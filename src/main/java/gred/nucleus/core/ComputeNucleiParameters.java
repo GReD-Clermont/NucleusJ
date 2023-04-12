@@ -117,6 +117,9 @@ public class ComputeNucleiParameters {
 	private String getColNameResult() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
+				"Moment 1\t" +
+				"Moment 2\t" +
+				"Moment 3 \t" +
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Esr\t" +

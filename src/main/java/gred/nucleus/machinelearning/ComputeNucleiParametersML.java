@@ -124,6 +124,9 @@ public class ComputeNucleiParametersML {
 	public String getResultsColumnNames() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
+				"Moment 1\t" +
+				"Moment 2\t" +
+				"Moment 3 \t" +
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Sphericity\t" +
