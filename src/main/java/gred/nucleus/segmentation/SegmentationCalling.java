@@ -12,6 +12,7 @@ import gred.nucleus.files.OutputTextFile;
 import gred.nucleus.core.ConvexHullSegmentation;
 import gred.nucleus.core.NucleusSegmentation;
 import gred.nucleus.nucleuscaracterisations.NucleusAnalysis;
+import gred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.measure.Calibration;
@@ -29,6 +30,7 @@ import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -280,20 +282,24 @@ public class SegmentationCalling {
 		LOGGER.info("End: {}", timeStampStart);
 		return log;
 	}
-	
-	
+
+
 	public void saveCropGeneralInfo() {
+		Date date = new Date() ;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss") ;
 		LOGGER.info("Saving crop general info.");
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(this.segmentationParameters.getOutputFolder()
 		                                                         + "OTSU"
 		                                                         + File.separator
-		                                                         + "result_Segmentation_Analyse_OTSU.csv");
+				                                                 + dateFormat.format(date)
+																 + " result_Segmentation_Analyse_OTSU.csv");
 		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, true);
 		if (this.segmentationParameters.getConvexHullDetection()) {
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(this.segmentationParameters.getOutputFolder()
 			                                                         + NucleusSegmentation.CONVEX_HULL_ALGORITHM
 			                                                         + File.separator
-			                                                         + "result_Segmentation_Analyse_" +
+																	 + dateFormat.format(date)
+											                         + "result_Segmentation_Analyse_" +
 			                                                         NucleusSegmentation.CONVEX_HULL_ALGORITHM +
 			                                                         ".csv");
 			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, true);
@@ -342,10 +348,12 @@ public class SegmentationCalling {
 	
 	public void saveCropGeneralInfoOmero(Client client, Long output)
 	throws ServiceException, AccessException, ExecutionException, InterruptedException {
+		Date date = new Date() ;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss") ;
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		
-		String path = "." + File.separator + "result_Segmentation_Analyse.csv";
+		String path = "." + File.separator +  dateFormat.format(date) + "result_Segmentation_Analyse.csv";
 		try {
 			path = new File(path).getCanonicalPath();
 		} catch (IOException e) {
@@ -504,6 +512,9 @@ public class SegmentationCalling {
 	public String getResultsColumnNames() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
+				"Moment 1 \t" +
+				"Moment 2 \t" +
+				"Moment 3 \t" +
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Esr\t" +
