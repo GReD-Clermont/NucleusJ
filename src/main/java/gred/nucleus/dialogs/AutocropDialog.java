@@ -261,8 +261,8 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldHostname.setText("omero.gred-clermont.fr");
 		jTextFieldPort.setText("4064");
 		
-		jTextFieldUsername.setText("demo");
-		jPasswordField.setText("Isim@42");
+		jTextFieldUsername.setText("");
+		jPasswordField.setText("");
 		jTextFieldGroup.setText("553");
 		
 		jComboBoxDataType.setSelectedIndex(3);
@@ -311,8 +311,8 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	}
 	
 	
-	public String getPassword() {
-		return String.valueOf(jPasswordField.getPassword());
+	public char[] getPassword() {
+		return jPasswordField.getPassword();
 	}
 	
 	

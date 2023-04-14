@@ -53,7 +53,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 	public Client checkOMEROConnection(String hostname,
 	                                   String port,
 	                                   String username,
-	                                   String password,
+	                                   char[] password,
 	                                   String group) {
 		Client client = new Client();
 		try {
@@ -75,7 +75,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 		String hostname = segmentationDialog.getHostname();
 		String port     = segmentationDialog.getPort();
 		String username = segmentationDialog.getUsername();
-		String password = segmentationDialog.getPassword();
+		char[] password = segmentationDialog.getPassword();
 		String group    = segmentationDialog.getGroup();
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
 		
