@@ -210,7 +210,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		JPanel regroupBoxesPanel = new JPanel();
 		regroupBoxesPanel.setLayout(new BoxLayout(regroupBoxesPanel, BoxLayout.X_AXIS));
 		regroupBoxesPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-		JLabel regroupBoxesValue = new JLabel("Boxes regrouping:");
+		JLabel regroupBoxesValue = new JLabel("Boxes regroupement:");
 		regroupBoxesPanel.add(regroupBoxesValue);
 		regroupBoxesPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		regroupBoxes.setSelected(true);

@@ -205,7 +205,7 @@ public class CropFromCoodinateDialog extends JFrame implements ActionListener, I
 		
 		
 		c.gridy = 7;
-		JLabel jLabelOutputProject = new JLabel("Output project :");
+		JLabel jLabelOutputProject = new JLabel("Output Dataset :");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelOutputProject, c);

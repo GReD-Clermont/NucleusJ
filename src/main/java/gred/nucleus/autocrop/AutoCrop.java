@@ -454,6 +454,7 @@ public class AutoCrop {
 		info.append(getSpecificImageInfo()).append(HEADERS);
 		for (int c = 0; c < this.channelNumbers; c++) {
 			DatasetWrapper dataset = client.getDataset(outputsDat[c]);
+			List<ROIWrapper> rois = new ArrayList<>(this.boxes.size());
 			for (Map.Entry<Double, Box> entry : new TreeMap<>(this.boxes).entrySet()) {
 				int i = entry.getKey().intValue();
 				LOGGER.info("Processing box number: {} (OMERO)", i);
@@ -481,7 +482,8 @@ public class AutoCrop {
 					shapes.add(rectangle);
 				}
 				ROIWrapper roi = new ROIWrapper(shapes);
-				image.saveROI(client, roi);
+				roi.setName(String.valueOf(i));
+				rois.add(roi);
 				ImagePlus   croppedImage = image.toImagePlus(client, xBound, yBound, cBound, zBound, null);
 				Calibration cal          = this.rawImg.getCalibration();
 				croppedImage.setCalibration(cal);
@@ -526,6 +528,10 @@ public class AutoCrop {
 					                        zMin + "\t" +
 					                        zMax);
 				}
+			}
+			List<ROIWrapper> roisGetter = image.getROIs(client);
+			if(roisGetter.size() == 0){
+				image.saveROIs(client, rois);
 			}
 		}
 		this.infoImageAnalysis += info.toString();
