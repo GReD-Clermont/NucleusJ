@@ -485,7 +485,7 @@ public class AutoCrop {
 				ROIWrapper roi = new ROIWrapper(shapes);
 				roi.setName(String.valueOf(i));
 				rois.add(roi);
-				ImagePlus   croppedImage = cropImage(xMin, yMin, zMin, width, height, depth, c);
+				ImagePlus   croppedImage = image.toImagePlus(client, roi);
 				Calibration cal          = this.rawImg.getCalibration();
 				croppedImage.setCalibration(cal);
 				String tiffPath = new File(".").getCanonicalPath() +

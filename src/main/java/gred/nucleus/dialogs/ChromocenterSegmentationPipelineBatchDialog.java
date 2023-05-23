@@ -39,7 +39,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		final JButton   jButtonStart         = new JButton("Start");
 		final JButton   jButtonQuit          = new JButton("Quit");
 		final JButton   jButtonRawData       = new JButton("Raw Data");
-		this.setTitle("Chromocenters segmentation pipeline (Batch)");
+		this.setTitle("Compute parameters");
 		this.setSize(500, 500);
 		this.setLocationRelativeTo(null);
 		container = getContentPane();
