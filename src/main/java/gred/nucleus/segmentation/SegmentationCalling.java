@@ -13,7 +13,6 @@ import gred.nucleus.files.OutputTextFile;
 import gred.nucleus.core.ConvexHullSegmentation;
 import gred.nucleus.core.NucleusSegmentation;
 import gred.nucleus.nucleuscaracterisations.NucleusAnalysis;
-import gred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.measure.Calibration;

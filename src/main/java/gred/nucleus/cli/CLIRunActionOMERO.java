@@ -13,7 +13,6 @@ import gred.nucleus.autocrop.GenerateOverlay;
 import gred.nucleus.core.ComputeNucleiParameters;
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
-import omero.gateway.LoginCredentials;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
