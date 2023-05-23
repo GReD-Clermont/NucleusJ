@@ -3,7 +3,9 @@ package gred.nucleus.utils;
 import ij.ImagePlus;
 import ij.ImageStack;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -13,7 +15,7 @@ import java.util.*;
  */
 public class Histogram {
 	/** HashMap which stock the different values of voxels and the number of voxels for each value present on the image */
-	private final Map<Double, Integer> hHistogram = new  TreeMap<>();
+	private final Map<Double, Integer> hHistogram = new TreeMap<>();
 	/** All the value present on the image */
 	private       double[]             label;
 	/**

@@ -9,9 +9,10 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 
 /**
@@ -35,8 +36,8 @@ public class Measure3D {
 	double yCal;
 	double zCal;
 	
-	Map<Double, Integer> segmentedNucleusHistogram = new HashMap<>();
-	Map<Double, Integer> backgroundHistogram       = new HashMap<>();
+	Map<Double, Integer> segmentedNucleusHistogram = new TreeMap<>();
+	Map<Double, Integer> backgroundHistogram       = new TreeMap<>();
 	
 	
 	public Measure3D() {
@@ -116,9 +117,9 @@ public class Measure3D {
 		histogram.run(imagePlusInput);
 		double[]             tlabel        = histogram.getLabels();
 		double[]             tObjectVolume = new double[tlabel.length];
-		Map<Double, Integer> hashHisto     = histogram.getHistogram();
+		Map<Double, Integer> histo         = histogram.getHistogram();
 		for (int i = 0; i < tlabel.length; ++i) {
-			int nbVoxel = hashHisto.get(tlabel[i]);
+			int nbVoxel = histo.get(tlabel[i]);
 			tObjectVolume[i] = nbVoxel * this.xCal * this.yCal * this.zCal;
 		}
 		return tObjectVolume;
@@ -743,13 +744,19 @@ public class Measure3D {
 		Histogram histogram        = new Histogram();
 		histogram.run(this.rawImage);
 		Map<Double, Integer> nucleusHistogram = histogram.getHistogram();
-		int medianElementStop =
-				(this.rawImage.getHeight() * this.rawImage.getWidth() * this.rawImage.getNSlices()) / 2;
-		int increment = 0;
-		for (Map.Entry<Double, Integer> entry : nucleusHistogram.entrySet()) {
+		
+		int     size              = rawImage.getHeight() * rawImage.getWidth() * rawImage.getNSlices();
+		float   medianElementStop = size / 2.0f;
+		int     increment         = 0;
+		boolean even              = false;
+		for (Entry<Double, Integer> entry : nucleusHistogram.entrySet()) {
 			increment += entry.getValue();
-			if (increment > medianElementStop) {
+			if (increment == medianElementStop) {
 				voxelMedianValue = entry.getKey();
+				even = true;
+			} else if (increment > medianElementStop) {
+				voxelMedianValue += entry.getKey();
+				if (even) voxelMedianValue /= 2;
 				break;
 			}
 		}
@@ -763,13 +770,17 @@ public class Measure3D {
 		for (int f : this.segmentedNucleusHistogram.values()) {
 			numberOfVoxelNucleus += f;
 		}
-		int medianElementStop = (numberOfVoxelNucleus) / 2;
-		int increment         = 0;
-		for (Map.Entry<Double, Integer> entry :
-				this.segmentedNucleusHistogram.entrySet()) {
+		float   medianElementStop = numberOfVoxelNucleus / 2.0f;
+		int     increment         = 0;
+		boolean even              = false;
+		for (Map.Entry<Double, Integer> entry : segmentedNucleusHistogram.entrySet()) {
 			increment += entry.getValue();
-			if (increment > medianElementStop) {
+			if (increment == medianElementStop) {
 				voxelMedianValue = entry.getKey();
+				even = true;
+			} else if (increment > medianElementStop) {
+				voxelMedianValue += entry.getKey();
+				if (even) voxelMedianValue /= 2;
 				break;
 			}
 		}
