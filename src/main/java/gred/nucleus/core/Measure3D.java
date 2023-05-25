@@ -9,6 +9,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -705,8 +706,7 @@ public class Measure3D {
 	 */
 	private double maxIntensity() {
 		double maxIntensity = 0;
-		for (Map.Entry<Double, Integer> entry :
-				this.segmentedNucleusHistogram.entrySet()) {
+		for (Map.Entry<Double, Integer> entry : this.segmentedNucleusHistogram.entrySet()) {
 			if (maxIntensity == 0 || entry.getKey().compareTo(maxIntensity) > 0) {
 				maxIntensity = entry.getKey();
 			}
@@ -722,15 +722,15 @@ public class Measure3D {
 	 * @return the minimum intensity voxel of segmented object
 	 */
 	private double minIntensity() {
-		double minIntensity = 0;
-		for (Map.Entry<Double, Integer> entry :
-				this.segmentedNucleusHistogram.entrySet()) {
-			if (minIntensity == 0 || entry.getKey().compareTo(minIntensity) < 0) {
-				minIntensity = entry.getKey();
-			}
+		Iterator<Map.Entry<Double, Integer>> iterator     = segmentedNucleusHistogram.entrySet().iterator();
+		int                                  count        = 0;
+		double                               minIntensity = 0;
+		while (iterator.hasNext() && count == 0) {
+			Map.Entry<Double, Integer> pair = iterator.next();
+			count = pair.getValue();
+			minIntensity = pair.getKey();
 		}
 		return minIntensity;
-		
 	}
 	
 	
@@ -745,16 +745,15 @@ public class Measure3D {
 		histogram.run(this.rawImage);
 		Map<Double, Integer> nucleusHistogram = histogram.getHistogram();
 		
-		int     size              = rawImage.getHeight() * rawImage.getWidth() * rawImage.getNSlices();
-		float   medianElementStop = size / 2.0f;
-		int     increment         = 0;
-		boolean even              = false;
+		int     size      = rawImage.getHeight() * rawImage.getWidth() * rawImage.getNSlices();
+		int     increment = 0;
+		boolean even      = false;
 		for (Entry<Double, Integer> entry : nucleusHistogram.entrySet()) {
 			increment += entry.getValue();
-			if (increment == medianElementStop) {
+			if (size == 2 * increment) {
 				voxelMedianValue = entry.getKey();
 				even = true;
-			} else if (increment > medianElementStop) {
+			} else if (size < 2 * increment) {
 				voxelMedianValue += entry.getKey();
 				if (even) voxelMedianValue /= 2;
 				break;
@@ -765,20 +764,19 @@ public class Measure3D {
 	
 	
 	private double medianIntensityNucleus() {
-		double voxelMedianValue     = 0;
-		int    numberOfVoxelNucleus = 0;
+		double voxelMedianValue = 0;
+		int    nbNucleusVoxels  = 0;
 		for (int f : this.segmentedNucleusHistogram.values()) {
-			numberOfVoxelNucleus += f;
+			nbNucleusVoxels += f;
 		}
-		float   medianElementStop = numberOfVoxelNucleus / 2.0f;
-		int     increment         = 0;
-		boolean even              = false;
+		int     increment = 0;
+		boolean even      = false;
 		for (Map.Entry<Double, Integer> entry : segmentedNucleusHistogram.entrySet()) {
 			increment += entry.getValue();
-			if (increment == medianElementStop) {
+			if (nbNucleusVoxels == 2 * increment) {
 				voxelMedianValue = entry.getKey();
 				even = true;
-			} else if (increment > medianElementStop) {
+			} else if (nbNucleusVoxels < 2 * increment) {
 				voxelMedianValue += entry.getKey();
 				if (even) voxelMedianValue /= 2;
 				break;
@@ -789,18 +787,21 @@ public class Measure3D {
 	
 	
 	private double medianIntensityBackground() {
-		double voxelMedianValue        = 0;
-		int    numberOfVoxelBackground = 0;
+		double voxelMedianValue   = 0;
+		int    nbBackgroundVoxels = 0;
 		for (int f : this.segmentedNucleusHistogram.values()) {
-			numberOfVoxelBackground += f;
+			nbBackgroundVoxels += f;
 		}
-		int medianElementStop = (numberOfVoxelBackground) / 2;
-		int increment         = 0;
-		for (Map.Entry<Double, Integer> entry :
-				this.backgroundHistogram.entrySet()) {
+		int     increment = 0;
+		boolean even      = false;
+		for (Map.Entry<Double, Integer> entry : this.backgroundHistogram.entrySet()) {
 			increment += entry.getValue();
-			if (increment > medianElementStop) {
+			if (nbBackgroundVoxels == 2 * increment) {
 				voxelMedianValue = entry.getKey();
+				even = true;
+			} else if (nbBackgroundVoxels < 2 * increment) {
+				voxelMedianValue += entry.getKey();
+				if (even) voxelMedianValue /= 2;
 				break;
 			}
 		}
