@@ -156,7 +156,7 @@ public class CropFromCoordinates_ implements PlugIn {
 		
 		// Handle the source according to the type given
 		String sourceDataType = cropFromCoodinateDialog.getDataType();
-		String ToCropdataType = cropFromCoodinateDialog.getDataType();
+		String ToCropdataType = cropFromCoodinateDialog.getDataTypeToCrop();
 		Long   inputID  = Long.valueOf(cropFromCoodinateDialog.getSourceID());
 		Long   inputToCropID  = Long.valueOf(cropFromCoodinateDialog.getToCropID());
 		DatasetWrapper outputds = client.getDataset(Long.parseLong(output));
