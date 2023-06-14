@@ -104,6 +104,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 					                                            Integer.parseInt(acd.getXCropBoxSize()),
 					                                            Integer.parseInt(acd.getYCropBoxSize()),
 					                                            Integer.parseInt(acd.getZCropBoxSize()),
+					                                            Integer.parseInt(acd.getBoxNumberFontSize()),
 					                                            Integer.parseInt(acd.getSlicesOTSUComputing()),
 					                                            Integer.parseInt(acd.getThresholdOTSUComputing()),
 					                                            Integer.parseInt(acd.getChannelToComputeThreshold()),
@@ -119,6 +120,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 					                                            Integer.parseInt(acd.getXCropBoxSize()),
 					                                            Integer.parseInt(acd.getYCropBoxSize()),
 					                                            Integer.parseInt(acd.getZCropBoxSize()),
+																Integer.parseInt(acd.getBoxNumberFontSize()),
 					                                            Integer.parseInt(acd.getSlicesOTSUComputing()),
 					                                            Integer.parseInt(acd.getThresholdOTSUComputing()),
 					                                            Integer.parseInt(acd.getChannelToComputeThreshold()),
@@ -132,7 +134,8 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		}
 		
 		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
-		
+		autoCrop.setExecutorThreads(autocropDialog.getThreads());
+
 		// Handle the source according to the type given
 		
 		String dataType = autocropDialog.getDataType();
@@ -175,6 +178,8 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 				autoCrop.runSeveralImageOMERO(images, outputsDat, client); // Run segmentation
 				
 			}
+			LOGGER.info("Autocrop process has ended successfully");
+			IJ.showMessage("Autocrop process ended successfully on "+ autocropDialog.getDataType()+"\\"+inputID);
 		} catch (ServiceException se) {
 			IJ.error("Unable to access to OMERO service");
 		} catch (AccessException ae) {
@@ -220,6 +225,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 							                                            Integer.parseInt(acd.getXCropBoxSize()),
 							                                            Integer.parseInt(acd.getYCropBoxSize()),
 							                                            Integer.parseInt(acd.getZCropBoxSize()),
+																		Integer.parseInt(acd.getBoxNumberFontSize()),
 							                                            Integer.parseInt(acd.getSlicesOTSUComputing()),
 							                                            Integer.parseInt(acd.getThresholdOTSUComputing()),
 							                                            Integer.parseInt(acd.getChannelToComputeThreshold()),
@@ -234,6 +240,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 							                                            Integer.parseInt(acd.getXCropBoxSize()),
 							                                            Integer.parseInt(acd.getYCropBoxSize()),
 							                                            Integer.parseInt(acd.getZCropBoxSize()),
+																		Integer.parseInt(acd.getBoxNumberFontSize()),
 							                                            Integer.parseInt(acd.getSlicesOTSUComputing()),
 							                                            Integer.parseInt(acd.getThresholdOTSUComputing()),
 							                                            Integer.parseInt(acd.getChannelToComputeThreshold()),
@@ -249,6 +256,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 						break;
 				}
 				AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+				autoCrop.setExecutorThreads(autocropDialog.getThreads());
 				File            file     = new File(input);
 				if (file.isDirectory()) {
 					autoCrop.runFolder();
@@ -257,6 +265,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 					autoCrop.saveGeneralInfo();
 				}
 				LOGGER.info("Autocrop process has ended successfully");
+				IJ.showMessage("Segmentation process ended successfully on "+ file.getName());
 			} catch (Exception e) {
 				LOGGER.error("An error occurred during autocrop.", e);
 			}

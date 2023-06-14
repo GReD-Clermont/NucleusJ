@@ -1,8 +1,10 @@
 package gred.nucleus.autocrop;
 
+import fr.igred.omero.Client;
 import gred.nucleus.files.Directory;
 import gred.nucleus.files.FilesNames;
 import loci.formats.FormatException;
+import omero.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +14,8 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.regex.Pattern;
+
+import static com.sun.tools.corba.se.idl.toJavaPortable.Arguments.Client;
 
 
 public class GenerateProjectionFromCoordinates {
@@ -63,9 +67,8 @@ public class GenerateProjectionFromCoordinates {
 		try (Scanner scanner = new Scanner(boxFile)) {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-				
-				if ((!(line.matches("^#.*")))
-				    && (!(line.matches("^FileName.*")))) {
+
+				if(Pattern.matches("^((.*(\\\\|/))+)[^\\t]*(\\t\\d*)+\\d+$", line)){
 					String[] splitLine = line.split("\\t");
 					String[] fileName  = splitLine[0].split(Pattern.quote(File.separator));
 					int      xMax      = Integer.parseInt(splitLine[3]) + Integer.parseInt(splitLine[6]);
@@ -78,7 +81,7 @@ public class GenerateProjectionFromCoordinates {
 					                                            + yMax + "\t"
 					                                            + splitLine[5] + "\t"
 					                                            + zMax);
-					LOGGER.debug("EUUU{}value{}\t{}\t{}\t{}\t{}\t{}\t{}",
+					LOGGER.debug("Box {} value {}\t{}\t{}\t{}\t{}\t{}\t{}",
 					             fileName[fileName.length - 1],
 					             splitLine[0],
 					             splitLine[3],
@@ -103,7 +106,7 @@ public class GenerateProjectionFromCoordinates {
 	 * @throws IOException
 	 * @throws FormatException
 	 */
-	public void generateCoordinateFiltered() throws IOException, FormatException {
+	public void generateProjectionFiltered() throws IOException, FormatException {
 		Directory convexHullSegImages = new Directory(this.pathToConvexHullSeg);
 		convexHullSegImages.listImageFiles(this.pathToConvexHullSeg);
 		convexHullSegImages.checkIfEmpty();
@@ -149,7 +152,7 @@ public class GenerateProjectionFromCoordinates {
 	}
 	
 	
-	public void generateCoordinate() throws IOException, FormatException {
+	public void generateProjection() throws IOException, FormatException {
 		Directory rawImage = new Directory(this.pathToRaw);
 		rawImage.listImageFiles(this.pathToRaw);
 		rawImage.checkIfEmpty();
@@ -185,5 +188,5 @@ public class GenerateProjectionFromCoordinates {
 			annotateAutoCrop.run();
 		}
 	}
-	
+
 }

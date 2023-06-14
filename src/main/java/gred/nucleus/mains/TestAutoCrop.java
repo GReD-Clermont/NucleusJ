@@ -59,8 +59,8 @@ public class TestAutoCrop {
 	
 	
 	public static void runCropFromCoordinates(String coordinateDir) throws IOException, FormatException {
-		CropFromCoordinates test = new CropFromCoordinates(coordinateDir);
-		test.runCropFromCoordinate();
+		//CropFromCoordinates test = new CropFromCoordinates(coordinateDir);
+		//test.runCropFromCoordinate();
 	}
 	
 	

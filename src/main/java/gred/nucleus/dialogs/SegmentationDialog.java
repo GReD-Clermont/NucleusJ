@@ -42,6 +42,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	private final        JTextField                    jTextFieldSourceID      = new JTextField();
 	private final        JTextField                    jTextFieldOutputProject = new JTextField();
 	private final        JButton                       confButton              = new JButton("...");
+	private final 		 JSpinner			  jSpinnerThreads;
 	private              boolean                       useOMERO                = false;
 	private              SegmentationDialog.ConfigMode configMode;
 	
@@ -237,7 +238,18 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		container.add(defConf, 3);
 		defConf.setBorder(padding);
 		configMode = SegmentationDialog.ConfigMode.DEFAULT;
-		
+
+		// Thread preferences
+		JPanel threadPanel = new JPanel();
+		threadPanel.setLayout(new BoxLayout(threadPanel, BoxLayout.X_AXIS));
+		JLabel jLabelThreads = new JLabel("Number of used threads : ");
+		threadPanel.add(jLabelThreads);
+		int maxThreads = Runtime.getRuntime().availableProcessors();
+		SpinnerModel model = new SpinnerNumberModel(Math.min(maxThreads, 4), 1, maxThreads, 1);
+		jSpinnerThreads = new JSpinner(model);
+		threadPanel.add(jSpinnerThreads);
+		threadPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 100));
+		container.add(threadPanel, 4);
 		
 		// Start/Quit buttons
 		JPanel startQuitPanel = new JPanel();
@@ -245,7 +257,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		startQuitPanel.add(jButtonStart);
 		startQuitPanel.add(jButtonQuit);
 		startQuitPanel.setBorder(padding);
-		container.add(startQuitPanel, 4);
+		container.add(startQuitPanel, 5);
 		
 		SegmentationDialog.QuitListener quitListener = new SegmentationDialog.QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
@@ -338,8 +350,10 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	public SegmentationConfigDialog getSegmentationConfigFileDialog() {
 		return segmentationConfigFileDialog;
 	}
-	
-	
+
+	public int getThreads(){return (int) jSpinnerThreads.getValue(); }
+
+
 	public void actionPerformed(ActionEvent e) {
 		switch (((JButton) e.getSource()).getName()) {
 			case INPUT_CHOOSER:

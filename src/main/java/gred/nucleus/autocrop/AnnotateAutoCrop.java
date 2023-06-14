@@ -1,7 +1,13 @@
 package gred.nucleus.autocrop;
 
+import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+import fr.igred.omero.repository.DatasetWrapper;
+import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.files.Directory;
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.gui.TextRoi;
 import ij.io.FileSaver;
 import ij.plugin.ContrastEnhancer;
@@ -18,7 +24,10 @@ import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 
@@ -39,8 +48,6 @@ public class AnnotateAutoCrop {
 	private final String             outputDirPath;
 	/** Parameters crop analyse */
 	private final AutocropParameters autocropParameters;
-	/** File to process (Image input) */
-	File currentFile;
 	/** ImagePlus of the Z projection */
 	private ImagePlus zProjection;
 	/** The prefix of the names of the output cropped images, which are automatically numbered */
@@ -89,14 +96,27 @@ public class AnnotateAutoCrop {
 	                        AutocropParameters autocropParameters)
 	throws IOException, FormatException {
 		this.autocropParameters = autocropParameters;
-		this.currentFile = imageFile;
 		this.zProjection =
 				BF.openImagePlus(imageFile.getAbsolutePath())[this.autocropParameters.getSlicesOTSUComputing()];
 		this.boxCoordinates = boxesCoordinates;
 		this.outputDirPath = outputDirPath;
 	}
-	
-	
+
+
+	public AnnotateAutoCrop(List<String> boxesCoordinates,
+							ImagePlus imp,
+							String outputDirPath,
+							String prefix,
+							AutocropParameters autocropParameters) {
+		this.autocropParameters = autocropParameters;
+		this.zProjection = imp;
+		this.boxCoordinates = boxesCoordinates;
+		this.outputDirPath = outputDirPath;
+		this.outputFilesPrefix = prefix ;
+		Directory dirOutput = new Directory(this.outputDirPath + "zprojection");
+		dirOutput.checkAndCreateDir();
+	}
+
 	/**
 	 * Main method to generate Z projection of wide field 3D image. Parameter use are max intensity projection
 	 * (projectionMax method) and contrast modification of 0,3.
@@ -162,7 +182,24 @@ public class AnnotateAutoCrop {
 		FileSaver fileSaver = new FileSaver(imagePlusInput);
 		fileSaver.saveAsTiff(pathFile);
 	}
-	
+
+	public void saveProjectionOMERO(Client client, Long output) throws Exception {
+		long datasetID;
+		ProjectWrapper project = client.getProject(output);
+		List<DatasetWrapper> datasets = project.getDatasets("Z-Projection");
+		if (datasets.isEmpty()) datasetID = project.addDataset(client, "Z-Projection", "").getId();
+		else datasetID = datasets.get(0).getId();
+		String outFileZBox = this.outputDirPath + File.separator +
+							"zprojection" + File.separator +
+							outputFilesPrefix + "_Zprojection.tif";
+		client.getDataset(datasetID).importImages(client, outFileZBox);
+		File file = new File(outFileZBox);
+		try {
+			Files.deleteIfExists(file.toPath());
+		} catch (IOException e) {
+			LOGGER.error("Could not delete file: {}", outFileZBox);
+		}
+	}
 	
 	/**
 	 * Method to project 3D stack to 2D images using Max method projection.
@@ -197,7 +234,7 @@ public class AnnotateAutoCrop {
 		ip.setLineWidth(4);
 		ip.setAntialiasedText(false);
 		/* Font */
-		Font font = new Font("Arial", Font.PLAIN, 30);
+		Font font = new Font("Arial", Font.PLAIN, autocropParameters.getNumberFontSize());
 		ip.setFont(font);
 		/* Draw current box*/
 		ip.drawRect(Integer.parseInt(currentBox[1]),
@@ -205,14 +242,8 @@ public class AnnotateAutoCrop {
 		            widthBox, heightBox);
 		
 		/* Calculation of the coordinate to add nuclei Number */
-		int xBorder = Integer.parseInt(currentBox[1]) - 100;
-		int yBorder = Integer.parseInt(currentBox[3]) +
-		              ((Integer.parseInt(currentBox[4]) - Integer.parseInt(currentBox[3])) / 2) - 20;
-		// When the box is in left border the number need
-		if (xBorder <= 40) {
-			// to be write on the right of the box
-			xBorder = Integer.parseInt(currentBox[2]) + 60;
-		}
+		int xBorder = Integer.parseInt(currentBox[1]) + font.getSize()/3;
+		int yBorder = Integer.parseInt(currentBox[3]) + font.getSize();
 		/* Draw the nucleus number aside the box */
 		TextRoi text = new TextRoi(Integer.toString(boxNumber), xBorder, yBorder, font);
 		text.drawPixels(ip);

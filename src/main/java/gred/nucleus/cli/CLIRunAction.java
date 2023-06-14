@@ -53,7 +53,7 @@ public class CLIRunAction {
 			case "cropFromCoordinate":
 				runCropFromCoordinates();
 				break;
-			case "GenerateOverlay":
+			case "generateOverlay":
 				runGenerateOV();
 				break;
 			default:
@@ -62,16 +62,22 @@ public class CLIRunAction {
 	}
 	
 	
-	private void runGenerateOV() throws FileNotFoundException {
-		GenerateOverlay ov = new GenerateOverlay(this.cmd.getOptionValue("input"));
+	private void runGenerateOV() throws Exception {
+		GenerateOverlay ov = new GenerateOverlay(this.cmd.getOptionValue("input"),
+												 this.cmd.getOptionValue("input2"));
 		ov.run();
 	}
 	
 	
 	private void runCropFromCoordinates() throws IOException, FormatException {
-		CropFromCoordinates test = new CropFromCoordinates(this.cmd.getOptionValue("input"));
-		test.runCropFromCoordinate();
+		CropFromCoordinates cropFromCoordinates = new CropFromCoordinates(
+				this.cmd.getOptionValue("input"),
+				this.cmd.getOptionValue("input2"),
+				this.cmd.getOptionValue("output")
+				);
+		cropFromCoordinates.run();
 	}
+
 	
 	
 	private void runProjectionFromCoordinates() throws Exception {
@@ -80,12 +86,12 @@ public class CLIRunAction {
 					new GenerateProjectionFromCoordinates(this.cmd.getOptionValue("input"),
 					                                      this.cmd.getOptionValue("input2"),
 					                                      this.cmd.getOptionValue("input3"));
-			projection.generateCoordinateFiltered();
+			projection.generateProjectionFiltered();
 		} else {
 			GenerateProjectionFromCoordinates projection =
 					new GenerateProjectionFromCoordinates(this.cmd.getOptionValue("input"),
 					                                      this.cmd.getOptionValue("input2"));
-			projection.generateCoordinate();
+			projection.generateProjection();
 		}
 	}
 	
@@ -104,6 +110,9 @@ public class CLIRunAction {
 			autoCrop.saveGeneralInfo();
 		} else {
 			AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+			if(this.cmd.hasOption("threads")) {
+				autoCrop.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
+			}
 			autoCrop.runFolder();
 		}
 	}
@@ -131,6 +140,9 @@ public class CLIRunAction {
 		} else {
 			SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
 			try {
+				if(this.cmd.hasOption("threads")) {
+					otsuModified.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
+				}
 				String log = otsuModified.runSeveralImages2();
 				if (!(log.equals(""))) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);

@@ -15,6 +15,7 @@ import gred.nucleus.imageprocessing.Thresholding;
 import gred.nucleus.utils.Histogram;
 import ij.ImagePlus;
 import ij.ImageStack;
+import ij.gui.Roi;
 import ij.measure.Calibration;
 import ij.plugin.ChannelSplitter;
 import ij.plugin.Duplicator;
@@ -138,9 +139,14 @@ public class AutoCrop {
 		} else {
 			this.imageSeg = this.rawImg;
 		}
+		this.imageFilePath = image.getName();
 		this.infoImageAnalysis = autocropParametersAnalyse.getAnalysisParameters();
+		this.rawImg.setTitle(image.getName()+"-"+image.getId());
 	}
-	
+
+	public ImagePlus getRawImage(){
+		return rawImg;
+	}
 	
 	public AutoCrop(File imageFile,
 	                String outputFilesPrefix,
@@ -397,9 +403,9 @@ public class AutoCrop {
 				int       xMin   = box.getXMin();
 				int       yMin   = box.getYMin();
 				int       zMin   = box.getZMin();
-				int       width  = box.getXMax() - box.getXMin();
-				int       height = box.getYMax() - box.getYMin();
-				int       depth  = box.getZMax() - box.getZMin();
+				int       width  = box.getXMax() - box.getXMin() + 1;
+				int       height = box.getYMax() - box.getYMin() + 1;
+				int       depth  = box.getZMax() - box.getZMin() + 1;
 				ImagePlus croppedImage;
 				if (this.rawImg.getNSlices() > 1) {
 					croppedImage = cropImage(xMin, yMin, zMin, width, height, depth, c);
@@ -463,15 +469,10 @@ public class AutoCrop {
 				int    xMin        = box.getXMin();
 				int    yMin        = box.getYMin();
 				int    zMin        = box.getZMin();
-				int    width       = box.getXMax() - box.getXMin();
-				int    height      = box.getYMax() - box.getYMin();
-				int    depth       = box.getZMax() - box.getZMin();
-				String coordinates = box.getXMin() + "_" + box.getYMin() + "_" + box.getZMin();
-				int[]  xBound      = {box.getXMin(), box.getXMax() - 1};
-				int[]  yBound      = {box.getYMin(), box.getYMax() - 1};
-				int[]  zBound      = {box.getZMin(), box.getZMax() - 1};
-				int[]  cBound      = {c, c};
-				
+				int       width  = box.getXMax() - box.getXMin() + 1;
+				int       height = box.getYMax() - box.getYMin() + 1;
+				int       depth  = box.getZMax() - box.getZMin() + 1;
+
 				ShapeList shapes = new ShapeList();
 				for (int z = box.getZMin(); z < box.getZMax(); z++) {
 					RectangleWrapper rectangle = new RectangleWrapper(xMin, yMin, width, height);
@@ -484,26 +485,24 @@ public class AutoCrop {
 				ROIWrapper roi = new ROIWrapper(shapes);
 				roi.setName(String.valueOf(i));
 				rois.add(roi);
-				ImagePlus   croppedImage = image.toImagePlus(client, xBound, yBound, cBound, zBound, null);
+				ImagePlus   croppedImage = cropImage(xMin, yMin, zMin, width, height, depth, c);
 				Calibration cal          = this.rawImg.getCalibration();
 				croppedImage.setCalibration(cal);
 				String tiffPath = new File(".").getCanonicalPath() +
 				                  File.separator +
 				                  this.outputFilesPrefix + "_" +
-				                  String.format("%02d", i) + ".tif";
+				                  String.format("%02d", i) +
+						          "_C" + c +".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
-				info.append(outputDirPath).append(outputFilesPrefix)
-				    .append(File.separator).append(outputFilesPrefix)
-				    .append("_").append(i).append(".tif").append("\t")
-				    .append(tiffPath).append("\t")
-				    .append(c).append("\t")
-				    .append(i).append("\t")
-				    .append(xMin).append("\t")
-				    .append(yMin).append("\t")
-				    .append(zMin).append("\t")
-				    .append(width).append("\t")
-				    .append(height).append("\t")
-				    .append(depth).append("\n");
+				info.append(tiffPath).append("\t")
+						.append(c).append("\t")
+						.append(i).append("\t")
+						.append(xMin).append("\t")
+						.append(yMin).append("\t")
+						.append(zMin).append("\t")
+						.append(width).append("\t")
+						.append(height).append("\t")
+						.append(depth).append("\n");
 				fileOutput.saveImage(croppedImage);
 				this.outputFile.add(this.outputFilesPrefix + "_" +
 				                    String.format("%02d", i) + ".tif");
@@ -519,14 +518,14 @@ public class AutoCrop {
 					int yMax = yMin + height;
 					int zMax = zMin + depth;
 					this.boxCoordinates.add(this.outputDirPath + File.separator +
-					                        this.outputFilesPrefix + "_" + coordinates +
-					                        i + "\t" +
-					                        xMin + "\t" +
-					                        xMax + "\t" +
-					                        yMin + "\t" +
-					                        yMax + "\t" +
-					                        zMin + "\t" +
-					                        zMax);
+							this.outputFilesPrefix + "_" +
+							String.format("%02d", i) + "_C0" + "\t" +
+							xMin + "\t" +
+							xMax + "\t" +
+							yMin + "\t" +
+							yMax + "\t" +
+							zMin + "\t" +
+							zMax);
 				}
 			}
 			List<ROIWrapper> roisGetter = image.getROIs(client);

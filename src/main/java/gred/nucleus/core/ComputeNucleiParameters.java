@@ -1,17 +1,26 @@
 package gred.nucleus.core;
 
+import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+import fr.igred.omero.repository.DatasetWrapper;
+import fr.igred.omero.repository.ImageWrapper;
 import gred.nucleus.files.Directory;
 import gred.nucleus.files.OutputTextFile;
 import gred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
+import ij.io.FileSaver;
 import ij.measure.Calibration;
 import loci.plugins.BF;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class ComputeNucleiParameters {
@@ -19,8 +28,7 @@ public class ComputeNucleiParameters {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	private final PluginParameters pluginParameters;
-	
-	
+
 	/**
 	 * Constructor with input, output and config files
 	 *
@@ -32,8 +40,8 @@ public class ComputeNucleiParameters {
 	                               String segmentedImagesDirectory,
 	                               String pathToConfig) {
 		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory, pathToConfig);
-		
-		
+
+
 	}
 	
 	
@@ -45,8 +53,18 @@ public class ComputeNucleiParameters {
 	 */
 	public ComputeNucleiParameters(String rawImagesInputDirectory, String segmentedImagesDirectory) {
 		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
-		
-		
+	}
+
+	public ComputeNucleiParameters(){
+		String rawPath = "." + File.separator + "raw-computeNucleiParameters";
+		String segmentedPath = "." + File.separator + "segmented-computeNucleiParameters";
+
+		Directory rawDirectory = new Directory(rawPath);
+		rawDirectory.checkAndCreateDir();
+		Directory segmentedDirectory = new Directory(segmentedPath);
+		segmentedDirectory.checkAndCreateDir();
+
+		this.pluginParameters = new PluginParameters(rawPath, segmentedPath);
 	}
 	
 	
@@ -61,7 +79,6 @@ public class ComputeNucleiParameters {
 	                               Calibration cal) {
 		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory,
 		                                             cal.pixelWidth, cal.pixelHeight, cal.pixelDepth);
-		
 	}
 	
 	
@@ -102,17 +119,41 @@ public class ComputeNucleiParameters {
 				+ "result_Segmentation_Analyse.csv");
 		
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU.toString(), true);
-		
-		
 	}
-	
-	
+
+	public void runFromOMERO(String rawDatasetID, String segmentedDatasetID, Client client) throws AccessException, ServiceException, ExecutionException, InterruptedException, IOException {
+		DatasetWrapper rawDataset = client.getDataset(Long.parseLong(rawDatasetID));
+		DatasetWrapper segmentedDataset = client.getDataset(Long.parseLong(segmentedDatasetID));
+
+		for (ImageWrapper raw : rawDataset.getImages(client)) {
+			saveFile(raw.toImagePlus(client), pluginParameters.getInputFolder() + File.separator + raw.getName());
+		}
+
+		for (ImageWrapper segmented : segmentedDataset.getImages(client)) {
+			saveFile(segmented.toImagePlus(client), pluginParameters.getOutputFolder() + File.separator + segmented.getName());
+		}
+
+		this.run();
+
+		rawDataset.addFile(
+				client,
+				new File(this.pluginParameters.getOutputFolder() + File.separator + "result_Segmentation_Analyse.csv")
+		);
+
+		FileUtils.deleteDirectory(new File(pluginParameters.getInputFolder()));
+		FileUtils.deleteDirectory(new File(pluginParameters.getOutputFolder()));
+	}
+
+	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
+		FileSaver fileSaver = new FileSaver(imagePlusInput);
+		fileSaver.saveAsTiff(pathFile);
+	}
+
 	public void addConfigParameters(String pathToConfig) {
 		this.pluginParameters.addGeneralProperties(pathToConfig);
 		
 	}
-	
-	
+
 	/** @return columns names for results */
 	private String getColNameResult() {
 		return "NucleusFileName\t" +

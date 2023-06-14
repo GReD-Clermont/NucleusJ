@@ -6,7 +6,7 @@ import org.apache.commons.cli.*;
 
 /** Generic class to handle command line option */
 public class CLIActionOptions {
-	
+	// TODO Store action and option String in constant
 	/** NucleusJ version */
 	private static final String NJ_VERSION = Version.get();
 	
@@ -17,6 +17,29 @@ public class CLIActionOptions {
 	                                                .type(String.class)
 	                                                .numberOfArgs(1)
 	                                                .build();
+
+	/** Path to second input folder needed in specific action */
+	public 				 Option inputFolder2 = Option.builder("in2")
+													.longOpt("input2")
+													.type(String.class)
+													.numberOfArgs(1)
+													.build();
+
+	/** Path to second input folder Need in specific action */
+	public 				Option inputFolder3 = Option.builder("in3")
+													.longOpt("input3")
+													.type(String.class)
+													.numberOfArgs(1)
+													.build();
+
+	/** Path to output folder */
+	protected 			Option outputFolder = Option.builder("out")
+													.longOpt("output")
+													.type(String.class)
+													.desc("Path to output results\n")
+													.numberOfArgs(1)
+													.build();
+
 	/** Path to config file */
 	public               Option configFile  = Option.builder("c")
 	                                                .longOpt("config")
@@ -38,6 +61,18 @@ public class CLIActionOptions {
 	                                                      "segmentation : nucleus segmentation\n")
 	                                                .numberOfArgs(1)
 	                                                .build();
+
+	/** Number of threads */
+	public               Option threads      = Option.builder("th")
+													.longOpt("threads")
+													.type(String.class)
+													.desc("Number of threads used to split image processing during autocrop or nucleus segmentation (do not exceed the number of available CPUs  (="  +
+															Runtime.getRuntime().availableProcessors()+ " CPUs))\n" +
+															"Default : 4 threads for several images (otherwise 1 thread for single image processing)")
+													.numberOfArgs(1)
+													.build();
+
+
 	/** OMERO activate */
 	public               Option omero       = Option.builder("ome")
 	                                                .longOpt("omero")
@@ -59,8 +94,10 @@ public class CLIActionOptions {
 	 */
 	public CLIActionOptions(String[] argument) {
 		this.options.addOption(this.inputFolder);
+		this.options.addOption(this.inputFolder2);
 		this.options.addOption(this.configFile);
 		this.options.addOption(this.action);
+		this.options.addOption(this.threads);
 		this.options.addOption(this.omero);
 		try {
 			this.cmd = this.parser.parse(this.options, argument, true);

@@ -37,8 +37,8 @@ public class CropFromCoordinates_ implements PlugIn {
 	
 	public static void cropFromCoordinates(String coordinateDir) throws IOException, FormatException {
 		
-		CropFromCoordinates test = new CropFromCoordinates(coordinateDir);
-		test.runCropFromCoordinate();
+		//CropFromCoordinates test = new CropFromCoordinates(coordinateDir);
+		//test.runCropFromCoordinate();
 	}
 	
 	

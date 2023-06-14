@@ -12,6 +12,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	private final JTextField xCropBoxSize                = new JTextField();
 	private final JTextField yCropBoxSize                = new JTextField();
 	private final JTextField zCropBoxSize                = new JTextField();
+	private final JTextField boxNumberFontSize           = new JTextField();
 	private final JTextField xCalibration                = new JTextField();
 	private final JTextField yCalibration                = new JTextField();
 	private final JTextField zCalibration                = new JTextField();
@@ -85,6 +86,16 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		zCropBoxSize.setText("20");
 		zCropBoxSize.setMinimumSize(new Dimension(60, 10));
 		zCropBoxPane.add(zCropBoxSize);
+
+		JPanel numberFontSizePane = new JPanel();
+		numberFontSizePane.setLayout(new BoxLayout(numberFontSizePane, BoxLayout.X_AXIS));
+		numberFontSizePane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+		JLabel fontSize = new JLabel("Number font size :");
+		numberFontSizePane.add(fontSize);
+		numberFontSizePane.add(Box.createRigidArea(new Dimension(10, 0)));
+		boxNumberFontSize.setText("30");
+		boxNumberFontSize.setMinimumSize(new Dimension(40, 10));
+		numberFontSizePane.add(boxNumberFontSize);
 		
 		JLabel cropBoxLabel = new JLabel("Crop Box Size:");
 		cropBoxLabel.setAlignmentX(0);
@@ -92,6 +103,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		cropBoxPane.add(xCropBoxPane);
 		cropBoxPane.add(yCropBoxPane);
 		cropBoxPane.add(zCropBoxPane);
+		cropBoxPane.add(numberFontSizePane);
 		cropBoxPane.add(Box.createRigidArea(new Dimension(0, 20)));
 
 
@@ -268,7 +280,10 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	public String getZCropBoxSize() {
 		return zCropBoxSize.getText();
 	}
-	
+
+	public String getBoxNumberFontSize() {
+		return boxNumberFontSize.getText();
+	}
 	
 	public String getXCalibration() {
 		return xCalibration.getText();

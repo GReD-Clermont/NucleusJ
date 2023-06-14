@@ -113,7 +113,8 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 		}
 		
 		SegmentationCalling segmentation = new SegmentationCalling(segmentationParameters);
-		
+		segmentation.setExecutorThreads(segmentationDialog.getThreads());
+
 		// Handle the source according to the type given
 		String dataType = segmentationDialog.getDataType();
 		Long   inputID  = Long.valueOf(segmentationDialog.getSourceID());
@@ -151,6 +152,8 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}
 			}
+			LOGGER.info("Segmentation process has ended successfully");
+			IJ.showMessage("Segmentation process ended successfully on "+ segmentationDialog.getDataType()+"\\"+inputID);
 		} catch (ServiceException se) {
 			IJ.error("Unable to access to OMERO service");
 		} catch (AccessException ae) {
@@ -215,7 +218,8 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				}
 				
 				SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
-				
+				otsuModified.setExecutorThreads(segmentationDialog.getThreads());
+
 				File   file = new File(input);
 				String log  = "";
 				if (file.isDirectory()) {
@@ -229,12 +233,14 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				}
 				
 				LOGGER.info("Segmentation process has ended successfully");
+				IJ.showMessage("Segmentation process ended successfully on "+ file.getName());
 			} catch (IOException ioe) {
 				IJ.error("File/Directory does not exist");
 			} catch (Exception e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		}
+
 	}
 	
 }

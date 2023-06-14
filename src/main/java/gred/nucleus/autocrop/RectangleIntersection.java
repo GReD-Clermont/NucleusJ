@@ -249,8 +249,10 @@ public class RectangleIntersection {
 		for (Rectangle rectangle : listOfRectangleToRemove) {
 			this.newBoxesAdded = true;
 			int indexRectangleRemove = listRectangle.indexOf(rectangle);
-			listRectangle.remove(indexRectangleRemove);
-			zSlices.remove(indexRectangleRemove);
+			if(indexRectangleRemove!= -1) {
+				listRectangle.remove(indexRectangleRemove);
+				zSlices.remove(indexRectangleRemove);
+			}
 		}
 	}
 	

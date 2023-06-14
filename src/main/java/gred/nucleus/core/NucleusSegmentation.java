@@ -136,14 +136,25 @@ public class NucleusSegmentation {
 		}
 	}
 	
-	
-	public NucleusSegmentation(ImageWrapper image, SegmentationParameters segmentationParameters, Client client)
+
+	public NucleusSegmentation(ImageWrapper image,  SegmentationParameters segmentationParameters, Client client)
 	throws ServiceException, AccessException, ExecutionException {
 		this.segmentationParameters = segmentationParameters;
 		
 		int[] cBound = {0, 0};
-		
 		this.imgRaw = image.toImagePlus(client, null, null, cBound, null, null);
+		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
+		this.imgRaw.setTitle(image.getName());
+		this.imgRawTransformed = this.imgRaw.duplicate();
+		this.imgRawTransformed.setTitle(image.getName());
+	}
+	
+	
+	// Changed HERE TO RETRIEVE ONLY ID, ALLOWING MULTI THREADING DOWNLOAD
+	public NucleusSegmentation(ImageWrapper image, ImagePlus imp,  SegmentationParameters segmentationParameters, Client client) {
+		this.segmentationParameters = segmentationParameters;
+		
+		this.imgRaw = imp;
 		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
 		this.imgRaw.setTitle(image.getName());
 		this.imgRawTransformed = this.imgRaw.duplicate();
@@ -839,26 +850,15 @@ public class NucleusSegmentation {
 	 * Method to save the OTSU segmented image.
 	 * <p> TODO verifier cette methode si elle est à ca place
 	 */
-	public void saveOTSUSegmentedOMERO(Client client, Long id)
+	public void saveOTSUSegmentedOMERO(Client client, Long output)
 	throws Exception {
 		LOGGER.info("Computing and saving OTSU segmentation.");
 		if (!badCrop && bestThreshold != -1) {
-			String path = new java.io.File(".").getCanonicalPath() + File.separator + this.imageSeg[0].getTitle();
+			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + "OTSU"
+			              + File.separator  + this.imageSeg[0].getTitle();
 			saveFile(this.imageSeg[0], path);
 			
-			ProjectWrapper       project  = client.getProject(id);
-			List<DatasetWrapper> datasets = project.getDatasets("OTSU");
-			
-			DatasetWrapper otsu;
-			if (datasets.isEmpty()) {
-				otsu = new DatasetWrapper("OTSU", "");
-				Long datasetId = project.addDataset(client, otsu).getId();
-				otsu = client.getDataset(datasetId);
-			} else {
-				otsu = datasets.get(0);
-			}
-			
-			otsu.importImages(client, path);
+			client.getDataset(output).importImages(client, path);
 			
 			File file = new File(path);
 			try {
@@ -868,6 +868,7 @@ public class NucleusSegmentation {
 			}
 		}
 	}
+	
 	
 	
 	/**
@@ -891,7 +892,7 @@ public class NucleusSegmentation {
 	 * Method to save the OTSU segmented image.
 	 * <p> TODO verifier cette methode si elle est à sa place
 	 */
-	public void saveConvexHullSegOMERO(Client client, Long id)
+	public void saveConvexHullSegOMERO(Client client, Long output)
 	throws Exception {
 		LOGGER.info("Computing and saving Convex Hull segmentation.");
 		if (!badCrop && bestThreshold != -1 && this.segmentationParameters.getConvexHullDetection()) {
@@ -899,22 +900,11 @@ public class NucleusSegmentation {
 			
 			this.imageSeg[0] = nuc.convexHullDetection(this.imageSeg[0], this.segmentationParameters);
 			
-			String path = new java.io.File(".").getCanonicalPath() + File.separator + this.imageSeg[0].getTitle();
+			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + CONVEX_HULL_ALGORITHM
+			              + File.separator + this.imageSeg[0].getTitle();
 			saveFile(this.imageSeg[0], path);
 			
-			ProjectWrapper       project  = client.getProject(id);
-			List<DatasetWrapper> datasets = project.getDatasets(CONVEX_HULL_ALGORITHM);
-			
-			DatasetWrapper convexHullDataset;
-			if (datasets.isEmpty()) {
-				convexHullDataset = new DatasetWrapper(CONVEX_HULL_ALGORITHM, "");
-				Long datasetId = project.addDataset(client, convexHullDataset).getId();
-				convexHullDataset = client.getDataset(datasetId);
-			} else {
-				convexHullDataset = datasets.get(0);
-			}
-			
-			convexHullDataset.importImages(client, path);
+			client.getDataset(output).importImages(client, path);
 			
 			File file = new File(path);
 			try {

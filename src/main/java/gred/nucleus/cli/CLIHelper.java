@@ -185,13 +185,28 @@ public class CLIHelper {
 			
 			case "GenerateOverlay":
 				exampleArgument = "-action GenerateOverlay " +
-				                  "-input path/to/coordinate/file/folder/ ";
+						"-input path/to/input/zprojection/ " +
+						"-input2 path/to/input/dic_images/";
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
 				formatter.printHelp("NucleusJ2.0 GenerateOverlay cli : ", command.getOptions());
 				System.console().writer().println("\nCommand line example : \n" +
-				                                  exampleCommand + exampleArgument + "\n\n");
+						exampleCommand + exampleArgument + "\n\n");
+
+				exampleArgumentOMERO = "-omero " +
+						"-action GenerateOverlay " +
+						"-input ZProjection_dataset_ID " +
+						"-input2 DIC_dataset_ID " +
+						"-output output_project_ID " +
+						"-port 0 " +
+						"-group 000";
+				exampleOMEROCMD = exampleArgumentOMERO.split(" ");
+				commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
+				formatter.printHelp("NucleusJ2.0 GenerateOverlay OMERO MODE: ", commandOMERO.getOptions());
+				System.console().writer().println("\nCommand line example : \n\n" +
+						exampleCommand + exampleArgumentOMERO);
+				///
 				break;
 			
 			case "configFileExample":

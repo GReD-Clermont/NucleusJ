@@ -27,6 +27,8 @@ public class AutocropParameters extends PluginParameters {
 	private int     yCropBoxSize                = 40;
 	/** Number of slice take plus object in y */
 	private int     zCropBoxSize                = 20;
+	/** Font size of the box number */
+	private int numberFontSize 					= 30;
 	/** Minimal default OTSU threshold */
 	private int     thresholdOTSUComputing      = 20;
 	/** Channel to compute OTSU threshold */
@@ -67,12 +69,14 @@ public class AutocropParameters extends PluginParameters {
 	                          int xCropBoxSize,
 	                          int yCropBoxSize,
 	                          int zCropBoxSize,
+	                          int numberFontSize,
 	                          int thresholdOTSUComputing,
 	                          int channelToComputeThreshold) {
 		super(inputFolder, outputFolder);
 		this.xCropBoxSize = xCropBoxSize;
 		this.yCropBoxSize = yCropBoxSize;
 		this.zCropBoxSize = zCropBoxSize;
+		this.numberFontSize = numberFontSize;
 		this.thresholdOTSUComputing = thresholdOTSUComputing;
 		this.channelToComputeThreshold = channelToComputeThreshold;
 	}
@@ -96,6 +100,7 @@ public class AutocropParameters extends PluginParameters {
 	                          int xCropBoxSize,
 	                          int yCropBoxSize,
 	                          int zCropBoxSize,
+	                          int numberFontSize,
 	                          int slicesOTSUComputing,
 	                          int thresholdOTSUComputing,
 	                          int channelToComputeThreshold,
@@ -106,6 +111,7 @@ public class AutocropParameters extends PluginParameters {
 		this.xCropBoxSize = xCropBoxSize;
 		this.yCropBoxSize = yCropBoxSize;
 		this.zCropBoxSize = zCropBoxSize;
+		this.numberFontSize = numberFontSize;
 		this.thresholdOTSUComputing = thresholdOTSUComputing;
 		this.slicesOTSUComputing = slicesOTSUComputing;
 		this.channelToComputeThreshold = channelToComputeThreshold;
@@ -134,6 +140,7 @@ public class AutocropParameters extends PluginParameters {
 	                          int xCropBoxSize,
 	                          int yCropBoxSize,
 	                          int zCropBoxSize,
+	                          int numberFontSize,
 	                          int slicesOTSUComputing,
 	                          int thresholdOTSUComputing,
 	                          int channelToComputeThreshold,
@@ -146,6 +153,7 @@ public class AutocropParameters extends PluginParameters {
 		this.xCropBoxSize = xCropBoxSize;
 		this.yCropBoxSize = yCropBoxSize;
 		this.zCropBoxSize = zCropBoxSize;
+		this.numberFontSize = numberFontSize;
 		this.thresholdOTSUComputing = thresholdOTSUComputing;
 		this.slicesOTSUComputing = slicesOTSUComputing;
 		this.channelToComputeThreshold = channelToComputeThreshold;
@@ -177,6 +185,7 @@ public class AutocropParameters extends PluginParameters {
 	                          int xCropBoxSize,
 	                          int yCropBoxSize,
 	                          int zCropBoxSize,
+	                          int numberFontSize,
 	                          int slicesOTSUComputing,
 	                          int thresholdOTSUComputing,
 	                          int channelToComputeThreshold,
@@ -187,6 +196,7 @@ public class AutocropParameters extends PluginParameters {
 		this.xCropBoxSize = xCropBoxSize;
 		this.yCropBoxSize = yCropBoxSize;
 		this.zCropBoxSize = zCropBoxSize;
+		this.numberFontSize = numberFontSize;
 		this.thresholdOTSUComputing = thresholdOTSUComputing;
 		this.slicesOTSUComputing = slicesOTSUComputing;
 		this.channelToComputeThreshold = channelToComputeThreshold;
@@ -222,6 +232,7 @@ public class AutocropParameters extends PluginParameters {
 	                          int xCropBoxSize,
 	                          int yCropBoxSize,
 	                          int zCropBoxSize,
+	                          int numberFontSize,
 	                          int slicesOTSUComputing,
 	                          int thresholdOTSUComputing,
 	                          int channelToComputeThreshold,
@@ -234,6 +245,7 @@ public class AutocropParameters extends PluginParameters {
 		this.xCropBoxSize = xCropBoxSize;
 		this.yCropBoxSize = yCropBoxSize;
 		this.zCropBoxSize = zCropBoxSize;
+		this.numberFontSize = numberFontSize;
 		this.thresholdOTSUComputing = thresholdOTSUComputing;
 		this.slicesOTSUComputing = slicesOTSUComputing;
 		this.channelToComputeThreshold = channelToComputeThreshold;
@@ -282,6 +294,9 @@ public class AutocropParameters extends PluginParameters {
 					break;
 				case "zCropBoxSize":
 					this.zCropBoxSize = Integer.parseInt(prop.getProperty("zCropBoxSize"));
+					break;
+				case "boxNumberFontSize":
+					this.numberFontSize = Integer.parseInt(prop.getProperty("boxNumberFontSize"));
 					break;
 				case "thresholdOTSUComputing":
 					this.thresholdOTSUComputing = Integer.parseInt(prop.getProperty("thresholdOTSUComputing"));
@@ -358,7 +373,15 @@ public class AutocropParameters extends PluginParameters {
 	public int getZCropBoxSize() {
 		return this.zCropBoxSize;
 	}
-	
+
+	/**
+	 * Getter for the font size of the box number
+	 *
+	 * @return font size
+	 */
+	public int getNumberFontSize(){
+		return this.numberFontSize;
+	}
 	
 	/**
 	 * Getter for OTSU threshold used to compute segmented image
