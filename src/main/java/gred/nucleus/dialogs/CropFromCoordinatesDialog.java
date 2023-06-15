@@ -39,6 +39,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	private final        JTextField        jTextFieldSourceID      = new JTextField();
 	private final        JTextField        jTextFieldToCropID      = new JTextField();
 	private final        JTextField        jTextFieldOutputProject = new JTextField();
+	private final        JTextField        jTextFieldChannelToCrop = new JTextField();
 	private              Container         container;
 	private              boolean           useOMERO                = false;
 	private static final String            INPUT_CHOOSER           = "inputChooser";
@@ -48,7 +49,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	
 	public CropFromCoordinatesDialog() {
 		
-		String host = Prefs.get("omero.host", "");
+		String host = Prefs.get("omero.host", "omero.gred-clermont.fr");
 		long port = Prefs.getInt("omero.port", 4);
 		String username = Prefs.get("omero.user", "");
 		
@@ -60,8 +61,8 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
 		this.setTitle("Crop From Coordinate - NucleusJ2");
-		this.setMinimumSize(new Dimension(500, 390));
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setMinimumSize(new Dimension(500, 410));
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		
 		container = getContentPane();
 		BoxLayout mainBoxLayout = new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
@@ -209,8 +210,15 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		omeroPanel.add(jTextFieldToCropID, c);
 		jTextFieldToCropID.setMaximumSize(new Dimension(20000, 20));
 		
+		c.gridy=7;
+		JLabel JchannelToCrop = new JLabel("Channel To Crop :");
+		c.gridx=0;
+		omeroPanel.add(JchannelToCrop,c);
+		c.gridx=1;
+		jTextFieldToCropID.setMaximumSize(new Dimension(20, 20));
+		omeroPanel.add(jTextFieldChannelToCrop,c);
 		
-		c.gridy = 7;
+		c.gridy = 8;
 		JLabel jLabelOutputProject = new JLabel("Output Dataset :");
 		c.gridx = 0;
 		c.gridwidth = 1;
@@ -303,11 +311,11 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jTextFieldUsername.setText(username);
 		jTextFieldGroup.setText("553");
 		jPasswordField.setText("");
-		jComboBoxDataType.setSelectedIndex(1);
-		jComboBoxDataTypeToCrop.setSelectedIndex(1);
-		jTextFieldSourceID.setText("26628");
-		jTextFieldToCropID.setText("26629");
-		jTextFieldOutputProject.setText("26401");
+		jComboBoxDataType.setSelectedIndex(3);
+		jComboBoxDataTypeToCrop.setSelectedIndex(3);
+		jTextFieldSourceID.setText("1012649");
+		jTextFieldToCropID.setText("1012649");
+		jTextFieldOutputProject.setText("27229");
 	}
 	
 	
@@ -358,6 +366,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	public String getToCropID() {
 		return jTextFieldToCropID.getText();
 	}
+	public String getChannelToCrop(){ return jTextFieldChannelToCrop.getText(); }
 	
 	
 	public String getDataType() {

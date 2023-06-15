@@ -4,9 +4,12 @@ import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
+import fr.igred.omero.repository.ChannelWrapper;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
+import fr.igred.omero.roi.GenericShapeWrapper;
 import fr.igred.omero.roi.ROIWrapper;
+import gred.nucleus.autocrop.CropFromCoordinates;
 import gred.nucleus.dialogs.CropFromCoordinatesDialog;
 import gred.nucleus.files.FilesNames;
 import ij.IJ;
@@ -37,8 +40,8 @@ public class CropFromCoordinates_ implements PlugIn {
 	
 	public static void cropFromCoordinates(String coordinateDir) throws IOException, FormatException {
 		
-		//CropFromCoordinates test = new CropFromCoordinates(coordinateDir);
-		//test.runCropFromCoordinate();
+		CropFromCoordinates test = new CropFromCoordinates(coordinateDir);
+		test.run();
 	}
 	
 	
@@ -74,13 +77,13 @@ public class CropFromCoordinates_ implements PlugIn {
 					IJ.error("Input file or directory is missing");
 				} else {
 					try {
-						LOGGER.info("Begin Autocrop from coordinate process ");
+						LOGGER.info("Begin Crop from coordinate process ");
 						
 						cropFromCoordinates(file);
 						
-						LOGGER.info("Autocrop from coordinate process has ended successfully");
+						LOGGER.info("Crop from coordinate process has ended successfully");
 					} catch (Exception e) {
-						LOGGER.info("Autocrop from coordinate process has failed");
+						LOGGER.info("Crop from coordinate process has failed");
 						LOGGER.error("An error occurred.", e);
 					}
 				}
@@ -107,6 +110,47 @@ public class CropFromCoordinates_ implements PlugIn {
 		return client;
 	}
 	
+	private void cropImageFromOMERO2(Client client, ImageWrapper image,ImageWrapper imageToCrop, DatasetWrapper outputDataset, int c)
+	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
+		List<ROIWrapper> rois = image.getROIs(client);
+		List<ChannelWrapper> canaux = imageToCrop.getChannels(client);
+		if(c>canaux.size()-1){
+			System.out.println("Channel doesn't exists, there are only "+ canaux.size()+" channels, first channel index is 0 !");
+		}else {
+			System.out.println("Number of channels detected : "+canaux.size());
+			for (ROIWrapper roi : rois) {
+				// Get the roi names
+				String ROIName = roi.getName();
+				for (GenericShapeWrapper<?> shape : roi.getShapes()) {
+					shape.setC(c);
+				}
+				// Get the name of the Image To Crop
+				String imageToCropName = imageToCrop.getName();
+				// Get the image to crop
+				ImagePlus imp = imageToCrop.toImagePlus(client, roi);
+				// Save Crop File
+				FileSaver fileSaver = new FileSaver(imp);
+				String    sortie    = fileSaver.toString();
+				// Save the crop as TIF
+				fileSaver.saveAsTiff(sortie);
+				// generate a temporary file
+				String resultPath = sortie;
+				File   resultFile = new File(resultPath);
+				// Remove file extension
+				FilesNames outPutFilesNames = new FilesNames(imageToCropName);
+				String     prefix           = outPutFilesNames.prefixNameFile();
+				// Rename the temporary file same as toCrop Image name
+				File toCropNewName = new File(prefix +"_"+ROIName+ "_C" +c);
+				resultFile.renameTo(toCropNewName);
+				String toCropFile = toCropNewName.toString();
+				// Import Cropped Image to the Dataset
+				outputDataset.importImages(client, toCropFile);
+				// Delete temp file
+				Files.deleteIfExists(toCropNewName.toPath());
+			}
+		}
+	}
+	
 	private void cropImageFromOMERO(Client client, ImageWrapper image,ImageWrapper imageToCrop, DatasetWrapper outputDataset)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		List<ROIWrapper> rois = image.getROIs(client);
@@ -116,20 +160,20 @@ public class CropFromCoordinates_ implements PlugIn {
 			// Get the name of the Image To Crop
 			String imageToCropName = imageToCrop.getName();
 			// Get the image to crop
-			ImagePlus imp       = imageToCrop.toImagePlus(client, roi);
+			ImagePlus imp = imageToCrop.toImagePlus(client, roi);
 			// Save Crop File
 			FileSaver fileSaver = new FileSaver(imp);
-			String sortie = fileSaver.toString();
+			String    sortie    = fileSaver.toString();
 			// Save the crop as TIF
 			fileSaver.saveAsTiff(sortie);
 			// generate a temporary file
-			String         resultPath       = sortie;
-			File           resultFile       = new File(resultPath);
+			String resultPath = sortie;
+			File   resultFile = new File(resultPath);
 			// Remove file extension
 			FilesNames outPutFilesNames = new FilesNames(imageToCropName);
 			String     prefix           = outPutFilesNames.prefixNameFile();
 			// Rename the temporary file same as toCrop Image name
-			File toCropNewName = new File(prefix+"_"+ROIName);
+			File toCropNewName = new File(prefix + "_" + ROIName);
 			resultFile.renameTo(toCropNewName);
 			String toCropFile = toCropNewName.toString();
 			// Import Cropped Image to the Dataset
@@ -147,6 +191,7 @@ public class CropFromCoordinates_ implements PlugIn {
 		String password = cropFromCoordinatesDialog.getPassword();
 		String group    = cropFromCoordinatesDialog.getGroup();
 		String output   = cropFromCoordinatesDialog.getOutputProject();
+		int channel = Integer.parseInt(cropFromCoordinatesDialog.getChannelToCrop());
 		
 		Prefs.set("omero.host", hostname);
 		Prefs.set("omero.port", port);
@@ -156,7 +201,7 @@ public class CropFromCoordinates_ implements PlugIn {
 		
 		// Handle the source according to the type given
 		String sourceDataType = cropFromCoordinatesDialog.getDataType();
-		String ToCropdataType = cropFromCoordinatesDialog.getDataType();
+		String ToCropdataType = cropFromCoordinatesDialog.getDataTypeToCrop();
 		Long   inputID  = Long.valueOf(cropFromCoordinatesDialog.getSourceID());
 		Long   inputToCropID  = Long.valueOf(cropFromCoordinatesDialog.getToCropID());
 		DatasetWrapper outputds = client.getDataset(Long.parseLong(output));
@@ -168,7 +213,7 @@ public class CropFromCoordinates_ implements PlugIn {
 			
 				try {
 					LOGGER.info("Begin Autocrop from coordinate process ");
-					cropImageFromOMERO(client, image, imageToCrop, outputds); // Run cropFromCoordinates
+					cropImageFromOMERO2(client, image, imageToCrop, outputds,channel); // Run cropFromCoordinates
 					LOGGER.info("Autocrop from coordinate process has ended successfully");
 				} catch (Exception e) {
 					LOGGER.info("Autocrop from coordinate process has failed");
