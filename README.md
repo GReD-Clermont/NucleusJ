@@ -14,7 +14,7 @@ The gift wrapping algorithm has been replaced by a graham scan algorithm which i
 
 # Downloading and manual user links
 
-Downloading Last version : [jar](https://gitlab.com/api/v4/projects/19044962/packages/maven/burp/NucleusJ_2/1.2.4/NucleusJ_2-1.2.4.jar)
+Downloading Last version : [jar](https://gitlab.com/api/v4/projects/19044962/packages/maven/burp/NucleusJ_2/2.0.1/NucleusJ_2-2.0.1.jar)
 
 Manual user and examples: [wiki](https://gitlab.com/DesTristus/NucleusJ2.0/-/wikis/home)
 
