@@ -394,8 +394,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jTextFieldUsername.setText("");
 		jTextFieldGroup.setText("553");
 		jPasswordField.setText("");
-		jTextFieldRawID.setText("1012649");
-		jTextFieldSegmentedID.setText("1012649");
+		jTextFieldRawID.setText("19699");
+		jTextFieldSegmentedID.setText("27349");
 		
 		
 		
@@ -611,20 +611,24 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		 *
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
-				JOptionPane.showMessageDialog
-						(
-								null,
-								"You did not choose a work directory or the raw data",
-								"Error",
-								JOptionPane.ERROR_MESSAGE
-						);
-			} else {
+			if (useOMERO==false){
+				if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
+					JOptionPane.showMessageDialog
+							           (
+									           null,
+									           "You did not choose a work directory or the raw data",
+									           "Error",
+									           JOptionPane.ERROR_MESSAGE
+							           );
+				} else {
+					start = true;
+					computeParametersDialog.dispose();
+				}
+			}else {
 				start = true;
 				computeParametersDialog.dispose();
 			}
 		}
-		
 	}
 	
 	/**
