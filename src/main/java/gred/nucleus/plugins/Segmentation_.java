@@ -149,7 +149,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 						break;
 				}
 				String log;
-				log = segmentation.runSeveralImagesOMERO(images, outputID, client);
+				log = segmentation.runSeveralImagesOMERO(images, outputID, client, inputID);
 				if (!(log.equals(""))) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}

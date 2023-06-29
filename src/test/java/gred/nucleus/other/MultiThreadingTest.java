@@ -119,7 +119,7 @@ public class MultiThreadingTest {
 		DatasetWrapper dataset = client.getDataset(sourceDataset);
 		List<ImageWrapper> images = dataset.getImages(client);
 		
-		segmentation.runSeveralImagesOMERO(images, OUTPUT_PROJECT_ID, client);
+		segmentation.runSeveralImagesOMERO(images, OUTPUT_PROJECT_ID, client, sourceDataset);
 	}
 
 	static void checkOMEROConnection(char[] password) {

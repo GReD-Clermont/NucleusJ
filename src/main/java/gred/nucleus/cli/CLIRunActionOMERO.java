@@ -321,7 +321,7 @@ public class CLIRunActionOMERO {
 					    (param.length == 5 && param[4].equals("ROI"))) {
 						log = otsuModified.runSeveralImagesOMERObyROIs(images, Long.parseLong(outputDirectory), client);
 					} else {
-						log = otsuModified.runSeveralImagesOMERO(images, Long.parseLong(outputDirectory), client);
+						log = otsuModified.runSeveralImagesOMERO(images, Long.parseLong(outputDirectory), client,id);
 					}
 					if (!(log.equals(""))) {
 						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
