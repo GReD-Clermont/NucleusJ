@@ -67,14 +67,13 @@ public class SegmentationCalling {
 	
 	private String outputCropGeneralInfoOTSU;
 	private String outputCropGeneralInfoConvexHull;
-
-
+	private String outputInfoParade;
 	/** Number of threads to used process images */
 	private int executorThreads = 4;
 	/** Number of threads used to download images */
 	private int downloaderThreads = 1;
-
-
+	private Long tID;
+	private String imgDatasetName;
 	public SegmentationCalling() {
 	}
 	
@@ -397,12 +396,12 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERO(List<ImageWrapper> images, Long output, final Client client) throws Exception {
+	public String runSeveralImagesOMERO(List<ImageWrapper> images, Long output, final Client client, Long inputID) throws Exception {
 		ExecutorService downloadExecutor = Executors.newFixedThreadPool(downloaderThreads);
 		final ExecutorService processExecutor = Executors.newFixedThreadPool(executorThreads);
 		final Map<Long, String> otsuResultLines = new ConcurrentHashMap<>();
 		final Map<Long, String> convexHullResultLines = new ConcurrentHashMap<>();
-
+		tID = inputID;
 
 		ProjectWrapper project = client.getProject(output);
 		// Get OTSU dataset ID
@@ -490,12 +489,19 @@ public class SegmentationCalling {
 		StringBuilder otsuInfoBuilder = new StringBuilder();
 		StringBuilder convexHullInfoBuilder = new StringBuilder();
 		for (ImageWrapper img: images) {
+			/** create results file compatible with OMERO.Parade*/
+			imgDatasetName = client.getDataset(inputID).getName();
+			otsuInfoBuilder.append(img.getId()+",");
+			otsuInfoBuilder.append(imgDatasetName+",");
 			otsuInfoBuilder.append(otsuResultLines.get(img.getId()));
+			convexHullInfoBuilder.append(img.getId()+",");
+			convexHullInfoBuilder.append(imgDatasetName+",");
 			convexHullInfoBuilder.append(convexHullResultLines.get(img.getId()));
 		}
+		outputInfoParade = getResultsColumnNames();
+		outputInfoParade += otsuInfoBuilder.toString();
 		outputCropGeneralInfoOTSU += otsuInfoBuilder.toString();
 		outputCropGeneralInfoConvexHull += convexHullInfoBuilder.toString();
-		
 		saveCropGeneralInfoOmero(client, output);
 		return "";
 	}
@@ -507,20 +513,34 @@ public class SegmentationCalling {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss") ;
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
+		ProjectWrapper project = client.getProject(output);
+		/** Get input dataset*/
+		DatasetWrapper input = client.getDataset(tID);
 		
-		String path = "." + File.separator +  dateFormat.format(date) + "result_Segmentation_Analyse.csv";
+		String path = "." + File.separator +  dateFormat.format(date)+"_"+imgDatasetName+"_" + "result_Segmentation_Analyse.csv";
+		String pathParade = "." + File.separator +  dateFormat.format(date) +"_"+imgDatasetName+"_" + "result_Segmentation_Analyse_parade.csv";
 		try {
 			path = new File(path).getCanonicalPath();
+			pathParade = new File(pathParade).getCanonicalPath();
 		} catch (IOException e) {
 			LOGGER.error("Could not get canonical path for:" + path, e);
 		}
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(path);
 		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, false);
+		/** Create results file for OMERO.Parade */
+		OutputTextFile resultFileOutputParade = new OutputTextFile(pathParade);
+		resultFileOutputParade.saveTextFile(this.outputInfoParade, false);
 		
 		File file = new File(path);
+		File fileParade = new File(pathParade);
 		dataset.addFile(client, file);
+		/** Put results file (for OMERO.Parade) in output Project and input dataset*/
+		project.addFile(client, fileParade);
+		input.addFile(client, fileParade);
+		
 		try {
 			Files.deleteIfExists(file.toPath());
+			Files.deleteIfExists(fileParade.toPath());
 		} catch (IOException e) {
 			LOGGER.error("File not deleted: " + path, e);
 		}
@@ -660,25 +680,27 @@ public class SegmentationCalling {
 	}
 	
 	public String getResultsColumnNames() {
-		return "NucleusFileName\t" +
-		       "Volume\t" +
-				"Moment 1 \t" +
-				"Moment 2 \t" +
-				"Moment 3 \t" +
-		       "Flatness\t" +
-		       "Elongation\t" +
-		       "Esr\t" +
-		       "SurfaceArea\t" +
-		       "Sphericity\t" +
-		       "MeanIntensityNucleus\t" +
-		       "MeanIntensityBackground\t" +
-		       "StandardDeviation\t" +
-		       "MinIntensity\t" +
-		       "MaxIntensity\t" +
-		       "MedianIntensityImage\t" +
-		       "MedianIntensityNucleus\t" +
-		       "MedianIntensityBackground\t" +
-		       "ImageSize\t" +
-		       "OTSUThreshold\n";
+		return "Image,"+
+		       "Dataset," +
+				"ImageName," +
+		       "Volume," +
+				"Moment 1," +
+				"Moment 2," +
+				"Moment 3," +
+		       "Flatness," +
+		       "Elongation," +
+		       "Esr," +
+		       "SurfaceArea," +
+		       "Sphericity," +
+		       "MeanIntensityNucleus," +
+		       "MeanIntensityBackground," +
+		       "StandardDeviation," +
+		       "MinIntensity," +
+		       "MaxIntensity," +
+		       "MedianIntensityImage," +
+		       "MedianIntensityNucleus," +
+		       "MedianIntensityBackground," +
+		       "ImageSize," +
+		       "OTSUThreshold,"+"\n";
 	}
 }

@@ -823,26 +823,26 @@ public class Measure3D {
 		double   surfaceArea    = computeSurfaceObject(255);
 		double   surfaceAreaNew = computeComplexSurface();
 		double[] tEigenValues   = computeEigenValue3D(255);
-		results = this.rawImage.getTitle() + "\t"
+		results = this.rawImage.getTitle() + ","
 		          //  + computeVolumeObject2(255) + "\t"
-		          + computeVolumeObjectML() + "\t"
-				+ computeEigenValue3D(255)[0] + "\t"
-				+ computeEigenValue3D(255)[1] + "\t"
-				+ computeEigenValue3D(255)[2] + "\t"
-		          + computeFlatnessAndElongation(255)[0] + "\t"
-		          + computeFlatnessAndElongation(255)[1] + "\t"
-		          + equivalentSphericalRadius(volume) + "\t"
-		          + surfaceAreaNew + "\t"
-		          + computeSphericity(volume, surfaceAreaNew) + "\t"
-		          + meanIntensity() + "\t"
-		          + meanIntensityBackground() + "\t"
-		          + standardDeviationIntensity(meanIntensity()) + "\t"
-		          + minIntensity() + "\t"
-		          + maxIntensity() + "\t"
-		          + medianComputingImage() + "\t"
-		          + medianIntensityNucleus() + "\t"
-		          + medianIntensityBackground() + "\t"
-		          + this.rawImage.getHeight() * this.rawImage.getWidth() * this.rawImage.getNSlices();
+		          + computeVolumeObjectML() + ","
+				+ computeEigenValue3D(255)[0] + ","
+				+ computeEigenValue3D(255)[1] + ","
+				+ computeEigenValue3D(255)[2] + ","
+		          + computeFlatnessAndElongation(255)[0] + ","
+		          + computeFlatnessAndElongation(255)[1] +","
+		          + equivalentSphericalRadius(volume) + ","
+		          + surfaceAreaNew + ","
+		          + computeSphericity(volume, surfaceAreaNew) + ","
+		          + meanIntensity() + ","
+		          + meanIntensityBackground() + ","
+		          + standardDeviationIntensity(meanIntensity()) + ","
+		          + minIntensity() + ","
+		          + maxIntensity() + ","
+		          + medianComputingImage() +","
+		          + medianIntensityNucleus() +","
+		          + medianIntensityBackground() + ","
+		          + this.rawImage.getHeight() * this.rawImage.getWidth() * this.rawImage.getNSlices()+",";
 		return results;
 	}
 	
