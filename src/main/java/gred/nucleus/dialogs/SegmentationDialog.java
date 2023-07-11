@@ -1,5 +1,8 @@
 package gred.nucleus.dialogs;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -8,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 
 public class SegmentationDialog extends JFrame implements ActionListener, ItemListener {
@@ -55,7 +59,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		JButton jButtonQuit  = new JButton("Quit");
 		this.setTitle("Segmentation NucleusJ2");
 		this.setMinimumSize(new Dimension(400, 500));
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		segmentationConfigFileDialog = new SegmentationConfigDialog(this);
 		segmentationConfigFileDialog.setVisible(false);
@@ -269,16 +273,16 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		this.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
-		jTextFieldHostname.setText("omero.gred-clermont.fr");
+		jTextFieldHostname.setText("omero.igred.fr");
 		jTextFieldPort.setText("4064");
 		
 		jTextFieldUsername.setText("");
 		jPasswordField.setText("");
 		jTextFieldGroup.setText("553");
 		
-		jComboBoxDataType.setSelectedIndex(3);
-		jTextFieldSourceID.setText("334953");
-		jTextFieldOutputProject.setText("9851");
+		jComboBoxDataType.setSelectedIndex(1);
+		jTextFieldSourceID.setText("19699");
+		jTextFieldOutputProject.setText("");
 	}
 	
 	
@@ -468,7 +472,15 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		public void actionPerformed(ActionEvent actionEvent) {
 			segmentationDialog.dispose();
 			segmentationConfigFileDialog.dispose();
-			dialogListener.OnStart();
+			try {
+				dialogListener.OnStart();
+			} catch (AccessException e) {
+				throw new RuntimeException(e);
+			} catch (ServiceException e) {
+				throw new RuntimeException(e);
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 	}

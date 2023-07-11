@@ -1,5 +1,7 @@
 package gred.nucleus.dialogs;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
 import ij.IJ;
 
 import javax.swing.*;
@@ -10,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 
 public class AutocropDialog extends JFrame implements ActionListener, ItemListener {
@@ -58,7 +61,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		JButton jButtonQuit  = new JButton("Quit");
 		this.setTitle("Autocrop NucleusJ2");
 		this.setMinimumSize(new Dimension(400, 500));
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		
 		autocropConfigFileDialog = new AutocropConfigDialog(this);
 		autocropConfigFileDialog.setVisible(false);
@@ -455,7 +458,15 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		public void actionPerformed(ActionEvent actionEvent) {
 			autocropDialog.dispose();
 			autocropConfigFileDialog.dispose();
-			dialogListener.OnStart();
+			try {
+				dialogListener.OnStart();
+			} catch (AccessException e) {
+				throw new RuntimeException(e);
+			} catch (ServiceException e) {
+				throw new RuntimeException(e);
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 	}

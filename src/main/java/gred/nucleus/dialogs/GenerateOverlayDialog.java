@@ -45,7 +45,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		
 		String host = Prefs.get("omero.host", "omero.igred.fr");
 		long port = Prefs.getInt("omero.port", 4064);
-		String username = Prefs.get("omero.user", "demo");
+		String username = Prefs.get("omero.user", "");
 		
 		
 		JButton jButtonStart = new JButton("Start");
