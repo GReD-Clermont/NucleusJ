@@ -11,6 +11,7 @@ import fr.igred.omero.roi.GenericShapeWrapper;
 import fr.igred.omero.roi.ROIWrapper;
 import gred.nucleus.autocrop.CropFromCoordinates;
 import gred.nucleus.dialogs.CropFromCoodinateDialog;
+import gred.nucleus.dialogs.IDialogListener;
 import gred.nucleus.files.FilesNames;
 import ij.IJ;
 import ij.ImagePlus;
@@ -28,15 +29,22 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class CropFromCoordinates_ implements PlugIn {
+public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	/**
 	 * Logger
 	 */
-	private DatasetWrapper toCropDataset;
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	private DatasetWrapper toCropDataset;
 	CropFromCoodinateDialog cropFromCoodinateDialog;
 	
-	
+	@Override
+	public void run(String s) {
+		if (IJ.versionLessThan("1.32c")) {
+			return;
+		}
+		cropFromCoodinateDialog = new CropFromCoodinateDialog();
+		
+	}
 	public static void cropFromCoordinates(String coordinateDir) throws IOException, FormatException {
 		
 		CropFromCoordinates test = new CropFromCoordinates(coordinateDir);
@@ -44,51 +52,31 @@ public class CropFromCoordinates_ implements PlugIn {
 	}
 	
 	
+	
 	@Override
-	public void run(String arg) {
-		if (IJ.versionLessThan("1.32c")) {
-			return;
-		}
-		cropFromCoodinateDialog = new CropFromCoodinateDialog();
-		while (cropFromCoodinateDialog.isShowing()) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				LOGGER.error("An error occurred.", e);
-			}
-		}
-		
-		if (cropFromCoodinateDialog.isStart()) {
-			if (cropFromCoodinateDialog.isOmeroEnabled()) {
-				
-				try {
-					runOMERO();
-				} catch (AccessException e) {
-					throw new RuntimeException(e);
-				} catch (ServiceException e) {
-					throw new RuntimeException(e);
-				} catch (ExecutionException e) {
-					throw new RuntimeException(e);
-				}
+	public void OnStart() throws AccessException, ServiceException, ExecutionException {
+		if (cropFromCoodinateDialog.isOmeroEnabled()) {
+			runOMERO();
+		} else {
+			String file = cropFromCoodinateDialog.getLink();
+			if (file == null || file.equals("")) {
+				IJ.error("Input file or directory is missing");
 			} else {
-				String file = cropFromCoodinateDialog.getLink();
-				if (file == null || file.equals("")) {
-					IJ.error("Input file or directory is missing");
-				} else {
-					try {
-						LOGGER.info("Begin Crop from coordinate process ");
-						
-						cropFromCoordinates(file);
-						
-						LOGGER.info("Crop from coordinate process has ended successfully");
-					} catch (Exception e) {
-						LOGGER.info("Crop from coordinate process has failed");
-						LOGGER.error("An error occurred.", e);
-					}
+				try {
+					LOGGER.info("Begin Crop from coordinate process ");
+					
+					cropFromCoordinates(file);
+					
+					LOGGER.info("Crop from coordinate process has ended successfully");
+				} catch (Exception e) {
+					LOGGER.info("Crop from coordinate process has failed");
+					LOGGER.error("An error occurred.", e);
 				}
 			}
 		}
 	}
+	
+
 	
 	public Client checkOMEROConnection(String hostname,
 	                                   String port,
@@ -259,5 +247,8 @@ public class CropFromCoordinates_ implements PlugIn {
 			LOGGER.error("An error occurred.", e);
 		}
 	}
+	
+	
+	
 	
 }
