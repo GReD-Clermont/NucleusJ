@@ -18,6 +18,7 @@ public class Gradient {
 	 *
 	 */
 	private final List<Double>[][][] tableUnitNormals;
+	private ArrayList <Double> _tableUnitaire [][][] = null;
 	
 	
 	@SuppressWarnings("unchecked")
@@ -95,4 +96,8 @@ public class Gradient {
 		return tableGradient;
 	}
 	
+	
+	public ArrayList <Double> [][][] getUnitaire () {
+		return _tableUnitaire;
+	}
 }

@@ -16,7 +16,7 @@ import ij.plugin.Resizer;
  * @author Tristan Dubos and Axel Poulet
  */
 public final class RadialDistance {
-	private RadialDistance() {
+	public RadialDistance() {
 	}
 	
 	

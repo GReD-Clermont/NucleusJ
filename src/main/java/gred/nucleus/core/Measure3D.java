@@ -31,7 +31,7 @@ public class Measure3D {
 	
 	ImagePlus[] imageSeg;
 	ImagePlus   rawImage;
-	
+	ImagePlus _imageSeg;
 	
 	double xCal;
 	double yCal;
@@ -39,6 +39,9 @@ public class Measure3D {
 	
 	Map<Double, Integer> segmentedNucleusHistogram = new TreeMap<>();
 	Map<Double, Integer> backgroundHistogram       = new TreeMap<>();
+	private ImagePlus _rawImage;
+	TreeMap< Double, Integer> _segmentedNucleusHisto =new TreeMap <Double, Integer>();
+	TreeMap< Double, Integer> _backgroundHisto =new TreeMap <Double, Integer>();
 	
 	
 	public Measure3D() {
@@ -60,7 +63,14 @@ public class Measure3D {
 		this.yCal = yCal;
 		this.zCal = zCal;
 	}
-	
+	public Measure3D(ImagePlus imageSeg, ImagePlus rawImage, double xCal, double ycal, double zCal) {
+		this._rawImage = rawImage;
+		this._imageSeg = imageSeg;
+		this.xCal = xCal;
+		this.yCal = ycal;
+		this.zCal = zCal;
+		this.histogramSegmentedNucleus2();
+	}
 	
 	/**
 	 * Scan of image and if the voxel belong to the object of interest, looking, if in his neighborhood there are voxel
@@ -634,6 +644,47 @@ public class Measure3D {
 				}
 			}
 		}
+	}
+	private void histogramSegmentedNucleus2() {
+		
+		ImageStack imageStackRaw = this._rawImage.getStack();
+		ImageStack imageStackSeg = this._imageSeg.getStack();
+		Histogram histogram = new Histogram();
+		histogram.run(this._rawImage);
+		for(int k = 0; k < this._rawImage.getStackSize(); ++k) {
+			for (int i = 0; i < this._rawImage.getWidth(); ++i) {
+				for (int j = 0; j < this._rawImage.getHeight(); ++j) {
+					double voxelValue = imageStackSeg.getVoxel(i, j, k);
+					if (voxelValue ==255) {
+						if(!this._segmentedNucleusHisto.containsKey(
+								imageStackRaw.getVoxel(i, j, k)) ){
+							this._segmentedNucleusHisto.put(
+									imageStackRaw.getVoxel(i, j, k),  1);
+						}
+						else{
+							this._segmentedNucleusHisto.put(
+									imageStackRaw.getVoxel(i, j, k),
+									this._segmentedNucleusHisto.get(
+											imageStackRaw.getVoxel(i, j, k)) + 1);
+						}
+					}
+					else{
+						if(!this._backgroundHisto.containsKey(
+								imageStackRaw.getVoxel(i, j, k)) ){
+							this._backgroundHisto.put(
+									imageStackRaw.getVoxel(i, j, k),  1);
+						}
+						else{
+							this._backgroundHisto.put(
+									imageStackRaw.getVoxel(i, j, k),
+									this._backgroundHisto.get(
+											imageStackRaw.getVoxel(i, j, k)) + 1);
+						}
+					}
+				}
+			}
+		}
+		
 	}
 	
 	

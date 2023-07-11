@@ -91,8 +91,8 @@ public class Histogram {
 	
 	
 	/** @return  */
-	public Map<Double, Integer> getHistogram() {
-		return hHistogram;
+	public TreeMap<Double, Integer> getHistogram() {
+		return (TreeMap<Double, Integer>) hHistogram;
 	}
 	
 	
