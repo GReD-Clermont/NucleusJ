@@ -9,13 +9,16 @@ import gred.nucleus.core.ComputeNucleiParameters;
 import gred.nucleus.machinelearning.ComputeNucleiParametersML;
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
+
+import gred.nucleus.plugins.ChromocenterParameters;
+import gred.nucleus.process.ChromocenterCalling;
+
 import loci.formats.FormatException;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
@@ -56,12 +59,50 @@ public class CLIRunAction {
 			case "generateOverlay":
 				runGenerateOV();
 				break;
+			case "segCC":
+				runSegCC();
 			default:
 				throw new IllegalArgumentException("Invalid action.");
 		}
 	}
 	
-	
+	private void runSegCC()throws Exception {
+		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(
+				this.cmd.getOptionValue("iRaw"),
+				this.cmd.getOptionValue("iSeg"),
+				this.cmd.getOptionValue("o"));
+		if (this.cmd.hasOption("isG")) chromocenterParameters._gaussianOnRaw = true;
+		if (this.cmd.hasOption("isF")) chromocenterParameters._sizeFilterConnectedComponent = true;
+		if (this.cmd.hasOption("noC")) chromocenterParameters._noChange = true;
+		if (this.cmd.hasOption("gX"))
+			chromocenterParameters._gaussianBlurXsigma =  Double.parseDouble(cmd.getOptionValue("gX"));
+		
+		if (this.cmd.hasOption("gY"))
+			chromocenterParameters._gaussianBlurYsigma =  Double.parseDouble(cmd.getOptionValue("gY"));
+		
+		if (this.cmd.hasOption("gZ"))
+			chromocenterParameters._gaussianBlurZsigma =  Double.parseDouble(cmd.getOptionValue("gZ"));
+		
+		if (this.cmd.hasOption("min"))
+			chromocenterParameters._minSizeConnectedComponent =  Double.parseDouble(cmd.getOptionValue("min"));
+		if (this.cmd.hasOption("max"))
+			
+			chromocenterParameters._maxSizeConnectedComponent =  Double.parseDouble(cmd.getOptionValue("max"));
+		if (this.cmd.hasOption("f"))
+			chromocenterParameters._factor=  Double.parseDouble(cmd.getOptionValue("f"));
+		if (this.cmd.hasOption("n"))
+			chromocenterParameters._neigh=  Integer.parseInt(cmd.getOptionValue("n"));
+		
+		ChromocenterCalling ccCalling= new ChromocenterCalling(chromocenterParameters);
+		try {
+			
+			System.out.println("-iRaw "+chromocenterParameters.inputFolder+" -iSeg "+chromocenterParameters._segInputFolder+" - "+chromocenterParameters.outputFolder);
+			ccCalling.runSeveralImages2();
+		} catch (Exception e) { e.printStackTrace(); }
+		System.out.println("End !!! Results available:"+ chromocenterParameters.outputFolder);
+		
+		
+	}
 	private void runGenerateOV() throws Exception {
 		GenerateOverlay ov = new GenerateOverlay(this.cmd.getOptionValue("input"),
 												 this.cmd.getOptionValue("input2"));
