@@ -7,6 +7,7 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import gred.nucleus.dialogs.GenerateOverlayDialog;
 import gred.nucleus.autocrop.GenerateOverlay;
+import gred.nucleus.dialogs.IDialogListener;
 import ij.IJ;
 import ij.Prefs;
 import ij.plugin.PlugIn;
@@ -17,7 +18,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class GenerateOverlay_ implements PlugIn {
+public class GenerateOverlay_ implements PlugIn, IDialogListener {
+	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	GenerateOverlay generateOverlay = new GenerateOverlay();
 	DatasetWrapper DICDataset;
@@ -29,49 +31,39 @@ public class GenerateOverlay_ implements PlugIn {
 		if (IJ.versionLessThan("1.32c")) {
 			return;
 		}
-		
 		GenerateOverlayDialog = new GenerateOverlayDialog();
-		while (GenerateOverlayDialog.isShowing()) {
+	}
+	
+	@Override
+	public void OnStart() throws AccessException, ServiceException, ExecutionException {
+		if (GenerateOverlayDialog.isOmeroEnabled()) {
+			runOMERO();
+		} else {
+			runLocal();
+		}
+	}
+	
+	
+	void runLocal(){
+		String DICfile = GenerateOverlayDialog.getDICInput();
+		String zProjectionFile = GenerateOverlayDialog.getZprojectionInput();
+		if (DICfile == null || DICfile.equals("") || zProjectionFile == null || zProjectionFile.equals("")) {
+			IJ.error("Input file or directory is missing");
+		} else {
 			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
+				LOGGER.info("Begin Overlay process ");
+				GenerateOverlay generateOverlay1 = new GenerateOverlay(zProjectionFile,DICfile);
+				generateOverlay1.run(); // Run Overlay process
+				
+				LOGGER.info("Overlay  process has ended successfully");
+			} catch (Exception e) {
+				LOGGER.info("Overlay process has failed");
 				LOGGER.error("An error occurred.", e);
 			}
 		}
-		if (GenerateOverlayDialog.isStart()) {
-			if (GenerateOverlayDialog.isOmeroEnabled()) {
-				try {
-					runOMERO();
-				} catch (AccessException e) {
-					throw new RuntimeException(e);
-				} catch (ServiceException e) {
-					throw new RuntimeException(e);
-				} catch (ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-			} else {
-				String DICfile = GenerateOverlayDialog.getDICInput();
-				String zProjectionFile = GenerateOverlayDialog.getZprojectionInput();
-				if (DICfile == null || DICfile.equals("") || zProjectionFile == null || zProjectionFile.equals("")) {
-					IJ.error("Input file or directory is missing");
-				} else {
-					try {
-						LOGGER.info("Begin Overlay process ");
-						GenerateOverlay generateOverlay1 = new GenerateOverlay(zProjectionFile,DICfile);
-						generateOverlay1.run(); // Run Overlay process
-						
-						LOGGER.info("Overlay  process has ended successfully");
-					} catch (Exception e) {
-						LOGGER.info("Overlay process has failed");
-						LOGGER.error("An error occurred.", e);
-					}
-				}
-			}
-		}
-	}
-
+}
 	
-	public void runOMERO() throws AccessException, ServiceException, ExecutionException {
+	public void runOMERO() {
 		// Check connection
 		String hostname = GenerateOverlayDialog.getHostname();
 		String port     = GenerateOverlayDialog.getPort();
@@ -111,6 +103,7 @@ public class GenerateOverlay_ implements PlugIn {
 			LOGGER.error("An error occurred.", e);
 		}
 	}
+	
 	public Client checkOMEROConnection(String hostname,
 	                                   String port,
 	                                   String username,
