@@ -13,11 +13,11 @@ To increase the number of nuclei considered in a single analysis, a method was i
 
 The gift wrapping algorithm has been replaced by a graham scan algorithm which is more efficient. Thus, the speed of the segmentation is enhanced.
 
-# Downloading and manual user links
+# Download and manual user links
 
-Downloading Last version : [jar](https://gitlab.com/api/v4/projects/19044962/packages/maven/burp/NucleusJ_2/2.0.1/NucleusJ_2-2.0.1.jar)
+Download the latest version: [jar](https://github.com/GReD-Clermont/NucleusJ2/releases/latest)
 
-Manual user and examples: [wiki](https://gitlab.com/DesTristus/NucleusJ2.0/-/wikis/home)
+Manual user and examples: [wiki](https://github.com/GReD-Clermont/NucleusJ2/wiki)
 
 # Authors & contact
 
