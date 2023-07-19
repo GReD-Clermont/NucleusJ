@@ -12,7 +12,6 @@ import gred.nucleus.files.Directory;
 import gred.nucleus.files.FilesNames;
 import gred.nucleus.files.OutputTextFile;
 import gred.nucleus.nucleuscaracterisations.NucleusAnalysis;
-import gred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.measure.Calibration;
