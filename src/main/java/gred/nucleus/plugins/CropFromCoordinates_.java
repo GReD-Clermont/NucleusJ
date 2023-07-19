@@ -8,7 +8,7 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.roi.ROIWrapper;
 import gred.nucleus.autocrop.CropFromCoordinates;
-import gred.nucleus.dialogs.CropFromCoodinateDialog;
+import gred.nucleus.dialogs.CropFromCoordinatesDialog;
 import gred.nucleus.files.FilesNames;
 import ij.IJ;
 import ij.ImagePlus;
@@ -33,7 +33,7 @@ public class CropFromCoordinates_ implements PlugIn {
 	 */
 	private DatasetWrapper toCropDataset;
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-	CropFromCoodinateDialog cropFromCoodinateDialog;
+	CropFromCoordinatesDialog cropFromCoordinatesDialog;
 	
 	
 	public static void cropFromCoordinates(String coordinateDir) throws IOException, FormatException {
@@ -48,8 +48,8 @@ public class CropFromCoordinates_ implements PlugIn {
 		if (IJ.versionLessThan("1.32c")) {
 			return;
 		}
-		cropFromCoodinateDialog = new CropFromCoodinateDialog();
-		while (cropFromCoodinateDialog.isShowing()) {
+		cropFromCoordinatesDialog = new CropFromCoordinatesDialog();
+		while (cropFromCoordinatesDialog.isShowing()) {
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
@@ -57,8 +57,8 @@ public class CropFromCoordinates_ implements PlugIn {
 			}
 		}
 		
-		if (cropFromCoodinateDialog.isStart()) {
-			if (cropFromCoodinateDialog.isOmeroEnabled()) {
+		if (cropFromCoordinatesDialog.isStart()) {
+			if (cropFromCoordinatesDialog.isOmeroEnabled()) {
 				
 				try {
 					runOMERO();
@@ -70,7 +70,7 @@ public class CropFromCoordinates_ implements PlugIn {
 					throw new RuntimeException(e);
 				}
 			} else {
-				String file = cropFromCoodinateDialog.getLink();
+				String file = cropFromCoordinatesDialog.getLink();
 				if (file == null || file.equals("")) {
 					IJ.error("Input file or directory is missing");
 				} else {
@@ -142,12 +142,12 @@ public class CropFromCoordinates_ implements PlugIn {
 	
 	public void runOMERO() throws AccessException, ServiceException, ExecutionException {
 		// Check connection
-		String hostname = cropFromCoodinateDialog.getHostname();
-		String port     = cropFromCoodinateDialog.getPort();
-		String username = cropFromCoodinateDialog.getUsername();
-		String password = cropFromCoodinateDialog.getPassword();
-		String group    = cropFromCoodinateDialog.getGroup();
-		String output   = cropFromCoodinateDialog.getOutputProject();
+		String hostname = cropFromCoordinatesDialog.getHostname();
+		String port     = cropFromCoordinatesDialog.getPort();
+		String username = cropFromCoordinatesDialog.getUsername();
+		String password = cropFromCoordinatesDialog.getPassword();
+		String group    = cropFromCoordinatesDialog.getGroup();
+		String output   = cropFromCoordinatesDialog.getOutputProject();
 		
 		Prefs.set("omero.host", hostname);
 		Prefs.set("omero.port", port);
@@ -156,10 +156,10 @@ public class CropFromCoordinates_ implements PlugIn {
 		Client client   = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
 		
 		// Handle the source according to the type given
-		String sourceDataType = cropFromCoodinateDialog.getDataType();
-		String ToCropdataType = cropFromCoodinateDialog.getDataType();
-		Long   inputID  = Long.valueOf(cropFromCoodinateDialog.getSourceID());
-		Long   inputToCropID  = Long.valueOf(cropFromCoodinateDialog.getToCropID());
+		String sourceDataType = cropFromCoordinatesDialog.getDataType();
+		String ToCropdataType = cropFromCoordinatesDialog.getDataType();
+		Long   inputID  = Long.valueOf(cropFromCoordinatesDialog.getSourceID());
+		Long   inputToCropID  = Long.valueOf(cropFromCoordinatesDialog.getToCropID());
 		DatasetWrapper outputds = client.getDataset(Long.parseLong(output));
 		
 		try {
