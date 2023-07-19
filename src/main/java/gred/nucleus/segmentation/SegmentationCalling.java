@@ -352,7 +352,7 @@ public class SegmentationCalling {
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		
-		String path = "." + File.separator +  dateFormat.format(date) + "-result_Segmentation_Analyse.csv";
+		String path = "." + File.separator + dateFormat.format(date) + "-result_Segmentation_Analyse.csv";
 		try {
 			path = new File(path).getCanonicalPath();
 		} catch (IOException e) {
