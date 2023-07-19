@@ -31,7 +31,7 @@ public class CLIRunActionOMERO {
 	Client      client  = new Client();
 	
 	/** OMERO password connection */
-	String mdp;
+	char[] mdp;
 	
 	/** OMERO type of data to analyse : image data dataset tag */
 	String dataType;
@@ -126,11 +126,11 @@ public class CLIRunActionOMERO {
 	
 	public void getOMEROPassword() {
 		if (this.cmd.hasOption("password")) {
-			this.mdp = this.cmd.getOptionValue("password");
+			this.mdp = this.cmd.getOptionValue("password").toCharArray();
 		} else {
 			System.console().writer().println("Enter password: ");
 			Console con = System.console();
-			this.mdp = String.valueOf(con.readPassword());
+			this.mdp = con.readPassword();
 		}
 	}
 	

@@ -260,8 +260,8 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		jTextFieldHostname.setText("omero.gred-clermont.fr");
 		jTextFieldPort.setText("4064");
 		
-		jTextFieldUsername.setText("demo");
-		jPasswordField.setText("Isim@42");
+		jTextFieldUsername.setText("");
+		jPasswordField.setText("");
 		jTextFieldGroup.setText("553");
 		
 		jComboBoxDataType.setSelectedIndex(3);
@@ -310,8 +310,8 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	}
 	
 	
-	public String getPassword() {
-		return String.valueOf(jPasswordField.getPassword());
+	public char[] getPassword() {
+		return jPasswordField.getPassword();
 	}
 	
 	

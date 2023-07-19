@@ -54,7 +54,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 	public Client checkOMEROConnection(String hostname,
 	                                   String port,
 	                                   String username,
-	                                   String password,
+	                                   char[] password,
 	                                   String group) {
 		Client client = new Client();
 		
@@ -78,7 +78,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		String hostname = autocropDialog.getHostname();
 		String port     = autocropDialog.getPort();
 		String username = autocropDialog.getUsername();
-		String password = autocropDialog.getPassword();
+		char[] password = autocropDialog.getPassword();
 		String group    = autocropDialog.getGroup();
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
 		
