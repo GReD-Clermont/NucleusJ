@@ -545,6 +545,7 @@ public class SegmentationCalling {
 		}
 	}
 	
+	
 	public String runOneImageOMERObyROIs(ImageWrapper image, Long output, Client client) throws Exception {
 		
 		StringBuilder info = new StringBuilder();
@@ -621,6 +622,7 @@ public class SegmentationCalling {
 		return log;
 	}
 	
+	
 	public String runSeveralImagesOMERObyROIs(List<ImageWrapper> images, Long output, Client client) throws Exception {
 		StringBuilder log = new StringBuilder();
 		
@@ -630,6 +632,7 @@ public class SegmentationCalling {
 		
 		return log.toString();
 	}
+	
 	
 	/**
 	 * Method which save the image in the directory.
@@ -641,6 +644,7 @@ public class SegmentationCalling {
 		FileSaver fileSaver = new FileSaver(imagePlusInput);
 		fileSaver.saveAsTiffStack(pathFile);
 	}
+	
 	
 	/**
 	 * 16bits image preprocessing normalised the histogram distribution apply a gaussian filter to smooth the signal
@@ -662,6 +666,7 @@ public class SegmentationCalling {
 		StackConverter stackConverter = new StackConverter(img);
 		stackConverter.convertToGray8();
 	}
+	
 	
 	public String getResultsColumnNames() {
 		return "NucleusFileName\t" +
@@ -685,4 +690,5 @@ public class SegmentationCalling {
 		       "ImageSize\t" +
 		       "OTSUThreshold\n";
 	}
+	
 }
