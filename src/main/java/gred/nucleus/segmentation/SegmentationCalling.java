@@ -3,14 +3,14 @@ package gred.nucleus.segmentation;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
+import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.roi.ROIWrapper;
-import fr.igred.omero.repository.DatasetWrapper;
+import gred.nucleus.core.ConvexHullSegmentation;
+import gred.nucleus.core.NucleusSegmentation;
 import gred.nucleus.files.Directory;
 import gred.nucleus.files.FilesNames;
 import gred.nucleus.files.OutputTextFile;
-import gred.nucleus.core.ConvexHullSegmentation;
-import gred.nucleus.core.NucleusSegmentation;
 import gred.nucleus.nucleuscaracterisations.NucleusAnalysis;
 import gred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
@@ -292,14 +292,14 @@ public class SegmentationCalling {
 		                                                         + "OTSU"
 		                                                         + File.separator
 				                                                 + dateFormat.format(date)
-																 + " result_Segmentation_Analyse_OTSU.csv");
+																 + "-result_Segmentation_Analyse_OTSU.csv");
 		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, true);
 		if (this.segmentationParameters.getConvexHullDetection()) {
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(this.segmentationParameters.getOutputFolder()
 			                                                         + NucleusSegmentation.CONVEX_HULL_ALGORITHM
 			                                                         + File.separator
 																	 + dateFormat.format(date)
-											                         + "result_Segmentation_Analyse_" +
+											                         + "-result_Segmentation_Analyse_" +
 			                                                         NucleusSegmentation.CONVEX_HULL_ALGORITHM +
 			                                                         ".csv");
 			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, true);
@@ -353,7 +353,7 @@ public class SegmentationCalling {
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		
-		String path = "." + File.separator +  dateFormat.format(date) + "result_Segmentation_Analyse.csv";
+		String path = "." + File.separator + dateFormat.format(date) + "-result_Segmentation_Analyse.csv";
 		try {
 			path = new File(path).getCanonicalPath();
 		} catch (IOException e) {
