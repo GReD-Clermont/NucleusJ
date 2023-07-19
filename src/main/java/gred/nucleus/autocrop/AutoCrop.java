@@ -529,10 +529,7 @@ public class AutoCrop {
 					                        zMax);
 				}
 			}
-			List<ROIWrapper> roisGetter = image.getROIs(client);
-			if(roisGetter.size() == 0){
-				image.saveROIs(client, rois);
-			}
+			image.saveROIs(client, rois);
 		}
 		this.infoImageAnalysis += info.toString();
 	}
