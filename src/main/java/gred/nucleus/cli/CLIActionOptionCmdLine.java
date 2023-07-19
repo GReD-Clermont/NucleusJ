@@ -1,6 +1,5 @@
 package gred.nucleus.cli;
 
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.ParseException;
 
 import java.util.ArrayList;

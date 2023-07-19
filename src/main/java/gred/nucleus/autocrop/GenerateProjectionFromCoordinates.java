@@ -1,10 +1,8 @@
 package gred.nucleus.autocrop;
 
-import fr.igred.omero.Client;
 import gred.nucleus.files.Directory;
 import gred.nucleus.files.FilesNames;
 import loci.formats.FormatException;
-import omero.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +10,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 

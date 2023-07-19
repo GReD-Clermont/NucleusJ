@@ -2,7 +2,6 @@ package gred.nucleus.mains;
 
 import gred.nucleus.autocrop.AutoCropCalling;
 import gred.nucleus.autocrop.AutocropParameters;
-import gred.nucleus.autocrop.CropFromCoordinates;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

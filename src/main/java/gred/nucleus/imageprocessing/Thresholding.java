@@ -2,7 +2,11 @@ package gred.nucleus.imageprocessing;
 
 import ij.ImagePlus;
 import ij.plugin.ContrastEnhancer;
-import ij.process.*;
+import ij.process.AutoThresholder;
+import ij.process.ImageConverter;
+import ij.process.ImageStatistics;
+import ij.process.StackConverter;
+import ij.process.StackStatistics;
 
 
 public final class Thresholding {

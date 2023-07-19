@@ -1,36 +1,35 @@
 package gred.nucleus.autocrop;
 
 import fr.igred.omero.Client;
-import fr.igred.omero.exception.AccessException;
-import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.files.Directory;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.ImageRoi;
 import ij.io.FileSaver;
-import ij.plugin.ContrastEnhancer;
 import ij.plugin.Duplicator;
 import ij.plugin.LutLoader;
-import ij.plugin.filter.LutApplier;
 import ij.process.ImageConverter;
 import ij.process.LUT;
-import omero.cmd.Duplicate;
-import omero.gateway.model.ProjectData;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.checkerframework.checker.units.qual.C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class GenerateOverlay {

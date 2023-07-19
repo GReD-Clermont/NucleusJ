@@ -1,6 +1,10 @@
 package gred.nucleus.mains;
 
-import gred.nucleus.cli.*;
+import gred.nucleus.cli.CLIActionOptionCmdLine;
+import gred.nucleus.cli.CLIActionOptionOMERO;
+import gred.nucleus.cli.CLIHelper;
+import gred.nucleus.cli.CLIRunAction;
+import gred.nucleus.cli.CLIRunActionOMERO;
 import ij.util.ThreadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
