@@ -4,9 +4,9 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
 		http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>igred</groupId>
-	<artifactId>NucleusJ_2</artifactId>
-	<version>2.0.0</version>
+	<groupId>fr.igred</groupId>
+	<artifactId>nucleusj_2</artifactId>
+	<version>2.2.0-SNAPSHOT</version>
 
 	<name>NucleusJ</name>
 	<description>Ensemble of ImageJ plugins for nuclear analysis</description>
@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>fr.igred</groupId>
 			<artifactId>simple-omero-client</artifactId>
-			<version>5.8.1</version>
+			<version>5.14.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
 		<dependency>
@@ -269,15 +269,10 @@
 
 	<distributionManagement>
 		<repository>
-			<id>gitlab-maven</id>
-			<name>Gitlab Repository</name>
-			<url>https://gitlab.com/api/v4/projects/19044962/packages/maven</url>
+			<id>github</id>
+			<name>GitHub GReD-Clermont Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/GReD-Clermont/NucleusJ2</url>
 		</repository>
-		<snapshotRepository>
-			<id>gitlab-maven</id>
-			<name>Gitlab Repository</name>
-			<url>https://gitlab.com/api/v4/projects/19044962/packages/maven</url>
-		</snapshotRepository>
 	</distributionManagement>
 
 	<properties>

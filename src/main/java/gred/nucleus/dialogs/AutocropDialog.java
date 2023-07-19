@@ -1,10 +1,13 @@
 package gred.nucleus.dialogs;
 
-import ij.IJ;
-
 import javax.swing.*;
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -275,7 +278,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldHostname.setText("omero.gred-clermont.fr");
 		jTextFieldPort.setText("4064");
 		
-		jTextFieldUsername.setText("demo");
+		jTextFieldUsername.setText("");
 		jPasswordField.setText("");
 		jTextFieldGroup.setText("553");
 		

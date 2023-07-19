@@ -85,7 +85,7 @@ public class CropFromCoordinates {
 			FilesNames       outPutFilesNames = new FilesNames(e.getValue().getName());
 			String           prefix           = outPutFilesNames.prefixNameFile();
 			AutoCrop         autoCrop         = new AutoCrop(rawImage, prefix, autocropParameters, boxes);
-			autoCrop.cropKernels3(channelToCrop); // TODO PROBLEM : Currently crops only channel 0 for any given channel number
+			autoCrop.cropKernels3(); // TODO PROBLEM : Currently crops only channel 0 for any given channel number === DONE
 		}
 	}
 

@@ -13,7 +13,6 @@ import gred.nucleus.autocrop.GenerateOverlay;
 import gred.nucleus.core.ComputeNucleiParameters;
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
-import omero.gateway.LoginCredentials;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,8 +154,8 @@ public class CLIRunActionOMERO {
 		}
 		this.client.disconnect();
 	}
-
-
+	
+	
 	public static void autoCropOMERO(String inputDirectory,
 	                                 String outputDirectory,
 	                                 Client client,
@@ -204,13 +203,13 @@ public class CLIRunActionOMERO {
 				int sizeC = images.get(0).getPixels().getSizeC();
 				
 				Long[] outputsDat = new Long[sizeC];
-
+				
 				for (int i = 0; i < sizeC; i++) {
 					DatasetWrapper dataset = new DatasetWrapper("raw_C" + i + "_" + name, "");
 					outputsDat[i] =
 							client.getProject(Long.parseLong(outputDirectory)).addDataset(client, dataset).getId();
 				}
-
+				
 				autoCrop.runSeveralImageOMERO(images, outputsDat, client);
 			}
 		} else {
@@ -242,9 +241,9 @@ public class CLIRunActionOMERO {
 			exit(1);
 		}
 	}
-
-
-	private void runSegmentationOMERO() throws Exception {
+	
+	
+	public void runSegmentationOMERO() throws Exception {
 		SegmentationParameters segmentationParameters = new SegmentationParameters(".", ".");
 		if (this.cmd.hasOption("config")) {
 			segmentationParameters.addGeneralProperties(this.cmd.getOptionValue("config"));
@@ -259,9 +258,9 @@ public class CLIRunActionOMERO {
 		                  this.client,
 		                  otsuModified);
 	}
-
-
-	private void segmentationOMERO(String inputDirectory,
+	
+	
+	public void segmentationOMERO(String inputDirectory,
 	                              String outputDirectory,
 	                              Client client,
 	                              SegmentationCalling otsuModified) throws Exception {

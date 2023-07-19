@@ -15,7 +15,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static com.sun.tools.corba.se.idl.toJavaPortable.Arguments.Client;
 
 
 public class GenerateProjectionFromCoordinates {
