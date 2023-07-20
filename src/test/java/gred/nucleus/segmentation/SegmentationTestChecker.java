@@ -92,8 +92,9 @@ public class SegmentationTestChecker {
 	
 	
 	public void checkResult(SegmentationResult result) {
-		ImagePlus imgDiff = new ImageCalculator().run("difference create stack"
-		                                        ,target.getImage(),  result.getImage());
+		ImagePlus imgDiff = new ImageCalculator().run("difference create stack",
+		                                              target.getImage(),
+		                                              result.getImage());
 		StackStatistics statsTarget      = new StackStatistics(target.getImage());
 		long[]          histogramTarget  = statsTarget.getHistogram();
 		long            targetMaskPixels = histogramTarget[histogramTarget.length - 1];

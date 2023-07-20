@@ -7,26 +7,26 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import gred.nucleus.autocrop.AutoCropCalling;
 import gred.nucleus.autocrop.AutocropParameters;
-import gred.nucleus.autocrop.Box;
-import gred.nucleus.dialogs.AutocropDialog;
-import gred.nucleus.dialogs.SegmentationDialog;
-import gred.nucleus.files.Directory;
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.io.FileSaver;
-import loci.formats.FormatException;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
 import java.lang.invoke.MethodHandles;
-import java.util.*;
-import java.util.concurrent.*;
-
+import java.util.List;
+import java.util.Scanner;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 /**

@@ -3,8 +3,6 @@ package gred.nucleus.autocrop;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
-
 
 class AutoCropTest {
 	public static final String PATH_TO_INPUT  = "../test-images/input/";

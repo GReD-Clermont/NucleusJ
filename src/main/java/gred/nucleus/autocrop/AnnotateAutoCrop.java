@@ -1,13 +1,10 @@
 package gred.nucleus.autocrop;
 
 import fr.igred.omero.Client;
-import fr.igred.omero.exception.AccessException;
-import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.files.Directory;
 import ij.ImagePlus;
-import ij.ImageStack;
 import ij.gui.TextRoi;
 import ij.io.FileSaver;
 import ij.plugin.ContrastEnhancer;
@@ -25,9 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 

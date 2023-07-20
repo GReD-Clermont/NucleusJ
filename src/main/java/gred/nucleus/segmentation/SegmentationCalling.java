@@ -35,7 +35,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -197,11 +201,12 @@ public class SegmentationCalling {
 		this.imgSeg = seg;
 		return nucleusSegmentation.getBestThreshold();
 	}
-
-
+	
+	
 	/**
 	 * Getter of the image segmented
-	 * @return
+	 *
+	 * @return See above.
 	 */
 	public ImagePlus getImageSegmented() {
 		return this.imgSeg;
@@ -305,7 +310,7 @@ public class SegmentationCalling {
 		outputCropGeneralInfoConvexHull += convexHullInfoBuilder.toString();
 		
 		saveCropGeneralInfo();
-
+		
 		return log;
 	}
 	
@@ -335,8 +340,8 @@ public class SegmentationCalling {
 		LOGGER.info("End: {}", timeStampStart);
 		return log;
 	}
-
-
+	
+	
 	public void saveCropGeneralInfo() {
 		Date date = new Date() ;
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss") ;
@@ -397,7 +402,7 @@ public class SegmentationCalling {
 		
 		return log;
 	}
-
+	
 	
 	public String runSeveralImagesOMERO(List<ImageWrapper> images, Long output, final Client client) throws Exception {
 		ExecutorService downloadExecutor = Executors.newFixedThreadPool(downloaderThreads);

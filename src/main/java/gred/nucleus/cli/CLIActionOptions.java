@@ -1,7 +1,12 @@
 package gred.nucleus.cli;
 
 import gred.nucleus.mains.Version;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 
 /** Generic class to handle command line option */

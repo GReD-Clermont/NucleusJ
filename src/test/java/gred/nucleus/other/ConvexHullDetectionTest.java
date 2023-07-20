@@ -1,7 +1,6 @@
 package gred.nucleus.other;
 
 import gred.nucleus.core.ConvexHullSegmentation;
-import gred.nucleus.core.Measure3D;
 import gred.nucleus.segmentation.SegmentationParameters;
 import ij.ImagePlus;
 import ij.io.FileSaver;
@@ -13,7 +12,9 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 
 /**
