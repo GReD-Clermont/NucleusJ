@@ -24,12 +24,11 @@ import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
 import loci.formats.FormatException;
 import loci.plugins.BF;
-import loci.plugins.in.ImporterOptions;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -460,6 +459,7 @@ public class AutoCrop {
 		info.append(getSpecificImageInfo()).append(HEADERS);
 		for (int c = 0; c < this.channelNumbers; c++) {
 			DatasetWrapper dataset = client.getDataset(outputsDat[c]);
+			List<ROIWrapper> rois = new ArrayList<>(this.boxes.size());
 			for (Map.Entry<Double, Box> entry : new TreeMap<>(this.boxes).entrySet()) {
 				int i = entry.getKey().intValue();
 				LOGGER.info("Processing box number: {} (OMERO)", i);
@@ -482,8 +482,9 @@ public class AutoCrop {
 					shapes.add(rectangle);
 				}
 				ROIWrapper roi = new ROIWrapper(shapes);
-				image.saveROI(client, roi);
-				ImagePlus   croppedImage =  cropImage(xMin, yMin, zMin, width, height, depth, c);
+				roi.setName(String.valueOf(i));
+				rois.add(roi);
+				ImagePlus   croppedImage = image.toImagePlus(client, roi);
 				Calibration cal          = this.rawImg.getCalibration();
 				croppedImage.setCalibration(cal);
 				String tiffPath = new File(".").getCanonicalPath() +
@@ -526,11 +527,12 @@ public class AutoCrop {
 							zMax);
 				}
 			}
+			image.saveROIs(client, rois);
 		}
 		this.infoImageAnalysis += info.toString();
 	}
-
-
+	
+	
 	/** Method crops a box of interest, from coordinate files. */
 	public void cropKernels3(int channelToCrop) {
 		LOGGER.info("Cropping kernels (3).");
@@ -738,7 +740,7 @@ public class AutoCrop {
 		}
 	}
 	
-
+	
 	/**
 	 * Getter number of crop
 	 *

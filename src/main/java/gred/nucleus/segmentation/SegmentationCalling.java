@@ -3,15 +3,15 @@ package gred.nucleus.segmentation;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
+import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import fr.igred.omero.roi.ROIWrapper;
-import fr.igred.omero.repository.DatasetWrapper;
+import gred.nucleus.core.ConvexHullSegmentation;
+import gred.nucleus.core.NucleusSegmentation;
 import gred.nucleus.files.Directory;
 import gred.nucleus.files.FilesNames;
 import gred.nucleus.files.OutputTextFile;
-import gred.nucleus.core.ConvexHullSegmentation;
-import gred.nucleus.core.NucleusSegmentation;
 import gred.nucleus.nucleuscaracterisations.NucleusAnalysis;
 import ij.ImagePlus;
 import ij.io.FileSaver;
@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -205,13 +206,15 @@ public class SegmentationCalling {
 	public ImagePlus getImageSegmented() {
 		return this.imgSeg;
 	}
-
+	
+	
 	/**
 	 * Setter for the number of threads used to process images
 	 * @param threadNumber number of executors threads
 	 */
 	public void setExecutorThreads(int threadNumber) { this.executorThreads = threadNumber; }
-
+	
+	
 	/**
 	 * Method to run the nuclear segmentation of images stocked in input dir. First listing of the tif files contained
 	 * in input dir. then for each images: the method will call method in NucleusSegmentation and ConvexHullSegmentation
@@ -305,8 +308,7 @@ public class SegmentationCalling {
 
 		return log;
 	}
-
-
+	
 	
 	public String runOneImage(String filePath) throws IOException, FormatException {
 		
@@ -333,24 +335,30 @@ public class SegmentationCalling {
 		LOGGER.info("End: {}", timeStampStart);
 		return log;
 	}
-	
+
+
 	public void saveCropGeneralInfo() {
+		Date date = new Date() ;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss") ;
 		LOGGER.info("Saving crop general info.");
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(this.segmentationParameters.getOutputFolder()
 		                                                         + "OTSU"
 		                                                         + File.separator
-		                                                         + "result_Segmentation_Analyse_OTSU.csv");
+				                                                 + dateFormat.format(date)
+																 + "-result_Segmentation_Analyse_OTSU.csv");
 		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, true);
 		if (this.segmentationParameters.getConvexHullDetection()) {
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(this.segmentationParameters.getOutputFolder()
 			                                                         + NucleusSegmentation.CONVEX_HULL_ALGORITHM
 			                                                         + File.separator
-			                                                         + "result_Segmentation_Analyse_" +
+																	 + dateFormat.format(date)
+											                         + "-result_Segmentation_Analyse_" +
 			                                                         NucleusSegmentation.CONVEX_HULL_ALGORITHM +
 			                                                         ".csv");
 			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, true);
 		}
 	}
+	
 	
 	public String runOneImageOMERO(ImageWrapper image, Long output, Client client) throws Exception {
 		String log = "";
@@ -497,10 +505,12 @@ public class SegmentationCalling {
 	
 	public void saveCropGeneralInfoOmero(Client client, Long output)
 	throws ServiceException, AccessException, ExecutionException, InterruptedException {
+		Date date = new Date() ;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss") ;
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		
-		String path = "." + File.separator + "result_Segmentation_Analyse.csv";
+		String path = "." + File.separator + dateFormat.format(date) + "-result_Segmentation_Analyse.csv";
 		try {
 			path = new File(path).getCanonicalPath();
 		} catch (IOException e) {
@@ -532,6 +542,7 @@ public class SegmentationCalling {
 			}
 		}
 	}
+	
 	
 	public String runOneImageOMERObyROIs(ImageWrapper image, Long output, Client client) throws Exception {
 		
@@ -609,6 +620,7 @@ public class SegmentationCalling {
 		return log;
 	}
 	
+	
 	public String runSeveralImagesOMERObyROIs(List<ImageWrapper> images, Long output, Client client) throws Exception {
 		StringBuilder log = new StringBuilder();
 		
@@ -618,6 +630,7 @@ public class SegmentationCalling {
 		
 		return log.toString();
 	}
+	
 	
 	/**
 	 * Method which save the image in the directory.
@@ -629,6 +642,7 @@ public class SegmentationCalling {
 		FileSaver fileSaver = new FileSaver(imagePlusInput);
 		fileSaver.saveAsTiffStack(pathFile);
 	}
+	
 	
 	/**
 	 * 16bits image preprocessing normalised the histogram distribution apply a gaussian filter to smooth the signal
@@ -651,9 +665,13 @@ public class SegmentationCalling {
 		stackConverter.convertToGray8();
 	}
 	
+	
 	public String getResultsColumnNames() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
+				"Moment 1 \t" +
+				"Moment 2 \t" +
+				"Moment 3 \t" +
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Esr\t" +
@@ -670,4 +688,5 @@ public class SegmentationCalling {
 		       "ImageSize\t" +
 		       "OTSUThreshold\n";
 	}
+	
 }

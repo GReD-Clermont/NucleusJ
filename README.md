@@ -1,5 +1,6 @@
 # NucleusJ2.0 
 
+
 NucleusJ 2.0 is a new release of [NucleusJ](https://github.com/PouletAxel/NucleusJ_), in which image processing is achieved more quickly using a command-line user interface. Starting with large collection of 3D nuclei, segmentation can be performed by the previously developed Otsu-modified method or by a new 3D gift-wrapping method, taking better account of nuclear indentations and unmarked nucleoli.
 
 A discrete geometric method was introduced to improve the surface area calculation, a key parameter when studying nuclear morphology, replacing an imageJ default tool by a new one that includes pixel context information.
@@ -12,11 +13,11 @@ To increase the number of nuclei considered in a single analysis, a method was i
 
 The gift wrapping algorithm has been replaced by a graham scan algorithm which is more efficient. Thus, the speed of the segmentation is enhanced.
 
-# Downloading and manual user links
+# Download and manual user links
 
-Downloading Last version : [jar](https://gitlab.com/api/v4/projects/19044962/packages/maven/burp/NucleusJ_2/1.2.4/NucleusJ_2-1.2.4.jar)
+Download the latest version: [jar](https://github.com/GReD-Clermont/NucleusJ2/releases/latest)
 
-Manual user and examples: [wiki](https://gitlab.com/DesTristus/NucleusJ2.0/-/wikis/home)
+Manual user and examples: [wiki](https://github.com/GReD-Clermont/NucleusJ2/wiki)
 
 # Authors & contact
 

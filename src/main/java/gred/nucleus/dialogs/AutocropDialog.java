@@ -275,7 +275,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldHostname.setText("omero.gred-clermont.fr");
 		jTextFieldPort.setText("4064");
 		
-		jTextFieldUsername.setText("demo");
+		jTextFieldUsername.setText("");
 		jPasswordField.setText("");
 		jTextFieldGroup.setText("553");
 		

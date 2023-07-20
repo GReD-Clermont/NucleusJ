@@ -5,7 +5,10 @@ import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
-import gred.nucleus.autocrop.*;
+import gred.nucleus.autocrop.AutoCropCalling;
+import gred.nucleus.autocrop.AutocropParameters;
+import gred.nucleus.autocrop.CropFromCoordinates;
+import gred.nucleus.autocrop.GenerateProjectionFromCoordinates;
 import ij.IJ;
 import ij.plugin.PlugIn;
 import loci.formats.FormatException;
@@ -16,6 +19,8 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+
 
 public class ZProjectionTest implements PlugIn {
     /** Logger */
@@ -61,7 +66,7 @@ public class ZProjectionTest implements PlugIn {
          */
     }
 
-    public void checkIfFileResultAreMissingOrDifferent() throws AccessException, ServiceException {
+    public void checkIfFileResultAreMissingOrDifferent() throws AccessException, ServiceException, ExecutionException {
         checkOMEROConnection("".toCharArray());
 
         DatasetWrapper datSource = client.getDataset(20736L);

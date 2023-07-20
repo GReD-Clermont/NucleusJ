@@ -13,7 +13,6 @@ import gred.nucleus.autocrop.GenerateOverlay;
 import gred.nucleus.core.ComputeNucleiParameters;
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
-import omero.gateway.LoginCredentials;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +49,6 @@ public class CLIRunActionOMERO {
 	private char[] password;
 	/** OMERO session ID */
 	private String sessionID = null;
-
-
 	
 	
 	public CLIRunActionOMERO(CommandLine cmd) {
@@ -131,8 +128,8 @@ public class CLIRunActionOMERO {
 			exit(1);
 		}
 	}
-
-
+	
+	
 	public void run() throws Exception {
 		switch (this.cmd.getOptionValue("action")) {
 			case "autocrop":
