@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 
 class SegmentationTest {
-	public static final String PATH_TO_INPUT  = "test-images/input/";
-	public static final String PATH_TO_OUTPUT = "test-images/output/";
+	public static final String PATH_TO_INPUT  = "test-images2/segmentation/";
+	public static final String PATH_TO_OUTPUT = "test-images2/segmentation/output/";
 	
 	
 	@Test

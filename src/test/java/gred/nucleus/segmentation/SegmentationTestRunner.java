@@ -5,12 +5,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 public class SegmentationTestRunner {
-	public static final String PATH_TO_SEGMENTATION = "segmentation/";
+	public static final String PATH_TO_SEGMENTATION = "/input";
 	public static final String PATH_TO_CONFIG       = SegmentationTest.PATH_TO_INPUT +
 	                                                  PATH_TO_SEGMENTATION +
 	                                                  "config" + File.separator +
@@ -20,7 +24,7 @@ public class SegmentationTestRunner {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
-	public static int getNumberOfImages(String dir) {
+	public static int getNumberOfImages(String dir) throws IOException {
 		int    nImages = 0;
 		File[] files  = new File(dir + PATH_TO_SEGMENTATION).listFiles();
 		if (files != null) {
@@ -45,7 +49,6 @@ public class SegmentationTestRunner {
 		if (files != null) {
 			for (File f : files) {
 				String name = f.getName();
-				
 				if (f.isDirectory()) {
 					LOGGER.info("Directory skipped: {}", name);
 				} else {
@@ -55,11 +58,11 @@ public class SegmentationTestRunner {
 					} else {
 						LOGGER.info("Beginning process on: {}", name);
 						runSegmentation(f.toString(),
-						                SegmentationTest.PATH_TO_OUTPUT + PATH_TO_SEGMENTATION + name,
-						                PATH_TO_CONFIG);
+						                SegmentationTest.PATH_TO_OUTPUT +  name);
 						LOGGER.info("Finished process on: {}", name);
 						
 						LOGGER.info("Checking results:");
+						TimeUnit.SECONDS.sleep(3);
 						SegmentationTestChecker checker = new SegmentationTestChecker(name);
 						checker.checkValues(f);
 					}
@@ -69,11 +72,11 @@ public class SegmentationTestRunner {
 	}
 	
 	
-	private static void runSegmentation(String imageSourceFile, String output, String configFile) throws Exception {
-		SegmentationParameters segmentationParameters = new SegmentationParameters(imageSourceFile, output, configFile);
+	private static void runSegmentation(String imageSourceFile, String output) throws Exception {
+		SegmentationParameters segmentationParameters = new SegmentationParameters(imageSourceFile, output);
 		SegmentationCalling    segmentation           = new SegmentationCalling(segmentationParameters);
 		segmentation.runOneImage(imageSourceFile);
-		segmentation.saveCropGeneralInfo();
+		segmentation.saveTestCropGeneralInfo();
 	}
 	
 	

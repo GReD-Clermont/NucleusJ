@@ -32,13 +32,12 @@ public class SegmentationTestChecker {
 	
 	public SegmentationTestChecker(String targetPath) {
 		File targetFile = new File(SegmentationTest.PATH_TO_INPUT +
-		                           SegmentationTestRunner.PATH_TO_SEGMENTATION +
 		                           PATH_TO_TARGET +
 		                           targetPath + File.separator +
 		                           PATH_TO_INFO
 		);
 		String resultPath = SegmentationTest.PATH_TO_INPUT +
-		                    SegmentationTestRunner.PATH_TO_SEGMENTATION +
+		                   
 		                    PATH_TO_TARGET +
 		                    targetPath + File.separator +
 		                    PATH_TO_RESULT + targetPath;
@@ -50,7 +49,7 @@ public class SegmentationTestChecker {
 	
 	public File getInfoFile(File file) {
 		return new File(SegmentationTest.PATH_TO_OUTPUT +
-		                SegmentationTestRunner.PATH_TO_SEGMENTATION +
+		             
 		                file.getName() + File.separator +
 		                PATH_TO_INFO);
 	}
@@ -64,7 +63,7 @@ public class SegmentationTestChecker {
 			ex.printStackTrace();
 		}
 		
-		String[] resultLine = list.get(list.size() - 1).split("\t");
+		//String[] resultLine = list.get(list.size() - 1).split("\t");
 		//result.setOtsuThreshold(Long.parseLong(resultLine[16]));
 		
 		return result;
@@ -78,7 +77,7 @@ public class SegmentationTestChecker {
 	
 	public String getResultPath(File file) {
 		return SegmentationTest.PATH_TO_OUTPUT +
-		       SegmentationTestRunner.PATH_TO_SEGMENTATION +
+		       
 		       file.getName() + File.separator +
 		       PATH_TO_RESULT +
 		       file.getName();
