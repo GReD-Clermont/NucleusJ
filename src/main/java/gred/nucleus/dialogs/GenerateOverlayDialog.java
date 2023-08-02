@@ -1,5 +1,7 @@
 package gred.nucleus.dialogs;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
 import ij.Prefs;
 
 import javax.swing.*;
@@ -10,12 +12,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 
 public class GenerateOverlayDialog extends JFrame implements ActionListener, ItemListener {
 	private static final long              serialVersionUID        = 1L;
 
 	private final        JFileChooser      fc                      = new JFileChooser();
+	private final IDialogListener dialogListener;
 	private              boolean           start                   = false;
 	private final        JRadioButton      omeroYesButton          = new JRadioButton("Yes");
 	private final        JRadioButton      omeroNoButton           = new JRadioButton("No");
@@ -41,8 +45,8 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	private final        JTextField        DICFileChooser       = new JTextField();
 	private final        JTextField        ZprojectionFileChooser       = new JTextField();
 	
-	public GenerateOverlayDialog() {
-		
+	public GenerateOverlayDialog(IDialogListener dialogListener) {
+		this.dialogListener = dialogListener;
 		String host = Prefs.get("omero.host", "omero.igred.fr");
 		long port = Prefs.getInt("omero.port", 4064);
 		String username = Prefs.get("omero.user", "");
@@ -408,6 +412,15 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		public void actionPerformed(ActionEvent actionEvent) {
 			start = true;
 			generateOverlayDialog.dispose();
+			try {
+				dialogListener.OnStart();
+			} catch (AccessException e) {
+				throw new RuntimeException(e);
+			} catch (ServiceException e) {
+				throw new RuntimeException(e);
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 	}
