@@ -31,7 +31,7 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 		if (IJ.versionLessThan("1.32c")) {
 			return;
 		}
-		GenerateOverlayDialog = new GenerateOverlayDialog();
+		GenerateOverlayDialog = new GenerateOverlayDialog(this);
 	}
 	
 	@Override
