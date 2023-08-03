@@ -363,6 +363,23 @@ public class SegmentationCalling {
 			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, true);
 		}
 	}
+	public void saveTestCropGeneralInfo() {
+		LOGGER.info("Saving crop general info.");
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile(this.segmentationParameters.getOutputFolder()
+		                                                         + "OTSU"
+		                                                         + File.separator
+		                                                         + "result_Segmentation_Analyse_OTSU.csv");
+		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, true);
+		if (this.segmentationParameters.getConvexHullDetection()) {
+			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(this.segmentationParameters.getOutputFolder()
+			                                                               + NucleusSegmentation.CONVEX_HULL_ALGORITHM
+			                                                               + File.separator
+			                                                               + "result_Segmentation_Analyse_" +
+			                                                               NucleusSegmentation.CONVEX_HULL_ALGORITHM +
+			                                                               ".csv");
+			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, true);
+		}
+	}
 	
 	
 	public String runOneImageOMERO(ImageWrapper image, Long output, Client client) throws Exception {
