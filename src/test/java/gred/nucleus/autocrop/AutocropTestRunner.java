@@ -10,7 +10,7 @@ import java.util.Locale;
 
 
 public class AutocropTestRunner {
-	public static final String PATH_TO_AUTOCROP = "autocrop/";
+	public static final String PATH_TO_AUTOCROP = "input/";
 	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -51,7 +51,6 @@ public class AutocropTestRunner {
 					} else {
 						LOGGER.info("Beginning process on: {}", name);
 						runAutoCrop(f.toString(), AutoCropTest.PATH_TO_OUTPUT
-						                          + PATH_TO_AUTOCROP
 						                          + name);
 						LOGGER.info("Finished process on: {}", name);
 						LOGGER.info("Checking results:");

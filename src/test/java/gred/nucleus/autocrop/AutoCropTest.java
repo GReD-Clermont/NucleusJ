@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 
 class AutoCropTest {
-	public static final String PATH_TO_INPUT  = "test-images/input/";
-	public static final String PATH_TO_OUTPUT = "test-images/output/";
+	public static final String PATH_TO_INPUT  = "test-images/autocrop/";
+	public static final String PATH_TO_OUTPUT = "test-images/autocrop/output/";
 	// Make sure the output folder is empty before running the test otherwise the checker might use the wrong files
 	
 	
