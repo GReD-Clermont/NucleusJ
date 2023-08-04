@@ -416,8 +416,7 @@ public class AutoCrop {
 				croppedImage.setCalibration(cal);
 				String tiffPath = dirOutput.getDirPath() + File.separator +
 				                  this.outputFilesPrefix +
-				                  "_" + String.format("%02d", i) +
-				                  "_C" + c + ".tif";
+				                  "_" + String.format("%02d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 				    .append(c).append("\t")
@@ -439,7 +438,7 @@ public class AutoCrop {
 					int zMax = zMin + depth;
 					this.boxCoordinates.add(this.outputDirPath + File.separator +
 					                        this.outputFilesPrefix + "_" +
-					                        String.format("%02d", i) + "_C0" + "\t" +
+					                        String.format("%02d", i) + "\t" +
 					                        xMin + "\t" +
 					                        xMax + "\t" +
 					                        yMin + "\t" +
@@ -491,8 +490,7 @@ public class AutoCrop {
 				String tiffPath = new File(".").getCanonicalPath() +
 				                  File.separator +
 				                  this.outputFilesPrefix + "_" +
-				                  String.format("%02d", i) +
-						          "_C" + c +".tif";
+				                  String.format("%02d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 						.append(c).append("\t")
@@ -519,7 +517,7 @@ public class AutoCrop {
 					int zMax = zMin + depth;
 					this.boxCoordinates.add(this.outputDirPath + File.separator +
 							this.outputFilesPrefix + "_" +
-							String.format("%02d", i) + "_C0" + "\t" +
+							String.format("%02d", i) +  "\t" +
 							xMin + "\t" +
 							xMax + "\t" +
 							yMin + "\t" +
@@ -565,8 +563,7 @@ public class AutoCrop {
 				croppedImage.setCalibration(cal);
 				String tiffPath = dirOutput.getDirPath() + File.separator +
 				                  this.outputFilesPrefix +
-				                  "_" + String.format("%02d", i) +
-				                  "_C" + c + ".tif";
+				                  "_" + String.format("%02d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 				    .append(c).append("\t")

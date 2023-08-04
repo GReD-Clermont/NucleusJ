@@ -877,9 +877,6 @@ public class Measure3D {
 		results = this.rawImage.getTitle() + ","
 		          //  + computeVolumeObject2(255) + "\t"
 		          + computeVolumeObjectML() + ","
-				+ computeEigenValue3D(255)[0] + ","
-				+ computeEigenValue3D(255)[1] + ","
-				+ computeEigenValue3D(255)[2] + ","
 		          + computeFlatnessAndElongation(255)[0] + ","
 		          + computeFlatnessAndElongation(255)[1] +","
 		          + equivalentSphericalRadius(volume) + ","
@@ -893,7 +890,10 @@ public class Measure3D {
 		          + medianComputingImage() +","
 		          + medianIntensityNucleus() +","
 		          + medianIntensityBackground() + ","
-		          + this.rawImage.getHeight() * this.rawImage.getWidth() * this.rawImage.getNSlices()+",";
+		          + this.rawImage.getHeight() * this.rawImage.getWidth() * this.rawImage.getNSlices()+","
+		          + computeEigenValue3D(255)[0] + ","
+		          + computeEigenValue3D(255)[1] + ","
+		          + computeEigenValue3D(255)[2] + ",";
 		return results;
 	}
 	

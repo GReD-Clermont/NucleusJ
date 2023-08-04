@@ -158,9 +158,6 @@ public class ComputeNucleiParameters {
 	private String getColNameResult() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
-				"Moment 1\t" +
-				"Moment 2\t" +
-				"Moment 3 \t" +
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Esr\t" +
@@ -174,7 +171,10 @@ public class ComputeNucleiParameters {
 		       "MedianIntensityImage\t" +
 		       "MedianIntensityNucleus\t" +
 		       "MedianIntensityBackground\t" +
-		       "ImageSize\n";
+		       "ImageSize\t"+
+		       "Moment 1\t" +
+		       "Moment 2\t" +
+		       "Moment 3 \n" ;
 	}
 	
 }

@@ -56,26 +56,24 @@ public class NucleusChromocentersAnalysis {
 		String text = imagePlusSegmented.getTitle() + " " + volume + " "
 		              + measure3D.equivalentSphericalRadius(volume) + " "
 		              + surfaceArea + " "
-				      + measure3D.computeEigenValue3D(255)[0] + "\t"
-				      + measure3D.computeEigenValue3D(255)[1] + "\t"
-				      + measure3D.computeEigenValue3D(255)[2] + "\t"
+				     
 		              + measure3D.computeFlatnessAndElongation(255)[0] + " "
 		              + measure3D.computeFlatnessAndElongation(255)[1] + " "
 		              + measure3D.computeSphericity(volume, surfaceArea);
 		if (rhfChoice.equals("Volume and intensity")) {
 			LOGGER.info(
-					"ImageTitle Volume ESR SurfaceArea Moment 1 Moment 2 Moment 3 Flatness Elongation Sphericity IntensityRHF VolumeRHF NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume");
+					"ImageTitle Volume ESR SurfaceArea  Flatness Elongation Sphericity IntensityRHF VolumeRHF NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume Moment 1 Moment 2 Moment 3");
 			text += " " + measure3D.computeIntensityRHF(imagePlusInput, imagePlusSegmented, imagePlusChromocenter) + " "
-			        + measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) + " ";
+			        + measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) +   measure3D.computeEigenValue3D(255)[0] + " " + measure3D.computeEigenValue3D(255)[1] + " " + measure3D.computeEigenValue3D(255)[2] +" ";
 		} else if (rhfChoice.equals("Volume")) {
 			LOGGER.info(
-					"ImageTitle Volume ESR SurfaceArea Moment 1 Moment 2 Moment 3 Flatness Elongation Sphericity VolumeRHF NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume");
-			text += " " + measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) + " ";
+					"ImageTitle Volume ESR SurfaceArea  Flatness Elongation Sphericity VolumeRHF NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume Moment 1 Moment 2 Moment 3");
+			text += " " + measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) +   measure3D.computeEigenValue3D(255)[0] + " " + measure3D.computeEigenValue3D(255)[1] + " " + measure3D.computeEigenValue3D(255)[2]  + " ";
 		} else {
 			LOGGER.info(
-					"ImageTitle Volume ESR SurfaceArea Moment 1 Moment 2 Moment 3 Flatness Elongation Sphericity IntensityRHF NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume");
+					"ImageTitle Volume ESR SurfaceArea  Flatness Elongation Sphericity IntensityRHF NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume Moment 1 Moment 2 Moment 3");
 			text += " " +
-			        measure3D.computeIntensityRHF(imagePlusInput, imagePlusSegmented, imagePlusChromocenter) +
+			        measure3D.computeIntensityRHF(imagePlusInput, imagePlusSegmented, imagePlusChromocenter) +   measure3D.computeEigenValue3D(255)[0] + " " + measure3D.computeEigenValue3D(255)[1] + " " + measure3D.computeEigenValue3D(255)[2] +
 			        " ";
 		}
 		

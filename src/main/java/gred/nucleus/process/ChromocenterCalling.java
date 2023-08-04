@@ -120,7 +120,7 @@ public class ChromocenterCalling {
 		
 		Long imageID = Long.parseLong(param[1]);
 		Long maskID = Long.parseLong(param1[1]);
-		
+		String dataset_name = client.getDataset(imageID).getName();
 		if (param.length >= 2 && param1.length >= 2) {
 			
 			if (param[0].equals("Image") && param1[0].equals("Image")){
@@ -135,7 +135,7 @@ public class ChromocenterCalling {
 				/** get images List */
 				images = imageDataset.getImages(client);
 				/** Create Dataset named NodeJOMERO */
-				outDataset = new DatasetWrapper("NodeJOMERO", "");
+				outDataset = new DatasetWrapper("NODeJ_"+ dataset_name, "");
 				project  = client.getProject(Long.parseLong(outputDirectory));
 				/** Add Dataset To the Project */
 				Long datasetId = project.addDataset(client, outDataset).getId();
@@ -255,7 +255,7 @@ public class ChromocenterCalling {
 		FilesNames outPutFilesNames = new FilesNames(imageName);
 		
 		this._prefix = outPutFilesNames.prefixNameFile();
-		String outputFileName   = segCcDir + imageName;
+		String outputFileName   = imageName;
 		String gradientFileName = diffDir + imageName;
 		
 		/** Test if Raw image is 2D*/
