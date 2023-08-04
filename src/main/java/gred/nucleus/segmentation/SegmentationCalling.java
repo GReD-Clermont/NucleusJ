@@ -40,6 +40,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -443,7 +444,7 @@ public class SegmentationCalling {
 		else convexHullDataset = -1;
 
 		final CountDownLatch latch = new CountDownLatch(images.size());
-
+		final CountDownLatch upload_latch = new CountDownLatch(1);
 		class ImageProcessorOMERO implements Runnable {
 
 			private final ImageWrapper img;
@@ -495,16 +496,20 @@ public class SegmentationCalling {
 
 					int[] cBound = {0, 0}; // For each image
 					ImagePlus imp = img.toImagePlus(client, null, null, cBound, null, null); // Download image
+					
 					processExecutor.submit(new ImageProcessorOMERO(img, imp)); // Pass img to executor
-
+					upload_latch.countDown();
 					LOGGER.info("Resource returned ({}).", img.getName());
 				} catch (AccessException | ExecutionException | ServiceException e) { e.printStackTrace(); }
 			}
 		}
 
 		for (ImageWrapper img: images) {
+			upload_latch.await(3, TimeUnit.SECONDS);
 			downloadExecutor.submit(new ImageDownloaderOMERO(img));
+			
 		}
+		
 		latch.await();
 		LOGGER.info("Finished processing");
 		downloadExecutor.shutdownNow();
