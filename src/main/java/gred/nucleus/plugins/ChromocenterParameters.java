@@ -54,7 +54,7 @@ public class ChromocenterParameters extends PluginParameters {
 	                               boolean sizeFilterConnectedComponent,
 	                               double maxSizeConnectedComponent,
 	                               double minSizeConnectedComponent){
-		super(inputFolder, outputFolder);
+		super(inputFolder, outputFolder,gaussianBlurXsigma,gaussianBlurYsigma,gaussianBlurZsigma, gaussian);
 		this._segInputFolder =SegInputFolder;
 		this._omeroClient = omeroClient;
 		this._gaussianBlurXsigma =gaussianBlurXsigma;

@@ -17,7 +17,8 @@ public class PluginParameters {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	
+	/** Activation of Gaussian Filter */
+	public boolean gaussianIsOn = false;
 	/** Activation of manual calibration parameter */
 	public boolean manualParameter = false;
 	/** X calibration plugin parameter */
@@ -70,6 +71,18 @@ public class PluginParameters {
 		dirOutput.checkAndCreateDir();
 		this.outputFolder = dirOutput.getDirPath();
 		this.manualParameter = true;
+		this.xCal = xCal;
+		this.yCal = yCal;
+		this.zCal = zCal;
+		
+	}
+	public PluginParameters(String inputFolder, String outputFolder, double xCal, double yCal, double zCal, boolean Gaussian) {
+		checkInputPaths(inputFolder, outputFolder);
+		Directory dirOutput = new Directory(outputFolder);
+		dirOutput.checkAndCreateDir();
+		this.outputFolder = dirOutput.getDirPath();
+		this.manualParameter = true;
+		this.gaussianIsOn = Gaussian;
 		this.xCal = xCal;
 		this.yCal = yCal;
 		this.zCal = zCal;
@@ -178,6 +191,25 @@ public class PluginParameters {
 		
 	}
 	
+	public String getAnalysisParametersNodej(){
+		this.headerInfo = "#Header \n"
+		                  + "#Star time analyse: " + getLocalTime() + "\n"
+		                  + "#Input folder: " + this.inputFolder + "\n"
+		                  + "#Output folder: " + this.outputFolder + "\n"
+		                  + "#Gaussian Blur:" + getInfoGaussianBlur() + "\n";
+		return this.headerInfo;
+		
+	}
+	public String getInfoGaussianBlur() {
+		String parametersInfo;
+		if (this.gaussianIsOn) {
+			parametersInfo = "x:" + this.xCal + "-y:" + this.yCal + "-z:" + this.zCal;
+		} else {
+			parametersInfo = "False";
+		}
+		return parametersInfo;
+		
+	}
 	
 	/**
 	 * Getter : image x y z calibration

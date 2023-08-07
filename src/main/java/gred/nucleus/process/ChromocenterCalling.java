@@ -31,6 +31,7 @@ public class ChromocenterCalling {
 	private DatasetWrapper outDataset;
 	private String segImg;
 	private String gradImg;
+	private String dataset_name;
 	
 	/**
 	 *
@@ -120,13 +121,14 @@ public class ChromocenterCalling {
 		
 		Long imageID = Long.parseLong(param[1]);
 		Long maskID = Long.parseLong(param1[1]);
-		String dataset_name = client.getDataset(imageID).getName();
+	
 		if (param.length >= 2 && param1.length >= 2) {
 			
 			if (param[0].equals("Image") && param1[0].equals("Image")){
 				runOneImageOMERO(imageID,maskID,outputDirectory,client);
 				
 			} else if (param[0].equals("Dataset") && param1[0].equals("Dataset")) {
+				dataset_name = client.getDataset(imageID).getName();
 				List<ImageWrapper> images;
 				List<ImageWrapper> masks;
 				/** get raw images and masks datasets*/
@@ -142,20 +144,23 @@ public class ChromocenterCalling {
 				outDataset = client.getDataset(datasetId);
 				
 				for (int i=0; i<images.size(); i++) {
-					/** Get Image name */
-					String imageName = images.get(i).getName();
-					/** Get the mask with the same name */
-					masks = maskDataset.getImages(client,imageName);
-					/** Run Segmentation */
-					runSeveralImagesOMERO(images.get(i), masks.get(0), client);
-					/** Import Segmented cc to the Dataset*/
-					outDataset.importImages(client, segImg);
-					/** Delete the files locally*/
+					try {
+						/** Get Image name */
+						String imageName = images.get(i).getName();
+						/** Get the mask with the same name */
+						masks = maskDataset.getImages(client,imageName);
+						/** Run Segmentation */
+						runSeveralImagesOMERO(images.get(i), masks.get(0), client);
+						/** Import Segmented cc to the Dataset*/
+						outDataset.importImages(client, segImg);
+						/** Delete the files locally*/
+						
+						File segImgDelete = new File(segImg);
+						File gradImgDelete = new File(gradImg);
+						Files.deleteIfExists(segImgDelete.toPath());
+						Files.deleteIfExists(gradImgDelete.toPath());
+					}catch (Exception ignore) { }
 					
-					File segImgDelete = new File(segImg);
-					File gradImgDelete = new File(gradImg);
-					Files.deleteIfExists(segImgDelete.toPath());
-					Files.deleteIfExists(gradImgDelete.toPath());
 				}
 				/** import Result Tabs to the Dataset */
 				outDataset.addFile(client, tab[0]);
@@ -193,7 +198,7 @@ public class ChromocenterCalling {
 		FilesNames outPutFilesNames = new FilesNames(imageName);
 		this._prefix = outPutFilesNames.prefixNameFile();
 		
-		String outputFileName= segCcDir+imageName;
+		String outputFileName= imageName;
 		String gradientFileName= diffDir+imageName;
 		
 		/** Test if Raw image is 2D*/
@@ -222,7 +227,7 @@ public class ChromocenterCalling {
 		project  = client.getProject(Long.parseLong(outputDirectory));
 		
 		/** Creating a Dataset in the Project */
-		outDataset = new DatasetWrapper("NodeJOMERO", "");
+		outDataset = new DatasetWrapper("NODeJ_"+ this._prefix, "");
 		Long datasetId = project.addDataset(client, outDataset).getId();
 		outDataset = client.getDataset(datasetId);
 		/**Import images and tabs to OMERO */

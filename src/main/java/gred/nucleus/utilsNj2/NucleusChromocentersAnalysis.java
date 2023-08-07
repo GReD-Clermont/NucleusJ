@@ -63,9 +63,9 @@ public class NucleusChromocentersAnalysis {
 		String text = "";
 		String textCC = "";
 		if (exist == false) {
-			text = chromocenterParameters.getAnalysisParameters();
+			text = chromocenterParameters.getAnalysisParametersNodej();
 			text += getResultsColumnNames();
-			textCC = chromocenterParameters.getAnalysisParameters();
+			textCC = chromocenterParameters.getAnalysisParametersNodej();
 			textCC += getResultsColumnNamesCC();
 			
 		}
