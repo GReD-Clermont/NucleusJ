@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -28,7 +30,8 @@ public class ComputeNucleiParameters {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	private final PluginParameters pluginParameters;
-
+	private String segDatasetName;
+	String currentTime;
 	/**
 	 * Constructor with input, output and config files
 	 *
@@ -113,18 +116,22 @@ public class ComputeNucleiParameters {
 				LOGGER.error("An error occurred.", e);
 			}
 		}
+		Date             date             = new Date() ;
+		SimpleDateFormat dateFormat       = new SimpleDateFormat("-yyyy-MM-dd-HH.mm.ss") ;
+		currentTime= dateFormat.format(date);
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(
 				this.pluginParameters.getOutputFolder()
 				+ directoryRawInput.getSeparator()
-				+ "result_Segmentation_Analyse.csv");
+				+segDatasetName + currentTime +"_.csv");
 		
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU.toString(), true);
 	}
 
 	public void runFromOMERO(String rawDatasetID, String segmentedDatasetID, Client client) throws AccessException, ServiceException, ExecutionException, InterruptedException, IOException {
 		DatasetWrapper rawDataset = client.getDataset(Long.parseLong(rawDatasetID));
-		DatasetWrapper segmentedDataset = client.getDataset(Long.parseLong(segmentedDatasetID));
-
+		DatasetWrapper   segmentedDataset = client.getDataset(Long.parseLong(segmentedDatasetID));
+		segDatasetName = segmentedDataset.getName();
+		
 		for (ImageWrapper raw : rawDataset.getImages(client)) {
 			saveFile(raw.toImagePlus(client), pluginParameters.getInputFolder() + File.separator + raw.getName());
 		}
@@ -134,10 +141,10 @@ public class ComputeNucleiParameters {
 		}
 
 		this.run();
-
-		rawDataset.addFile(
+		
+		segmentedDataset.addFile(
 				client,
-				new File(this.pluginParameters.getOutputFolder() + File.separator + "result_Segmentation_Analyse.csv")
+				new File(this.pluginParameters.getOutputFolder() + File.separator+ segDatasetName + currentTime  + "_.csv")
 		);
 
 		FileUtils.deleteDirectory(new File(pluginParameters.getInputFolder()));
