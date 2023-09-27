@@ -524,15 +524,15 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		jTextFieldHostname.setText("omero.igred.fr");
 		jTextFieldPort.setText("4064");
 		
-		jTextFieldUsername.setText("demo");
-		jPasswordField.setText("Isim@42");
-		jTextFieldGroup.setText("553");
+		jTextFieldUsername.setText("");
+		jPasswordField.setText("");
+		jTextFieldGroup.setText("203");
 		
 		
-		jTextFieldSourceID.setText("19699");
-		segmentedNucleiTextField.setText("27343");
+		jTextFieldSourceID.setText("22669");
+		segmentedNucleiTextField.setText("22683");
 		
-		jTextFieldOutputProject.setText("12788");
+		jTextFieldOutputProject.setText("12981");
 	}
 	
 	

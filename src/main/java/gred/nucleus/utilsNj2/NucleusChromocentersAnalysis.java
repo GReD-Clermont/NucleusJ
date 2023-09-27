@@ -8,7 +8,8 @@ import ij.process.ImageProcessor;
 import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.utils.Chromocenter;
 import gred.nucleus.utils.Parameters2D;
-import gred.nucleus.core.*;
+import gred.nucleus.utilsNj2.Measure3D;
+import gred.nucleus.core.RadialDistance;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -194,8 +195,8 @@ public class NucleusChromocentersAnalysis {
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Esr\t" +
-		       "SurfaceArea\t" +
-		       "Sphericity\t" +
+		       //"SurfaceArea\t" +
+		       //"Sphericity\t" +
 		       "MeanIntensityNucleus\t" +
 		       "MeanIntensityBackground\t" +
 		       "StandardDeviation\t" +

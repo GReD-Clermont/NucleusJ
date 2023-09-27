@@ -10,7 +10,6 @@ import gred.nucleus.utils.VoxelRecord;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.measure.Calibration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -209,8 +208,8 @@ public class Measure3D {
 	 */
 	
 	public double[] computeEigenValue3D( double label) {
-		ImageStack  imageStackInput = this._imageSeg.getImageStack();
-		VoxelRecord barycenter      = computeBarycenter3D(true, this._imageSeg, label);
+		ImageStack imageStackInput = this._imageSeg.getImageStack();
+		VoxelRecord barycenter = computeBarycenter3D(true, this._imageSeg, label);
 		
 		double xx = 0;
 		double xy = 0;
@@ -402,7 +401,7 @@ public class Measure3D {
 	 * @return
 	 */
 	public double computeComplexSurface() {
-		Gradient          gradient            = new Gradient(this._rawImage);
+		Gradient gradient = new Gradient(this._rawImage);
 		ArrayList<Double> tableUnitaire[][][] = gradient.getUnitaire();
 		ImageStack imageStackSegmented = this._imageSeg.getStack();
 		double surfaceArea = 0, voxelValue, neighborVoxelValue;

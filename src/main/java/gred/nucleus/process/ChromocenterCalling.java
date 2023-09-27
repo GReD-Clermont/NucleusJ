@@ -155,11 +155,15 @@ public class ChromocenterCalling {
 						outDataset.importImages(client, segImg);
 						/** Delete the files locally*/
 						
+						
+					}catch (Exception ignore) { }
+					try{
 						File segImgDelete = new File(segImg);
 						File gradImgDelete = new File(gradImg);
 						Files.deleteIfExists(segImgDelete.toPath());
 						Files.deleteIfExists(gradImgDelete.toPath());
-					}catch (Exception ignore) { }
+						
+					}catch (Exception ignore){}
 					
 				}
 				/** import Result Tabs to the Dataset */
