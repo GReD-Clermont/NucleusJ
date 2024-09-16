@@ -1,11 +1,15 @@
 package gred.nucleus.dialogs;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -34,10 +38,10 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	private final        JCheckBox    addCalibrationBox       = new JCheckBox();
 	private final        JPanel       calibration;
 	private              boolean      start                   = false;
-	
+	final                IDialogListener               dialogListener;
 	
 	/** Architecture of the graphical windows */
-	public ChromocentersAnalysisPipelineBatchDialog() {
+	public ChromocentersAnalysisPipelineBatchDialog(IDialogListener dialogListener) {
 		final String      font                      = "Albertus";
 		final String      boldFont                  = "Albertus Extra Bold (W1)";
 		final Container   container                 = getContentPane();
@@ -52,6 +56,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		this.setTitle("Chromocenters Analysis Pipeline (Batch)");
 		this.setSize(500, 600);
 		this.setLocationRelativeTo(null);
+		this.dialogListener = dialogListener;
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.rowHeights = new int[]{17, 200, 124, 7};
@@ -324,12 +329,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	}
 	
 	
-	/** @param args arguments */
-	public static void main(String[] args) {
-		ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog =
-				new ChromocentersAnalysisPipelineBatchDialog();
-		chromocentersAnalysisPipelineBatchDialog.setLocationRelativeTo(null);
-	}
+
 	
 	
 	public double getXCalibration() {
@@ -528,6 +528,15 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 			} else {
 				start = true;
 				chromocentersAnalysisPipelineBatchDialog.dispose();
+				try {
+					dialogListener.OnStart();
+				} catch (AccessException e) {
+					throw new RuntimeException(e);
+				} catch (ServiceException e) {
+					throw new RuntimeException(e);
+				} catch (ExecutionException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		}
 		

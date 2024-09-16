@@ -1,8 +1,11 @@
 package gred.nucleus.plugins;
 
+import fr.igred.omero.Client;
 import gred.nucleus.core.ChromocenterAnalysis;
 import gred.nucleus.core.NucleusChromocentersAnalysis;
 import gred.nucleus.dialogs.ChromocentersAnalysisPipelineBatchDialog;
+import gred.nucleus.dialogs.IDialogListener;
+import gred.nucleus.dialogs.SegmentationDialog;
 import gred.nucleus.utils.FileList;
 import ij.IJ;
 import ij.ImagePlus;
@@ -22,23 +25,53 @@ import java.util.List;
 /**
  * @author Tristan Dubos and Axel Poulet
  */
-public class ChromocentersAnalysisBatchPlugin_ implements PlugIn {
+public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListener {
+	ChromocentersAnalysisPipelineBatchDialog chromocentersPipelineBatchDialog;
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
 	/** Run the the analyse, call the graphical windows */
+
+	@Override
 	public void run(String arg) {
-		ChromocentersAnalysisPipelineBatchDialog chromocentersPipelineBatchDialog =
-				new ChromocentersAnalysisPipelineBatchDialog();
-		while (chromocentersPipelineBatchDialog.isShowing()) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				LOGGER.error("An error occurred.", e);
-			}
+		if (IJ.versionLessThan("1.32c")) {
+			return;
 		}
-		if (chromocentersPipelineBatchDialog.isStart()) {
+		chromocentersPipelineBatchDialog = new ChromocentersAnalysisPipelineBatchDialog(this);
+	}
+
+
+	@Override
+	public void OnStart() {
+
+			runCC();
+	}
+
+
+	public Client checkOMEROConnection(String hostname,
+									   String port,
+									   String username,
+									   char[] password,
+									   String group) {
+		Client client = new Client();
+		try {
+			client.connect(hostname,
+					Integer.parseInt(port),
+					username,
+					password,
+					Long.valueOf(group));
+		} catch (Exception exp) {
+			IJ.error("Invalid connection values");
+			return null;
+		}
+		return client;
+	}
+
+	private void runCC(){
+
+
+			System.out.println("rani dakhel");
 			FileList fileList      = new FileList();
 			File[]   tFileRawImage = fileList.run(chromocentersPipelineBatchDialog.getRawDataDirectory());
 			
@@ -141,7 +174,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn {
 				IJ.showMessage(
 						"There are no the three subdirectories  (See the directory name) or subDirectories are empty");
 			}
-		}
+
 	}
 	
 }

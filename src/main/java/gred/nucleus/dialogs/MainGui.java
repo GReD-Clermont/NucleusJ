@@ -20,6 +20,7 @@ public class MainGui extends JFrame{
 	JButton NODeJButton  = new JButton("NODeJ");
 	JButton CropFromCoordinatesButton  = new JButton("Crop From Coordinates");
 	JButton ComputeParametersButton  = new JButton("Compute Parameters");
+	JButton ComputeCcParametersButton  = new JButton("Compute CC Parameters");
 	public MainGui(){
 		this.setTitle("NucleusJ 2");
 		this.setMinimumSize(new Dimension(400, 500));
@@ -65,7 +66,10 @@ public class MainGui extends JFrame{
 		localPanel.add(NODeJButton,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                                  GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
 		                                                  new Insets(240, 30, 0, 0), 100, 0));
-		
+
+		localPanel.add(ComputeCcParametersButton,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+				GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+				new Insets(280, 30, 0, 0), 16, 0));
 		
 		container.add(localPanel,0);
 		
@@ -111,8 +115,13 @@ public class MainGui extends JFrame{
 				nodej.run("");
 			}
 		});
-		
-		
+
+		ComputeCcParametersButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ChromocentersAnalysisBatchPlugin_ ComputeCcParameters = new ChromocentersAnalysisBatchPlugin_();
+				ComputeCcParameters.run("");
+			}
+		});
 		
 	}
 	
