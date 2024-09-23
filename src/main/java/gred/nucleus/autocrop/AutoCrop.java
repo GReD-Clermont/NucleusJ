@@ -416,7 +416,7 @@ public class AutoCrop {
 				croppedImage.setCalibration(cal);
 				String tiffPath = dirOutput.getDirPath() + File.separator +
 				                  this.outputFilesPrefix +
-				                  "_" + String.format("%02d", i) + ".tif";
+				                  "_" + String.format("%03d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 				    .append(c).append("\t")
@@ -431,7 +431,7 @@ public class AutoCrop {
 				this.outputFile.add(this.outputDirPath + File.separator +
 				                    this.outputFilesPrefix + File.separator +
 				                    this.outputFilesPrefix + "_" +
-				                    String.format("%02d", i) + ".tif");
+				                    String.format("%03d", i) + ".tif");
 				if (c == 0) {
 					int xMax = xMin + width;
 					int yMax = yMin + height;
@@ -490,7 +490,7 @@ public class AutoCrop {
 				String tiffPath = new File(".").getCanonicalPath() +
 				                  File.separator +
 				                  this.outputFilesPrefix + "_" +
-				                  String.format("%02d", i) + ".tif";
+				                  String.format("%03d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 						.append(c).append("\t")
@@ -503,7 +503,7 @@ public class AutoCrop {
 						.append(depth).append("\n");
 				fileOutput.saveImage(croppedImage);
 				this.outputFile.add(this.outputFilesPrefix + "_" +
-				                    String.format("%02d", i) + ".tif");
+				                    String.format("%03d", i) + ".tif");
 				dataset.importImages(client, tiffPath);
 				File file = new File(tiffPath);
 				try {
@@ -517,7 +517,7 @@ public class AutoCrop {
 					int zMax = zMin + depth;
 					this.boxCoordinates.add(this.outputDirPath + File.separator +
 							this.outputFilesPrefix + "_" +
-							String.format("%02d", i) +  "\t" +
+							String.format("%03d", i) +  "\t" +
 							xMin + "\t" +
 							xMax + "\t" +
 							yMin + "\t" +
@@ -563,7 +563,7 @@ public class AutoCrop {
 				croppedImage.setCalibration(cal);
 				String tiffPath = dirOutput.getDirPath() + File.separator +
 				                  this.outputFilesPrefix +
-				                  "_" + String.format("%02d", i) + ".tif";
+				                  "_" + String.format("%03d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 				    .append(c).append("\t")
@@ -578,7 +578,7 @@ public class AutoCrop {
 				this.outputFile.add(this.outputDirPath + File.separator +
 				                    this.outputFilesPrefix + File.separator +
 				                    this.outputFilesPrefix + "_" +
-				                    String.format("%02d", i) + ".tif");
+				                    String.format("%03d", i) + ".tif");
 				if (c == 0) {
 					int xMax = xMin + width;
 					int yMax = yMin + height;
