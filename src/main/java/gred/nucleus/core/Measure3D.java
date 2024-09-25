@@ -836,11 +836,11 @@ public class Measure3D {
 		return voxelMedianValue;
 	}
 	
-	
+
 	private double medianIntensityBackground() {
 		double voxelMedianValue   = 0;
 		int    nbBackgroundVoxels = 0;
-		for (int f : this.segmentedNucleusHistogram.values()) {
+		for (int f : this.backgroundHistogram.values()) {
 			nbBackgroundVoxels += f;
 		}
 		int     increment = 0;
@@ -893,7 +893,7 @@ public class Measure3D {
 		          + this.rawImage.getHeight() * this.rawImage.getWidth() * this.rawImage.getNSlices()+","
 		          + computeEigenValue3D(255)[0] + ","
 		          + computeEigenValue3D(255)[1] + ","
-		          + computeEigenValue3D(255)[2] + ",";
+		          + computeEigenValue3D(255)[2] ;
 		return results;
 	}
 	
