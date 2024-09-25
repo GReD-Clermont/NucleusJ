@@ -29,6 +29,7 @@ public class ChromocenterCalling {
 	private File[] tab;
 	private ProjectWrapper project;
 	private DatasetWrapper outDataset;
+	private DatasetWrapper outDatasetGradient;
 	private String segImg;
 	private String gradImg;
 	private String dataset_name;
@@ -138,10 +139,13 @@ public class ChromocenterCalling {
 				images = imageDataset.getImages(client);
 				/** Create Dataset named NodeJOMERO */
 				outDataset = new DatasetWrapper("NODeJ_"+ dataset_name, "");
+				outDatasetGradient = new DatasetWrapper("NODeJ_"+ dataset_name+ "_Gradient", "");
 				project  = client.getProject(Long.parseLong(outputDirectory));
 				/** Add Dataset To the Project */
 				Long datasetId = project.addDataset(client, outDataset).getId();
 				outDataset = client.getDataset(datasetId);
+				Long gradientDatasetId = project.addDataset(client, outDatasetGradient).getId();
+				outDatasetGradient = client.getDataset(gradientDatasetId);
 				
 				for (int i=0; i<images.size(); i++) {
 					try {
@@ -153,6 +157,7 @@ public class ChromocenterCalling {
 						runSeveralImagesOMERO(images.get(i), masks.get(0), client);
 						/** Import Segmented cc to the Dataset*/
 						outDataset.importImages(client, segImg);
+						outDatasetGradient.importImages(client, gradImg);
 						/** Delete the files locally*/
 						
 						
@@ -236,6 +241,7 @@ public class ChromocenterCalling {
 		outDataset = client.getDataset(datasetId);
 		/**Import images and tabs to OMERO */
 		outDataset.importImages(client, outputFileName);
+		outDataset.importImages(client, gradientFileName);
 		outDataset.addFile(client, Parameters3DTab[0]);
 		outDataset.addFile(client, Parameters3DTab[1]);
 		File segImgDelete = new File(outputFileName);
