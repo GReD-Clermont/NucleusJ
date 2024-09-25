@@ -705,9 +705,6 @@ public class SegmentationCalling {
 		       "Dataset," +
 				"ImageName," +
 		       "Volume," +
-				"Moment 1," +
-				"Moment 2," +
-				"Moment 3," +
 		       "Flatness," +
 		       "Elongation," +
 		       "Esr," +
@@ -722,6 +719,9 @@ public class SegmentationCalling {
 		       "MedianIntensityNucleus," +
 		       "MedianIntensityBackground," +
 		       "ImageSize," +
+				"Moment 1," +
+				"Moment 2," +
+				"Moment 3," +
 		       "OTSUThreshold,"+"\n";
 	}
 }
