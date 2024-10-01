@@ -121,6 +121,7 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		actionAvailableInOMERO.add("generateOverlay");
 		actionAvailableInOMERO.add("cropFromCoordinate");
 		actionAvailableInOMERO.add("computeParameters");
+		actionAvailableInOMERO.add("segCC");
 		return actionAvailableInOMERO.contains(action);
 	}
 	
