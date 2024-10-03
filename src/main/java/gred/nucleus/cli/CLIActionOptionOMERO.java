@@ -56,7 +56,18 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 												.desc("Path to OMERO config file")
 												.numberOfArgs(1)
 												.build();
-
+	private final Option obj = Option.builder("obj")
+			.longOpt("object")
+			.type(String.class)
+			.desc("Result file of interest ( Nucleus, chromocenters,both")
+			.numberOfArgs(1)
+			.build();
+	private final Option rhf = Option.builder("rhf")
+			.longOpt("rhf")
+			.type(String.class)
+			.desc("Type of Relative Heterochromatin Fraction")
+			.numberOfArgs(1)
+			.build();
 
 	/**
 	 * Constructor with argument
@@ -79,6 +90,8 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		this.options.addOption(this.username);
 		this.options.addOption(this.password);
 		this.options.addOption(this.group);
+		this.options.addOption(this.obj);
+		this.options.addOption(this.rhf);
 		String inputDescription = "OMERO  inputs 2 information separated with slash separator :  " +
 				"Type input: dataset, project, image, tag " +
 				"Input id number" + "\n" +
@@ -122,35 +135,9 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		actionAvailableInOMERO.add("cropFromCoordinate");
 		actionAvailableInOMERO.add("computeParameters");
 		actionAvailableInOMERO.add("segCC");
+		actionAvailableInOMERO.add("computeCcParameters");
 		return actionAvailableInOMERO.contains(action);
 	}
-	
-	
-	private Option getGroup() {
-		return this.group;
-	}
-	
-	
-	private Option getHostname() {
-		return this.hostname;
-	}
-	
-	
-	private Option getPort() {
-		return this.port;
-	}
-	
-	
-	private Option getUsername() {
-		return this.username;
-	}
-	
-	
-	private Option getPassword() {
-		return this.password;
-	}
-	
-	
-	private Option getOutputFolder() { return this.outputFolder; }
+
 
 }

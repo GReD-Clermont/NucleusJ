@@ -68,8 +68,8 @@ public class CLIRunAction {
 	
 	private void runSegCC()throws Exception {
 		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(
-				this.cmd.getOptionValue("iRaw"),
-				this.cmd.getOptionValue("iSeg"),
+				this.cmd.getOptionValue("input"),
+				this.cmd.getOptionValue("input2"),
 				this.cmd.getOptionValue("o"));
 		if (this.cmd.hasOption("isG")) chromocenterParameters._gaussianOnRaw = true;
 		if (this.cmd.hasOption("isF")) chromocenterParameters._sizeFilterConnectedComponent = true;
@@ -96,7 +96,7 @@ public class CLIRunAction {
 		ChromocenterCalling ccCalling= new ChromocenterCalling(chromocenterParameters);
 		try {
 			
-			System.out.println("-iRaw "+chromocenterParameters.inputFolder+" -iSeg "+chromocenterParameters._segInputFolder+" - "+chromocenterParameters.outputFolder);
+			System.out.println("-input "+chromocenterParameters.inputFolder+" -input2 "+chromocenterParameters._segInputFolder+" - "+chromocenterParameters.outputFolder);
 			ccCalling.runSeveralImages2();
 		} catch (Exception e) { e.printStackTrace(); }
 		System.out.println("End !!! Results available:"+ chromocenterParameters.outputFolder);

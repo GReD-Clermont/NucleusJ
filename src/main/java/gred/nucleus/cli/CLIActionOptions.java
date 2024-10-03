@@ -95,6 +95,7 @@ public class CLIActionOptions {
 	public CLIActionOptions(String[] argument) {
 		this.options.addOption(this.inputFolder);
 		this.options.addOption(this.inputFolder2);
+		this.options.addOption(this.inputFolder3);
 		this.options.addOption(this.configFile);
 		this.options.addOption(this.action);
 		this.options.addOption(this.threads);

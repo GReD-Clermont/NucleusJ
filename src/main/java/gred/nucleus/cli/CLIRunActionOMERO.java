@@ -10,6 +10,7 @@ import gred.nucleus.autocrop.AutoCropCalling;
 import gred.nucleus.autocrop.AutocropParameters;
 import gred.nucleus.autocrop.CropFromCoordinates;
 import gred.nucleus.autocrop.GenerateOverlay;
+import gred.nucleus.core.ChromocenterAnalysis;
 import gred.nucleus.core.ComputeNucleiParameters;
 import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.process.ChromocenterCalling;
@@ -154,10 +155,41 @@ public class CLIRunActionOMERO {
 			case "segCC":
 				runSegCC();
 				break;
+			case "computeCcParameters":
+				runComputeCC();
+				break;
 			default:
 				throw new IllegalArgumentException("Invalid action");
 		}
 		this.client.disconnect();
+	}
+
+	private void runComputeCC() {
+		ChromocenterAnalysis ccAnalysis = new ChromocenterAnalysis();
+		if (this.cmd.hasOption("rhf")) ccAnalysis.isRHFVolumeAndIntensity = cmd.getOptionValue("rhf");
+		if (this.cmd.hasOption("obj")) ccAnalysis.isNucAndCcAnalysis=  cmd.getOptionValue("obj");
+
+
+		if (this.cmd.hasOption("calibration")) ccAnalysis._calibration = true;
+		if (this.cmd.hasOption("cX")) ccAnalysis._Xcalibration=   Double.parseDouble(cmd.getOptionValue("cX"));
+		if (this.cmd.hasOption("cY")) ccAnalysis._Ycalibration=   Double.parseDouble(cmd.getOptionValue("cY"));
+		if (this.cmd.hasOption("cZ")) ccAnalysis._Zcalibration=  Double.parseDouble(cmd.getOptionValue("cZ"));
+		if (this.cmd.hasOption("unit")) ccAnalysis._unit=  cmd.getOptionValue("unit");
+
+		String inputDirectory = this.cmd.getOptionValue("input");
+		String segDirectory = this.cmd.getOptionValue("input2");
+		String ccDirectory = this.cmd.getOptionValue("input3");
+
+
+
+		try {
+
+			System.out.println("-Input Folder : "+ inputDirectory + " -Segmentation Folder : "+segDirectory+" -Chromocenters folder : "+ ccDirectory);
+			ccAnalysis.runComputeParametersCC(inputDirectory,segDirectory,ccDirectory,this.client);
+		} catch (Exception e) { e.printStackTrace(); }
+		System.out.println("End !!! Results available:");
+
+
 	}
 
 	private void runSegCC() {
@@ -210,7 +242,7 @@ public class CLIRunActionOMERO {
 		
 		if (param.length >= 2) {
 			Long id = Long.parseLong(param[1]);
-			if (param[0].equals("image")) {
+			if (param[0].equals("Image")) {
 				ImageWrapper image = client.getImage(id);
 				
 				int sizeC = image.getPixels().getSizeC();
@@ -230,17 +262,17 @@ public class CLIRunActionOMERO {
 				
 				String name = "";
 				
-				if (param[0].equals("dataset")) {
+				if (param[0].equals("Dataset")) {
 					DatasetWrapper dataset = client.getDataset(id);
 					
 					name = dataset.getName();
 					
-					if (param.length == 4 && param[2].equals("tag")) {
+					if (param.length == 4 && param[2].equals("Tag")) {
 						images = dataset.getImagesTagged(client, Long.parseLong(param[3]));
 					} else {
 						images = dataset.getImages(client);
 					}
-				} else if (param[0].equals("tag")) {
+				} else if (param[0].equals("Tag")) {
 					images = client.getImagesTagged(id);
 				} else {
 					throw new IllegalArgumentException();
