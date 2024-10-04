@@ -284,8 +284,8 @@ public class Measure3D {
 	public double[] computeFlatnessAndElongation(double label) {
 		double[] shapeParameters = new double[2];
 		double[] tEigenValues    = computeEigenValue3D(label);
-		shapeParameters[0] = Math.sqrt(tEigenValues[1] / tEigenValues[0]);
-		shapeParameters[1] = Math.sqrt(tEigenValues[2] / tEigenValues[1]);
+		shapeParameters[0] = tEigenValues[1] / tEigenValues[0];
+		shapeParameters[1] = tEigenValues[2] / tEigenValues[1];
 		return shapeParameters;
 	}
 	
