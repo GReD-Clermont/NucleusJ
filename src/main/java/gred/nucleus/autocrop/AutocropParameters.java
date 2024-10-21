@@ -340,7 +340,10 @@ public class AutocropParameters extends PluginParameters {
 		                   + "#slicesOTSUComputing: " + slicesOTSUComputing + "\n"
 		                   + "#channelToComputeThreshold: " + channelToComputeThreshold + "\n"
 		                   + "#maxVolumeNucleus:" + maxVolumeNucleus + "\n"
-		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n";
+		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n"
+							+ "#boxesRegrouping: " + boxesRegrouping + "\n"
+							+ "#boxesPercentSurfaceToFilter: " + boxesPercentSurfaceToFilter + "\n";
+
 		return this.headerInfo;
 	}
 	
