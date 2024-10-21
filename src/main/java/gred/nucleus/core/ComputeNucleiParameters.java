@@ -181,7 +181,9 @@ public class ComputeNucleiParameters {
 		       "ImageSize\t"+
 		       "Moment 1\t" +
 		       "Moment 2\t" +
-		       "Moment 3 \n" ;
+				"Moment 3\t" +
+				"Aspect Ratio\t" +
+		       " Circularity \n" ;
 	}
 	
 }

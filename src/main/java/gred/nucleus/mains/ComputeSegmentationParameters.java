@@ -113,6 +113,8 @@ public class ComputeSegmentationParameters {
 		       "MedianIntensityNucleus\t" +
 		       "MedianIntensityBackground\t" +
 		       "ImageSize\t" +
+				"AspectRatio\t"+
+				"Circularity\t" +
 		       "OTSUThreshold\n";
 	}
 	

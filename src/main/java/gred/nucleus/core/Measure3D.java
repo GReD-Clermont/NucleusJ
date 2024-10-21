@@ -8,6 +8,10 @@ import gred.nucleus.utils.VoxelRecord;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
+import ij.measure.Measurements;
+import ij.measure.ResultsTable;
+import ij.plugin.filter.ParticleAnalyzer;
+import ij.process.StackConverter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +32,8 @@ import java.util.TreeMap;
  * @author Tristan Dubos and Axel Poulet
  */
 public class Measure3D {
-	
+	ResultsTable _resultsTable;
+
 	ImagePlus[] imageSeg;
 	ImagePlus   rawImage;
 	ImagePlus _imageSeg;
@@ -163,7 +168,85 @@ public class Measure3D {
 		}
 		return volumeTMP * this.xCal * this.yCal * this.zCal;
 	}
-	
+
+	public void compute2dParameters ()
+	{
+		StackConverter stackConverter = new StackConverter( this.imageSeg[0] );
+		if (this.imageSeg[0].getType() != ImagePlus.GRAY8)	stackConverter.convertToGray8();
+		_resultsTable = computePrameters(this.imageSeg[0],searchSliceWithMaxArea(this.imageSeg[0]));
+	}
+	private int searchSliceWithMaxArea(ImagePlus imagePlusSegmented)
+	{
+		Calibration calibration= imagePlusSegmented.getCalibration();
+		int indiceMaxArea = -1;
+		double xCalibration = calibration.pixelWidth;
+		double yCalibration = calibration.pixelHeight;
+		ImageStack imageStackSegmented = imagePlusSegmented.getStack();
+		double areaMax = 0;
+		double area = 0;
+		for (int k = 0; k < imagePlusSegmented.getNSlices(); ++k)
+		{
+			int nbVoxel = 0;
+			for (int i = 1; i < imagePlusSegmented.getWidth(); ++i)
+			{
+				for (int j = 1;  j < imagePlusSegmented.getHeight(); ++j)
+					if (imageStackSegmented.getVoxel(i, j, k)>0)
+						++nbVoxel ;
+			}
+			area = xCalibration*yCalibration*nbVoxel;
+			if (area > areaMax)
+			{
+				areaMax = area ;
+				indiceMaxArea = k;
+			}
+		}
+		return indiceMaxArea;
+	}
+
+	/**
+	 * method to compute the parameter
+	 *
+	 * @param imagePlusSegmented
+	 * @param indiceMaxArea
+	 * @return a resultTable object which contain the results
+	 */
+	private ResultsTable computePrameters(ImagePlus imagePlusSegmented, int indiceMaxArea)
+	{
+		ImagePlus imagePlusTemp = new ImagePlus();
+		ImageStack imageStackSegmented = imagePlusSegmented.getStack();
+		ImageStack imageStackTemp = new ImageStack(imagePlusSegmented.getWidth(),imagePlusSegmented.getHeight());
+		imageStackTemp.addSlice(imageStackSegmented.getProcessor(indiceMaxArea));
+		imagePlusTemp.setStack(imageStackTemp);
+		Calibration calibrationImagePlusSegmented= imagePlusSegmented.getCalibration();
+		Calibration calibration = new Calibration();
+		calibration.pixelHeight = calibrationImagePlusSegmented.pixelHeight;
+		calibration.pixelWidth =  calibrationImagePlusSegmented.pixelWidth;
+		imagePlusTemp.setCalibration(calibration);
+		ResultsTable resultTable = new ResultsTable();
+		ParticleAnalyzer particleAnalyser = new ParticleAnalyzer
+				(ParticleAnalyzer.SHOW_NONE, Measurements.AREA+Measurements.CIRCULARITY, resultTable, 10, Double.MAX_VALUE, 0,1);
+		particleAnalyser.analyze(imagePlusTemp);
+		return resultTable;
+
+	}
+	/**
+	 * Aspect ratio The aspect ratio of the particle’s fitted ellipse, i.e., [M ajor Axis]/Minor Axis] . If Fit
+	 * Ellipse is selected the Major and Minor axis are displayed. Uses the heading AR.
+	 *
+	 * @return
+	 */
+	public double getAspectRatio () {	return _resultsTable.getValue("AR", 0);	}
+
+	/**
+	 * Circularity Particles with size circularity values outside the range specified in this field are also
+	 * ignored. Circularity = (4π × [Area ] / [P erimeter]2 ) , see Set Measurements. . . ) ranges from 0 (infinitely
+	 * elongated polygon) to 1 (perfect circle).
+	 *
+	 * @return
+	 */
+
+	public double getCirculairty() {   return _resultsTable.getValue("Circ.", 0); }
+
 	
 	/**
 	 * Compute the volume of one object with this label
@@ -874,6 +957,7 @@ public class Measure3D {
 		double   surfaceArea    = computeSurfaceObject(255);
 		double   surfaceAreaNew = computeComplexSurface();
 		double[] tEigenValues   = computeEigenValue3D(255);
+		compute2dParameters();
 		results = this.rawImage.getTitle() + ","
 		          //  + computeVolumeObject2(255) + "\t"
 		          + computeVolumeObjectML() + ","
@@ -893,7 +977,11 @@ public class Measure3D {
 		          + this.rawImage.getHeight() * this.rawImage.getWidth() * this.rawImage.getNSlices()+","
 		          + computeEigenValue3D(255)[0] + ","
 		          + computeEigenValue3D(255)[1] + ","
-		          + computeEigenValue3D(255)[2] ;
+		          + computeEigenValue3D(255)[2] + ","
+				  + getAspectRatio()  + ","
+		 		  + getCirculairty()
+
+					;
 		return results;
 	}
 	
