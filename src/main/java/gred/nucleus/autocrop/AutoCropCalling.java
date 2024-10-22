@@ -43,7 +43,7 @@ public class AutoCropCalling {
 	private AutocropParameters autocropParameters;
 
 	/** Number of threads to used process images */
-	private int executorThreads = 4;
+	private int executorThreads = 1;
 	/** Number of threads used to download images */
 	private final int DOWNLOADER_THREADS = 1;
 

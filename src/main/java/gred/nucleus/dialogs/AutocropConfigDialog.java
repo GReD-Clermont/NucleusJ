@@ -33,7 +33,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	
 	public AutocropConfigDialog(AutocropDialog caller) {
 		this.setTitle("Autocrop NucleusJ2");
-		this.setSize(500, 350);
+		this.setSize(600, 350);
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		Container     container     = getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -253,7 +253,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		                                                    0,
 		                                                    0.0,
 		                                                    0.0,
-		                                                    GridBagConstraints.NORTHWEST,
+		                                                    GridBagConstraints.NORTHEAST,
 		                                                    GridBagConstraints.NONE,
 		                                                    new Insets(0, 0, 0, 0),
 		                                                    0,

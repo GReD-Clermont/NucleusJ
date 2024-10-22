@@ -62,7 +62,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		this.setTitle("Autocrop NucleusJ2");
 		this.setMinimumSize(new Dimension(400, 500));
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		
+		this.setLocationRelativeTo(null);
 		autocropConfigFileDialog = new AutocropConfigDialog(this);
 		autocropConfigFileDialog.setVisible(false);
 		
@@ -251,7 +251,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		JLabel jLabelThreads = new JLabel("Number of used threads : ");
 		threadPanel.add(jLabelThreads);
 		int maxThreads = Runtime.getRuntime().availableProcessors();
-		SpinnerModel model = new SpinnerNumberModel(Math.min(maxThreads, 4), 1, maxThreads, 1);
+		SpinnerModel model = new SpinnerNumberModel(Math.min(maxThreads, 1), 1, maxThreads, 1);
 		jSpinnerThreads = new JSpinner(model);
 		threadPanel.add(jSpinnerThreads);
 		threadPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 100));
@@ -283,8 +283,8 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldGroup.setText("553");
 		
 		jComboBoxDataType.setSelectedIndex(3);
-		jTextFieldSourceID.setText("334953");
-		jTextFieldOutputProject.setText("9851");
+		jTextFieldSourceID.setText("");
+		jTextFieldOutputProject.setText("");
 	}
 	
 	
