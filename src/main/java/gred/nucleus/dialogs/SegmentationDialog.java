@@ -60,7 +60,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		this.setTitle("Segmentation NucleusJ2");
 		this.setMinimumSize(new Dimension(400, 500));
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		
+		this.setLocationRelativeTo(null);
 		segmentationConfigFileDialog = new SegmentationConfigDialog(this);
 		segmentationConfigFileDialog.setVisible(false);
 		
@@ -249,7 +249,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		JLabel jLabelThreads = new JLabel("Number of used threads : ");
 		threadPanel.add(jLabelThreads);
 		int maxThreads = Runtime.getRuntime().availableProcessors();
-		SpinnerModel model = new SpinnerNumberModel(Math.min(maxThreads, 4), 1, maxThreads, 1);
+		SpinnerModel model = new SpinnerNumberModel(Math.min(maxThreads, 1), 1, maxThreads, 1);
 		jSpinnerThreads = new JSpinner(model);
 		threadPanel.add(jSpinnerThreads);
 		threadPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 100));
@@ -281,7 +281,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		jTextFieldGroup.setText("553");
 		
 		jComboBoxDataType.setSelectedIndex(1);
-		jTextFieldSourceID.setText("19699");
+		jTextFieldSourceID.setText("");
 		jTextFieldOutputProject.setText("");
 	}
 	

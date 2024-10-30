@@ -67,13 +67,15 @@ public class SegmentationCalling {
 	
 	private String outputCropGeneralInfoOTSU;
 	private String outputCropGeneralInfoConvexHull;
-	private String outputInfoParade;
+	private String outputInfoParade = getResultsColumnNames();
+	private String outputInfoParadeGraham = getResultsColumnNames();
 	/** Number of threads to used process images */
-	private int executorThreads = 4;
+	private int executorThreads = 1;
 	/** Number of threads used to download images */
 	private int downloaderThreads = 1;
 	private Long tID;
 	private String imgDatasetName;
+	private long imgDatasetId;
 	public SegmentationCalling() {
 	}
 	
@@ -86,9 +88,9 @@ public class SegmentationCalling {
 	public SegmentationCalling(SegmentationParameters segmentationParameters) {
 		this.segmentationParameters = segmentationParameters;
 		this.outputCropGeneralInfoOTSU =
-				this.segmentationParameters.getAnalysisParameters() + getResultsColumnNames();
+				this.segmentationParameters.getAnalysisParameters() ;
 		this.outputCropGeneralInfoConvexHull =
-				this.segmentationParameters.getAnalysisParameters() + getResultsColumnNames();
+				this.segmentationParameters.getAnalysisParameters() ;
 	}
 	
 	
@@ -96,9 +98,9 @@ public class SegmentationCalling {
 		this.inputDir = inputDir;
 		this.output = outputDir;
 		this.outputCropGeneralInfoOTSU =
-				this.segmentationParameters.getAnalysisParameters() + getResultsColumnNames();
+				this.segmentationParameters.getAnalysisParameters() ;
 		this.outputCropGeneralInfoConvexHull =
-				this.segmentationParameters.getAnalysisParameters() + getResultsColumnNames();
+				this.segmentationParameters.getAnalysisParameters() ;
 	}
 	
 	
@@ -299,7 +301,9 @@ public class SegmentationCalling {
 			otsuInfoBuilder.append(otsuResultLines.get(file.getName()));
 			convexHullInfoBuilder.append(convexHullResultLines.get(file.getName()));
 		}
+		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		outputCropGeneralInfoOTSU += otsuInfoBuilder.toString();
+		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
 		outputCropGeneralInfoConvexHull += convexHullInfoBuilder.toString();
 		
 		saveCropGeneralInfo();
@@ -325,8 +329,10 @@ public class SegmentationCalling {
 		nucleusSegmentation.findOTSUMaximisingSphericity();
 		nucleusSegmentation.checkBadCrop(this.segmentationParameters.inputFolder);
 		nucleusSegmentation.saveOTSUSegmented();
+		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
 		nucleusSegmentation.saveConvexHullSeg();
+		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
 		this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
 		
 		timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
@@ -402,8 +408,10 @@ public class SegmentationCalling {
 		nucleusSegmentation.checkBadCrop(image, client);
 		
 		nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset);
+		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
 		nucleusSegmentation.saveConvexHullSegOMERO(client, convexHullDataset);
+		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
 		this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
 		
 		timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
@@ -512,6 +520,7 @@ public class SegmentationCalling {
 		for (ImageWrapper img: images) {
 			/** create results file compatible with OMERO.Parade*/
 			imgDatasetName = client.getDataset(inputID).getName();
+			imgDatasetId = client.getDataset(inputID).getId();
 			otsuInfoBuilder.append(img.getId()+",");
 			otsuInfoBuilder.append(imgDatasetName+",");
 			otsuInfoBuilder.append(otsuResultLines.get(img.getId()));
@@ -519,9 +528,14 @@ public class SegmentationCalling {
 			convexHullInfoBuilder.append(imgDatasetName+",");
 			convexHullInfoBuilder.append(convexHullResultLines.get(img.getId()));
 		}
-		outputInfoParade = getResultsColumnNames();
+
 		outputInfoParade += otsuInfoBuilder.toString();
+		outputInfoParadeGraham += convexHullInfoBuilder.toString();
+
+		this.outputCropGeneralInfoOTSU += "#Dataset:" + imgDatasetId + "\n" + getResultsColumnNames();
+
 		outputCropGeneralInfoOTSU += otsuInfoBuilder.toString();
+		this.outputCropGeneralInfoConvexHull += "#Dataset:" + imgDatasetId + "\n" +  getResultsColumnNames();
 		outputCropGeneralInfoConvexHull += convexHullInfoBuilder.toString();
 		saveCropGeneralInfoOmero(client, output);
 		return "";
@@ -537,12 +551,15 @@ public class SegmentationCalling {
 		ProjectWrapper project = client.getProject(output);
 		/** Get input dataset*/
 		DatasetWrapper input = client.getDataset(tID);
-		
-		String path = "." + File.separator +  dateFormat.format(date)+"_"+imgDatasetName+"_" + "result_Segmentation_Analyse.csv";
-		String pathParade = "." + File.separator +  dateFormat.format(date) +"_"+imgDatasetName+"_" + "result_Segmentation_Analyse_parade.csv";
+		/** Create paths for the files (Otsu,Graham.Parade)*/
+		String path = "." + File.separator +  dateFormat.format(date)+"_"+imgDatasetName+"_" + "result_Segmentation_OTSU.csv";
+		String pathGraham = "." + File.separator +  dateFormat.format(date)+"_"+imgDatasetName+"_" + "result_Segmentation_GRAHAM.csv";
+		String pathParade = "." + File.separator +  dateFormat.format(date) +"_"+imgDatasetName+"_" + "result_Segmentation_OTSU_parade.csv";
+		String pathParadeGraham  = "." + File.separator +  dateFormat.format(date) +"_"+imgDatasetName+"_" + "result_Segmentation_GRAHAM_parade.csv";
 		try {
 			path = new File(path).getCanonicalPath();
 			pathParade = new File(pathParade).getCanonicalPath();
+			pathParadeGraham = new File(pathParadeGraham).getCanonicalPath();
 		} catch (IOException e) {
 			LOGGER.error("Could not get canonical path for:" + path, e);
 		}
@@ -550,34 +567,47 @@ public class SegmentationCalling {
 		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, false);
 		/** Create results file for OMERO.Parade */
 		OutputTextFile resultFileOutputParade = new OutputTextFile(pathParade);
+		OutputTextFile resultFileOutputParadeGraham = new OutputTextFile(pathParadeGraham);
 		resultFileOutputParade.saveTextFile(this.outputInfoParade, false);
+		resultFileOutputParadeGraham.saveTextFile(this.outputInfoParadeGraham, false);
 		
 		File file = new File(path);
 		File fileParade = new File(pathParade);
+		File fileParadeGraham = new File(pathParadeGraham);
 		dataset.addFile(client, file);
-		/** Put results file (for OMERO.Parade) in output Project and input dataset*/
+		/** Put Otsu results file (for OMERO.Parade) in output Project and input dataset*/
 		project.addFile(client, fileParade);
 		input.addFile(client, fileParade);
+		/** Put Graham results file (for OMERO.Parade) in output Project and input dataset*/
+		project.addFile(client, fileParadeGraham);
+		input.addFile(client, fileParadeGraham);
 		
 		try {
 			Files.deleteIfExists(file.toPath());
 			Files.deleteIfExists(fileParade.toPath());
+			Files.deleteIfExists(fileParadeGraham.toPath());
 		} catch (IOException e) {
 			LOGGER.error("File not deleted: " + path, e);
 		}
 		
 		if (this.segmentationParameters.getConvexHullDetection()) {
 			LOGGER.info("Saving Convex Hull algorithm results.");
+			try {
+				pathGraham = new File(pathGraham).getCanonicalPath();
+
+			} catch (IOException e) {
+				LOGGER.error("Could not get canonical path for:" + pathGraham, e);
+			}
 			dataset = client.getProject(output).getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM).get(0);
-			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(path);
+			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(pathGraham);
 			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, false);
 			
-			file = new File(path);
+			file = new File(pathGraham);
 			dataset.addFile(client, file);
 			try {
 				Files.deleteIfExists(file.toPath());
 			} catch (IOException e) {
-				LOGGER.error("File not deleted: " + path, e);
+				LOGGER.error("File not deleted: " + pathGraham, e);
 			}
 		}
 	}
@@ -618,6 +648,7 @@ public class SegmentationCalling {
 			
 			i++;
 		}
+		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += info.toString();
 		
 		timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
@@ -722,6 +753,8 @@ public class SegmentationCalling {
 				"Moment 1," +
 				"Moment 2," +
 				"Moment 3," +
+				"AspectRatio,"+
+				"Circularity," +
 		       "OTSUThreshold,"+"\n";
 	}
 }
