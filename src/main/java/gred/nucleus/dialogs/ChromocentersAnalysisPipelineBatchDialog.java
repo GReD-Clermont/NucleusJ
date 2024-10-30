@@ -182,7 +182,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 						GridBagConstraints.HORIZONTAL,
 						new Insets(10, 10, 0, 10), 0, 0));
 */
-		jLabelAnalysis = new JLabel("Type of Relative Heterochromatin Fraction:");
+		jLabelAnalysis = new JLabel("Results file of interest:");
 		container.add(jLabelAnalysis,
 				new GridBagConstraints(0, 3, 5, 1, 0.0, 0.0,
 						GridBagConstraints.SOUTHWEST,
@@ -204,7 +204,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 						GridBagConstraints.NORTHWEST,
 						GridBagConstraints.NONE,
 						new Insets(10, 10, 0, 10), 0, 0));
-		jLabelAnalysis2 = new JLabel("Results file of interest:");
+		jLabelAnalysis2 = new JLabel("Type of Relative Heterochromatin Fraction:");
 		container.add(jLabelAnalysis2,
 				new GridBagConstraints(0, 5, 3, 1, 1.0, 0.0,
 						GridBagConstraints.NORTHWEST,
@@ -380,10 +380,10 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jComboBoxDataType.setSelectedIndex(1);
 		jComboBoxDataTypeCC.setSelectedIndex(1);
 		jComboBoxDataTypeNuc.setSelectedIndex(1);
-		jTextFieldSourceID.setText("31510");
-		jTextFieldNucSegID.setText("31511");
-		jTextFieldCCsegID.setText("31512");
-		jTextFieldOutputProject.setText("27229");
+		jTextFieldSourceID.setText("");
+		jTextFieldNucSegID.setText("");
+		jTextFieldCCsegID.setText("");
+		jTextFieldOutputProject.setText("");
 	}
 
 

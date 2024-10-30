@@ -552,8 +552,7 @@ public class Measure3D {
 	private double meanIntensity (){
 		int numberOfVoxel=0;
 		double mean=0;
-		for(Map.Entry<Double , Integer> histo2 :
-				this._segmentedNucleusHisto.entrySet()) {
+		for(Map.Entry<Double , Integer> histo2 : this._segmentedNucleusHisto.entrySet()) {
 			numberOfVoxel+=histo2.getValue();
 			mean+=histo2.getKey()*histo2.getValue();
 			
@@ -651,12 +650,9 @@ public class Measure3D {
 	private double standardDeviationIntensity (Double mean){
 		int numberOfVoxel=0;
 		double std=0;
-		for(Map.Entry<Double , Integer> histo2 :
-				this._segmentedNucleusHisto.entrySet()) {
+		for(Map.Entry<Double , Integer> histo2 : this._segmentedNucleusHisto.entrySet()) {
 			numberOfVoxel+=histo2.getValue();
-			std=Math.abs((histo2.getKey()*histo2.getValue())
-			             -(histo2.getValue()*mean));
-			
+			std=Math.abs((histo2.getKey()*histo2.getValue()) -(histo2.getValue()*mean));
 		}
 		return std/(numberOfVoxel-1);
 		
@@ -672,8 +668,7 @@ public class Measure3D {
 	
 	private double maxIntensity(){
 		double maxIntensity=0;
-		for (Map.Entry<Double , Integer> entry :
-				this._segmentedNucleusHisto.entrySet())
+		for (Map.Entry<Double , Integer> entry : this._segmentedNucleusHisto.entrySet())
 		{
 			if (maxIntensity ==0 || entry.getKey().compareTo(maxIntensity) > 0)
 			{
@@ -691,8 +686,7 @@ public class Measure3D {
 	
 	private double minIntensity(){
 		double minIntensity=0;
-		for (Map.Entry<Double , Integer> entry :
-				this._segmentedNucleusHisto.entrySet())
+		for (Map.Entry<Double , Integer> entry : this._segmentedNucleusHisto.entrySet())
 		{
 			if (minIntensity ==0 || entry.getKey().compareTo(minIntensity) < 0)
 			{
@@ -785,22 +779,22 @@ public class Measure3D {
 		
 		double volume = computeVolumeObjectML();
 		//double surfaceAreaNew = computeComplexSurface();
-		resu = this._rawImage.getTitle()+ "\t"
+		resu = this._rawImage.getTitle()+ ","
 		       //  + computeVolumeObject2(255) + "\t"
-		       +computeVolumeObjectML()+ "\t"
-		       + computeFlatnessAndElongation( 255)[0] + "\t"
-		       + computeFlatnessAndElongation( 255)[1] + "\t"
-		       + equivalentSphericalRadius(volume) + "\t"
+		       +computeVolumeObjectML()+ ","
+		       + computeFlatnessAndElongation( 255)[0] + ","
+		       + computeFlatnessAndElongation( 255)[1] + ","
+		       + equivalentSphericalRadius(volume) + ","
 		       //+ surfaceAreaNew + "\t"
 		       //+ computeSphericity(volume, surfaceAreaNew)+ "\t"
-		       +meanIntensity()+ "\t"
-		       +meanIntensityBackground()+"\t"
-		       +standardDeviationIntensity(meanIntensity())+ "\t"
-		       +minIntensity()+ "\t"
-		       +maxIntensity()+ "\t"
-		       +medianComputingImage()+ "\t"
-		       +medianIntensityNucleus ()+ "\t"
-		       +medianIntensityBackground ()+ "\t"
+		       +meanIntensity()+ ","
+		       +meanIntensityBackground()+","
+		       +standardDeviationIntensity(meanIntensity())+ ","
+		       +minIntensity()+ ","
+		       +maxIntensity()+ ","
+		       +medianComputingImage()+ ","
+		       +medianIntensityNucleus ()+ ","
+		       +medianIntensityBackground ()+ ","
 		       +this._rawImage.getHeight()*this._rawImage.getWidth()*this._rawImage.getNSlices()
 		;
 		return resu;

@@ -122,7 +122,7 @@ public class ChromocenterCalling {
 		
 		Long imageID = Long.parseLong(param[1]);
 		Long maskID = Long.parseLong(param1[1]);
-	
+
 		if (param.length >= 2 && param1.length >= 2) {
 			
 			if (param[0].equals("Image") && param1[0].equals("Image")){
@@ -146,7 +146,7 @@ public class ChromocenterCalling {
 				outDataset = client.getDataset(datasetId);
 				Long gradientDatasetId = project.addDataset(client, outDatasetGradient).getId();
 				outDatasetGradient = client.getDataset(gradientDatasetId);
-				
+
 				for (int i=0; i<images.size(); i++) {
 					try {
 						/** Get Image name */
@@ -154,7 +154,7 @@ public class ChromocenterCalling {
 						/** Get the mask with the same name */
 						masks = maskDataset.getImages(client,imageName);
 						/** Run Segmentation */
-						runSeveralImagesOMERO(images.get(i), masks.get(0), client);
+						runSeveralImagesOMERO(images.get(i), masks.get(0), dataset_name,client);
 						/** Import Segmented cc to the Dataset*/
 						outDataset.importImages(client, segImg);
 						outDatasetGradient.importImages(client, gradImg);
@@ -174,10 +174,14 @@ public class ChromocenterCalling {
 				/** import Result Tabs to the Dataset */
 				outDataset.addFile(client, tab[0]);
 				outDataset.addFile(client, tab[1]);
+				project.addFile(client, tab[2]);
+				project.addFile(client, tab[3]);
 				/** Delete the tabs Locally*/
 				try {
 					Files.deleteIfExists(tab[0].toPath());
 					Files.deleteIfExists(tab[1].toPath());
+					Files.deleteIfExists(tab[2].toPath());
+					Files.deleteIfExists(tab[3].toPath());
 				} catch (IOException e) {
 					//LOGGER.error("Could not delete file: {}", outputFileName);
 				}
@@ -244,6 +248,9 @@ public class ChromocenterCalling {
 		outDataset.importImages(client, gradientFileName);
 		outDataset.addFile(client, Parameters3DTab[0]);
 		outDataset.addFile(client, Parameters3DTab[1]);
+		project.addFile(client, Parameters3DTab[2]);
+		project.addFile(client, Parameters3DTab[3]);
+
 		File segImgDelete = new File(outputFileName);
 		File gradImgDelete = new File(gradientFileName);
 		try {
@@ -251,12 +258,14 @@ public class ChromocenterCalling {
 			Files.deleteIfExists(gradImgDelete.toPath());
 			Files.deleteIfExists(Parameters3DTab[0].toPath());
 			Files.deleteIfExists(Parameters3DTab[1].toPath());
+			Files.deleteIfExists(Parameters3DTab[2].toPath());
+			Files.deleteIfExists(Parameters3DTab[3].toPath());
 		} catch (IOException e) {
 			//LOGGER.error("Could not delete file: {}", outputFileName);
 		}
 	}
 	
-	public void runSeveralImagesOMERO(ImageWrapper image,ImageWrapper mask,Client client ) throws  Exception {
+	public void runSeveralImagesOMERO(ImageWrapper image,ImageWrapper mask, String datasetName,Client client ) throws  Exception {
 		
 		String rhfChoice = "Volume";
 		String imageName = image.getName();
@@ -287,12 +296,15 @@ public class ChromocenterCalling {
 		chromencenterSegmentation.runCC3D(gradientFileName);
 		
 		NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
-		File[] Parameters3DTab = nucleusChromocenterAnalysis.compute3DParameters(
+
+		File[] Parameters3DTab = nucleusChromocenterAnalysis.compute3DParametersOmero(
 				rhfChoice,
-				RawImage[0],
-				SegImage[0],
+				image,
+				mask,
 				IJ.openImage(outputFileName),
-				this.chromocenterParameters);
+				this.chromocenterParameters,
+				datasetName,
+				client);
 		
 		tab = Parameters3DTab;
 		segImg = outputFileName;
