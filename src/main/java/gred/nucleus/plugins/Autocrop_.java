@@ -81,7 +81,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		char[] password = autocropDialog.getPassword();
 		String group    = autocropDialog.getGroup();
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
-		
+		String typeThresholding = autocropDialog.getTypeThresholding();
 		AutocropParameters autocropParameters = null;
 		// Check config
 		String configFile = autocropDialog.getConfig();
@@ -134,6 +134,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		}
 		
 		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+		autoCrop.setTypeThresholding(typeThresholding);
 		autoCrop.setExecutorThreads(autocropDialog.getThreads());
 
 		// Handle the source according to the type given
@@ -194,6 +195,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		String input  = autocropDialog.getInput();
 		String output = autocropDialog.getOutput();
 		String config = autocropDialog.getConfig();
+		String typeThresholding = autocropDialog.getTypeThresholding();
 		if (input == null || input.equals("")) {
 			IJ.error("Input file or directory is missing");
 		} else if (output == null || output.equals("")) {
@@ -256,6 +258,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 						break;
 				}
 				AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+				autoCrop.setTypeThresholding(typeThresholding);
 				autoCrop.setExecutorThreads(autocropDialog.getThreads());
 				File            file     = new File(input);
 				if (file.isDirectory()) {
