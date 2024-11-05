@@ -242,7 +242,7 @@ public class CLIRunActionOMERO {
 		
 		if (param.length >= 2) {
 			Long id = Long.parseLong(param[1]);
-			if (param[0].equals("Image")) {
+			if (param[0].equals("image")) {
 				ImageWrapper image = client.getImage(id);
 				
 				int sizeC = image.getPixels().getSizeC();
@@ -254,7 +254,7 @@ public class CLIRunActionOMERO {
 					outputsDat[i] =
 							client.getProject(Long.parseLong(outputDirectory)).addDataset(client, dataset).getId();
 				}
-				
+
 				autoCrop.runImageOMERO(image, outputsDat, client);
 				autoCrop.saveGeneralInfoOmero(client, outputsDat);
 			} else {
@@ -262,17 +262,17 @@ public class CLIRunActionOMERO {
 				
 				String name = "";
 				
-				if (param[0].equals("Dataset")) {
+				if (param[0].equals("dataset")) {
 					DatasetWrapper dataset = client.getDataset(id);
 					
 					name = dataset.getName();
 					
-					if (param.length == 4 && param[2].equals("Tag")) {
+					if (param.length == 4 && param[2].equals("tag")) {
 						images = dataset.getImagesTagged(client, Long.parseLong(param[3]));
 					} else {
 						images = dataset.getImages(client);
 					}
-				} else if (param[0].equals("Tag")) {
+				} else if (param[0].equals("tag")) {
 					images = client.getImagesTagged(id);
 				} else {
 					throw new IllegalArgumentException();
@@ -306,8 +306,14 @@ public class CLIRunActionOMERO {
 			autocropParameters.addProperties(this.cmd.getOptionValue("config"));
 		}
 		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+		if (this.cmd.hasOption("thresholding")) {
+			autoCrop.setTypeThresholding(this.cmd.getOptionValue("thresholding"));
+		}
+
+		// add setter here !!!!
 		if(this.cmd.hasOption("threads")) {
 			autoCrop.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
+			System.out.println("threads  ! "+ this.cmd.getOptionValue("threads"));
 		}
 		try {
 			autoCropOMERO(this.cmd.getOptionValue("input"),
@@ -416,7 +422,7 @@ public class CLIRunActionOMERO {
 		GenerateOverlay ov = new GenerateOverlay();
 		ov.runFromOMERO(this.cmd.getOptionValue("input"),
 						this.cmd.getOptionValue("input2"),
-						this.cmd.getOptionValue("out"),
+						this.cmd.getOptionValue("output"),
 						this.client
 		);
 	}
@@ -427,7 +433,7 @@ public class CLIRunActionOMERO {
 		);
 		cropFromCoordinates.runFromOMERO(
 				this.cmd.getOptionValue("input2"),
-				this.cmd.getOptionValue("out"),
+				this.cmd.getOptionValue("output"),
 				this.client
 		);
 	}

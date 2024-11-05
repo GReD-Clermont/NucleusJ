@@ -79,6 +79,16 @@ public class CLIActionOptions {
 	                                                .type(boolean.class)
 	                                                .desc("Use of NucleusJ2.0 in OMERO\n")
 	                                                .build();
+	/** List of available actions */
+	public               Option thresholding      = Option.builder("thresh")
+			.longOpt("thresholding")
+			.type(String.class)
+			.desc("type of thresholding method to use:\n" +
+					"Otsu \n" +
+					"RenyiEntropy \n")
+			.numberOfArgs(1)
+			.build();
+
 	/** List of options */
 	Options           options = new Options();
 	/** Command line */
@@ -100,6 +110,7 @@ public class CLIActionOptions {
 		this.options.addOption(this.action);
 		this.options.addOption(this.threads);
 		this.options.addOption(this.omero);
+		this.options.addOption(this.thresholding);
 		try {
 			this.cmd = this.parser.parse(this.options, argument, true);
 		} catch (ParseException exp) {
