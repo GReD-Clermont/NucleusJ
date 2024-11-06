@@ -398,7 +398,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jTextFieldPort.setText(String.valueOf(4064));
 		
 		jTextFieldUsername.setText("");
-		jTextFieldGroup.setText("203");
+		jTextFieldGroup.setText("553");
 		jPasswordField.setText("");
 		jTextFieldRawID.setText("");
 		jTextFieldSegmentedID.setText("");

@@ -253,7 +253,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		this._jtfNeigh.setFont(new java.awt.Font("arial",1,12));
 		this._parameters.add( this._jtfNeigh, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0,  GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(52, 205, 0, 0), 0, 0
+				GridBagConstraints.NONE, new Insets(52, 245, 0, 0), 0, 0
 		));
 		
 		label = new JLabel();
@@ -269,7 +269,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		this._jtfFactor.setFont(new java.awt.Font("arial",1,12));
 		this._parameters.add( this._jtfFactor, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0,  GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(78, 205, 0, 0), 0, 0
+				GridBagConstraints.NONE, new Insets(78, 245, 0, 0), 0, 0
 		));
 		
 		
@@ -293,7 +293,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		this._jtfGX.setFont(new java.awt.Font("arial",1,12));
 		this._parameters.add( this._jtfGX, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0,  GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(132, 175, 0, 0), 0, 0
+				GridBagConstraints.NONE, new Insets(132, 195, 0, 0), 0, 0
 		));
 		
 		label = new JLabel();
@@ -309,7 +309,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		this._jtfGY.setFont(new java.awt.Font("arial",1,12));
 		this._parameters.add( this._jtfGY, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0,  GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(158, 175, 0, 0), 0, 0
+				GridBagConstraints.NONE, new Insets(158, 195, 0, 0), 0, 0
 		));
 		
 		label = new JLabel();
@@ -325,7 +325,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		this._jtfGZ.setFont(new java.awt.Font("arial",1,12));
 		this._parameters.add( this._jtfGZ, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0,  GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(182, 175, 0, 0), 0, 0
+				GridBagConstraints.NONE, new Insets(182, 195, 0, 0), 0, 0
 		));
 		
 		
@@ -529,10 +529,10 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		jTextFieldGroup.setText("203");
 		
 		
-		jTextFieldSourceID.setText("22669");
-		segmentedNucleiTextField.setText("22683");
+		jTextFieldSourceID.setText("31510");
+		segmentedNucleiTextField.setText("31511");
 		
-		jTextFieldOutputProject.setText("12981");
+		jTextFieldOutputProject.setText("14855");
 	}
 	
 	

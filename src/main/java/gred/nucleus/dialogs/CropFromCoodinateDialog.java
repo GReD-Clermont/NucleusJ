@@ -307,9 +307,9 @@ public class CropFromCoodinateDialog extends JFrame implements ActionListener, I
 		jPasswordField.setText("");
 		jComboBoxDataType.setSelectedIndex(3);
 		jComboBoxDataTypeToCrop.setSelectedIndex(3);
-		jTextFieldSourceID.setText("1012649");
-		jTextFieldToCropID.setText("1012649");
-		jTextFieldOutputProject.setText("27229");
+		jTextFieldSourceID.setText("");
+		jTextFieldToCropID.setText("");
+		jTextFieldOutputProject.setText("");
 	}
 	
 	
