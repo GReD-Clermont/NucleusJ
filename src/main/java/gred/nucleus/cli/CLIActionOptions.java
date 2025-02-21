@@ -13,7 +13,6 @@ public class CLIActionOptions {
 	/** Path to input folder */
 	public               Option inputFolder = Option.builder("in")
 	                                                .longOpt("input")
-	                                                .required()
 	                                                .type(String.class)
 	                                                .numberOfArgs(1)
 	                                                .build();
@@ -54,7 +53,6 @@ public class CLIActionOptions {
 	/** List of available actions */
 	public               Option action      = Option.builder("a")
 	                                                .longOpt("action")
-	                                                .required()
 	                                                .type(String.class)
 	                                                .desc("Action available:\n" +
 	                                                      "autocrop : crop wide field images\n" +
