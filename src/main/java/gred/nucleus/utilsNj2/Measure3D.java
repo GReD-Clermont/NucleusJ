@@ -366,16 +366,15 @@ public class Measure3D {
 	 * @return double Relative Heterochromatin Fraction compute on the Volume ratio
 	 */
 	
-	public double computeVolumeRHF(ImagePlus imagePlusSegmented
-			, ImagePlus imagePlusChomocenters) {
+	public double computeVolumeRHF(ImagePlus imagePlusSegmented, ImagePlus imagePlusChomocenters) {
 		double volumeCc = 0;
 		//Calibration calSeg = imagePlusSegmented.getCalibration();
 		//Calibration calChrom = imagePlusChomocenters.getCalibration();
 		double[] tVolumeChromocenter = computeVolumeofAllObjects(imagePlusChomocenters);
-		for (int i = 0; i < tVolumeChromocenter.length; ++i)
-			volumeCc += tVolumeChromocenter[i];
-		double[] tVolumeSegmented =
-				computeVolumeofAllObjects(imagePlusSegmented);
+		for (double v : tVolumeChromocenter) {
+			volumeCc += v;
+		}
+		double[] tVolumeSegmented = computeVolumeofAllObjects(imagePlusSegmented);
 		return volumeCc / tVolumeSegmented[0];
 	}
 	

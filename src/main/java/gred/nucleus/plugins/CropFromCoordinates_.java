@@ -1,6 +1,7 @@
 package gred.nucleus.plugins;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -206,31 +208,25 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 					LOGGER.info("Autocrop from coordinate process has failed");
 					LOGGER.error("An error occurred.", e);
 				}
-				
 			} else {
-				List<ImageWrapper> sourceImages = null;
-				List<ImageWrapper> toCropImages = null;
-				String             sourceImageName   = "";
-				ImageWrapper sourceImage;
+				List<ImageWrapper> sourceImages = new ArrayList<>(0);
+				
 				if (sourceDataType.equals("Dataset") && ToCropdataType.equals("Dataset")) {
-					
 					DatasetWrapper sourceDataset = client.getDataset(inputID);
 					toCropDataset = client.getDataset(inputToCropID);
 					sourceImages = sourceDataset.getImages(client);
-					
 				} else if (sourceDataType.equals("Tag")) {
-					sourceImages = client.getImagesTagged(inputID);
+					TagAnnotationWrapper tag = client.getTag(inputID);
+					sourceImages = client.getImages(tag);
 				}
 				try {
 					LOGGER.info("Begin Autocrop from coordinate process ");
-					for (int i =0; i< sourceImages.size(); i++) {
-						
-						sourceImage = sourceImages.get(i) ;
-						sourceImageName = sourceImage.getName();
-						toCropImages = toCropDataset.getImages(client,sourceImageName);
-						if(!toCropImages.isEmpty()){
-							ImageWrapper toCropImage= toCropImages.get(0);
-							cropImageFromOMERO(client, sourceImage,toCropImage, outputds); // Run cropFromCoordinates
+					for (ImageWrapper sourceImage : sourceImages) {
+						String sourceImageName = sourceImage.getName();
+						List<ImageWrapper> toCropImages = toCropDataset.getImages(client, sourceImageName);
+						if (!toCropImages.isEmpty()) {
+							ImageWrapper toCropImage = toCropImages.get(0);
+							cropImageFromOMERO(client, sourceImage, toCropImage, outputds); // Run cropFromCoordinates
 						}
 					}
 					LOGGER.info("Autocrop from coordinate process has ended successfully");

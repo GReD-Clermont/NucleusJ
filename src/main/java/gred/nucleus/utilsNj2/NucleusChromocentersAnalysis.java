@@ -241,9 +241,10 @@ public class NucleusChromocentersAnalysis {
 	 */
 	public double computeMeanOfTable (double [] tInput) {
 		double mean = 0;
-		for (int i = 0; i < tInput.length; ++i)
-			mean += tInput[i];
-		mean = mean / (tInput.length);
+		for (double v : tInput) {
+			mean += v;
+		}
+		mean /= (tInput.length);
 		return mean;
 	}
 	
