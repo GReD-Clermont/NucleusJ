@@ -1,7 +1,6 @@
 package gred.nucleus.utilsNj2;
 
 import gred.nucleus.utils.Histogram;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.Calibration;
 import ij.process.ImageProcessor;

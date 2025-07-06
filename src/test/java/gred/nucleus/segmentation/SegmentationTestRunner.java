@@ -46,7 +46,6 @@ public class SegmentationTestRunner {
 		if (files != null) {
 			for (File f : files) {
 				String name = f.getName();
-				
 				if (f.isDirectory()) {
 					LOGGER.info("Directory skipped: {}", name);
 				} else {
@@ -56,8 +55,7 @@ public class SegmentationTestRunner {
 					} else {
 						LOGGER.info("Beginning process on: {}", name);
 						runSegmentation(f.toString(),
-						                SegmentationTest.PATH_TO_OUTPUT + name,
-						                PATH_TO_CONFIG);
+						                SegmentationTest.PATH_TO_OUTPUT + name);
 						LOGGER.info("Finished process on: {}", name);
 						
 						LOGGER.info("Checking results:");
@@ -71,14 +69,9 @@ public class SegmentationTestRunner {
 	}
 	
 	
-	private static void runSegmentation(String imageSourceFile, String output, String configFile) throws Exception {
-		SegmentationParameters segmentationParameters;
-		if (new File(configFile).exists()) {
-			segmentationParameters = new SegmentationParameters(imageSourceFile, output, configFile);
-		} else {
-			segmentationParameters = new SegmentationParameters(imageSourceFile, output);
-		}
-		SegmentationCalling segmentation = new SegmentationCalling(segmentationParameters);
+	private static void runSegmentation(String imageSourceFile, String output) throws Exception {
+		SegmentationParameters segmentationParameters = new SegmentationParameters(imageSourceFile, output);
+		SegmentationCalling    segmentation           = new SegmentationCalling(segmentationParameters);
 		segmentation.runOneImage(imageSourceFile);
 		segmentation.saveTestCropGeneralInfo();
 	}

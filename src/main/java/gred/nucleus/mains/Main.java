@@ -7,7 +7,6 @@ import gred.nucleus.cli.CLIRunAction;
 import gred.nucleus.cli.CLIRunActionOMERO;
 import gred.nucleus.dialogs.MainGui;
 
-import ij.util.ThreadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.*;

@@ -7,13 +7,10 @@ import Jama.Matrix;
 import gred.nucleus.utils.Gradient;
 import gred.nucleus.utils.Histogram;
 import gred.nucleus.utils.VoxelRecord;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.measure.Calibration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 

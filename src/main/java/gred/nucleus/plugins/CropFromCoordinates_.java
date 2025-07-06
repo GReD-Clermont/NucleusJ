@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class CropFromCoordinates_ implements PlugIn {
+public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	/**
 	 * Logger
 	 */
@@ -39,7 +39,6 @@ public class CropFromCoordinates_ implements PlugIn {
 	CropFromCoordinatesDialog cropFromCoordinatesDialog;
 	
 	public static void cropFromCoordinates(String coordinateDir) throws IOException, FormatException {
-		
 		CropFromCoordinates test = new CropFromCoordinates(coordinateDir);
 		test.run();
 	}
@@ -53,6 +52,7 @@ public class CropFromCoordinates_ implements PlugIn {
 	}
 	
 	
+	@Override
 	public void OnStart() throws AccessException, ServiceException, ExecutionException {
 		if (cropFromCoordinatesDialog.isOmeroEnabled()) {
 			runOMERO();
