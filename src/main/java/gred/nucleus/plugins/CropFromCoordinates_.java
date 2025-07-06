@@ -38,10 +38,12 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	private DatasetWrapper toCropDataset;
 	CropFromCoordinatesDialog cropFromCoordinatesDialog;
 	
+	
 	public static void cropFromCoordinates(String coordinateDir) throws IOException, FormatException {
 		CropFromCoordinates test = new CropFromCoordinates(coordinateDir);
 		test.run();
 	}
+	
 	
 	@Override
 	public void run(String s) {

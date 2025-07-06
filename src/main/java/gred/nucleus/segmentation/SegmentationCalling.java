@@ -782,5 +782,4 @@ public class SegmentationCalling {
 				"Circularity," +
 		       "OTSUThreshold,"+"\n";
 	}
-	
 }

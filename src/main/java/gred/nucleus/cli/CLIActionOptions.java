@@ -84,6 +84,7 @@ public class CLIActionOptions {
 	                                                .type(boolean.class)
 	                                                .desc("Use of NucleusJ2.0 in OMERO\n")
 	                                                .build();
+	
 	/** List of available actions */
 	public               Option thresholding      = Option.builder("thresh")
 			.longOpt("thresholding")

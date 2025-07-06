@@ -340,11 +340,13 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	public String getDataType() {
 		return (String) jComboBoxDataType.getSelectedItem();
 	}
+	
 
 	public String getTypeThresholding() {
 		return (String) jComboBoxThresholdType.getSelectedItem();
 	}
 
+	
 	public String getUsername() {
 		return jTextFieldUsername.getText();
 	}

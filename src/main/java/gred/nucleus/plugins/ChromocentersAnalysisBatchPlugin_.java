@@ -5,12 +5,10 @@ import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
-import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.core.ChromocenterAnalysis;
 import gred.nucleus.core.NucleusChromocentersAnalysis;
 import gred.nucleus.dialogs.ChromocentersAnalysisPipelineBatchDialog;
 import gred.nucleus.dialogs.IDialogListener;
-import gred.nucleus.dialogs.SegmentationDialog;
 import gred.nucleus.utils.FileList;
 import ij.IJ;
 import ij.ImagePlus;
@@ -25,10 +23,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import java.nio.file.*;
 import java.util.Comparator;
 import java.util.stream.Stream;
 

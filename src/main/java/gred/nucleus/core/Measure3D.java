@@ -168,6 +168,7 @@ public class Measure3D {
 		}
 		return volumeTMP * this.xCal * this.yCal * this.zCal;
 	}
+	
 
 	public void compute2dParameters ()
 	{
@@ -175,6 +176,8 @@ public class Measure3D {
 		if (this.imageSeg[0].getType() != ImagePlus.GRAY8)	stackConverter.convertToGray8();
 		_resultsTable = computePrameters(this.imageSeg[0],searchSliceWithMaxArea(this.imageSeg[0]));
 	}
+	
+	
 	private int searchSliceWithMaxArea(ImagePlus imagePlusSegmented)
 	{
 		Calibration calibration= imagePlusSegmented.getCalibration();
@@ -202,6 +205,7 @@ public class Measure3D {
 		}
 		return indiceMaxArea;
 	}
+	
 
 	/**
 	 * method to compute the parameter
@@ -227,16 +231,20 @@ public class Measure3D {
 				(ParticleAnalyzer.SHOW_NONE, Measurements.AREA+Measurements.CIRCULARITY, resultTable, 10, Double.MAX_VALUE, 0,1);
 		particleAnalyser.analyze(imagePlusTemp);
 		return resultTable;
-
 	}
+	
+	
 	/**
 	 * Aspect ratio The aspect ratio of the particle’s fitted ellipse, i.e., [M ajor Axis]/Minor Axis] . If Fit
 	 * Ellipse is selected the Major and Minor axis are displayed. Uses the heading AR.
 	 *
 	 * @return
 	 */
-	public double getAspectRatio () {	return _resultsTable.getValue("AR", 0);	}
+	public double getAspectRatio () {
+		return _resultsTable.getValue("AR", 0);
+	}
 
+	
 	/**
 	 * Circularity Particles with size circularity values outside the range specified in this field are also
 	 * ignored. Circularity = (4π × [Area ] / [P erimeter]2 ) , see Set Measurements. . . ) ranges from 0 (infinitely
@@ -244,8 +252,9 @@ public class Measure3D {
 	 *
 	 * @return
 	 */
-
-	public double getCirculairty() {   return _resultsTable.getValue("Circ.", 0); }
+	public double getCirculairty() {
+		return _resultsTable.getValue("Circ.", 0);
+	}
 
 	
 	/**
@@ -979,9 +988,7 @@ public class Measure3D {
 		          + computeEigenValue3D(255)[1] + ","
 		          + computeEigenValue3D(255)[2] + ","
 				  + getAspectRatio()  + ","
-		 		  + getCirculairty()
-
-					;
+		 		  + getCirculairty();
 		return results;
 	}
 	

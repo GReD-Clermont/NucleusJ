@@ -11,7 +11,6 @@ import ij.process.ImageProcessor;
 import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.utils.Chromocenter;
 import gred.nucleus.utils.Parameters2D;
-import gred.nucleus.utilsNj2.Measure3D;
 import gred.nucleus.core.RadialDistance;
 import java.io.BufferedWriter;
 import java.io.File;

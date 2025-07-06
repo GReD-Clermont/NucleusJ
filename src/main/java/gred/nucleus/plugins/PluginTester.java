@@ -17,10 +17,7 @@ package gred.nucleus.plugins;
 
 
 
-import gred.nucleus.nucleuscaracterisations.NucleusAnalysis;
 import ij.IJ;
-
-import javax.swing.*;
 
 
 public class PluginTester {

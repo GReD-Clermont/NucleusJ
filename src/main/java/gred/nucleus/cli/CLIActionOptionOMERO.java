@@ -56,12 +56,14 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 												.desc("Path to OMERO config file")
 												.numberOfArgs(1)
 												.build();
+	
 	private final Option obj = Option.builder("obj")
 			.longOpt("object")
 			.type(String.class)
 			.desc("Result file of interest ( Nucleus, chromocenters,both")
 			.numberOfArgs(1)
 			.build();
+	
 	private final Option rhf = Option.builder("rhf")
 			.longOpt("rhf")
 			.type(String.class)

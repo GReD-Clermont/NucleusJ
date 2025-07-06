@@ -80,6 +80,8 @@ public class PluginParameters {
 		this.zCal = zCal;
 		
 	}
+	
+	
 	public PluginParameters(String inputFolder, String outputFolder, double xCal, double yCal, double zCal, boolean Gaussian) {
 		checkInputPaths(inputFolder, outputFolder);
 		Directory dirOutput = new Directory(outputFolder);
@@ -195,6 +197,7 @@ public class PluginParameters {
 		
 	}
 	
+	
 	public String getAnalysisParametersNodej(){
 		this.headerInfo = "#Header \n"
 		                  + "#Star time analyse: " + getLocalTime() + "\n"
@@ -204,6 +207,8 @@ public class PluginParameters {
 		return this.headerInfo;
 		
 	}
+	
+	
 	public String getInfoGaussianBlur() {
 		String parametersInfo;
 		if (this.gaussianIsOn) {
@@ -214,6 +219,7 @@ public class PluginParameters {
 		return parametersInfo;
 		
 	}
+	
 	
 	/**
 	 * Getter : image x y z calibration
