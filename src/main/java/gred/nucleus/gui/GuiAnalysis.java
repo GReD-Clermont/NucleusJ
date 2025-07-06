@@ -715,7 +715,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 			if (_gui.is2D()) {
 				_jtfGY.setEnabled(false);
 				_jtfGZ.setEnabled(false);
-			} else if (_gui.is2D() == false) {
+			} else if (!_gui.is2D()) {
 				_jtfGY.setEnabled(true);
 				_jtfGZ.setEnabled(true);
 			}
@@ -723,7 +723,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 			if (_gui.isFilter()) {
 				_jtfMax.setEnabled(true);
 				_jtfMin.setEnabled(true);
-			}else if (_gui.isFilter() == false) {
+			} else if (!_gui.isFilter()) {
 				_jtfMax.setEnabled(false);
 				_jtfMin.setEnabled(false);
 			}
@@ -753,7 +753,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		 * Test all the box, condition etc before to allow the program to run and dispose the java.trax.gui
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (useOMERO==false){
+			if (!useOMERO){
 				if (_jtfWorkDir.getText().isEmpty() || _jtfRawData.getText().isEmpty() || _jtfRawSeg.getText().isEmpty() ) {
 					JOptionPane.showMessageDialog(
 							null, "You did not choose an input/output directory",
@@ -770,11 +770,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 			}
 			try {
 				dialogListener.OnStart();
-			} catch (AccessException e) {
-				throw new RuntimeException(e);
-			} catch (ServiceException e) {
-				throw new RuntimeException(e);
-			} catch (ExecutionException e) {
+			} catch (AccessException | ServiceException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}
 			

@@ -67,12 +67,11 @@ public class NucleusChromocentersAnalysis {
 
 		String text = "";
 		String textCC = "";
-		if (exist == false) {
-			text = chromocenterParameters.getAnalysisParametersNodej();
+		if (!exist) {
+			text = chromocenterParameters.getAnalysisParametersNodeJ();
 			text += getResultsColumnNames();
-			textCC = chromocenterParameters.getAnalysisParametersNodej();
+			textCC = chromocenterParameters.getAnalysisParametersNodeJ();
 			textCC += getResultsColumnNamesCC();
-			
 		}
 		
 		text += measure3D.nucleusParameter3D()+"," +
@@ -82,11 +81,10 @@ public class NucleusChromocentersAnalysis {
 			double [] tVolumesObjects =  measure3D.computeVolumeofAllObjects(imagePlusChromocenter);
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
 			int nbCc = measure3D.getNumberOfObject(imagePlusChromocenter);
-			RadialDistance radialDistance = new RadialDistance ();
-			double [] tBorderToBorderDistance = radialDistance.computeBorderToBorderDistances(imagePlusSegmented,imagePlusChromocenter);
-			double [] tBarycenterToBorderDistance = radialDistance.computeBarycenterToBorderDistances (imagePlusSegmented,imagePlusChromocenter);
+			double [] tBorderToBorderDistance = RadialDistance.computeBorderToBorderDistances(imagePlusSegmented,imagePlusChromocenter);
+			double [] tBarycenterToBorderDistance = RadialDistance.computeBarycenterToBorderDistances (imagePlusSegmented,imagePlusChromocenter);
 			double [] tIntensity = measure3D.computeIntensityofAllObjects(imagePlusChromocenter);
-			double [] tBarycenterToBorderDistanceTableNucleus = radialDistance.computeBarycenterToBorderDistances (imagePlusSegmented,imagePlusSegmented);
+			double [] tBarycenterToBorderDistanceTableNucleus = RadialDistance.computeBarycenterToBorderDistances (imagePlusSegmented,imagePlusSegmented);
 			text += nbCc+","
 			        +volumeCcMean+","
 			        +volumeCcMean*nbCc+","
@@ -159,9 +157,9 @@ public class NucleusChromocentersAnalysis {
 
 		// Add header if file does not exist
 		if (!exist) {
-			text =  chromocenterParameters.getAnalysisParametersNodej();  // Add image as the first column
+			text =  chromocenterParameters.getAnalysisParametersNodeJ();  // Add image as the first column
 			text += getResultsColumnNames();  // Existing column names
-			textCC =  chromocenterParameters.getAnalysisParametersNodej();
+			textCC =  chromocenterParameters.getAnalysisParametersNodeJ();
 			textCC += getResultsColumnNamesCC();
 
 			textParade = "image,Dataset," +getResultsColumnNames();  // Add image to Parade version too

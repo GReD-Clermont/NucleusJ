@@ -41,9 +41,9 @@ public class AutoCropCalling {
 	private static final String HEADERS = "FileName\tNumberOfCrop\tOTSUThreshold\tDefaultOTSUThreshold\n";
 	/** image prefix name */
 	private String             prefix                = "";
-	/** Get general information of cropping analyse */
+	/** Get general information of cropping analysis */
 	private String             outputCropGeneralInfo = "#HEADER\n";
-	/** Parameters crop analyse */
+	/** Parameters for crop analysis */
 	private AutocropParameters autocropParameters;
 
 	/** Number of threads to used process images */

@@ -41,7 +41,7 @@ public class AnnotateAutoCrop {
 	private final List<String>       boxCoordinates;
 	/** the path of the directory where image with boxes is saved */
 	private final String             outputDirPath;
-	/** Parameters crop analyse */
+	/** Parameters for crop analysis */
 	private final AutocropParameters autocropParameters;
 	/** ImagePlus of the Z projection */
 	private ImagePlus zProjection;

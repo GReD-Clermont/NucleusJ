@@ -69,7 +69,7 @@ public class AutoCrop {
 	private final List<String>       outputFile     = new ArrayList<>();
 	/** List of boxes coordinates */
 	private final List<String>       boxCoordinates = new ArrayList<>();
-	/** Parameters crop analyse */
+	/** Parameters for crop analysis */
 	private final AutocropParameters autocropParameters;
 	/** File to process (Image input) */
 	File currentFile;
@@ -83,7 +83,7 @@ public class AutoCrop {
 	private String           imageFilePath;
 	/** Number of channels in current image */
 	private int              channelNumbers   = 1;
-	/** Get current info image analyse */
+	/** Get current info image analysis */
 	private String           infoImageAnalysis;
 	/** OTSU threshold  used to compute segmented image */
 	private int              otsuThreshold;
@@ -96,7 +96,7 @@ public class AutoCrop {
 	
 	
 	/**
-	 * Autocrop constructor : initialisation of analyse parameter
+	 * Autocrop constructor : initialisation of analysis parameter
 	 *
 	 * @param imageFile                 Current image analyse
 	 * @param outputFilesPrefix         Prefix use for output file name
@@ -702,7 +702,7 @@ public class AutoCrop {
 	}
 	
 	
-	/** @return Header current image info analyse */
+	/** @return Header current image info analysis */
 	public String getSpecificImageInfo() {
 		return "#Image: " +
 		       this.imageFilePath +
@@ -740,7 +740,7 @@ public class AutoCrop {
 	}
 	
 	
-	/** Write analyse info in output text file */
+	/** Write analysis info in output text file */
 	public void writeAnalyseInfoOMERO(Long id, Client client) {
 		try {
 			String path = new File(".").getCanonicalPath() + File.separator + this.outputFilesPrefix + ".txt";

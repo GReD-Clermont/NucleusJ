@@ -55,7 +55,7 @@ public class NucleusSegmentation {
 	/** Currently used algorithm to calculate nuclei convex hull*/
 	public static final String CONVEX_HULL_ALGORITHM = "GRAHAM";
 	
-	/** Segmentation parameters for the analyse */
+	/** Segmentation parameters for the analysis */
 	private final SegmentationParameters segmentationParameters;
 	/** ImagePlus input to process */
 	private final ImagePlus              imgRawTransformed;
@@ -81,7 +81,7 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Constructor for the segmentation analyse for a single image.
+	 * Constructor for the segmentation analysis for a single image.
 	 *
 	 * @param imgRaw                 raw image to analyse
 	 * @param vMin                   minimum volume of detected object
@@ -106,7 +106,7 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Constructor for the segmentation analyse for a folder containing images.
+	 * Constructor for the segmentation analysis for a folder containing images.
 	 *
 	 * @param imageFile              Current image analysed
 	 * @param outputFilesPrefix      prefix for the output file
@@ -682,7 +682,7 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Method to get X calibration if it's present in parameters of analyse or get the metadata of the image.
+	 * Method to get X calibration if it's present in parameters of analysis or get the metadata of the image.
 	 * <p> TODO verifier cette methode si elle est au bon endroit
 	 *
 	 * @return X calibration
@@ -699,7 +699,7 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Method to get Y calibration if it's present in parameters of analyse or get the metadata of the image.
+	 * Method to get Y calibration if it's present in parameters of analysis or get the metadata of the image.
 	 * <p> TODO verifier cette methode si elle est au bonne endroit
 	 *
 	 * @return Y calibration
@@ -716,7 +716,7 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Method to get Y calibration if it's present in parameters of analyse or get the metadata of the image.
+	 * Method to get Y calibration if it's present in parameters of analysis or get the metadata of the image.
 	 * <p> TODO verifier cette methode si elle est à sa place
 	 *
 	 * @return Z calibration
@@ -733,7 +733,7 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Method to compute the voxel volume : if it's present in parameters of analyse or get the metadata of the image.
+	 * Method to compute the voxel volume : if it's present in parameters of analysisor get the metadata of the image.
 	 * TODO verifier cette methode si elle est à sa place
 	 *
 	 * @return Z calibration

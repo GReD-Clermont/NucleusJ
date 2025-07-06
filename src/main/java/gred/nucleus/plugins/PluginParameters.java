@@ -22,7 +22,7 @@ public class PluginParameters {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	/** Activation of Gaussian Filter */
-	public boolean gaussianIsOn = false;
+	protected boolean gaussianIsOn = false;
 	/** Activation of manual calibration parameter */
 	public boolean manualParameter = false;
 	/** X calibration plugin parameter */
@@ -82,17 +82,16 @@ public class PluginParameters {
 	}
 	
 	
-	public PluginParameters(String inputFolder, String outputFolder, double xCal, double yCal, double zCal, boolean Gaussian) {
+	public PluginParameters(String inputFolder, String outputFolder, double xCal, double yCal, double zCal, boolean gaussian) {
 		checkInputPaths(inputFolder, outputFolder);
 		Directory dirOutput = new Directory(outputFolder);
 		dirOutput.checkAndCreateDir();
 		this.outputFolder = dirOutput.getDirPath();
 		this.manualParameter = true;
-		this.gaussianIsOn = Gaussian;
+		this.gaussianIsOn = gaussian;
 		this.xCal = xCal;
 		this.yCal = yCal;
 		this.zCal = zCal;
-		
 	}
 	
 	
@@ -109,7 +108,6 @@ public class PluginParameters {
 		dirOutput.checkAndCreateDir();
 		this.outputFolder = dirOutput.getDirPath();
 		addGeneralProperties(pathToConfigFile);
-		
 	}
 	
 	
@@ -152,7 +150,6 @@ public class PluginParameters {
 		} else {
 			LOGGER.error("{}: can't find the input folder/file !", inputFolder);
 			IJ.error(inputFolder + " : can't find the input folder/file !");
-//            System.exit(-1);
 		}
 		if (outputFolder == null) {
 			IJ.error("Output directory is missing");
@@ -189,7 +186,7 @@ public class PluginParameters {
 	 */
 	public String getAnalysisParameters() {
 		this.headerInfo = "#Header \n"
-		                  + "#Star time analyse: " + getLocalTime() + "\n"
+		                  + "#Start time analysis: " + getLocalTime() + "\n"
 		                  + "#Input folder: " + this.inputFolder + "\n"
 		                  + "#Output folder: " + this.outputFolder + "\n"
 		                  + "#Calibration:" + getInfoCalibration() + "\n";
@@ -198,9 +195,9 @@ public class PluginParameters {
 	}
 	
 	
-	public String getAnalysisParametersNodej(){
+	public String getAnalysisParametersNodeJ(){
 		this.headerInfo = "#Header \n"
-		                  + "#Star time analyse: " + getLocalTime() + "\n"
+		                  + "#Start time analysis: " + getLocalTime() + "\n"
 		                  + "#Input folder: " + this.inputFolder + "\n"
 		                  + "#Output folder: " + this.outputFolder + "\n"
 		                  + "#Gaussian Blur:" + getInfoGaussianBlur() + "\n";
@@ -239,7 +236,7 @@ public class PluginParameters {
 	
 	
 	/**
-	 * get local time start analyse information yyyy-MM-dd:HH-mm-ss format
+	 * get local time start analysisinformation yyyy-MM-dd:HH-mm-ss format
 	 *
 	 * @return time in yyyy-MM-dd:HH-mm-ss format
 	 */

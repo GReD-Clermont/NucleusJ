@@ -326,7 +326,7 @@ public class AutocropParameters extends PluginParameters {
 	
 	
 	/**
-	 * Method to get parameters of the analyse
+	 * Method to get parameters of the analysis
 	 *
 	 * @return : list of the parameters used for the analyse
 	 */
@@ -341,9 +341,9 @@ public class AutocropParameters extends PluginParameters {
 		                   + "#channelToComputeThreshold: " + channelToComputeThreshold + "\n"
 		                   + "#maxVolumeNucleus:" + maxVolumeNucleus + "\n"
 		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n"
-							+ "#boxesRegrouping: " + boxesRegrouping + "\n"
-							+ "#boxesPercentSurfaceToFilter: " + boxesPercentSurfaceToFilter + "\n";
-
+		                   + "#boxesRegrouping: " + boxesRegrouping + "\n"
+		                   + "#boxesPercentSurfaceToFilter: " + boxesPercentSurfaceToFilter + "\n";
+		
 		return this.headerInfo;
 	}
 	

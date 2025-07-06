@@ -102,7 +102,7 @@ public class OutputFileVerification {
 	
 	
 	/**
-	 * List files output folder produce by the analyse and compute md5sum stored in hashMap (read recursively folders)
+	 * List files output folder produce by the analysis and compute md5sum stored in hashMap (read recursively folders)
 	 *
 	 * @param path Path of folder which contains files expected
 	 */
