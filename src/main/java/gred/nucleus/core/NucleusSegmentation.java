@@ -3,6 +3,7 @@ package gred.nucleus.core;
 import fr.igred.omero.Client;
 import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.roi.GenericShapeWrapper;
@@ -849,7 +850,7 @@ public class NucleusSegmentation {
 	 * <p> TODO verifier cette methode si elle est à ca place
 	 */
 	public void saveOTSUSegmentedOMERO(Client client, Long output)
-	throws Exception {
+	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
 		LOGGER.info("Computing and saving OTSU segmentation.");
 		if (!badCrop && bestThreshold != -1) {
 			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + "OTSU"
@@ -891,7 +892,7 @@ public class NucleusSegmentation {
 	 * <p> TODO verifier cette methode si elle est à sa place
 	 */
 	public void saveConvexHullSegOMERO(Client client, Long output)
-	throws Exception {
+	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
 		LOGGER.info("Computing and saving Convex Hull segmentation.");
 		if (!badCrop && bestThreshold != -1 && this.segmentationParameters.getConvexHullDetection()) {
 			ConvexHullSegmentation nuc = new ConvexHullSegmentation();

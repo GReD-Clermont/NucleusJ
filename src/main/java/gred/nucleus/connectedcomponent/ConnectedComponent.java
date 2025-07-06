@@ -125,7 +125,8 @@ public abstract class ConnectedComponent {
 	                                                               int foregroundColor,
 	                                                               boolean removeBorderComponent,
 	                                                               double thresholdVoxelVolume,
-	                                                               boolean setRandomColors) throws Exception {
+	                                                               boolean setRandomColors)
+	throws Exception {
 		ConnectedComponent cc;
 		if (inputImage.getNSlices() <= 1) {
 			cc = new ConnectedComponent2D(inputImage, foregroundColor);

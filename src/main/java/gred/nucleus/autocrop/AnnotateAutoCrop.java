@@ -1,6 +1,9 @@
 package gred.nucleus.autocrop;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.files.Directory;
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 
@@ -178,7 +182,8 @@ public class AnnotateAutoCrop {
 		fileSaver.saveAsTiff(pathFile);
 	}
 
-	public void saveProjectionOMERO(Client client, Long output) throws Exception {
+	public void saveProjectionOMERO(Client client, Long output)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
 		long datasetID;
 		ProjectWrapper project = client.getProject(output);
 		List<DatasetWrapper> datasets = project.getDatasets("Z-Projection");

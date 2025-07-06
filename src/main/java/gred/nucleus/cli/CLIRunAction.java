@@ -36,7 +36,7 @@ public class CLIRunAction {
 	}
 	
 	
-	public void run() throws Exception {
+	public void run() throws FormatException, IOException {
 		switch (this.cmd.getOptionValue("action")) {
 			case "autocrop":
 				runAutocrop();
@@ -66,7 +66,7 @@ public class CLIRunAction {
 		}
 	}
 	
-	private void runSegCC()throws Exception {
+	private void runSegCC() {
 		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(
 				this.cmd.getOptionValue("input"),
 				this.cmd.getOptionValue("input2"),
@@ -95,15 +95,15 @@ public class CLIRunAction {
 		
 		ChromocenterCalling ccCalling= new ChromocenterCalling(chromocenterParameters);
 		try {
-			
 			System.out.println("-input "+chromocenterParameters.inputFolder+" -input2 "+chromocenterParameters._segInputFolder+" - "+chromocenterParameters.outputFolder);
 			ccCalling.runSeveralImages2();
-		} catch (Exception e) { e.printStackTrace(); }
-		System.out.println("End !!! Results available:"+ chromocenterParameters.outputFolder);
-		
+		} catch (IOException | FormatException e) {
+			LOGGER.error("An error occurred during chromocenter segmentation.", e);
+		}
+		LOGGER.info("End !!! Results available: {}", chromocenterParameters.outputFolder);
 		
 	}
-	private void runGenerateOV() throws Exception {
+	private void runGenerateOV() throws IOException {
 		GenerateOverlay ov = new GenerateOverlay(this.cmd.getOptionValue("input"),
 												 this.cmd.getOptionValue("input2"));
 		ov.run();
@@ -121,7 +121,8 @@ public class CLIRunAction {
 
 	
 	
-	private void runProjectionFromCoordinates() throws Exception {
+	private void runProjectionFromCoordinates()
+	throws IOException, FormatException {
 		if (this.cmd.hasOption("coordinateFiltered")) {
 			GenerateProjectionFromCoordinates projection =
 					new GenerateProjectionFromCoordinates(this.cmd.getOptionValue("input"),
@@ -159,7 +160,7 @@ public class CLIRunAction {
 	}
 	
 	
-	private void runSegmentation() throws Exception {
+	private void runSegmentation() throws FormatException {
 		SegmentationParameters segmentationParameters =
 				new SegmentationParameters(this.cmd.getOptionValue("input"), this.cmd.getOptionValue("output"));
 		if (this.cmd.hasOption("config")) {
@@ -172,7 +173,7 @@ public class CLIRunAction {
 			try {
 				String log = otsuModified.runOneImage(this.cmd.getOptionValue("input"));
 				otsuModified.saveCropGeneralInfo();
-				if (!(log.equals(""))) {
+				if (!(log.isEmpty())) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}
 			} catch (IOException e) {
@@ -185,7 +186,7 @@ public class CLIRunAction {
 					otsuModified.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
 				}
 				String log = otsuModified.runSeveralImages2();
-				if (!(log.equals(""))) {
+				if (!(log.isEmpty())) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}
 			} catch (IOException e) {
@@ -203,7 +204,8 @@ public class CLIRunAction {
 	}
 	
 	
-	private void runComputeNucleiParametersDL() throws Exception {
+	private void runComputeNucleiParametersDL()
+	throws IOException, FormatException {
 		ComputeNucleiParametersML computeParameters = new ComputeNucleiParametersML(this.cmd.getOptionValue("input"),
 		                                                                            this.cmd.getOptionValue("input2"));
 		computeParameters.run();

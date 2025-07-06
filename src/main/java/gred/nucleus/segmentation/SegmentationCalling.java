@@ -2,6 +2,7 @@ package gred.nucleus.segmentation;
 
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
@@ -388,7 +389,8 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runOneImageOMERO(ImageWrapper image, Long output, Client client) throws Exception {
+	public String runOneImageOMERO(ImageWrapper image, Long output, Client client)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
 		String log = "";
 
 		ProjectWrapper project = client.getProject(output);
@@ -429,7 +431,8 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERO(List<ImageWrapper> images, Long output, final Client client, Long inputID) throws Exception {
+	public String runSeveralImagesOMERO(List<ImageWrapper> images, Long output, final Client client, Long inputID)
+	throws AccessException, ServiceException, ExecutionException, InterruptedException {
 		ExecutorService downloadExecutor = Executors.newFixedThreadPool(downloaderThreads);
 		final ExecutorService processExecutor = Executors.newFixedThreadPool(executorThreads);
 		final Map<Long, String> otsuResultLines = new ConcurrentHashMap<>();
@@ -508,14 +511,15 @@ public class SegmentationCalling {
 					processExecutor.submit(new ImageProcessorOMERO(img, imp)); // Pass img to executor
 					upload_latch.countDown();
 					LOGGER.info("Resource returned ({}).", img.getName());
-				} catch (AccessException | ExecutionException | ServiceException e) { e.printStackTrace(); }
+				} catch (AccessException | ExecutionException | ServiceException e) {
+					LOGGER.error("Error downloading image: {}", img.getName(), e);
+				}
 			}
 		}
 
 		for (ImageWrapper img: images) {
 			upload_latch.await(3, TimeUnit.SECONDS);
 			downloadExecutor.submit(new ImageDownloaderOMERO(img));
-			
 		}
 		
 		latch.await();
@@ -633,7 +637,8 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runOneImageOMERObyROIs(ImageWrapper image, Long output, Client client) throws Exception {
+	public String runOneImageOMERObyROIs(ImageWrapper image, Long output, Client client)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, InterruptedException {
 		
 		StringBuilder info = new StringBuilder();
 		
@@ -711,7 +716,8 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERObyROIs(List<ImageWrapper> images, Long output, Client client) throws Exception {
+	public String runSeveralImagesOMERObyROIs(List<ImageWrapper> images, Long output, Client client)
+	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
 		StringBuilder log = new StringBuilder();
 		
 		for (ImageWrapper image : images) {

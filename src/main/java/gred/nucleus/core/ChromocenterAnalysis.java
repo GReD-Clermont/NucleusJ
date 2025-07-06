@@ -133,7 +133,6 @@ public final class ChromocenterAnalysis {
 	}
 
 
-
 	public void runComputeParametersCC(String rawInput, String segInput, String ccInput,Client client) throws AccessException, ServiceException, ExecutionException {
 		// Check connection
 		/** Get  image or Dataset ID */
@@ -219,11 +218,10 @@ public final class ChromocenterAnalysis {
 			LOGGER.error("An error occurred.", e);
 		}
 	}
+	
 
-
-
-
-	private String processAndAnalyze(Client client, Long sourceImageId, Long segImageId, Long ccImageId) throws Exception {
+	private String processAndAnalyze(Client client, Long sourceImageId, Long segImageId, Long ccImageId)
+	throws AccessException, ServiceException, IOException, ExecutionException {
 		String ccInputDir = fileDownloader(client, ccImageId, "SegmentedDataCc");
 		fileDownloader(client, sourceImageId, "RawDataNucleus");
 		fileDownloader(client, segImageId, "SegmentedDataNucleus");
@@ -232,6 +230,7 @@ public final class ChromocenterAnalysis {
 		return ccInputDir;
 	}
 
+	
 	private String fileDownloader(Client client, Long inputID, String subDirectoryName) throws AccessException, ServiceException, ExecutionException, IOException {
 		ImageWrapper image = client.getImage(inputID);
 		// Get the name of the Image
@@ -278,6 +277,7 @@ public final class ChromocenterAnalysis {
 		}
 		return mainDirectory.getAbsolutePath();
 	}
+	
 
 	public static void deleteFolder(String folderPathString) throws IOException {
 		Path folderPath = Paths.get(folderPathString);  // Convert String to Path
@@ -295,6 +295,7 @@ public final class ChromocenterAnalysis {
 		}
 	}
 
+	
 	private void runCCAnalysis(String rawDataDir, String workDirectory){
 
 
@@ -317,9 +318,7 @@ public final class ChromocenterAnalysis {
 			}
 
 			List<String> listImageChromocenter = fileList.fileSearchList(".+SegmentedDataCc.+", tFileRawImage);
-
-
-
+			
 			String nameFileChromocenterAndNucleus = workDirectory + File.separator + "NucAndCcParameters.tab";
 			String nameFileChromocenter           = workDirectory + File.separator + "CcParameters.tab";
 
@@ -401,7 +400,6 @@ public final class ChromocenterAnalysis {
 			IJ.showMessage(
 					"There are no the three subdirectories  (See the directory name) or subDirectories are empty");
 		}
-
 	}
-
+	
 }

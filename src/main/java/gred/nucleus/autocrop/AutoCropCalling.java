@@ -2,6 +2,7 @@ package gred.nucleus.autocrop;
 
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
@@ -37,6 +38,8 @@ public class AutoCropCalling {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
+	/** Number of threads used to download images */
+	private static final int DOWNLOADER_THREADS = 1;
 	/** Column names */
 	private static final String HEADERS = "FileName\tNumberOfCrop\tOTSUThreshold\tDefaultOTSUThreshold\n";
 	/** image prefix name */
@@ -48,8 +51,6 @@ public class AutoCropCalling {
 
 	/** Number of threads to used process images */
 	private int executorThreads = 1;
-	/** Number of threads used to download images */
-	private final int DOWNLOADER_THREADS = 1;
 	/** Type of thresholding method used process images */
 	private String typeThresholding = "Otsu" ;
 
@@ -63,17 +64,22 @@ public class AutoCropCalling {
 		this.outputCropGeneralInfo = autocropParameters.getAnalysisParameters() + HEADERS;
 	}
 
+	
 	/**
 	 * Setter for the number of threads used to process images
 	 * @param threadNumber number of executors threads
 	 */
-	public void setExecutorThreads(int threadNumber) { this.executorThreads = threadNumber; }
+	public void setExecutorThreads(int threadNumber) {
+		this.executorThreads = threadNumber;
+	}
 
+	
 	/**
 	 * Setter for the thresholding method used to process images
 	 */
-	public void setTypeThresholding(String typeThresholding) { this.typeThresholding = typeThresholding; }
-
+	public void setTypeThresholding(String typeThresholding) {
+		this.typeThresholding = typeThresholding;
+	}
 
 
 	/**
@@ -137,8 +143,12 @@ public class AutoCropCalling {
 		for (File currentFile : files) {
 			processExecutor.submit(new ImageProcessor(currentFile));
 		}
-		try { latch.await(); }
-		catch (InterruptedException e) { e.printStackTrace(); }
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			LOGGER.error("Interrupted while waiting for image processing to finish.", e);
+			Thread.currentThread().interrupt();
+		}
 		processExecutor.shutdownNow();
 
 		StringBuilder generalInfoBuilder = new StringBuilder();
@@ -198,7 +208,8 @@ public class AutoCropCalling {
 	}
 	
 	
-	public void runImageOMERO(ImageWrapper image, Long[] outputsDatImages, Client client) throws Exception {
+	public void runImageOMERO(ImageWrapper image, Long[] outputsDatImages, Client client)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
 		String fileImg = image.getName();
 		LOGGER.info("Current file: {}", fileImg);
 		FilesNames outPutFilesNames = new FilesNames(fileImg);
@@ -235,7 +246,7 @@ public class AutoCropCalling {
 	
 	
 	public void runSeveralImageOMERO(final List<ImageWrapper> images, final Long[] outputsDatImages, final Client client)
-	throws Exception {
+	throws AccessException, ServiceException, ExecutionException, InterruptedException {
 		ExecutorService downloadExecutor = Executors.newFixedThreadPool(DOWNLOADER_THREADS);
 		final ExecutorService processExecutor = Executors.newFixedThreadPool(executorThreads);
 		final ConcurrentHashMap<String, String> outputCropGeneralLines = new ConcurrentHashMap<>();
@@ -283,15 +294,17 @@ public class AutoCropCalling {
 						autocropParameters);
 					annotate.run();
 					annotate.saveProjectionOMERO(client, outputProject);
-				} catch (Exception e) {
+				} catch (AccessException | ServiceException |OMEROServerError | IOException | ExecutionException e) {
 					e.printStackTrace();
 				}
-
+				
 				outputCropGeneralLines.put(image.getName(), autoCrop.getImageCropInfo());
 
 				latch.countDown();
 			}
 		}
+		
+		
 		class ImageDownloader implements Runnable {
 
 			private final ImageWrapper image;
@@ -305,8 +318,12 @@ public class AutoCropCalling {
 				String fileImg = image.getName();
 				LOGGER.info("Current file: {}", fileImg);
 				AutoCrop autoCrop = null;
-				try { autoCrop = new AutoCrop(image, autocropParameters, client); }
-				catch (ServiceException | AccessException | ExecutionException e) { e.printStackTrace(); }
+				try {
+					autoCrop = new AutoCrop(image, autocropParameters, client);
+				}
+				catch (ServiceException | AccessException | ExecutionException e) {
+					e.printStackTrace();
+				}
 				processExecutor.submit(new ImageProcessor(autoCrop, image));
 			}
 		}
@@ -328,8 +345,8 @@ public class AutoCropCalling {
 	}
 	
 	
-	public void saveGeneralInfoOmero(Client client, Long[] outputsDatImages) throws InterruptedException {
-		
+	public void saveGeneralInfoOmero(Client client, Long[] outputsDatImages)
+	throws InterruptedException {
 		String         resultPath       = this.autocropParameters.getOutputFolder() + "result_Autocrop_Analyse.csv";
 		File           resultFile       = new File(resultPath);
 		OutputTextFile resultFileOutput = new OutputTextFile(resultPath);

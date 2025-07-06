@@ -107,16 +107,15 @@ public class NucleusChromocentersAnalysis {
 		
 		text += voxelVolume+"\n";
 		
-		BufferedWriter bufferedWriterOutput = new BufferedWriter(new FileWriter(fileResults, true));
+		try (BufferedWriter output = new BufferedWriter(new FileWriter(fileResults, true))) {
+			output.write(text);
+			output.flush();
+		}
 		
-		bufferedWriterOutput.write(text);
-		bufferedWriterOutput.flush();
-		bufferedWriterOutput.close();
-		
-		BufferedWriter bufferedWriterOutputCC = new BufferedWriter(new FileWriter(fileResultsCC, true));
-		bufferedWriterOutputCC.write(textCC);
-		bufferedWriterOutputCC.flush();
-		bufferedWriterOutputCC.close();
+		try (BufferedWriter outputCC = new BufferedWriter(new FileWriter(fileResultsCC, true))) {
+			outputCC.write(textCC);
+			outputCC.flush();
+		}
 		return new File[] {fileResults, fileResultsCC};
 		
 	}
@@ -128,8 +127,6 @@ public class NucleusChromocentersAnalysis {
 
 		this.client = client;
 		long imageId = imageInput.getId();  // Get the image ID
-		String imageName = imageInput.getName();
-
 
 		// Image to ImagePlus conversion
 		ImagePlus[] RawImage = new ImagePlus[]{imageInput.toImagePlus(client)};

@@ -2,6 +2,7 @@ package gred.nucleus.autocrop;
 
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
@@ -348,9 +349,9 @@ public class AutoCrop {
 		LOGGER.info("Adding CROP parameter.");
 		for (Map.Entry<Double, Box> entry : new TreeMap<>(this.boxes).entrySet()) {
 			Box box  = entry.getValue();
-			int xMin = (int) box.getXMin() - this.autocropParameters.getXCropBoxSize();
-			int yMin = (int) box.getYMin() - this.autocropParameters.getYCropBoxSize();
-			int zMin = (int) box.getZMin() - this.autocropParameters.getZCropBoxSize();
+			int xMin = box.getXMin() - this.autocropParameters.getXCropBoxSize();
+			int yMin = box.getYMin() - this.autocropParameters.getYCropBoxSize();
+			int zMin = box.getZMin() - this.autocropParameters.getZCropBoxSize();
 			
 			xMin = Math.max(1, xMin);
 			yMin = Math.max(1, yMin);
@@ -452,7 +453,7 @@ public class AutoCrop {
 	
 	
 	public void cropKernelsOMERO(ImageWrapper image, Long[] outputsDat, Client client)
-	throws Exception {
+	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		LOGGER.info("Cropping kernels (OMERO).");
 		StringBuilder info = new StringBuilder();
 		info.append(getSpecificImageInfo()).append(HEADERS);
@@ -625,7 +626,7 @@ public class AutoCrop {
 	 * @param imagePlusInput ImagePlus raw image to binarize
 	 * @param threshold      integer threshold value
 	 *
-	 * @return
+	 * @return The segmented binary image.
 	 */
 	private ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
 		ImageStack imageStackInput     = imagePlusInput.getStack();
@@ -752,8 +753,11 @@ public class AutoCrop {
 			resultFileOutput.saveTextFile(this.infoImageAnalysis, false);
 			dataset.addFile(client, file);
 			Files.deleteIfExists(file.toPath());
-		} catch (Exception e) {
+		} catch (IOException |AccessException | ServiceException | ExecutionException e) {
 			LOGGER.error("Error writing analysis information to OMERO.", e);
+		} catch (InterruptedException e) {
+			LOGGER.error("Interruption while writing analysis information to OMERO.", e);
+			Thread.currentThread().interrupt();
 		}
 	}
 	

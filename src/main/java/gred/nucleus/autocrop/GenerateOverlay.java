@@ -1,6 +1,9 @@
 package gred.nucleus.autocrop;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
@@ -30,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 
 public class GenerateOverlay {
@@ -128,7 +132,8 @@ public class GenerateOverlay {
 		}
 	}
 
-	public void runFromOMERO(String projectionDatasetID, String dicDatasetID, String outputProjectID, Client client) throws Exception {
+	public void runFromOMERO(String projectionDatasetID, String dicDatasetID, String outputProjectID, Client client)
+	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		DatasetWrapper projectionDataset = client.getDataset(Long.parseLong(projectionDatasetID));
 		DatasetWrapper dicDataset = client.getDataset(Long.parseLong(dicDatasetID));
 		ProjectWrapper outputProject = client.getProject(Long.parseLong(outputProjectID));

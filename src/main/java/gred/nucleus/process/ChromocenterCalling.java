@@ -1,6 +1,9 @@
 package gred.nucleus.process;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
@@ -9,6 +12,7 @@ import gred.nucleus.files.FilesNames;
 import ij.IJ;
 import ij.ImagePlus;
 import loci.common.DebugTools;
+import loci.formats.FormatException;
 import loci.plugins.BF;
 import gred.nucleus.gui.Progress;
 import gred.nucleus.plugins.ChromocenterParameters;
@@ -17,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 
 public class ChromocenterCalling {
 	ChromocenterParameters chromocenterParameters ;
@@ -43,16 +49,20 @@ public class ChromocenterCalling {
 		
 	}
 	
+	
 	public  ChromocenterCalling(ChromocenterParameters chromocenterParameters, boolean gui ){
 		this.chromocenterParameters=chromocenterParameters;
 		_isGui = gui;
 	}
 	
+	
 	/**
+	 * Run the Chromocenter segmentation on several images
 	 *
-	 * @throws Exception
+	 * @throws IOException
+	 * @throws FormatException
 	 */
-	public void  runSeveralImages2() throws  Exception{
+	public void  runSeveralImages2() throws IOException, FormatException {
 		DebugTools.enableLogging("OFF");
 		Directory directoryInput = new Directory(this.chromocenterParameters.getInputFolder());
 		directoryInput.listImageFiles(this.chromocenterParameters.getInputFolder());
@@ -115,7 +125,7 @@ public class ChromocenterCalling {
 	
 	
 	public void SegmentationOMERO(String inputDirectoryRaw,String inputDirectorySeg,String outputDirectory,Client client)
-	throws Exception {
+	throws AccessException, ServiceException, IOException, ExecutionException, InterruptedException, OMEROServerError {
 		/** Get  image or Dataset ID */
 		String[] param = inputDirectoryRaw.split("/");
 		String[] param1 = inputDirectorySeg.split("/");
@@ -124,10 +134,8 @@ public class ChromocenterCalling {
 		Long maskID = Long.parseLong(param1[1]);
 
 		if (param.length >= 2 && param1.length >= 2) {
-			
-			if (param[0].equals("Image") && param1[0].equals("Image")){
+			if (param[0].equals("Image") && param1[0].equals("Image")) {
 				runOneImageOMERO(imageID,maskID,outputDirectory,client);
-				
 			} else if (param[0].equals("Dataset") && param1[0].equals("Dataset")) {
 				dataset_name = client.getDataset(imageID).getName();
 				List<ImageWrapper> images;
@@ -159,16 +167,18 @@ public class ChromocenterCalling {
 						outDataset.importImages(client, segImg);
 						outDatasetGradient.importImages(client, gradImg);
 						/** Delete the files locally*/
-						
-						
-					}catch (Exception ignore) { }
-					try{
+					} catch (Exception ignore) {
+						//IGNORE
+					}
+					try {
 						File segImgDelete = new File(segImg);
 						File gradImgDelete = new File(gradImg);
 						Files.deleteIfExists(segImgDelete.toPath());
 						Files.deleteIfExists(gradImgDelete.toPath());
 						
-					}catch (Exception ignore){}
+					} catch (Exception ignore) {
+						//IGNORE
+					}
 					
 				}
 				/** import Result Tabs to the Dataset */
@@ -189,7 +199,8 @@ public class ChromocenterCalling {
 		}
 	}
 	/** Function For OMERO  */
-	public void  runOneImageOMERO(Long inputDirectoryRaw,Long inputDirectorySeg,String outputDirectory,Client client) throws  Exception{
+	public void  runOneImageOMERO(Long inputDirectoryRaw,Long inputDirectorySeg,String outputDirectory,Client client)
+	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError, InterruptedException {
 		
 		String rhfChoice = "Volume";
 		Long imageID = inputDirectoryRaw;
@@ -211,8 +222,8 @@ public class ChromocenterCalling {
 		FilesNames outPutFilesNames = new FilesNames(imageName);
 		this._prefix = outPutFilesNames.prefixNameFile();
 		
-		String outputFileName= imageName;
-		String gradientFileName= diffDir+imageName;
+		String outputFileName = imageName;
+		String gradientFileName = diffDir+imageName;
 		
 		/** Test if Raw image is 2D*/
 		//is2D => change
@@ -265,7 +276,8 @@ public class ChromocenterCalling {
 		}
 	}
 	
-	public void runSeveralImagesOMERO(ImageWrapper image,ImageWrapper mask, String datasetName,Client client ) throws  Exception {
+	public void runSeveralImagesOMERO(ImageWrapper image,ImageWrapper mask, String datasetName,Client client )
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
 		
 		String rhfChoice = "Volume";
 		String imageName = image.getName();
@@ -313,12 +325,13 @@ public class ChromocenterCalling {
 	}
 	
 	
-	
 	/**
+	 * Run the Chromocenter segmentation on a single image
 	 *
-	 * @throws Exception
+	 * @throws IOException
+	 * @throws FormatException
 	 */
-	public void  just3D() throws  Exception{
+	public void  just3D() throws IOException, FormatException {
 		DebugTools.enableLogging("OFF");
 		Directory directoryInput = new Directory(this.chromocenterParameters.getInputFolder());
 		directoryInput.listImageFiles(this.chromocenterParameters.getInputFolder());

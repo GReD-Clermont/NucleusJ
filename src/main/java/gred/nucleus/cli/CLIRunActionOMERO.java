@@ -1,7 +1,9 @@
 package gred.nucleus.cli;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
@@ -16,6 +18,7 @@ import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.process.ChromocenterCalling;
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
+import loci.formats.FormatException;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -137,7 +140,9 @@ public class CLIRunActionOMERO {
 	}
 	
 	
-	public void run() throws Exception {
+	public void run()
+	throws AccessException, ServiceException, OMEROServerError, IOException,
+	       ExecutionException, InterruptedException, FormatException {
 		switch (this.cmd.getOptionValue("action")) {
 			case "autocrop":
 				runAutoCropOMERO();
@@ -171,7 +176,6 @@ public class CLIRunActionOMERO {
 		if (this.cmd.hasOption("rhf")) ccAnalysis.isRHFVolumeAndIntensity = cmd.getOptionValue("rhf");
 		if (this.cmd.hasOption("obj")) ccAnalysis.isNucAndCcAnalysis=  cmd.getOptionValue("obj");
 
-
 		if (this.cmd.hasOption("calibration")) ccAnalysis._calibration = true;
 		if (this.cmd.hasOption("cX")) ccAnalysis._Xcalibration=   Double.parseDouble(cmd.getOptionValue("cX"));
 		if (this.cmd.hasOption("cY")) ccAnalysis._Ycalibration=   Double.parseDouble(cmd.getOptionValue("cY"));
@@ -181,17 +185,14 @@ public class CLIRunActionOMERO {
 		String inputDirectory = this.cmd.getOptionValue("input");
 		String segDirectory = this.cmd.getOptionValue("input2");
 		String ccDirectory = this.cmd.getOptionValue("input3");
-
-
-
+		
 		try {
-
-			System.out.println("-Input Folder : "+ inputDirectory + " -Segmentation Folder : "+segDirectory+" -Chromocenters folder : "+ ccDirectory);
-			ccAnalysis.runComputeParametersCC(inputDirectory,segDirectory,ccDirectory,this.client);
-		} catch (Exception e) { e.printStackTrace(); }
-		System.out.println("End !!! Results available:");
-
-
+			LOGGER.info("-Input Folder : {} -Segmentation Folder : {} -Chromocenters folder : {}", inputDirectory, segDirectory, ccDirectory);
+			ccAnalysis.runComputeParametersCC(inputDirectory, segDirectory, ccDirectory, this.client);
+		} catch (Exception e) {
+			LOGGER.error("An error occurred while computing chromocenter parameters.", e);
+		}
+		LOGGER.info("End !!! Results available:");
 	}
 
 	private void runSegCC() {
@@ -223,15 +224,14 @@ public class CLIRunActionOMERO {
 		String inputDirectory = this.cmd.getOptionValue("input");
 		String segDirectory = this.cmd.getOptionValue("input2");
 		String outputDirectory = this.cmd.getOptionValue("output");
-
-
-
+		
 		try {
-
-			System.out.println("-Input Folder : "+ inputDirectory + " -Segmentation Folder : "+segDirectory+" -Output : "+ outputDirectory);
+			LOGGER.info("-Input Folder : {} -Segmentation Folder : {} -Output : {}", inputDirectory, segDirectory, outputDirectory);
 			ccCalling.SegmentationOMERO(inputDirectory,segDirectory,outputDirectory,this.client);
-		} catch (Exception e) { e.printStackTrace(); }
-		System.out.println("End !!! Results available:"+ chromocenterParameters.outputFolder);
+		} catch (Exception e) {
+			LOGGER.error("An error occurred during chromocenter segmentation.", e);
+		}
+		LOGGER.info("End !!! Results available: {}", chromocenterParameters.outputFolder);
 
 
 	}
@@ -239,7 +239,8 @@ public class CLIRunActionOMERO {
 	public static void autoCropOMERO(String inputDirectory,
 	                                 String outputDirectory,
 	                                 Client client,
-	                                 AutoCropCalling autoCrop) throws Exception {
+	                                 AutoCropCalling autoCrop)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, InterruptedException {
 		String[] param = inputDirectory.split("/");
 		
 		if (param.length >= 2) {
@@ -301,7 +302,8 @@ public class CLIRunActionOMERO {
 	}
 
 
-	private void runAutoCropOMERO() throws Exception {
+	private void runAutoCropOMERO()
+	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
 		AutocropParameters autocropParameters = new AutocropParameters(".", ".");
 		if (this.cmd.hasOption("config")) {
 			autocropParameters.addGeneralProperties(this.cmd.getOptionValue("config"));
@@ -315,7 +317,7 @@ public class CLIRunActionOMERO {
 		// add setter here !!!!
 		if(this.cmd.hasOption("threads")) {
 			autoCrop.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
-			System.out.println("threads  ! "+ this.cmd.getOptionValue("threads"));
+			LOGGER.info("Threads set to: {}", this.cmd.getOptionValue("threads"));
 		}
 		try {
 			autoCropOMERO(this.cmd.getOptionValue("input"),
@@ -329,7 +331,8 @@ public class CLIRunActionOMERO {
 	}
 	
 	
-	public void runSegmentationOMERO() throws Exception {
+	public void runSegmentationOMERO()
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError {
 		SegmentationParameters segmentationParameters = new SegmentationParameters(".", ".");
 		if (this.cmd.hasOption("config")) {
 			segmentationParameters.addGeneralProperties(this.cmd.getOptionValue("config"));
@@ -349,7 +352,8 @@ public class CLIRunActionOMERO {
 	public void segmentationOMERO(String inputDirectory,
 	                              String outputDirectory,
 	                              Client client,
-	                              SegmentationCalling otsuModified) throws Exception {
+	                              SegmentationCalling otsuModified)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError {
 		String[] param = inputDirectory.split("/");
 		
 		if (param.length >= 2) {
@@ -365,11 +369,14 @@ public class CLIRunActionOMERO {
 						log = otsuModified.runOneImageOMERO(image, Long.parseLong(outputDirectory), client);
 					}
 					otsuModified.saveCropGeneralInfoOmero(client, Long.parseLong(outputDirectory));
-					if (!(log.equals(""))) {
+					if (!(log.isEmpty())) {
 						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 					}
-				} catch (IOException e) {
+				} catch (IOException | OMEROServerError e) {
 					LOGGER.error("An error occurred.", e);
+				} catch (InterruptedException e) {
+					LOGGER.error("An interruption occurred.", e);
+					Thread.currentThread().interrupt();
 				}
 			} else {
 				List<ImageWrapper> images;
@@ -394,7 +401,8 @@ public class CLIRunActionOMERO {
 						}
 						break;
 					case "tag":
-						images = client.getImagesTagged(id);
+						TagAnnotationWrapper tag = client.getTag(id);
+						images = client.getImages(tag);
 						break;
 					default:
 						throw new IllegalArgumentException();
@@ -407,11 +415,14 @@ public class CLIRunActionOMERO {
 					} else {
 						log = otsuModified.runSeveralImagesOMERO(images, Long.parseLong(outputDirectory), client,id);
 					}
-					if (!(log.equals(""))) {
+					if (!(log.isEmpty())) {
 						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 					}
 				} catch (IOException e) {
 					LOGGER.error("An error occurred.", e);
+				} catch (InterruptedException e) {
+					LOGGER.error("An interruption occurred.", e);
+					Thread.currentThread().interrupt();
 				}
 			}
 		} else {
@@ -420,7 +431,8 @@ public class CLIRunActionOMERO {
 	}
 
 
-	private void runGenerateOV() throws Exception {
+	private void runGenerateOV()
+	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException {
 		GenerateOverlay ov = new GenerateOverlay();
 		ov.runFromOMERO(this.cmd.getOptionValue("input"),
 						this.cmd.getOptionValue("input2"),
@@ -429,7 +441,8 @@ public class CLIRunActionOMERO {
 		);
 	}
 
-	private void runCropFromCoordinate() throws Exception {
+	private void runCropFromCoordinate()
+	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, FormatException {
 		CropFromCoordinates cropFromCoordinates = new CropFromCoordinates(
 				this.cmd.getOptionValue("input")
 		);

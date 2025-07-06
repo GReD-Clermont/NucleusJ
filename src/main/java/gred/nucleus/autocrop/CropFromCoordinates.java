@@ -1,6 +1,9 @@
 package gred.nucleus.autocrop;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
@@ -22,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 
@@ -89,7 +93,8 @@ public class CropFromCoordinates {
 		}
 	}
 
-	public void runFromOMERO(String rawDatasetIDAndChannel, String outputProjectID, Client client) throws Exception {
+	public void runFromOMERO(String rawDatasetIDAndChannel, String outputProjectID, Client client)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, FormatException {
 		String[] splitRawInfo = rawDatasetIDAndChannel.split(File.separator);
 		String channelNumber = splitRawInfo[splitRawInfo.length-1];
 		this.channelToCrop = Integer.parseInt(channelNumber);
