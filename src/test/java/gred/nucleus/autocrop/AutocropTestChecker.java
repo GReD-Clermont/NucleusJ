@@ -98,10 +98,11 @@ public class AutocropTestChecker {
 			ex.printStackTrace();
 		}
 		
-		List<String> coordinateList = fileList.subList(17, fileList.size());
+		fileList.removeIf(line -> line.startsWith("#"));
+		fileList.removeIf(line -> line.startsWith("FileName"));
 		
 		List<CropResult> coordinates = new ArrayList<>();
-		for (String line : coordinateList) {
+		for (String line : fileList) {
 			String[] resultLine = line.split("\t");
 			coordinates.add(new CropResult(Integer.parseInt(resultLine[2]),
 			                               Integer.parseInt(resultLine[1]),
