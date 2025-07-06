@@ -5,9 +5,9 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.process.LUT;
+import imagescience.ImageScience;
 import imagescience.image.Image;
 import imagescience.utility.I5DResource;
-import imagescience.utility.ImageScience;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,6 +2,7 @@ package gred.nucleus.gradient;
 
 import ij.ImagePlus;
 import ij.ImageStack;
+import imagescience.ImageScience;
 import imagescience.feature.Differentiator;
 import imagescience.image.Aspects;
 import imagescience.image.Axes;
@@ -10,7 +11,6 @@ import imagescience.image.Dimensions;
 import imagescience.image.FloatImage;
 import imagescience.image.Image;
 import imagescience.utility.FMath;
-import imagescience.utility.ImageScience;
 import imagescience.utility.Messenger;
 import imagescience.utility.Progressor;
 import imagescience.utility.Timer;
