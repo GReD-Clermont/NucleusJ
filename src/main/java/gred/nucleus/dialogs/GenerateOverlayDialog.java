@@ -268,9 +268,9 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jTextFieldUsername.setText(username);
 		jTextFieldGroup.setText("553");
 		jPasswordField.setText("");
-		jTextFieldSourceID.setText("21001"); //dic
-		zProjectionTextField.setText("21002");
-		jTextFieldOutputProject.setText("11251");
+		jTextFieldSourceID.setText(""); //dic
+		zProjectionTextField.setText("");
+		jTextFieldOutputProject.setText("");
 	}
 	
 	

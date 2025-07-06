@@ -23,7 +23,7 @@ public class ComputeParametersPlugin_ implements PlugIn,IDialogListener {
 		if (IJ.versionLessThan("1.32c")) {
 			return;
 		}
-		computeParametersDialog = new ComputeParametersDialog();
+		computeParametersDialog = new ComputeParametersDialog(this);
 	}
 	
 	@Override

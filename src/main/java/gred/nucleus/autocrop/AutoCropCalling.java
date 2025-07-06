@@ -47,10 +47,11 @@ public class AutoCropCalling {
 	private AutocropParameters autocropParameters;
 
 	/** Number of threads to used process images */
-	private int executorThreads = 4;
+	private int executorThreads = 1;
 	/** Number of threads used to download images */
 	private final int DOWNLOADER_THREADS = 1;
-
+	/** Type of thresholding method used process images */
+	private String typeThresholding = "Otsu" ;
 
 	/** Constructor Create the output directory if it doesn't exist. */
 	public AutoCropCalling() {
@@ -67,6 +68,12 @@ public class AutoCropCalling {
 	 * @param threadNumber number of executors threads
 	 */
 	public void setExecutorThreads(int threadNumber) { this.executorThreads = threadNumber; }
+
+	/**
+	 * Setter for the thresholding method used to process images
+	 */
+	public void setTypeThresholding(String typeThresholding) { this.typeThresholding = typeThresholding; }
+
 
 
 	/**
@@ -102,7 +109,7 @@ public class AutoCropCalling {
 				String prefix = outPutFilesNames.prefixNameFile();
 				try {
 					AutoCrop autoCrop = new AutoCrop(file, prefix, autocropParameters);
-					autoCrop.thresholdKernels();
+					autoCrop.thresholdKernels(typeThresholding);
 					autoCrop.computeConnectedComponent();
 					autoCrop.componentBorderFilter();
 					autoCrop.componentSizeFilter();
@@ -159,7 +166,7 @@ public class AutoCropCalling {
 		this.prefix = outPutFilesNames.prefixNameFile();
 		try {
 			AutoCrop autoCrop = new AutoCrop(currentFile, this.prefix, this.autocropParameters);
-			autoCrop.thresholdKernels();
+			autoCrop.thresholdKernels(typeThresholding);
 			autoCrop.computeConnectedComponent();
 			autoCrop.componentBorderFilter();
 			autoCrop.componentSizeFilter();
@@ -197,7 +204,7 @@ public class AutoCropCalling {
 		FilesNames outPutFilesNames = new FilesNames(fileImg);
 		String prefix = outPutFilesNames.prefixNameFile();
 		AutoCrop autoCrop = new AutoCrop(image, autocropParameters, client);
-		autoCrop.thresholdKernels();
+		autoCrop.thresholdKernels(typeThresholding);
 		autoCrop.computeConnectedComponent();
 		autoCrop.componentBorderFilter();
 		autoCrop.componentSizeFilter();
@@ -257,7 +264,7 @@ public class AutoCropCalling {
 
 			@Override
 			public void run() {
-				autoCrop.thresholdKernels();
+				autoCrop.thresholdKernels(typeThresholding);
 				autoCrop.computeConnectedComponent();
 				autoCrop.componentBorderFilter();
 				autoCrop.componentSizeFilter();

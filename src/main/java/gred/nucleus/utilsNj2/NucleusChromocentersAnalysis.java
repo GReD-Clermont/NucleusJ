@@ -1,5 +1,9 @@
 package gred.nucleus.utilsNj2;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
+import fr.igred.omero.repository.ImageWrapper;
 import gred.nucleus.utils.Histogram;
 import ij.ImagePlus;
 import ij.measure.Calibration;
@@ -7,13 +11,16 @@ import ij.process.ImageProcessor;
 import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.utils.Chromocenter;
 import gred.nucleus.utils.Parameters2D;
-import gred.nucleus.core.*;
+import gred.nucleus.utilsNj2.Measure3D;
+import gred.nucleus.core.RadialDistance;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
+import fr.igred.omero.Client;
 /**
  * Several method to realise and create the outfile for the nuclear Analysis
  * this class contains the chromocenter parameters
@@ -25,6 +32,7 @@ public class NucleusChromocentersAnalysis {
 	/**
 	 *
 	 */
+	Client client;
 	public NucleusChromocentersAnalysis(){
 	}
 	
@@ -57,20 +65,19 @@ public class NucleusChromocentersAnalysis {
 		File fileResultsCC = new File(chromocenterParameters.outputFolder+"CcParameters3D.tab");
 		boolean exist = fileResults.exists();
 		
-		
-		
+
 		String text = "";
 		String textCC = "";
 		if (exist == false) {
-			text = chromocenterParameters.getAnalysisParameters();
+			text = chromocenterParameters.getAnalysisParametersNodej();
 			text += getResultsColumnNames();
-			textCC = chromocenterParameters.getAnalysisParameters();
+			textCC = chromocenterParameters.getAnalysisParametersNodej();
 			textCC += getResultsColumnNamesCC();
 			
 		}
 		
-		text += measure3D.nucleusParameter3D()+"\t" +
-		        measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter)+"\t";
+		text += measure3D.nucleusParameter3D()+"," +
+		        measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter)+",";
 		
 		if (histogram.getNbLabels() > 0) {
 			double [] tVolumesObjects =  measure3D.computeVolumeofAllObjects(imagePlusChromocenter);
@@ -81,21 +88,21 @@ public class NucleusChromocentersAnalysis {
 			double [] tBarycenterToBorderDistance = radialDistance.computeBarycenterToBorderDistances (imagePlusSegmented,imagePlusChromocenter);
 			double [] tIntensity = measure3D.computeIntensityofAllObjects(imagePlusChromocenter);
 			double [] tBarycenterToBorderDistanceTableNucleus = radialDistance.computeBarycenterToBorderDistances (imagePlusSegmented,imagePlusSegmented);
-			text += nbCc+"\t"
-			        +volumeCcMean+"\t"
-			        +volumeCcMean*nbCc+"\t"
-			        +computeMeanOfTable(tIntensity)+"\t"
-			        +computeMeanOfTable(tBorderToBorderDistance)+"\t"
-			        +computeMeanOfTable(tBarycenterToBorderDistance)+"\t";
+			text += nbCc+","
+			        +volumeCcMean+","
+			        +volumeCcMean*nbCc+","
+			        +computeMeanOfTable(tIntensity)+","
+			        +computeMeanOfTable(tBorderToBorderDistance)+","
+			        +computeMeanOfTable(tBarycenterToBorderDistance)+",";
 			
 			
 			for (int i = 0; i < tBorderToBorderDistance.length;++i ) {
-				textCC += imagePlusInput.getTitle()+"_"+i+"\t"
-				          +tVolumesObjects[i]+"\t"
-				          +tIntensity[i]+"\t"
-				          +tBarycenterToBorderDistance[i]+"\t"
-				          +tBorderToBorderDistance[i]+"\t"
-				          +tBarycenterToBorderDistanceTableNucleus[0]+"\n";
+				textCC += imagePlusInput.getTitle()+"_"+i+","
+				          +tVolumesObjects[i]+","
+				          +tIntensity[i]+","
+				          +tBarycenterToBorderDistance[i]+","
+				          +tBorderToBorderDistance[i]+","
+				          +tBarycenterToBorderDistanceTableNucleus[0]+",";
 			}
 		}
 		else
@@ -116,10 +123,123 @@ public class NucleusChromocentersAnalysis {
 		return new File[] {fileResults, fileResultsCC};
 		
 	}
-	
-	
-	
-	
+
+	public File[] compute3DParametersOmero(String rhfChoice,
+										   ImageWrapper imageInput, ImageWrapper imageSegmented,
+										   ImagePlus imagePlusChromocenter,
+										   ChromocenterParameters chromocenterParameters, String datasetName,Client client) throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
+
+		this.client = client;
+		long imageId = imageInput.getId();  // Get the image ID
+		String imageName = imageInput.getName();
+
+
+		// Image to ImagePlus conversion
+		ImagePlus[] RawImage = new ImagePlus[]{imageInput.toImagePlus(client)};
+		ImagePlus[] SegImage = new ImagePlus[]{imageSegmented.toImagePlus(client)};
+		ImagePlus imagePlusInput = RawImage[0];
+		ImagePlus imagePlusSegmented = SegImage[0];
+
+		Histogram histogram = new Histogram();
+		histogram.run(imagePlusChromocenter);
+		Calibration calibration = imagePlusInput.getCalibration();
+		double voxelVolume = calibration.pixelDepth * calibration.pixelHeight * calibration.pixelWidth;
+
+		imagePlusSegmented.setCalibration(calibration);
+		Measure3D measure3D = new Measure3D(imagePlusSegmented, imagePlusInput, imagePlusInput.getCalibration().pixelWidth, imagePlusInput.getCalibration().pixelHeight, imagePlusInput.getCalibration().pixelDepth);
+		File fileResults = new File(chromocenterParameters.outputFolder + "NucAndCcParameters3D.csv");
+		File fileResultsParade = new File(chromocenterParameters.outputFolder + "NucAndCcParameters3D_Parade.csv");
+		File fileResultsCC = new File(chromocenterParameters.outputFolder + "CcParameters3D.csv");
+		File fileResultsCCParade = new File(chromocenterParameters.outputFolder + "CcParameters3D_Parade.csv");
+		boolean exist = fileResults.exists();
+
+		String text = "";
+		String textCC = "";
+		String textParade = "";
+		String textCCParade = "";
+
+		// Add header if file does not exist
+		if (!exist) {
+			text =  chromocenterParameters.getAnalysisParametersNodej();  // Add image as the first column
+			text += getResultsColumnNames();  // Existing column names
+			textCC =  chromocenterParameters.getAnalysisParametersNodej();
+			textCC += getResultsColumnNamesCC();
+
+			textParade = "image,Dataset," +getResultsColumnNames();  // Add image to Parade version too
+			textCCParade = "image,Dataset," + getResultsColumnNamesCC();
+		}
+
+		// Append the imageId at the beginning of the result string
+		text +=  measure3D.nucleusParameter3D() + "," +
+				measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) + ",";
+		textParade += imageId + "," + datasetName + ","+ measure3D.nucleusParameter3D() + "," +
+				measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) + ",";
+
+		if (histogram.getNbLabels() > 0) {
+			double[] tVolumesObjects = measure3D.computeVolumeofAllObjects(imagePlusChromocenter);
+			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
+			int nbCc = measure3D.getNumberOfObject(imagePlusChromocenter);
+			RadialDistance radialDistance = new RadialDistance();
+			double[] tBorderToBorderDistance = radialDistance.computeBorderToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
+			double[] tBarycenterToBorderDistance = radialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
+			double[] tIntensity = measure3D.computeIntensityofAllObjects(imagePlusChromocenter);
+			double[] tBarycenterToBorderDistanceTableNucleus = radialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusSegmented);
+
+			text += nbCc + "," + volumeCcMean + "," + volumeCcMean * nbCc + "," +
+					computeMeanOfTable(tIntensity) + "," +
+					computeMeanOfTable(tBorderToBorderDistance) + "," +
+					computeMeanOfTable(tBarycenterToBorderDistance) + ",";
+
+			textParade += nbCc + "," + volumeCcMean + "," + volumeCcMean * nbCc + "," +
+					computeMeanOfTable(tIntensity) + "," +
+					computeMeanOfTable(tBorderToBorderDistance) + "," +
+					computeMeanOfTable(tBarycenterToBorderDistance) + ",";
+
+			for (int i = 0; i < tBorderToBorderDistance.length; ++i) {
+				textCC += imagePlusInput.getTitle() + "_" + i + "," +
+						tVolumesObjects[i] + "," +
+						tIntensity[i] + "," +
+						tBarycenterToBorderDistance[i] + "," +
+						tBorderToBorderDistance[i] + "," +
+						tBarycenterToBorderDistanceTableNucleus[0] + "\n";
+
+				textCCParade += imageId + "," + datasetName + ","+  imagePlusInput.getTitle() + "_" + i + "," +
+						tVolumesObjects[i] + "," +
+						tIntensity[i] + "," +
+						tBarycenterToBorderDistance[i] + "," +
+						tBorderToBorderDistance[i] + "," +
+						tBarycenterToBorderDistanceTableNucleus[0] + "\n";
+			}
+		} else {
+			text += "0\t0\t0\tNaN\tNaN\t\n";  // Default values if no labels
+		}
+
+		text += voxelVolume + "\n";  // Append voxelVolume at the end of the row
+		textParade += voxelVolume + "\n";  // Same for Parade
+
+		BufferedWriter bufferedWriterOutput = new BufferedWriter(new FileWriter(fileResults, true));
+		bufferedWriterOutput.write(text);
+		bufferedWriterOutput.flush();
+		bufferedWriterOutput.close();
+
+		BufferedWriter bufferedWriterOutputParade = new BufferedWriter(new FileWriter(fileResultsParade, true));
+		bufferedWriterOutputParade.write(textParade);
+		bufferedWriterOutputParade.flush();
+		bufferedWriterOutputParade.close();
+
+		BufferedWriter bufferedWriterOutputCC = new BufferedWriter(new FileWriter(fileResultsCC, true));
+		bufferedWriterOutputCC.write(textCC);
+		bufferedWriterOutputCC.flush();
+		bufferedWriterOutputCC.close();
+
+		BufferedWriter bufferedWriterOutputCCParade = new BufferedWriter(new FileWriter(fileResultsCCParade, true));
+		bufferedWriterOutputCCParade.write(textCCParade);
+		bufferedWriterOutputCCParade.flush();
+		bufferedWriterOutputCCParade.close();
+
+		return new File[]{fileResults, fileResultsCC, fileResultsParade, fileResultsCCParade};
+	}
+
 	/**
 	 * Method wich compute the mean of the value in the table
 	 *
@@ -188,38 +308,38 @@ public class NucleusChromocentersAnalysis {
 		
 	}
 	public String getResultsColumnNames() {
-		return "NucleusFileName\t" +
-		       "Volume\t" +
-		       "Flatness\t" +
-		       "Elongation\t" +
-		       "Esr\t" +
-		       "SurfaceArea\t" +
-		       "Sphericity\t" +
-		       "MeanIntensityNucleus\t" +
-		       "MeanIntensityBackground\t" +
-		       "StandardDeviation\t" +
-		       "MinIntensity\t" +
-		       "MaxIntensity\t" +
-		       "MedianIntensityImage\t" +
-		       "MedianIntensityNucleus\t" +
-		       "MedianIntensityBackground\t" +
-		       "ImageSize\t" +
-		       "VolumeRHF\t" +
-		       "NbCc\t" +
-		       "VCcMean\t" +
-		       "VCcTotal\t" +
-		       "normIntensityMean\t" +
-		       "DistanceBorderToBorderMean\t" +
-		       "DistanceBarycenterToBorderMean\t" +
+		return "ImageName," +
+		       "Volume," +
+		       "Flatnes," +
+		       "Elongation," +
+		       "Esr," +
+		       //"SurfaceArea\t" +
+		       //"Sphericity\t" +
+		       "MeanIntensityNucleus," +
+		       "MeanIntensityBackground," +
+		       "StandardDeviation," +
+		       "MinIntensity," +
+		       "MaxIntensity," +
+		       "MedianIntensityImage," +
+		       "MedianIntensityNucleus," +
+		       "MedianIntensityBackground," +
+		       "ImageSize," +
+		       "VolumeRHF," +
+		       "NbCc," +
+		       "VCcMean," +
+		       "VCcTotal," +
+		       "normIntensityMean," +
+		       "DistanceBorderToBorderMean," +
+		       "DistanceBarycenterToBorderMean," +
 		       "VoxelVolume\n";
 	}
 	
 	public String getResultsColumnNamesCC() {
-		return "NucleusFileName\t" +
-		       "Volume\t" +
-		       "NormIntensity\t" +
-		       "BorderToBorderDistance\t" +
-		       "BarycenterToBorderDistance\t" +
+		return "ImageName," +
+		       "Volume," +
+		       "NormIntensity," +
+		       "BorderToBorderDistance," +
+		       "BarycenterToBorderDistance," +
 		       "BarycenterToBorderDistanceNucleus\n";
 	}
 }

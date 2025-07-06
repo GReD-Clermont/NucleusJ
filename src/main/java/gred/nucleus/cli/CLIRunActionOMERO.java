@@ -10,7 +10,10 @@ import gred.nucleus.autocrop.AutoCropCalling;
 import gred.nucleus.autocrop.AutocropParameters;
 import gred.nucleus.autocrop.CropFromCoordinates;
 import gred.nucleus.autocrop.GenerateOverlay;
+import gred.nucleus.core.ChromocenterAnalysis;
 import gred.nucleus.core.ComputeNucleiParameters;
+import gred.nucleus.plugins.ChromocenterParameters;
+import gred.nucleus.process.ChromocenterCalling;
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
 import org.apache.commons.cli.CommandLine;
@@ -151,12 +154,87 @@ public class CLIRunActionOMERO {
 			case "computeParameters":
 				runComputeNucleiParameters();
 				break;
+			case "segCC":
+				runSegCC();
+				break;
+			case "computeCcParameters":
+				runComputeCC();
+				break;
 			default:
 				throw new IllegalArgumentException("Invalid action");
 		}
 		this.client.disconnect();
 	}
-	
+
+	private void runComputeCC() {
+		ChromocenterAnalysis ccAnalysis = new ChromocenterAnalysis();
+		if (this.cmd.hasOption("rhf")) ccAnalysis.isRHFVolumeAndIntensity = cmd.getOptionValue("rhf");
+		if (this.cmd.hasOption("obj")) ccAnalysis.isNucAndCcAnalysis=  cmd.getOptionValue("obj");
+
+
+		if (this.cmd.hasOption("calibration")) ccAnalysis._calibration = true;
+		if (this.cmd.hasOption("cX")) ccAnalysis._Xcalibration=   Double.parseDouble(cmd.getOptionValue("cX"));
+		if (this.cmd.hasOption("cY")) ccAnalysis._Ycalibration=   Double.parseDouble(cmd.getOptionValue("cY"));
+		if (this.cmd.hasOption("cZ")) ccAnalysis._Zcalibration=  Double.parseDouble(cmd.getOptionValue("cZ"));
+		if (this.cmd.hasOption("unit")) ccAnalysis._unit=  cmd.getOptionValue("unit");
+
+		String inputDirectory = this.cmd.getOptionValue("input");
+		String segDirectory = this.cmd.getOptionValue("input2");
+		String ccDirectory = this.cmd.getOptionValue("input3");
+
+
+
+		try {
+
+			System.out.println("-Input Folder : "+ inputDirectory + " -Segmentation Folder : "+segDirectory+" -Chromocenters folder : "+ ccDirectory);
+			ccAnalysis.runComputeParametersCC(inputDirectory,segDirectory,ccDirectory,this.client);
+		} catch (Exception e) { e.printStackTrace(); }
+		System.out.println("End !!! Results available:");
+
+
+	}
+
+	private void runSegCC() {
+		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(".", ".",".");
+		if (this.cmd.hasOption("isG")) chromocenterParameters._gaussianOnRaw = true;
+		if (this.cmd.hasOption("isF")) chromocenterParameters._sizeFilterConnectedComponent = true;
+		if (this.cmd.hasOption("noC")) chromocenterParameters._noChange = true;
+		if (this.cmd.hasOption("gX"))
+			chromocenterParameters._gaussianBlurXsigma =  Double.parseDouble(cmd.getOptionValue("gX"));
+
+		if (this.cmd.hasOption("gY"))
+			chromocenterParameters._gaussianBlurYsigma =  Double.parseDouble(cmd.getOptionValue("gY"));
+
+		if (this.cmd.hasOption("gZ"))
+			chromocenterParameters._gaussianBlurZsigma =  Double.parseDouble(cmd.getOptionValue("gZ"));
+
+		if (this.cmd.hasOption("min"))
+			chromocenterParameters._minSizeConnectedComponent =  Double.parseDouble(cmd.getOptionValue("min"));
+		if (this.cmd.hasOption("max"))
+
+			chromocenterParameters._maxSizeConnectedComponent =  Double.parseDouble(cmd.getOptionValue("max"));
+		if (this.cmd.hasOption("f"))
+			chromocenterParameters._factor=  Double.parseDouble(cmd.getOptionValue("f"));
+		if (this.cmd.hasOption("n"))
+			chromocenterParameters._neigh=  Integer.parseInt(cmd.getOptionValue("n"));
+
+		ChromocenterCalling ccCalling= new ChromocenterCalling(chromocenterParameters);
+
+		String inputDirectory = this.cmd.getOptionValue("input");
+		String segDirectory = this.cmd.getOptionValue("input2");
+		String outputDirectory = this.cmd.getOptionValue("output");
+
+
+
+		try {
+
+			System.out.println("-Input Folder : "+ inputDirectory + " -Segmentation Folder : "+segDirectory+" -Output : "+ outputDirectory);
+			ccCalling.SegmentationOMERO(inputDirectory,segDirectory,outputDirectory,this.client);
+		} catch (Exception e) { e.printStackTrace(); }
+		System.out.println("End !!! Results available:"+ chromocenterParameters.outputFolder);
+
+
+	}
 	
 	public static void autoCropOMERO(String inputDirectory,
 	                                 String outputDirectory,
@@ -178,7 +256,7 @@ public class CLIRunActionOMERO {
 					outputsDat[i] =
 							client.getProject(Long.parseLong(outputDirectory)).addDataset(client, dataset).getId();
 				}
-				
+
 				autoCrop.runImageOMERO(image, outputsDat, client);
 				autoCrop.saveGeneralInfoOmero(client, outputsDat);
 			} else {
@@ -230,8 +308,14 @@ public class CLIRunActionOMERO {
 			autocropParameters.addProperties(this.cmd.getOptionValue("config"));
 		}
 		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+		if (this.cmd.hasOption("thresholding")) {
+			autoCrop.setTypeThresholding(this.cmd.getOptionValue("thresholding"));
+		}
+
+		// add setter here !!!!
 		if(this.cmd.hasOption("threads")) {
 			autoCrop.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
+			System.out.println("threads  ! "+ this.cmd.getOptionValue("threads"));
 		}
 		try {
 			autoCropOMERO(this.cmd.getOptionValue("input"),
@@ -340,7 +424,7 @@ public class CLIRunActionOMERO {
 		GenerateOverlay ov = new GenerateOverlay();
 		ov.runFromOMERO(this.cmd.getOptionValue("input"),
 						this.cmd.getOptionValue("input2"),
-						this.cmd.getOptionValue("out"),
+						this.cmd.getOptionValue("output"),
 						this.client
 		);
 	}
@@ -351,7 +435,7 @@ public class CLIRunActionOMERO {
 		);
 		cropFromCoordinates.runFromOMERO(
 				this.cmd.getOptionValue("input2"),
-				this.cmd.getOptionValue("out"),
+				this.cmd.getOptionValue("output"),
 				this.client
 		);
 	}

@@ -220,14 +220,14 @@ public class AutoCrop {
 	 * computation using only half of last slice (useful in case of top slice with lot of noise) If OTSU threshold is
 	 * still under 20 threshold default threshold value is 20.
 	 */
-	public void thresholdKernels() {
+	public void thresholdKernels(String typeThresholding) {
 		LOGGER.info("Thresholding kernels.");
 		if (this.imageSeg == null) {
 			return;
 		}
 		this.sliceUsedForOTSU = "default";
 		GaussianBlur3D.blur(this.imageSeg, 0.5, 0.5, 1);
-		int thresh = Thresholding.computeOTSUThreshold(this.imageSeg);
+		int thresh = Thresholding.computeThreshold(this.imageSeg, typeThresholding);
 		if (thresh < this.autocropParameters.getThresholdOTSUComputing()) {
 			ImagePlus imp2;
 			if (autocropParameters.getSlicesOTSUComputing() == 0) {
@@ -245,7 +245,7 @@ public class AutoCrop {
 				                            this.autocropParameters.getSlicesOTSUComputing(),
 				                            this.imageSeg.getStackSize());
 			}
-			int thresh2 = Thresholding.computeOTSUThreshold(imp2);
+			int thresh2 = Thresholding.computeThreshold(imp2, typeThresholding);
 			if (thresh2 < this.autocropParameters.getThresholdOTSUComputing()) {
 				thresh = this.autocropParameters.getThresholdOTSUComputing();
 				this.defaultThreshold = true;
@@ -305,7 +305,7 @@ public class AutoCrop {
 	 * or upper threshold volume are removed.
 	 * <p>The coordinates allow the implementation of the box objects which define the bounding box, and these objects
 	 * are stored in a List.
-	 * <p>In order to use with a grey-level image, use either {@link AutoCrop#thresholdKernels()} or your own
+	 * <p>In order to use with a grey-level image, use either {@link AutoCrop#thresholdKernels(String type)} or your own
 	 * binarization method.
 	 */
 	public void computeBoxes2() {
@@ -415,7 +415,7 @@ public class AutoCrop {
 				croppedImage.setCalibration(cal);
 				String tiffPath = dirOutput.getDirPath() + File.separator +
 				                  this.outputFilesPrefix +
-				                  "_" + String.format("%02d", i) + ".tif";
+				                  "_" + String.format("%03d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 				    .append(c).append("\t")
@@ -430,7 +430,7 @@ public class AutoCrop {
 				this.outputFile.add(this.outputDirPath + File.separator +
 				                    this.outputFilesPrefix + File.separator +
 				                    this.outputFilesPrefix + "_" +
-				                    String.format("%02d", i) + ".tif");
+				                    String.format("%03d", i) + ".tif");
 				if (c == 0) {
 					int xMax = xMin + width;
 					int yMax = yMin + height;
@@ -489,7 +489,7 @@ public class AutoCrop {
 				String tiffPath = new File(".").getCanonicalPath() +
 				                  File.separator +
 				                  this.outputFilesPrefix + "_" +
-				                  String.format("%02d", i) + ".tif";
+				                  String.format("%03d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 						.append(c).append("\t")
@@ -502,7 +502,7 @@ public class AutoCrop {
 						.append(depth).append("\n");
 				fileOutput.saveImage(croppedImage);
 				this.outputFile.add(this.outputFilesPrefix + "_" +
-				                    String.format("%02d", i) + ".tif");
+				                    String.format("%03d", i) + ".tif");
 				dataset.importImages(client, tiffPath);
 				File file = new File(tiffPath);
 				try {
@@ -516,7 +516,7 @@ public class AutoCrop {
 					int zMax = zMin + depth;
 					this.boxCoordinates.add(this.outputDirPath + File.separator +
 							this.outputFilesPrefix + "_" +
-							String.format("%02d", i) + "\t" +
+							String.format("%03d", i) +  "\t" +
 							xMin + "\t" +
 							xMax + "\t" +
 							yMin + "\t" +
@@ -562,7 +562,7 @@ public class AutoCrop {
 				croppedImage.setCalibration(cal);
 				String tiffPath = dirOutput.getDirPath() + File.separator +
 				                  this.outputFilesPrefix +
-							  "_" + String.format("%02d", i) + ".tif";
+				                  "_" + String.format("%03d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 				    .append(c).append("\t")
@@ -577,7 +577,7 @@ public class AutoCrop {
 				this.outputFile.add(this.outputDirPath + File.separator +
 				                    this.outputFilesPrefix + File.separator +
 				                    this.outputFilesPrefix + "_" +
-				                    String.format("%02d", i) + ".tif");
+				                    String.format("%03d", i) + ".tif");
 				if (c == 0) {
 					int xMax = xMin + width;
 					int yMax = yMin + height;

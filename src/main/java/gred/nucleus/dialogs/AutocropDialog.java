@@ -48,7 +48,9 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	private final        JPasswordField       jPasswordField          = new JPasswordField();
 	private final        JTextField           jTextFieldGroup         = new JTextField();
 	private final        String[]             dataTypes               = {"Project", "Dataset", "Tag", "Image"};
+	private final        String[]             tresholdType               = {"Otsu", "RenyiEntropy", "Huang", "Intermodes","IsoData", "Li", "MaxEntropy", "Mean", "MinError", "Minimum", "Moments","Percentile", "Shanbhag", "Triangle", "Yen"};
 	private final        JComboBox<String>    jComboBoxDataType       = new JComboBox<>(dataTypes);
+	private final        JComboBox<String>    jComboBoxThresholdType       = new JComboBox<>(tresholdType);
 	private final        JTextField           jTextFieldSourceID      = new JTextField();
 	private final        JTextField           jTextFieldOutputProject = new JTextField();
 	private final        JButton              confButton              = new JButton("...");
@@ -66,7 +68,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		this.setTitle("Autocrop NucleusJ2");
 		this.setMinimumSize(new Dimension(400, 500));
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		
+		this.setLocationRelativeTo(null);
 		autocropConfigFileDialog = new AutocropConfigDialog(this);
 		autocropConfigFileDialog.setVisible(false);
 		
@@ -130,7 +132,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		c.insets = new Insets(10, 0, 0, 0);
 		c.gridx = 2;
 		localPanel.add(destButton, c);
-		
+
 		localPanel.setBorder(padding);
 		localModeLayout.add(localPanel);
 		container.add(localModeLayout, 1);
@@ -218,11 +220,24 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		c.gridwidth = 2;
 		omeroPanel.add(jTextFieldOutputProject, c);
 		jTextFieldOutputProject.setMaximumSize(new Dimension(10000, 20));
-		
+
 		omeroPanel.setBorder(padding);
 		omeroModeLayout.add(omeroPanel);
-		
-		
+
+		// Threshold preferences
+		JPanel thresholdPanel = new JPanel();
+		thresholdPanel.setLayout(new BoxLayout(thresholdPanel, BoxLayout.X_AXIS));
+		c.gridy = 7;
+		JLabel jLabelThresholdType  = new JLabel("Threshold Method :");
+		c.gridx = 0;
+		c.gridwidth = 1;
+		thresholdPanel.add(jLabelThresholdType, c);
+		c.gridx = 1;
+		thresholdPanel.add(jComboBoxThresholdType, c);
+		thresholdPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 100));
+		container.add(thresholdPanel, 2);
+
+
 		// Config panel
 		JPanel configPanel = new JPanel();
 		configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.X_AXIS));
@@ -243,9 +258,9 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		rdoAddConfigFile.addItemListener(this);
 		configPanel.add(rdoAddConfigFile);
 		configPanel.setBorder(padding);
-		container.add(configPanel, 2);
+		container.add(configPanel, 3);
 		// Initialize config to default
-		container.add(defConf, 3);
+		container.add(defConf, 4);
 		defConf.setBorder(padding);
 		configMode = ConfigMode.DEFAULT;
 
@@ -255,11 +270,11 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		JLabel jLabelThreads = new JLabel("Number of used threads : ");
 		threadPanel.add(jLabelThreads);
 		int maxThreads = Runtime.getRuntime().availableProcessors();
-		SpinnerModel model = new SpinnerNumberModel(Math.min(maxThreads, 4), 1, maxThreads, 1);
+		SpinnerModel model = new SpinnerNumberModel(Math.min(maxThreads, 1), 1, maxThreads, 1);
 		jSpinnerThreads = new JSpinner(model);
 		threadPanel.add(jSpinnerThreads);
 		threadPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 100));
-		container.add(threadPanel, 4);
+		container.add(threadPanel, 5);
 
 		// Start/Quit buttons
 		JPanel startQuitPanel = new JPanel();
@@ -267,7 +282,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		startQuitPanel.add(jButtonStart);
 		startQuitPanel.add(jButtonQuit);
 		startQuitPanel.setBorder(padding);
-		container.add(startQuitPanel, 5);
+		container.add(startQuitPanel, 6);
 		
 		QuitListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
@@ -287,8 +302,8 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldGroup.setText("553");
 		
 		jComboBoxDataType.setSelectedIndex(3);
-		jTextFieldSourceID.setText("334953");
-		jTextFieldOutputProject.setText("9851");
+		jTextFieldSourceID.setText("");
+		jTextFieldOutputProject.setText("");
 	}
 	
 	
@@ -325,8 +340,11 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	public String getDataType() {
 		return (String) jComboBoxDataType.getSelectedItem();
 	}
-	
-	
+
+	public String getTypeThresholding() {
+		return (String) jComboBoxThresholdType.getSelectedItem();
+	}
+
 	public String getUsername() {
 		return jTextFieldUsername.getText();
 	}

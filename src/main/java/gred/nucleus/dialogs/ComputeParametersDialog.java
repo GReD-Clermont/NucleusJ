@@ -1,5 +1,8 @@
 package gred.nucleus.dialogs;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -7,9 +10,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.concurrent.ExecutionException;
 
 
 public class ComputeParametersDialog extends JFrame implements ItemListener {
+	final                IDialogListener               dialogListener;
 	private static final long       serialVersionUID        = 1L;
 	private static final JButton    jButtonWorkDirectory    = new JButton("Seg Data folder");
 	private final        JTextField jTextFieldWorkDirectory = new JTextField();
@@ -44,7 +49,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	private              boolean                       useOMERO                = false;
 	
 	/** Architecture of the graphical windows */
-	public ComputeParametersDialog() {
+	public ComputeParametersDialog(IDialogListener dialogListener) {
+		this.dialogListener = dialogListener;
 		final String    font                = "Albertus";
 		container           = getContentPane();
 		final JLabel    jLabelWorkDirectory = new JLabel();
@@ -394,8 +400,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jTextFieldUsername.setText("");
 		jTextFieldGroup.setText("553");
 		jPasswordField.setText("");
-		jTextFieldRawID.setText("19699");
-		jTextFieldSegmentedID.setText("27349");
+		jTextFieldRawID.setText("");
+		jTextFieldSegmentedID.setText("");
 		
 		
 		
@@ -622,9 +628,27 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 							           );
 				} else {
 					start = true;
+					try {
+						dialogListener.OnStart();
+					} catch (AccessException e) {
+						throw new RuntimeException(e);
+					} catch (ServiceException e) {
+						throw new RuntimeException(e);
+					} catch (ExecutionException e) {
+						throw new RuntimeException(e);
+					}
 					computeParametersDialog.dispose();
 				}
 			}else {
+				try {
+					dialogListener.OnStart();
+				} catch (AccessException e) {
+					throw new RuntimeException(e);
+				} catch (ServiceException e) {
+					throw new RuntimeException(e);
+				} catch (ExecutionException e) {
+					throw new RuntimeException(e);
+				}
 				start = true;
 				computeParametersDialog.dispose();
 			}
