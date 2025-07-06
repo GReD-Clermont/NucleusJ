@@ -39,8 +39,7 @@ public class Rd2ToTif {
 	private ImagePlus getImageChannel(int channelNumber) throws Exception {
 		DebugTools.enableLogging("OFF");    // DEBUG INFO BIOFORMAT OFF
 		ImagePlus[] currentImage = BF.openImagePlus(_pathInput);
-		ChannelSplitter splitter = new ChannelSplitter();
-		currentImage = splitter.split(currentImage[0]);
+		currentImage = ChannelSplitter.split(currentImage[0]);
 		return currentImage[channelNumber];
 	}
 	
@@ -54,8 +53,7 @@ public class Rd2ToTif {
 	public static ImagePlus getImageChannel(int channelNumber, String input) throws Exception {
 		DebugTools.enableLogging("OFF");    // DEBUG INFO BIOFORMAT OFF
 		ImagePlus[] currentImage = BF.openImagePlus(input);
-		ChannelSplitter splitter = new ChannelSplitter();
-		currentImage = splitter.split(currentImage[0]);
+		currentImage = ChannelSplitter.split(currentImage[0]);
 		return currentImage[channelNumber];
 	}
 	

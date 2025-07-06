@@ -87,17 +87,17 @@ public class ChromocenterCalling {
 			String fileImg = currentFile.toString();
 			FilesNames outPutFilesNames = new FilesNames(fileImg);
 			FilesNames SegCC = new FilesNames(this.chromocenterParameters._segInputFolder +
-			                                  currentFile.separator+currentFile.getName());
+			                                  File.separator + currentFile.getName());
 			this._prefix = outPutFilesNames.prefixNameFile();
 			ImagePlus [] _raw = BF.openImagePlus(currentFile.getAbsolutePath());
 			//is2D => change
 			imageType(_raw[0]);
-			String outputFileName= segCcDir+currentFile.separator+currentFile.getName();
-			String gradientFileName= diffDir+currentFile.separator+currentFile.getName();
+			String outputFileName= segCcDir+File.separator+currentFile.getName();
+			String gradientFileName= diffDir+File.separator+currentFile.getName();
 			
 			if(SegCC.fileExists()) {
 				ImagePlus [] segNuc =BF.openImagePlus(this.chromocenterParameters._segInputFolder +
-				                                      currentFile.separator+currentFile.getName());
+				                                      File.separator+currentFile.getName());
 				ChromencenterSegmentation chromencenterSegmentation = new ChromencenterSegmentation(
 						_raw,
 						segNuc,
@@ -349,8 +349,8 @@ public class ChromocenterCalling {
 			String fileImg = currentFile.toString();
 			ImagePlus [] _raw = BF.openImagePlus(currentFile.getAbsolutePath());
 			imageType(_raw[0]);
-			String outputFileName= segCcDir+currentFile.separator+currentFile.getName();
-			ImagePlus [] segNuc =BF.openImagePlus(this.chromocenterParameters._segInputFolder+currentFile.separator+currentFile.getName());
+			String outputFileName= segCcDir+File.separator+currentFile.getName();
+			ImagePlus [] segNuc =BF.openImagePlus(this.chromocenterParameters._segInputFolder+File.separator+currentFile.getName());
 			// ChromocenterAnalysis chromocenterAnalysis = new ChromocenterAnalysis(_raw[0],segNuc[0], IJ.openImage(outputFileName));
 			// chromocenterAnalysis.computeParametersChromocenter();
 			

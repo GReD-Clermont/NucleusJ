@@ -173,11 +173,10 @@ public class NucleusChromocentersAnalysis {
 			double[] tVolumesObjects = measure3D.computeVolumeofAllObjects(imagePlusChromocenter);
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
 			int nbCc = measure3D.getNumberOfObject(imagePlusChromocenter);
-			RadialDistance radialDistance = new RadialDistance();
-			double[] tBorderToBorderDistance = radialDistance.computeBorderToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
-			double[] tBarycenterToBorderDistance = radialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
+			double[] tBorderToBorderDistance = RadialDistance.computeBorderToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
+			double[] tBarycenterToBorderDistance = RadialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
 			double[] tIntensity = measure3D.computeIntensityofAllObjects(imagePlusChromocenter);
-			double[] tBarycenterToBorderDistanceTableNucleus = radialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusSegmented);
+			double[] tBarycenterToBorderDistanceTableNucleus = RadialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusSegmented);
 
 			text += nbCc + "," + volumeCcMean + "," + volumeCcMean * nbCc + "," +
 					computeMeanOfTable(tIntensity) + "," +
