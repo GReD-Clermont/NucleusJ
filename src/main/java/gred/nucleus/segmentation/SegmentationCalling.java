@@ -530,7 +530,7 @@ public class SegmentationCalling {
 		StringBuilder otsuInfoBuilder = new StringBuilder();
 		StringBuilder convexHullInfoBuilder = new StringBuilder();
 		for (ImageWrapper img: images) {
-			/** create results file compatible with OMERO.Parade*/
+			/* create results file compatible with OMERO.Parade*/
 			imgDatasetName = client.getDataset(inputID).getName();
 			imgDatasetId = client.getDataset(inputID).getId();
 			otsuInfoBuilder.append(img.getId()+",");
@@ -561,9 +561,9 @@ public class SegmentationCalling {
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		ProjectWrapper project = client.getProject(output);
-		/** Get input dataset*/
+		/* Get input dataset*/
 		DatasetWrapper input = client.getDataset(tID);
-		/** Create paths for the files (Otsu,Graham.Parade)*/
+		/* Create paths for the files (Otsu,Graham.Parade)*/
 		String path = "." +
 		              File.separator +
 		              dateFormat.format(date) +
@@ -589,7 +589,7 @@ public class SegmentationCalling {
 		}
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(path);
 		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, false);
-		/** Create results file for OMERO.Parade */
+		/* Create results file for OMERO.Parade */
 		OutputTextFile resultFileOutputParade = new OutputTextFile(pathParade);
 		OutputTextFile resultFileOutputParadeGraham = new OutputTextFile(pathParadeGraham);
 		resultFileOutputParade.saveTextFile(this.outputInfoParade, false);
@@ -599,10 +599,10 @@ public class SegmentationCalling {
 		File fileParade = new File(pathParade);
 		File fileParadeGraham = new File(pathParadeGraham);
 		dataset.addFile(client, file);
-		/** Put Otsu results file (for OMERO.Parade) in output Project and input dataset*/
+		/* Put Otsu results file (for OMERO.Parade) in output Project and input dataset*/
 		project.addFile(client, fileParade);
 		input.addFile(client, fileParade);
-		/** Put Graham results file (for OMERO.Parade) in output Project and input dataset*/
+		/* Put Graham results file (for OMERO.Parade) in output Project and input dataset*/
 		project.addFile(client, fileParadeGraham);
 		input.addFile(client, fileParadeGraham);
 		

@@ -135,7 +135,7 @@ public final class ChromocenterAnalysis {
 
 	public void runComputeParametersCC(String rawInput, String segInput, String ccInput,Client client) throws AccessException, ServiceException, ExecutionException {
 		// Check connection
-		/** Get  image or Dataset ID */
+		/* Get  image or Dataset ID */
 		String[] rawParam = rawInput.split("/");
 		String[] segParam = segInput.split("/");
 		String[] ccParam = ccInput.split("/");

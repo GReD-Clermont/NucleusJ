@@ -175,7 +175,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		addCalibrationBox.setSelected(false);
 		addCalibrationBox.addItemListener(this);
 		calibration.add(addCalibrationBox, gc);
-/**
+/*
 		localPanel.add(calibration,
 				new GridBagConstraints(0, 4, 3, 1, 1.0, 0.0,
 						GridBagConstraints.NORTHWEST,
