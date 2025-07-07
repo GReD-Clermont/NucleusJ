@@ -54,7 +54,7 @@ public final class SegmentationTestChecker {
 	
 	
 	public static SegmentationResult extractGeneralInfo(SegmentationResult result, File file) {
-		List<String> list = new ArrayList<>();
+		List<String> list = new ArrayList<>(0);
 		try {
 			list = Files.readAllLines(file.toPath(), Charset.defaultCharset());
 		} catch (IOException ex) {

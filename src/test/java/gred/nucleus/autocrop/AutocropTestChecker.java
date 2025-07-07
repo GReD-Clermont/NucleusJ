@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AutocropTestChecker {
 	public static final String PATH_TO_INFO   = "result_Autocrop_Analyse.csv";
-	public static final String PATH_TO_TARGET = "target/";
+	public static final String PATH_TO_TARGET = "target" + File.separator;
 	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -32,15 +32,15 @@ public class AutocropTestChecker {
 	
 	
 	public AutocropTestChecker(String targetPath) {
-		PATH_TO_COORDINATES = "coordinates/" + FilenameUtils.removeExtension(targetPath) + ".txt";
+		PATH_TO_COORDINATES = "coordinates" + File.separator + FilenameUtils.removeExtension(targetPath) + ".txt";
 		
-		File targetInfoFile = new File(AutoCropTest.PATH_TO_INPUT +
+		File targetInfoFile = new File(AutoCropTest.PATH_TO_AUTOCROP +
 		                               PATH_TO_TARGET +
 		                               targetPath + File.separator +
 		                               PATH_TO_INFO
 		);
 		
-		File targetCoordinatesFile = new File(AutoCropTest.PATH_TO_INPUT +
+		File targetCoordinatesFile = new File(AutoCropTest.PATH_TO_AUTOCROP +
 		                                      PATH_TO_TARGET +
 		                                      targetPath + File.separator +
 		                                      PATH_TO_COORDINATES
@@ -77,11 +77,11 @@ public class AutocropTestChecker {
 	
 	public AutocropResult extractGeneralInfo(AutocropResult result, File file) {
 		LOGGER.debug("Extracting info from file: {}", file);
-		List<String> resultList = new ArrayList<>();
+		List<String> resultList = new ArrayList<>(0);
 		try {
 			resultList = Files.readAllLines(file.toPath(), Charset.defaultCharset());
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LOGGER.error("Could not read file: {}", file, ex);
 		}
 		String[] resultLine = resultList.get(resultList.size() - 1).split("\t");
 		result.setCropNb(Integer.parseInt(resultLine[1]));
@@ -91,11 +91,11 @@ public class AutocropTestChecker {
 	
 	
 	public AutocropResult extractCoordinates(AutocropResult result, File file) {
-		List<String> fileList = new ArrayList<>();
+		List<String> fileList = new ArrayList<>(0);
 		try {
 			fileList = Files.readAllLines(file.toPath(), Charset.defaultCharset());
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LOGGER.error("Could not read file: {}", file, ex);
 		}
 		
 		fileList.removeIf(line -> line.startsWith("#"));

@@ -10,7 +10,7 @@ import java.util.Locale;
 
 
 public class AutocropTestRunner {
-	public static final String PATH_TO_AUTOCROP = "input/";
+	public static final String PATH_TO_INPUT = "input" + File.separator;
 	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -18,7 +18,7 @@ public class AutocropTestRunner {
 	
 	public static int getNumberOfImages(String dir) {
 		int nImages = 0;
-		File[] files = new File(dir + PATH_TO_AUTOCROP).listFiles();
+		File[] files = new File(dir + PATH_TO_INPUT).listFiles();
 		if(files != null) {
 			for (File file : files) {
 				String extension = FilenameUtils.getExtension(file.getName())
@@ -34,9 +34,9 @@ public class AutocropTestRunner {
 	
 	
 	public static void run(String dir) {
-		File   file  = new File(dir + PATH_TO_AUTOCROP);
+		File   file  = new File(dir + PATH_TO_INPUT);
 		File[] files = file.listFiles();
-		LOGGER.info("Running test on directory: {}", dir + PATH_TO_AUTOCROP);
+		LOGGER.info("Running test on directory: {}", dir + PATH_TO_INPUT);
 		
 		if (files != null) {
 			for (File f : files) {
@@ -47,7 +47,7 @@ public class AutocropTestRunner {
 				} else {
 					String extension = FilenameUtils.getExtension(name).toLowerCase(Locale.ROOT);
 					if (!extension.equals("tif")) {
-						LOGGER.info("File of type " + extension + " skipped");
+						LOGGER.info("File of type {} skipped: {}", extension, name);
 					} else {
 						LOGGER.info("Beginning process on: {}", name);
 						runAutoCrop(f.toString(), AutoCropTest.PATH_TO_OUTPUT
