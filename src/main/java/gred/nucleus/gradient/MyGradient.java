@@ -54,7 +54,7 @@ public class MyGradient {
 				throw new IllegalArgumentException("Invalid smoothing scale value");
 			}
 			try {
-				if (LOWER.equals("")) {
+				if (LOWER.isEmpty()) {
 					lowThreshold = false;
 				} else {
 					lowVal = Double.parseDouble(LOWER);
@@ -63,7 +63,7 @@ public class MyGradient {
 				throw new IllegalArgumentException("Invalid lower threshold value");
 			}
 			try {
-				if (HIGHER.equals("")) {
+				if (HIGHER.isEmpty()) {
 					highThreshold = false;
 				} else {
 					highVal = Double.parseDouble(HIGHER);

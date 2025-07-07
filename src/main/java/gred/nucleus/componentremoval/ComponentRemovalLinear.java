@@ -54,7 +54,7 @@ public class ComponentRemovalLinear implements ComponentRemovalPredicate {
 	public boolean keepVoxelComponent(Voxel voxel, ComponentInfo componentInfo) {
 		double zValue =
 				this.xCoefficient * voxel.getX() + this.yCoefficient * voxel.getY() + this.constantCoefficient;
-		return ((voxel.getZ() >= zValue) && (voxel.getZ() < zValue + this.thickness));
+		return voxel.getZ() >= zValue && voxel.getZ() < zValue + this.thickness;
 	}
 	
 }

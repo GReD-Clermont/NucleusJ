@@ -60,7 +60,7 @@ public class FJ_Derivatives implements PlugIn, WindowListener {
 		zOrder = gd.getNextChoiceIndex();
 		scale = gd.getNextString();
 		
-		(new FJDerivatives()).run(imp, xOrder, yOrder, zOrder, scale);
+		new FJDerivatives().run(imp, xOrder, yOrder, zOrder, scale);
 	}
 	
 	

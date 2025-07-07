@@ -196,7 +196,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		DatasetWrapper outputds = client.getDataset(Long.parseLong(output));
 		
 		try {
-			if (sourceDataType.equals("Image") && ToCropdataType.equals("Image") ) {
+			if ("Image".equals(sourceDataType) && "Image".equals(ToCropdataType) ) {
 				ImageWrapper image      = client.getImage(inputID);
 				ImageWrapper imageToCrop      = client.getImage(inputToCropID);
 			
@@ -211,11 +211,11 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 			} else {
 				List<ImageWrapper> sourceImages = new ArrayList<>(0);
 				
-				if (sourceDataType.equals("Dataset") && ToCropdataType.equals("Dataset")) {
+				if ("Dataset".equals(sourceDataType) && "Dataset".equals(ToCropdataType)) {
 					DatasetWrapper sourceDataset = client.getDataset(inputID);
 					toCropDataset = client.getDataset(inputToCropID);
 					sourceImages = sourceDataset.getImages(client);
-				} else if (sourceDataType.equals("Tag")) {
+				} else if ("Tag".equals(sourceDataType)) {
 					TagAnnotationWrapper tag = client.getTag(inputID);
 					sourceImages = client.getImages(tag);
 				}

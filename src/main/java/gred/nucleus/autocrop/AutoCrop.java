@@ -279,8 +279,8 @@ public class AutoCrop {
 		for (Map.Entry<Double, Integer> entry : new TreeMap<>(histogramData).entrySet()) {
 			Double  key   = entry.getKey();
 			Integer value = entry.getValue();
-			if (!((value * getVoxelVolume() < this.autocropParameters.getMinVolumeNucleus()) ||
-			      (value * getVoxelVolume() > this.autocropParameters.getMaxVolumeNucleus())) && value > 1) {
+			if (!(value * getVoxelVolume() < this.autocropParameters.getMinVolumeNucleus() ||
+			      value * getVoxelVolume() > this.autocropParameters.getMaxVolumeNucleus()) && value > 1) {
 				Box initializedBox = new Box(Short.MAX_VALUE,
 				                             Short.MIN_VALUE,
 				                             Short.MAX_VALUE,
@@ -318,8 +318,8 @@ public class AutoCrop {
 			for (short k = 0; k < this.imageSegLabelled.getNSlices(); ++k) {
 				for (short i = 0; i < this.imageSegLabelled.getWidth(); ++i) {
 					for (short j = 0; j < this.imageSegLabelled.getHeight(); ++j) {
-						if ((imageStackInput.getVoxel(i, j, k) > 0) &&
-						    (this.boxes.containsKey(imageStackInput.getVoxel(i, j, k)))) {
+						if (imageStackInput.getVoxel(i, j, k) > 0 &&
+						    this.boxes.containsKey(imageStackInput.getVoxel(i, j, k))) {
 							box = this.boxes.get(imageStackInput.getVoxel(i, j, k));
 							box.setXMin((short) Math.min(i, box.getXMin()));
 							box.setXMax((short) Math.max(i, box.getXMax()));
@@ -358,18 +358,18 @@ public class AutoCrop {
 			yMin = Math.max(1, yMin);
 			zMin = Math.max(1, zMin);
 			
-			int width = box.getXMax() + (2 * this.autocropParameters.getXCropBoxSize()) - box.getXMin();
+			int width = box.getXMax() + 2 * this.autocropParameters.getXCropBoxSize() - box.getXMin();
 			if (width > imageSeg.getWidth()) {
 				width = imageSeg.getWidth() - 1;
 			}
 			if (width + xMin >= this.imageSeg.getWidth() || width < 0) {
 				width = this.imageSeg.getWidth() - xMin;
 			}
-			int height = box.getYMax() + (2 * this.autocropParameters.getYCropBoxSize()) - box.getYMin();
-			if ((height + yMin) >= this.imageSeg.getHeight() || (height < 0)) {
+			int height = box.getYMax() + 2 * this.autocropParameters.getYCropBoxSize() - box.getYMin();
+			if (height + yMin >= this.imageSeg.getHeight() || height < 0) {
 				height = this.imageSeg.getHeight() - yMin;
 			}
-			int depth = box.getZMax() + (2 * this.autocropParameters.getZCropBoxSize()) - box.getZMin();
+			int depth = box.getZMax() + 2 * this.autocropParameters.getZCropBoxSize() - box.getZMin();
 			if (depth + zMin >= this.imageSeg.getNSlices() || depth < 0) {
 				depth = this.imageSeg.getNSlices() - zMin;
 			}
@@ -819,7 +819,7 @@ public class AutoCrop {
 	 * @param boxes list of boxes
 	 */
 	public void setBoxes(Map<Double, ? extends Box> boxes) {
-		this.boxes = new HashMap(boxes);
+		this.boxes = new HashMap<>(boxes);
 	}
 	
 }

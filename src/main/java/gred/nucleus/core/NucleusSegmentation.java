@@ -466,7 +466,7 @@ public class NucleusSegmentation {
 	private void checkBorder(ImagePlus imagePlusInput) {
 		ImageStack imageStackInput = imagePlusInput.getStack();
 		for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
-			if ((k == 0) || k == imagePlusInput.getStackSize() - 1) {
+			if (k == 0 || k == imagePlusInput.getStackSize() - 1) {
 				for (int i = 0; i < imagePlusInput.getWidth(); i++) {
 					for (int j = 0; j < imagePlusInput.getHeight(); j++) {
 						if (imageStackInput.getVoxel(i, j, k) == 255.0) {
@@ -477,7 +477,7 @@ public class NucleusSegmentation {
 			}
 			
 			for (int i = 0; i < imagePlusInput.getWidth();
-			     i += (imagePlusInput.getWidth()) - 1) {
+			     i += imagePlusInput.getWidth() - 1) {
 				for (int j = 0; j < imagePlusInput.getHeight(); j++) {
 					if (imageStackInput.getVoxel(i, j, k) == 255.0) {
 						this.badCrop = true;
@@ -485,7 +485,7 @@ public class NucleusSegmentation {
 				}
 			}
 			for (int j = 0; j < imagePlusInput.getHeight();
-			     j += (imagePlusInput.getHeight() - 1)) {
+			     j += imagePlusInput.getHeight() - 1) {
 				
 				for (int i = 0; i < imagePlusInput.getWidth(); i++) {
 					if (imageStackInput.getVoxel(i, j, k) == 255.0) {
@@ -629,7 +629,7 @@ public class NucleusSegmentation {
 	 * @return boolean if ratio object/image > 70% return false else return true
 	 */
 	private boolean testRelativeObjectVolume(double objectVolume, double imageVolume) {
-		final double ratio = (objectVolume / imageVolume) * 100;
+		final double ratio = objectVolume / imageVolume * 100;
 		return ratio < 70;
 	}
 	
@@ -760,7 +760,7 @@ public class NucleusSegmentation {
 	 */
 	public void checkBadCrop(String inputPathDir) {
 		LOGGER.info("Checking bad crop.");
-		if ((this.badCrop) || (this.bestThreshold == -1)) {
+		if (this.badCrop || this.bestThreshold == -1) {
 			File badCropFolder = new File(inputPathDir + File.separator + "BadCrop");
 			LOGGER.debug("Saving bad crops to: {}", badCropFolder);
 			
@@ -777,7 +777,7 @@ public class NucleusSegmentation {
 	
 	
 	public void checkBadCrop(ImageWrapper image, Client client) {
-		if ((this.badCrop) || (this.bestThreshold == -1)) {
+		if (this.badCrop || this.bestThreshold == -1) {
 			List<TagAnnotationWrapper> tags;
 			TagAnnotationWrapper       tagBadCrop;
 			
@@ -815,7 +815,7 @@ public class NucleusSegmentation {
 	
 	
 	public void checkBadCrop(ROIWrapper roi, Client client) {
-		if ((this.badCrop) || (this.bestThreshold == -1)) {
+		if (this.badCrop || this.bestThreshold == -1) {
 			for (GenericShapeWrapper<?> shape : roi.getShapes()) {
 				shape.setStroke(Color.RED);
 			}

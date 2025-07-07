@@ -133,9 +133,9 @@ public class ChromocenterCalling {
 		Long maskID = Long.parseLong(param1[1]);
 
 		if (param.length >= 2 && param1.length >= 2) {
-			if (param[0].equals("Image") && param1[0].equals("Image")) {
+			if ("Image".equals(param[0]) && "Image".equals(param1[0])) {
 				runOneImageOMERO(imageID,maskID,outputDirectory,client);
-			} else if (param[0].equals("Dataset") && param1[0].equals("Dataset")) {
+			} else if ("Dataset".equals(param[0]) && "Dataset".equals(param1[0])) {
 				dataset_name = client.getDataset(imageID).getName();
 				List<ImageWrapper> images;
 				List<ImageWrapper> masks;

@@ -85,7 +85,7 @@ public final class NoiseComputing {
 		
 		Map<Double, Integer> segmentedNucleusHistogram = histogram.getHistogram();
 		
-		int medianElementStop = (raw.getHeight() * raw.getWidth() * raw.getNSlices()) / 2;
+		int medianElementStop = raw.getHeight() * raw.getWidth() * raw.getNSlices() / 2;
 		int increment         = 0;
 		
 		for (Map.Entry<Double, Integer> entry : segmentedNucleusHistogram.entrySet()) {

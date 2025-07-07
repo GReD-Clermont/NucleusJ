@@ -69,11 +69,11 @@ public class NODeJ implements PlugIn, IDialogListener {
 		ChromocenterCalling CCAnalyse = new ChromocenterCalling(CCAnalyseParameters,true);
 		
 		try {
-			if (dataType.equals("Image") & dataTypeSegmented.equals("Image")){
+			if ("Image".equals(dataType) & "Image".equals(dataTypeSegmented)){
 				sourceID ="Image/"+gui.getSourceID();
 				segmentedID = "Image/" + gui.getSegmentedNucleiID();
 				CCAnalyse.SegmentationOMERO(sourceID,segmentedID,outputID,client);
-			} else if (dataType.equals("Dataset") & dataTypeSegmented.equals("Dataset")) {
+			} else if ("Dataset".equals(dataType) & "Dataset".equals(dataTypeSegmented)) {
 				sourceID ="Dataset/"+gui.getSourceID();
 				segmentedID = "Dataset/" + gui.getSegmentedNucleiID();
 				CCAnalyse.SegmentationOMERO(sourceID,segmentedID,outputID,client);

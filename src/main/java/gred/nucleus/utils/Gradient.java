@@ -52,11 +52,11 @@ public class Gradient {
 					double       dz   = 0;
 					if (k - 1 > 1 || j - 1 > 1 || i - 1 > 1 || k + 1 < imagePlusInput.getStackSize() - 1 ||
 					    j + 1 < imagePlusInput.getHeight() - 1 || i + 1 < imagePlusInput.getWidth() - 1) {
-						dx = (1 / xCalibration) *
+						dx = 1 / xCalibration *
 						     ((imageStackInput.getVoxel(i + 1, j, k) - imageStackInput.getVoxel(i - 1, j, k)) / 2);
-						dy = (1 / yCalibration) *
+						dy = 1 / yCalibration *
 						     ((imageStackInput.getVoxel(i, j + 1, k) - imageStackInput.getVoxel(i, j - 1, k)) / 2);
-						dz = (1 / zCalibration) *
+						dz = 1 / zCalibration *
 						     ((imageStackInput.getVoxel(i, j, k + 1) - imageStackInput.getVoxel(i, j, k - 1)) / 2);
 					}
 					list.add(dx);

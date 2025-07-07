@@ -123,7 +123,7 @@ public class GenerateProjectionFromCoordinates {
 			List<String>        boxListsNucleiNotPass = new ArrayList<>();
 			Map<String, String> sortedMap             = new TreeMap<>(listOfBoxes);
 			for (Map.Entry<String, String> entry : sortedMap.entrySet()) {
-				if (!(convexHullSegImages.checkIfFileExists(entry.getKey()))) {
+				if (!convexHullSegImages.checkIfFileExists(entry.getKey())) {
 					boxListsNucleiNotPass.add(entry.getValue());
 					LOGGER.info("add {}", entry.getValue());
 				}

@@ -55,8 +55,8 @@ public class MulticropFilter {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				
-				if ((!(line.matches("^#.*")))
-				    && (!(line.matches("^FileName.*")))) {
+				if (!line.matches("^#.*")
+				    && !line.matches("^FileName.*")) {
 					String[] splitLine = line.split("\\t");
 					int      xMax      = Integer.parseInt(splitLine[3]) + Integer.parseInt(splitLine[6]);
 					int      yMax      = Integer.parseInt(splitLine[4]) + Integer.parseInt(splitLine[7]);

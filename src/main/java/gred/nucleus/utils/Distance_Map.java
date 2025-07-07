@@ -154,7 +154,7 @@ public class Distance_Map implements PlugInFilter {
 		for (int k = 0; k < d; k++) {
 			sk = s[k];
 			for (int ind = 0; ind < wh; ind++) {
-				if (((data[k][ind] & 255) < thresh) ^ inverse) {
+				if ((data[k][ind] & 255) < thresh ^ inverse) {
 					sk[ind] = 0;
 				} else {
 					dist = (float) Math.sqrt(sk[ind]);
@@ -290,7 +290,7 @@ public class Distance_Map implements PlugInFilter {
 				dk = data[k];
 				for (int j = 0; j < h; j++) {
 					for (int i = 0; i < w; i++) {
-						background[i] = ((dk[i + w * j] & 255) < thresh) ^ inverse;
+						background[i] = (dk[i + w * j] & 255) < thresh ^ inverse;
 					}
 					for (int i = 0; i < w; i++) {
 						min = noResult;
@@ -367,15 +367,15 @@ public class Distance_Map implements PlugInFilter {
 					}
 					if (nonempty) {
 						zStart = 0;
-						while ((zStart < (d - 1)) && (tempS[zStart] == 0)) zStart++;
+						while (zStart < d - 1 && tempS[zStart] == 0) zStart++;
 						if (zStart > 0) zStart--;
 						zStop = d - 1;
-						while ((zStop > 0) && (tempS[zStop] == 0)) zStop--;
-						if (zStop < (d - 1)) zStop++;
+						while (zStop > 0 && tempS[zStop] == 0) zStop--;
+						if (zStop < d - 1) zStop++;
 						
 						for (int k = 0; k < d; k++) {
 							//Limit to the non-background to save time,
-							if (((data[k][i + w * j] & 255) >= thresh) ^ inverse) {
+							if ((data[k][i + w * j] & 255) >= thresh ^ inverse) {
 								min = noResult;
 								zBegin = zStart;
 								zEnd = zStop;

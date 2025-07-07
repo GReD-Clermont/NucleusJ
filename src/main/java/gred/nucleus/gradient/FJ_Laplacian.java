@@ -58,7 +58,7 @@ public class FJ_Laplacian implements PlugIn, WindowListener {
 		scale = gd.getNextString();
 		zeroCross = gd.getNextBoolean();
 		
-		(new FJLaplacian()).run(imp, compute, scale, zeroCross);
+		new FJLaplacian().run(imp, compute, scale, zeroCross);
 	}
 	
 	

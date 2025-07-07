@@ -66,7 +66,7 @@ public class FJ_Hessian implements PlugIn, WindowListener {
 		absolute = gd.getNextBoolean();
 		scale = gd.getNextString();
 		
-		(new FJHessian()).run(imp, largest, middle, smallest, absolute, scale);
+		new FJHessian().run(imp, largest, middle, smallest, absolute, scale);
 	}
 	
 	

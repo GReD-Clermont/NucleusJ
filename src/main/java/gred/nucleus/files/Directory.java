@@ -62,7 +62,7 @@ public class Directory {
 	
 	/** Check if separator exist */
 	private void checkSeparatorEndPath() {
-		if (!(this.dirPath.endsWith(File.separator))) {
+		if (!this.dirPath.endsWith(File.separator)) {
 			this.dirPath += File.separator;
 		}
 	}
@@ -106,9 +106,9 @@ public class Directory {
 				
 				listImageFiles(f.getAbsolutePath());
 			} else {
-				if (!(FilenameUtils.getExtension(f.getName()).equals("txt"))) {
+				if (!"txt".equals(FilenameUtils.getExtension(f.getName()))) {
 					this.fileList.add(f);
-					if (FilenameUtils.getExtension(f.getName()).equals("nd")) {
+					if ("nd".equals(FilenameUtils.getExtension(f.getName()))) {
 						this.containNdFile = true;
 						this.fileListND.add(f);
 					}
@@ -195,8 +195,8 @@ public class Directory {
 		boolean fileExists = false;
 		
 		for (File f : this.fileList) {
-			if ((f.getName().substring(0, f.getName().lastIndexOf('.')).equals(fileName))
-			    || (f.getName().equals(fileName))) {
+			if (f.getName().substring(0, f.getName().lastIndexOf('.')).equals(fileName)
+			    || f.getName().equals(fileName)) {
 				fileExists = true;
 			}
 		}

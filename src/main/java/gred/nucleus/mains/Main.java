@@ -38,7 +38,7 @@ public class Main {
 		
 		if (listArgs.contains("-h") || listArgs.contains("-help")) {
 			CLIHelper.run(args);
-		} else if ((listArgs.contains("-ome")) || (listArgs.contains("-omero"))) {
+		} else if (listArgs.contains("-ome") || listArgs.contains("-omero")) {
 			CLIActionOptionOMERO command = new CLIActionOptionOMERO(args);
 			CLIRunActionOMERO cliOMERO = new CLIRunActionOMERO(command.getCmd());
 			cliOMERO.run();

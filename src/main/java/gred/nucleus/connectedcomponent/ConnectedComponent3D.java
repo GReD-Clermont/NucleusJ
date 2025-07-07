@@ -114,8 +114,8 @@ public class ConnectedComponent3D extends ConnectedComponent {
 				for (short ii = iMin; ii <= iMax; ii++) {
 					for (short jj = jMin; jj <= jMax; jj++) {
 						// If the neighbor (different from VoxelRecordShort) is a 1 and not labeled
-						if ((getLabel(ii, jj, kk) == 0) &&
-						    (imageStack.getVoxel(ii, jj, kk) == this.foregroundColor)) {
+						if (getLabel(ii, jj, kk) == 0 &&
+						    imageStack.getVoxel(ii, jj, kk) == this.foregroundColor) {
 							// Set the voxel's label
 							setLabel(ii, jj, kk, currentLabel);
 							componentInfo.incrementNumberOfPoints(); // increment component's cardinality					

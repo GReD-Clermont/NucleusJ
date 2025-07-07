@@ -245,7 +245,7 @@ public class CLIRunActionOMERO {
 		
 		if (param.length >= 2) {
 			Long id = Long.parseLong(param[1]);
-			if (param[0].equals("image")) {
+			if ("image".equals(param[0])) {
 				ImageWrapper image = client.getImage(id);
 				
 				int sizeC = image.getPixels().getSizeC();
@@ -265,20 +265,21 @@ public class CLIRunActionOMERO {
 				
 				String name = "";
 				
-				if (param[0].equals("dataset")) {
+				if ("dataset".equals(param[0])) {
 					DatasetWrapper dataset = client.getDataset(id);
 					
 					name = dataset.getName();
 					
-					if (param.length == 4 && param[2].equals("tag")) {
+					if (param.length == 4 && "tag".equals(param[2])) {
 						images = dataset.getImagesTagged(client, Long.parseLong(param[3]));
 					} else {
 						images = dataset.getImages(client);
 					}
-				} else if (param[0].equals("tag")) {
-					images = client.getImagesTagged(id);
+				} else if ("tag".equals(param[0])) {
+					TagAnnotationWrapper tag = client.getTag(id);
+					images = tag.getImages(client);
 				} else {
-					throw new IllegalArgumentException();
+					throw new IllegalArgumentException("Wrong input parameter");
 				}
 				
 				int sizeC = images.get(0).getPixels().getSizeC();
@@ -358,18 +359,18 @@ public class CLIRunActionOMERO {
 		
 		if (param.length >= 2) {
 			Long id = Long.parseLong(param[1]);
-			if (param[0].equals("image")) {
+			if ("image".equals(param[0])) {
 				ImageWrapper image = client.getImage(id);
 				
 				try {
 					String log;
-					if (param.length == 3 && param[2].equals("ROI")) {
+					if (param.length == 3 && "ROI".equals(param[2])) {
 						log = otsuModified.runOneImageOMERObyROIs(image, Long.parseLong(outputDirectory), client);
 					} else {
 						log = otsuModified.runOneImageOMERO(image, Long.parseLong(outputDirectory), client);
 					}
 					otsuModified.saveCropGeneralInfoOmero(client, Long.parseLong(outputDirectory));
-					if (!(log.isEmpty())) {
+					if (!log.isEmpty()) {
 						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 					}
 				} catch (IOException | OMEROServerError e) {
@@ -385,7 +386,7 @@ public class CLIRunActionOMERO {
 					case "dataset":
 						DatasetWrapper dataset = client.getDataset(id);
 						
-						if (param.length == 4 && param[2].equals("tag")) {
+						if (param.length == 4 && "tag".equals(param[2])) {
 							images = dataset.getImagesTagged(client, Long.parseLong(param[3]));
 						} else {
 							images = dataset.getImages(client);
@@ -394,7 +395,7 @@ public class CLIRunActionOMERO {
 					case "project":
 						ProjectWrapper project = client.getProject(id);
 						
-						if (param.length == 4 && param[2].equals("tag")) {
+						if (param.length == 4 && "tag".equals(param[2])) {
 							images = project.getImagesTagged(client, Long.parseLong(param[3]));
 						} else {
 							images = project.getImages(client);
@@ -409,13 +410,13 @@ public class CLIRunActionOMERO {
 				}
 				try {
 					String log;
-					if ((param.length == 3 && param[2].equals("ROI")) ||
-					    (param.length == 5 && param[4].equals("ROI"))) {
+					if (param.length == 3 && "ROI".equals(param[2]) ||
+					    param.length == 5 && "ROI".equals(param[4])) {
 						log = otsuModified.runSeveralImagesOMERObyROIs(images, Long.parseLong(outputDirectory), client);
 					} else {
 						log = otsuModified.runSeveralImagesOMERO(images, Long.parseLong(outputDirectory), client,id);
 					}
-					if (!(log.isEmpty())) {
+					if (!log.isEmpty()) {
 						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 					}
 				} catch (IOException e) {

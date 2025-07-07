@@ -194,7 +194,7 @@ public class SegmentationCalling {
 				seg = nuc.convexHullDetection(seg, this.segmentationParameters);
 			}
 			seg.setTitle(this.output);
-			if (!this.output.equals("")) {
+			if (!this.output.isEmpty()) {
 				saveFile(seg, this.output);
 			}
 			NucleusAnalysis nucleusAnalysis =

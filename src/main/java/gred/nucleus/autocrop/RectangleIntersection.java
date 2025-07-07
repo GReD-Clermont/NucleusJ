@@ -79,7 +79,7 @@ public class RectangleIntersection {
 		Rectangle2D.intersect(r1, r2, r);
 		double fr1 = r1.getWidth() * r1.getHeight();                // area of "r1"
 		double f   = r.getWidth() * r.getHeight();                  // area of "r" - overlap
-		return (fr1 == 0 || f <= 0) ? 0 : (f / fr1) * 100;          // overlap percentage
+		return fr1 == 0 || f <= 0 ? 0 : f / fr1 * 100;          // overlap percentage
 	}
 	
 	
@@ -108,9 +108,9 @@ public class RectangleIntersection {
 		for (int i = 0; i < this.listRectangle.size(); i++) {
 			for (int y = 0; y < this.listRectangle.size(); y++) {
 				
-				if (((i != y)) &&
-				    (!((this.rectangleIntersect.contains(i + "-" + y)))) &&
-				    (!((this.rectangleIntersect.contains(y + "-" + i))))) {
+				if (i != y &&
+				    !this.rectangleIntersect.contains(i + "-" + y) &&
+				    !this.rectangleIntersect.contains(y + "-" + i)) {
 					
 					if (listRectangle.get(i).intersects(this.listRectangle.get(y))) {
 						
@@ -172,7 +172,7 @@ public class RectangleIntersection {
 						listToIterateThrough.remove(0);
 					}
 				}
-				if (!(listRectangleConnected.toString().equals(listRectangleConnectedStartTurn))) {
+				if (!listRectangleConnected.toString().equals(listRectangleConnectedStartTurn)) {
 					i--;
 					listRectangleConnectedStartTurn = listRectangleConnected.toString();
 				}
@@ -199,27 +199,27 @@ public class RectangleIntersection {
 			if (splitList2.length > 1) {
 				for (String s : splitList2) {
 					int tmp = Integer.parseInt(s);
-					if ((this.listRectangle.get(tmp).getX() < xMixNewRectangle) || (xMixNewRectangle == 0)) {
+					if (this.listRectangle.get(tmp).getX() < xMixNewRectangle || xMixNewRectangle == 0) {
 						xMixNewRectangle = this.listRectangle.get(tmp).getX();
 					}
-					if ((this.listRectangle.get(tmp).getY() < yMinNewRectangle) || (yMinNewRectangle == 0)) {
+					if (this.listRectangle.get(tmp).getY() < yMinNewRectangle || yMinNewRectangle == 0) {
 						yMinNewRectangle = this.listRectangle.get(tmp).getY();
 					}
-					if (((this.listRectangle.get(tmp).getX() + this.listRectangle.get(tmp).getWidth()) > maxWidth) ||
-					    (maxWidth == 0)) {
+					if (this.listRectangle.get(tmp).getX() + this.listRectangle.get(tmp).getWidth() > maxWidth ||
+					    maxWidth == 0) {
 						maxWidth = this.listRectangle.get(tmp).getX() + this.listRectangle.get(tmp).getWidth();
 					}
-					if (((this.listRectangle.get(tmp).getY() + this.listRectangle.get(tmp).getHeight()) > maxHeight) ||
-					    (maxHeight == 0)) {
+					if (this.listRectangle.get(tmp).getY() + this.listRectangle.get(tmp).getHeight() > maxHeight ||
+					    maxHeight == 0) {
 						maxHeight = this.listRectangle.get(tmp).getY() + this.listRectangle.get(tmp).getHeight();
 					}
 					
 					String[] zSliceTMP = this.zSlices.get(tmp).split("-");
-					if ((Integer.parseInt(zSliceTMP[0]) < minZSlice) || (minZSlice == 0)) {
+					if (Integer.parseInt(zSliceTMP[0]) < minZSlice || minZSlice == 0) {
 						minZSlice = Integer.parseInt(zSliceTMP[0]);
 					}
-					if (((Integer.parseInt(zSliceTMP[0] + Integer.valueOf(zSliceTMP[1])) > maxZSlice) ||
-					     (maxZSlice == 0))) {
+					if (Integer.parseInt(zSliceTMP[0] + Integer.valueOf(zSliceTMP[1])) > maxZSlice ||
+					     maxZSlice == 0) {
 						maxZSlice = Integer.parseInt(zSliceTMP[0]) + Integer.parseInt(zSliceTMP[1]);
 					}
 					listOfRectangleToRemove.add(new Rectangle((int) this.listRectangle.get(tmp).getX(),
@@ -274,9 +274,9 @@ public class RectangleIntersection {
 			if (tmpZMax == 0) {
 				tmpZMax = 1;
 			}
-			Box box = new Box((short) (this.listRectangle.get(i).getX()),
+			Box box = new Box((short) this.listRectangle.get(i).getX(),
 			                  tmpXMax,
-			                  (short) (this.listRectangle.get(i).getY()),
+			                  (short) this.listRectangle.get(i).getY(),
 			                  tmpYMax,
 			                  Short.parseShort(zSliceTMP[0]),
 			                  tmpZMax);

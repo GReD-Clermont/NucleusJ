@@ -360,8 +360,8 @@ public abstract class ConnectedComponent {
 		// and we should keep only
 		// the components with a voxel satisfying removalPredicate 
 		for (int i = 0; i < this.compInfo.size(); ++i) {
-			if (((!existsVoxelSatisfyingPredicate.get(i)) && keepPredicate) ||
-			    (existsVoxelSatisfyingPredicate.get(i) && !keepPredicate))
+			if (!existsVoxelSatisfyingPredicate.get(i) && keepPredicate ||
+			    existsVoxelSatisfyingPredicate.get(i) && !keepPredicate)
 			// remove the component
 			{
 				this.compInfo.get(i).setNumberOfPoints(0);
@@ -379,7 +379,7 @@ public abstract class ConnectedComponent {
 			if (ci != null &&
 			    ci.getNumberOfPoints() > 0 &&
 			    ci.getNumberOfPoints() >= thresholdNVoxel &&
-			    ((!removeBorderComponent) || !ci.isOnTheBorder())) {
+			    (!removeBorderComponent || !ci.isOnTheBorder())) {
 				componentsCount++;
 				// old label/new label correspondence
 				newLabels.add((int) componentsCount);

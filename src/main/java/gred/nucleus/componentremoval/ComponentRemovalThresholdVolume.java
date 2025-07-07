@@ -37,7 +37,7 @@ public class ComponentRemovalThresholdVolume implements ComponentRemovalPredicat
 	/** @see  */
 	@Override
 	public boolean keepVoxelComponent(Voxel voxel, ComponentInfo componentInfo) {
-		return (componentInfo.getNumberOfPoints() >= this.thresholdCardinality);
+		return componentInfo.getNumberOfPoints() >= this.thresholdCardinality;
 	}
 	
 }

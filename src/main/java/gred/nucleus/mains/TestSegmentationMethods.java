@@ -41,7 +41,7 @@ public class TestSegmentationMethods {
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
 			String log = otsuModified.runSeveralImages2();
-			if (!(log.equals(""))) {
+			if (!log.isEmpty()) {
 				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 			}
 		} catch (IOException e) {
@@ -56,7 +56,7 @@ public class TestSegmentationMethods {
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
 			String log = otsuModified.runSeveralImages2();
-			if (!(log.equals(""))) {
+			if (!log.isEmpty()) {
 				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 			}
 		} catch (IOException e) {
@@ -94,7 +94,7 @@ public class TestSegmentationMethods {
 		String pathToTest = "/home/tridubos/Bureau/IMAGES_TEST/AUTOCROP";
 		long   maxMemory  = Runtime.getRuntime().maxMemory();
 		LOGGER.debug("Maximum memory (bytes) /RAW_CZI: {} {}",
-		             (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1e-9),
+		             maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1e-9,
 		             Runtime.getRuntime().freeMemory() * 1e-9);
 		/*
 		 testStupidSeveralImages("/media/tridubos/DATA1/DATA_ANALYSE/MANIP_MANU_KAKU/ANALYSE_OCTOBRE_2019/images_PROBLEMS",

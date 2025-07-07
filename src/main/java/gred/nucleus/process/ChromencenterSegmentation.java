@@ -194,7 +194,7 @@ public class ChromencenterSegmentation {
 				if (ipBin.getf(i, j) > 0) {
 					for (int ii = i - this._neigh; ii < i + this._neigh; ++ii) {
 						for (int jj = j - this._neigh; jj < j + this._neigh; ++jj) {
-							if ((i != ii || j != jj) && (ipBin.getf(ii, jj) > 1) && ii >= 0 && jj >= 0 &&
+							if ((i != ii || j != jj) && ipBin.getf(ii, jj) > 1 && ii >= 0 && jj >= 0 &&
 							    ii < this._raw[0].getWidth() && jj < this._raw[0].getHeight()) {
 								
 								float valueA = ip.getf(i, j);
@@ -443,10 +443,10 @@ public class ChromencenterSegmentation {
 		for (Map.Entry<Double, Integer> entry : parcour.entrySet()) {
 			Double cle = entry.getKey();
 			Integer valeur = entry.getValue();
-			if (((valeur * getVoxelVolume3D() <
-			      this._chromocenterParameters._minSizeConnectedComponent) ||
-			     (valeur * getVoxelVolume3D() >
-			      this._chromocenterParameters._maxSizeConnectedComponent)) && valeur > 1) {
+			if ((valeur * getVoxelVolume3D() <
+			     this._chromocenterParameters._minSizeConnectedComponent ||
+			     valeur * getVoxelVolume3D() >
+			      this._chromocenterParameters._maxSizeConnectedComponent) && valeur > 1) {
 				for (int k = 0; k < this._raw[0].getNSlices(); ++k) {
 					for (int i = 0; i < this._raw[0].getWidth(); ++i) {
 						for (int j = 0; j < this._raw[0].getHeight(); ++j) {
@@ -478,10 +478,10 @@ public class ChromencenterSegmentation {
 		for (Map.Entry<Double, Integer> entry : parcour.entrySet()) {
 			Double cle = entry.getKey();
 			Integer valeur = entry.getValue();
-			if (((valeur * getPixelSurface2D() <
-			      this._chromocenterParameters._minSizeConnectedComponent) ||
-			     (valeur * getPixelSurface2D() >
-			      this._chromocenterParameters._maxSizeConnectedComponent)) && valeur > 1) {
+			if ((valeur * getPixelSurface2D() <
+			     this._chromocenterParameters._minSizeConnectedComponent ||
+			     valeur * getPixelSurface2D() >
+			      this._chromocenterParameters._maxSizeConnectedComponent) && valeur > 1) {
 				for (int i = 0; i < this._raw[0].getWidth(); ++i) {
 					for (int j = 0; j < this._raw[0].getHeight(); ++j) {
 						if (ip.getPixelValue(i, j ) == cle) {

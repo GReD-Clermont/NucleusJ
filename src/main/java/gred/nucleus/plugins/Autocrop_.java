@@ -1,7 +1,9 @@
 package gred.nucleus.plugins;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
@@ -16,8 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class Autocrop_ implements PlugIn, IDialogListener {
@@ -143,7 +147,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		Long   inputID  = Long.valueOf(autocropDialog.getSourceID());
 		Long   outputID = Long.valueOf(autocropDialog.getOutputProject());
 		try {
-			if (dataType.equals("Image")) {
+			if ("Image".equals(dataType)) {
 				ImageWrapper image      = client.getImage(inputID);
 				int          sizeC      = image.getPixels().getSizeC();
 				Long[]       outputsDat = new Long[sizeC];
@@ -161,12 +165,13 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 				List<ImageWrapper> images = null;
 				String             name   = "";
 				
-				if (dataType.equals("Dataset")) {
+				if ("Dataset".equals(dataType)) {
 					DatasetWrapper dataset = client.getDataset(inputID);
 					name = dataset.getName();
 					images = dataset.getImages(client);
-				} else if (dataType.equals("Tag")) {
-					images = client.getImagesTagged(inputID);
+				} else if ("Tag".equals(dataType)) {
+					TagAnnotationWrapper tag = client.getTag(inputID);
+					images = tag.getImages(client);
 				}
 				int    sizeC      = images.get(0).getPixels().getSizeC();
 				Long[] outputsDat = new Long[sizeC];
@@ -185,8 +190,11 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 			IJ.error("Unable to access to OMERO service");
 		} catch (AccessException ae) {
 			IJ.error("Cannot access " + dataType + "with ID = " + inputID + ".");
-		} catch (Exception e) {
+		} catch (OMEROServerError | IOException | ExecutionException e) {
 			LOGGER.error("An error occurred.", e);
+		} catch (InterruptedException e) {
+			LOGGER.error("An error occurred.", e);
+			Thread.currentThread().interrupt(); // Restore interrupted status
 		}
 	}
 	
@@ -196,9 +204,9 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		String output = autocropDialog.getOutput();
 		String config = autocropDialog.getConfig();
 		String typeThresholding = autocropDialog.getTypeThresholding();
-		if (input == null || input.equals("")) {
+		if (input == null || input.isEmpty()) {
 			IJ.error("Input file or directory is missing");
-		} else if (output == null || output.equals("")) {
+		} else if (output == null || output.isEmpty()) {
 			IJ.error("Output directory is missing");
 		} else {
 			try {
@@ -208,7 +216,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 				
 				switch (autocropDialog.getConfigMode()) {
 					case FILE:
-						if (config == null || config.equals("")) {
+						if (config == null || config.isEmpty()) {
 							IJ.error("Config file is missing");
 						} else {
 							LOGGER.info("Config file");
@@ -269,7 +277,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 				}
 				LOGGER.info("Autocrop process has ended successfully");
 				IJ.showMessage("Segmentation process ended successfully on "+ file.getName());
-			} catch (Exception e) {
+			} catch (NumberFormatException e)  {
 				LOGGER.error("An error occurred during autocrop.", e);
 			}
 		}

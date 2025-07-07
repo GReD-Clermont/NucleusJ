@@ -27,7 +27,11 @@ public class OutputTiff extends FilesNames {
 	public void saveImage(ImagePlus imageToSave) {
 		LOGGER.debug("Saving image: {}", this.fullPathFile);
 		try {
-			if (!fileExists()) {
+			if (fileExists()) {
+				File old = new File(this.fullPathFile);
+				if (old.delete()) {
+					LOGGER.debug("Deleted old {}", this.fullPathFile);
+				}
 				if (imageToSave.getNSlices() > 1) {
 					FileSaver fileSaver = new FileSaver(imageToSave);
 					fileSaver.saveAsTiffStack(this.fullPathFile);
@@ -36,10 +40,6 @@ public class OutputTiff extends FilesNames {
 					fileSaver.saveAsTiff(this.fullPathFile);
 				}
 			} else {
-				File old = new File(this.fullPathFile);
-				if (old.delete()) {
-					LOGGER.debug("Deleted old {}", this.fullPathFile);
-				}
 				if (imageToSave.getNSlices() > 1) {
 					FileSaver fileSaver = new FileSaver(imageToSave);
 					fileSaver.saveAsTiffStack(this.fullPathFile);

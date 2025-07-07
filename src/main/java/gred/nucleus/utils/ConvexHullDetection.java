@@ -242,7 +242,7 @@ public class ConvexHullDetection {
 			
 			Point temp = points.get(i);
 			
-			if(temp.y < lowest.y || (temp.y == lowest.y && temp.x < lowest.x)) {
+			if(temp.y < lowest.y || temp.y == lowest.y && temp.x < lowest.x) {
 				lowest = temp;
 			}
 		}
@@ -287,10 +287,10 @@ public class ConvexHullDetection {
 					// collinear with the 'lowest' point, let the point closest to it come first
 					
 					// use longs to guard against int-over/underflow
-					double distanceA = Math.sqrt((((long)lowest.x - a.x) * ((long)lowest.x - a.x)) +
-					                             (((long)lowest.y - a.y) * ((long)lowest.y - a.y)));
-					double distanceB = Math.sqrt((((long)lowest.x - b.x) * ((long)lowest.x - b.x)) +
-					                             (((long)lowest.y - b.y) * ((long)lowest.y - b.y)));
+					double distanceA = Math.sqrt(((long)lowest.x - a.x) * ((long)lowest.x - a.x) +
+					                             ((long)lowest.y - a.y) * ((long)lowest.y - a.y));
+					double distanceB = Math.sqrt(((long)lowest.x - b.x) * ((long)lowest.x - b.x) +
+					                             ((long)lowest.y - b.y) * ((long)lowest.y - b.y));
 					
 					if(distanceA < distanceB) {
 						return -1;
@@ -329,8 +329,8 @@ public class ConvexHullDetection {
 	protected static Turn getTurn(Point a, Point b, Point c) {
 		
 		// use longs to guard against int-over/underflow
-		long crossProduct = (((long)b.x - a.x) * ((long)c.y - a.y)) -
-		                    (((long)b.y - a.y) * ((long)c.x - a.x));
+		long crossProduct = ((long)b.x - a.x) * ((long)c.y - a.y) -
+		                    ((long)b.y - a.y) * ((long)c.x - a.x);
 		
 		if(crossProduct > 0) {
 			return Turn.COUNTER_CLOCKWISE;

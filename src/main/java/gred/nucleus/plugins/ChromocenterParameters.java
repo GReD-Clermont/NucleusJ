@@ -281,39 +281,39 @@ public class ChromocenterParameters extends PluginParameters {
 			System.exit(-1);
 		}
 		for (String idProp : prop.stringPropertyNames()) {
-			if (idProp.equals("_neigh")) {
+			if ("_neigh".equals(idProp)) {
 				this._neigh =
 						Integer.valueOf(prop.getProperty("_neigh"));
 			}
-			if (idProp.equals("_factor")) {
+			if ("_factor".equals(idProp)) {
 				this._factor =
 						Integer.valueOf(prop.getProperty("_factor"));
 			}
-			if (idProp.equals("_gaussianOnRaw")) {
+			if ("_gaussianOnRaw".equals(idProp)) {
 				this._gaussianOnRaw =
 						Boolean.valueOf(prop.getProperty("_gaussianOnRaw"));
 			}
-			if (idProp.equals("_gaussianBlurXsigma;")) {
+			if ("_gaussianBlurXsigma;".equals(idProp)) {
 				this._gaussianBlurXsigma =
 						Double.valueOf(prop.getProperty("_gaussianBlurXsigma"));
 			}
-			if (idProp.equals("_gaussianBlurYsigma;")) {
+			if ("_gaussianBlurYsigma;".equals(idProp)) {
 				this._gaussianBlurXsigma =
 						Double.valueOf(prop.getProperty("_gaussianBlurYsigma"));
 			}
-			if (idProp.equals("_gaussianBlurXsigma;")) {
+			if ("_gaussianBlurXsigma;".equals(idProp)) {
 				this._gaussianBlurXsigma =
 						Double.valueOf(prop.getProperty("_gaussianBlurYsigma"));
 			}
-			if (idProp.equals("_sizeFilterConnectedComponent")) {
+			if ("_sizeFilterConnectedComponent".equals(idProp)) {
 				this._sizeFilterConnectedComponent =
 						Boolean.valueOf(prop.getProperty("_sizeFilterConnectedComponent"));
 			}
-			if (idProp.equals("_maxSizeConnectedComponent;")) {
+			if ("_maxSizeConnectedComponent;".equals(idProp)) {
 				this._maxSizeConnectedComponent =
 						Double.valueOf(prop.getProperty("_maxSizeConnectedComponent"));
 			}
-			if (idProp.equals("_minSizeConnectedComponent;")) {
+			if ("_minSizeConnectedComponent;".equals(idProp)) {
 				this._minSizeConnectedComponent =
 						Double.valueOf(prop.getProperty("_minSizeConnectedComponent"));
 			}

@@ -77,7 +77,9 @@ public class ConvexHullSegmentation {
 		for (int d = 0; d < imagePlusXY.getNSlices(); ++d) {
 			for (int w = 0; w < imagePlusXY.getWidth(); ++w) {
 				for (int h = 0; h < imagePlusXY.getHeight(); ++h) {
-					if (imageStackXY.getVoxel(w, h, d) != 0 || (imageStackYZ.getVoxel(h, d, w) != 0 || imageStackXZ.getVoxel(w, d, h) != 0)) {
+					if (imageStackXY.getVoxel(w, h, d) != 0 ||
+					    imageStackYZ.getVoxel(h, d, w) != 0 ||
+					    imageStackXZ.getVoxel(w, d, h) != 0) {
 						if (imageStackOutput.getVoxel(w, h, d) == 0) {
 							imageStackOutput.setVoxel(w, h, d, 255);
 						}

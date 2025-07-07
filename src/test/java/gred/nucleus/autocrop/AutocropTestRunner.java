@@ -23,7 +23,7 @@ public class AutocropTestRunner {
 			for (File file : files) {
 				String extension = FilenameUtils.getExtension(file.getName())
 				                                .toLowerCase(Locale.ROOT);
-				if (file.isFile() && extension.equals("tif")) {
+				if (file.isFile() && "tif".equals(extension)) {
 					nImages++;
 				}
 			}
@@ -46,9 +46,7 @@ public class AutocropTestRunner {
 					LOGGER.info("Directory skipped: {}", name);
 				} else {
 					String extension = FilenameUtils.getExtension(name).toLowerCase(Locale.ROOT);
-					if (!extension.equals("tif")) {
-						LOGGER.info("File of type {} skipped: {}", extension, name);
-					} else {
+					if ("tif".equals(extension)) {
 						LOGGER.info("Beginning process on: {}", name);
 						runAutoCrop(f.toString(), AutoCropTest.PATH_TO_OUTPUT
 						                          + name);
@@ -56,6 +54,8 @@ public class AutocropTestRunner {
 						LOGGER.info("Checking results:");
 						AutocropTestChecker checker = new AutocropTestChecker(name);
 						checker.checkValues(f);
+					} else {
+						LOGGER.info("File of type {} skipped: {}", extension, name);
 					}
 				}
 			}

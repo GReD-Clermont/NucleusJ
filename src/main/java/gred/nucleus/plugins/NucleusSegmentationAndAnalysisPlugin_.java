@@ -34,7 +34,7 @@ public class NucleusSegmentationAndAnalysisPlugin_ implements PlugIn {
 		if (null == img) {
 			IJ.noImage();
 			return;
-		} else if (img.getStackSize() == 1 || (img.getType() != ImagePlus.GRAY8 && img.getType() != ImagePlus.GRAY16)) {
+		} else if (img.getStackSize() == 1 || img.getType() != ImagePlus.GRAY8 && img.getType() != ImagePlus.GRAY16) {
 			IJ.error("image format", "No images in 8 or 16 bits gray scale  in 3D");
 			return;
 		}

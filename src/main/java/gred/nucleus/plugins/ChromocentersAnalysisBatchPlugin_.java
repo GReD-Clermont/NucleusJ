@@ -57,7 +57,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 			runOMERO();
 		} else {
 			String file = chromocentersPipelineBatchDialog.getRawDataDirectory();
-			if (file == null || file.equals("")) {
+			if (file == null || file.isEmpty()) {
 				IJ.error("Input file or directory is missing");
 			} else {
 				try {
@@ -114,11 +114,11 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 		DatasetWrapper outDataset;
 		try {
 			// Check if all data types are "Image"
-			if (sourceDatatype.equals("Image") && segDatatype.equals("Image") && ccDatatype.equals("Image")) {
+			if ("Image".equals(sourceDatatype) && "Image".equals(segDatatype) && "Image".equals(ccDatatype)) {
 				mainFolder = processAndAnalyze(client, inputID, segID, ccID);
 			}
 			// Check if all data types are "Dataset"
-			else if (sourceDatatype.equals("Dataset") && segDatatype.equals("Dataset") && ccDatatype.equals("Dataset")) {
+			else if ("Dataset".equals(sourceDatatype) && "Dataset".equals(segDatatype) && "Dataset".equals(ccDatatype)) {
 				Long sourceImageId, segImageId, ccImageId;
 				DatasetWrapper sourceDataset = client.getDataset(inputID),
 						segDataset = client.getDataset(segID),
@@ -282,7 +282,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 				String nameFileChromocenter           = workDirectory + File.separator + "CcParameters.tab";
 				
 				for (int i = 0; i < listImageChromocenter.size(); ++i) {
-					LOGGER.info("image {}/{}", (i + 1), listImageChromocenter.size());
+					LOGGER.info("image {}/{}", i + 1, listImageChromocenter.size());
 					String pathImageChromocenter = listImageChromocenter.get(i);
 					String pathNucleusRaw =
 							pathImageChromocenter.replace("SegmentedDataCc", "RawDataNucleus");

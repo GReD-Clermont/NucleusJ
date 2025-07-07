@@ -73,12 +73,12 @@ public class SliceToStack {
 			LOGGER.info("image: {}", entry.getKey());
 			for (short i = 0; i < image.length; ++i) {
 				//image= BF.openImagePlus((directoryInput.dirPath
-				image[i] = IJ.openImage((directoryInput.getDirPath() +
-				                         File.separator +
-				                         entry.getKey() +
-				                         "_" +
-				                         i +
-				                         "_MLprediction.tif"));
+				image[i] = IJ.openImage(directoryInput.getDirPath() +
+				                        File.separator +
+				                        entry.getKey() +
+				                        "_" +
+				                        i +
+				                        "_MLprediction.tif");
 				IJ.run(image[i], "8-bit", "");
 				//
 			}

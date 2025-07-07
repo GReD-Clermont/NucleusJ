@@ -125,7 +125,7 @@ public class FJ_Statistics implements PlugIn, ItemListener, WindowListener {
 		slice = gd.getNextBoolean();
 		decimals = gd.getNextChoiceIndex();
 		
-		(new FJStatistics()).run(imp, values, clear, name, channel, time, slice, decimals);
+		new FJStatistics().run(imp, values, clear, name, channel, time, slice, decimals);
 	}
 	
 	
@@ -260,7 +260,7 @@ class FJStatistics {
 			cMax.y = bounds.y + bounds.height - 1;
 			
 			// Compute and show statistics:
-			final String    namePrelude = name ? ("\t" + imp.getTitle()) : "";
+			final String    namePrelude = name ? "\t" + imp.getTitle() : "";
 			final TextPanel textpanel   = IJ.getTextPanel();
 			final String    headings    = headings();
 			if (clear || !headings.equals(textpanel.getColumnHeadings())) {

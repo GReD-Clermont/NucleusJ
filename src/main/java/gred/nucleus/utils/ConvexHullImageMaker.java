@@ -40,11 +40,11 @@ public class ConvexHullImageMaker {
 		int         width;
 		int         height;
 		// Defining plan
-		if (axesName.equals("xy")) {
+		if ("xy".equals(axesName)) {
 			width = imagePlusBinary.getWidth();
 			height = imagePlusBinary.getHeight();
 			depth = imagePlusBinary.getNSlices();
-		} else if (axesName.equals("xz")) {
+		} else if ("xz".equals(axesName)) {
 			width = imagePlusBinary.getWidth();
 			height = imagePlusBinary.getNSlices();
 			depth = imagePlusBinary.getHeight();
@@ -119,9 +119,9 @@ public class ConvexHullImageMaker {
 				if (image[i][j] == label) {
 					if (image[i - 1][j] == 0 || image[i + 1][j] == 0 || image[i][j - 1] == 0 || image[i][j + 1] == 0) {
 						VoxelRecord voxelTest = new VoxelRecord();
-						if (axesName.equals("xy")) {
+						if ("xy".equals(axesName)) {
 							voxelTest.setLocation(i, j, indice);
-						} else if (axesName.equals("xz")) {
+						} else if ("xz".equals(axesName)) {
 							voxelTest.setLocation(i, indice, j);
 						} else {
 							voxelTest.setLocation(indice, i, j);
@@ -222,9 +222,9 @@ public class ConvexHullImageMaker {
 		double[][] image           = new double[width][height];
 		for (int i = 0; i < width; ++i) {
 			for (int j = 0; j < height; ++j) {
-				if (axesName.equals("xy")) {
+				if ("xy".equals(axesName)) {
 					image[i][j] = imageStackInput.getVoxel(i, j, index);
-				} else if (axesName.equals("xz")) {
+				} else if ("xz".equals(axesName)) {
 					image[i][j] = imageStackInput.getVoxel(i, index, j);
 				} else {
 					image[i][j] = imageStackInput.getVoxel(index, i, j);

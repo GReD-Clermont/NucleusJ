@@ -74,7 +74,7 @@ public class TestAutoCrop {
 		long maxMemory = Runtime.getRuntime().maxMemory();
 		/* Maximum amount of memory the JVM will attempt to use */
 		LOGGER.info("Maximum memory (bytes): {}",
-		            (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1e-9));
+		            maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1e-9);
 
 //		runAutoCropFolder("C:/Users/Martin/Documents/IMAGE_TEST_NJ/AUTOCROP/RAW_ND/","C:/Users/Martin/Documents/IMAGE_TEST_NJ/AUTOCROP/RESULTS/RAW_ND/");
 		runCropFromCoordinates("C:/Users/Martin/Documents/IMAGE_TEST_NJ/AUTOCROP/RESULTS/TIF_3D/tab_file.txt");

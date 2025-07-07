@@ -41,7 +41,7 @@ public class SegmentationImageIntegrationCheck {
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
 			String log = otsuModified.runSeveralImages2();
-			if (!(log.equals(""))) {
+			if (!log.isEmpty()) {
 				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 			}
 		} catch (IOException | FormatException e) {
@@ -55,7 +55,7 @@ public class SegmentationImageIntegrationCheck {
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
 			String log = otsuModified.runSeveralImages2();
-			if (!(log.equals(""))) {
+			if (!log.isEmpty()) {
 				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 			}
 		} catch (IOException | FormatException e) {

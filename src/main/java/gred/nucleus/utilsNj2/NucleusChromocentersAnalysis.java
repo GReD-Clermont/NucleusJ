@@ -245,7 +245,7 @@ public class NucleusChromocentersAnalysis {
 		for (double v : tInput) {
 			mean += v;
 		}
-		mean /= (tInput.length);
+		mean /= tInput.length;
 		return mean;
 	}
 	

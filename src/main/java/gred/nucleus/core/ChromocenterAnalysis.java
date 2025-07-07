@@ -152,11 +152,11 @@ public final class ChromocenterAnalysis {
 		DatasetWrapper outDataset;
 		try {
 			// Check if all data types are "Image"
-			if (sourceDatatype.equals("Image") && segDatatype.equals("Image") && ccDatatype.equals("Image")) {
+			if ("Image".equals(sourceDatatype) && "Image".equals(segDatatype) && "Image".equals(ccDatatype)) {
 				mainFolder = processAndAnalyze(client, inputID, segID, ccID);
 			}
 			// Check if all data types are "Dataset"
-			else if (sourceDatatype.equals("Dataset") && segDatatype.equals("Dataset") && ccDatatype.equals("Dataset")) {
+			else if ("Dataset".equals(sourceDatatype) && "Dataset".equals(segDatatype) && "Dataset".equals(ccDatatype)) {
 				Long sourceImageId, segImageId, ccImageId;
 				DatasetWrapper sourceDataset = client.getDataset(inputID),
 						segDataset = client.getDataset(segID),
@@ -309,9 +309,9 @@ public final class ChromocenterAnalysis {
 				fileList.isDirectoryOrFileExist(".+SegmentedDataCc.+", tFileRawImage)) {
 
 			String rhfChoice;
-			if (("volume_intensity").equals(isRHFVolumeAndIntensity)) {
+			if ("volume_intensity".equals(isRHFVolumeAndIntensity)) {
 				rhfChoice = "Volume and intensity";
-			} else if (("volume").equals(isRHFVolumeAndIntensity)) {
+			} else if ("volume".equals(isRHFVolumeAndIntensity)) {
 				rhfChoice = "Volume";
 			} else {
 				rhfChoice = "Intensity";
@@ -323,7 +323,7 @@ public final class ChromocenterAnalysis {
 			String nameFileChromocenter           = workDirectory + File.separator + "CcParameters.tab";
 
 			for (int i = 0; i < listImageChromocenter.size(); ++i) {
-				LOGGER.info("image {}/{}", (i + 1), listImageChromocenter.size());
+				LOGGER.info("image {}/{}", i + 1, listImageChromocenter.size());
 				String pathImageChromocenter = listImageChromocenter.get(i);
 				String pathNucleusRaw =
 						pathImageChromocenter.replace("SegmentedDataCc", "RawDataNucleus");
@@ -353,7 +353,7 @@ public final class ChromocenterAnalysis {
 					imagePlusSegmented.setCalibration(calibration);
 					imagePlusInput.setCalibration(calibration);
 					try {
-						if (("nuc_cc").equals(isNucAndCcAnalysis)) {
+						if ("nuc_cc".equals(isNucAndCcAnalysis)) {
 							ChromocenterAnalysis.computeParametersChromocenter(nameFileChromocenter,
 									imagePlusSegmented,
 									imagePlusChromocenter);
@@ -364,7 +364,7 @@ public final class ChromocenterAnalysis {
 									imagePlusInput,
 									imagePlusSegmented,
 									imagePlusChromocenter);
-						} else if (("cc").equals(isNucAndCcAnalysis)) {
+						} else if ("cc".equals(isNucAndCcAnalysis)) {
 							ChromocenterAnalysis.computeParametersChromocenter(nameFileChromocenter,
 									imagePlusSegmented,
 									imagePlusChromocenter);

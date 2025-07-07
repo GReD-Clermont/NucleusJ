@@ -759,8 +759,14 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		 * Test all the box, condition etc before to allow the program to run and dispose the java.trax.gui
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (!useOMERO){
-				if (_jtfWorkDir.getText().isEmpty() || _jtfRawData.getText().isEmpty() || _jtfRawSeg.getText().isEmpty() ) {
+			if (useOMERO) {
+				_start = true;
+				_gui.dispose();
+				
+			} else {
+				if (_jtfWorkDir.getText().isEmpty() ||
+				    _jtfRawData.getText().isEmpty() ||
+				    _jtfRawSeg.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(
 							null, "You did not choose an input/output directory",
 							"Error", JOptionPane.ERROR_MESSAGE
@@ -769,10 +775,6 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 					_start = true;
 					_gui.dispose();
 				}
-			} else {
-				_start = true;
-				_gui.dispose();
-				
 			}
 			try {
 				dialogListener.OnStart();

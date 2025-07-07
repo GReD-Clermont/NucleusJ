@@ -122,14 +122,14 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 		Long   inputID  = Long.valueOf(segmentationDialog.getSourceID());
 		Long   outputID = Long.valueOf(segmentationDialog.getOutputProject());
 		try {
-			if (dataType.equals("Image")) {
+			if ("Image".equals(dataType)) {
 				ImageWrapper image = client.getImage(inputID);
 				String       log;
 				
 				log = segmentation.runOneImageOMERO(image, outputID, client);
 				segmentation.saveCropGeneralInfoOmero(client, outputID);
 				
-				if (!(log.equals(""))) {
+				if (!log.isEmpty()) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}
 			} else {
@@ -150,7 +150,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				}
 				String log;
 				log = segmentation.runSeveralImagesOMERO(images, outputID, client, inputID);
-				if (!(log.equals(""))) {
+				if (!log.isEmpty()) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}
 			}
@@ -170,9 +170,9 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 		String input  = segmentationDialog.getInput();
 		String output = segmentationDialog.getOutput();
 		String config = segmentationDialog.getConfig();
-		if (input == null || input.equals("")) {
+		if (input == null || input.isEmpty()) {
 			IJ.error("Input file or directory is missing");
-		} else if (output == null || output.equals("")) {
+		} else if (output == null || output.isEmpty()) {
 			IJ.error("Output directory is missing");
 		} else {
 			try {
@@ -181,7 +181,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				
 				switch (segmentationDialog.getConfigMode()) {
 					case FILE:
-						if (config == null || config.equals("")) {
+						if (config == null || config.isEmpty()) {
 							IJ.error("Config file is missing");
 						} else {
 							LOGGER.info("Config file");
@@ -230,7 +230,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 					log = otsuModified.runOneImage(input);
 					otsuModified.saveCropGeneralInfo();
 				}
-				if (!(log.equals(""))) {
+				if (!log.isEmpty()) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}
 				

@@ -62,7 +62,7 @@ public class FJ_Structure implements PlugIn, WindowListener {
 		smoothingScale = gd.getNextString();
 		integrationScale = gd.getNextString();
 		
-		(new FJStructure()).run(imp, largest, middle, smallest, smoothingScale, integrationScale);
+		new FJStructure().run(imp, largest, middle, smallest, smoothingScale, integrationScale);
 	}
 	
 	

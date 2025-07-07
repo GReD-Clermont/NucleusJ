@@ -39,7 +39,7 @@ public class FJ_Panel implements PlugIn, ActionListener, WindowListener {
 		
 		FJ.log(FJ.name() + " " + FJ.version() + ": Panel");
 		
-		final Frame parent = (IJ.getInstance() != null) ? IJ.getInstance() : new Frame();
+		final Frame parent = IJ.getInstance() != null ? IJ.getInstance() : new Frame();
 		dialog = new Dialog(parent, FJ.name(), false);
 		dialog.setLayout(new FlowLayout());
 		dialog.addWindowListener(this);
@@ -95,10 +95,10 @@ public class FJ_Panel implements PlugIn, ActionListener, WindowListener {
 		} else if (source == structure) {
 			IJ.doCommand("FeatureJ Structure");
 		} else if (source == about) {
-			(new FJ_About()).run("");
+			new FJ_About().run("");
 		} else if (source == options) {
 			IJ.doCommand("FeatureJ Options");
-		} else if (source == website) (new FJ_Website()).run("");
+		} else if (source == website) new FJ_Website().run("");
 	}
 	
 	

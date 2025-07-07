@@ -71,7 +71,7 @@ public class FJ_Edges implements PlugIn, ItemListener, WindowListener {
 		lower = gd.getNextString();
 		higher = gd.getNextString();
 		
-		(new FJEdges()).run(imp, compute, scale, suppress, lower, higher);
+		new FJEdges().run(imp, compute, scale, suppress, lower, higher);
 	}
 	
 	
@@ -138,7 +138,7 @@ class FJEdges {
 				throw new IllegalArgumentException("Invalid smoothing scale value");
 			}
 			try {
-				if (lower.equals("")) {
+				if (lower.isEmpty()) {
 					lowThreshold = false;
 				} else {
 					lowVal = Double.parseDouble(lower);
@@ -147,7 +147,7 @@ class FJEdges {
 				throw new IllegalArgumentException("Invalid lower threshold value");
 			}
 			try {
-				if (higher.equals("")) {
+				if (higher.isEmpty()) {
 					highThreshold = false;
 				} else {
 					highVal = Double.parseDouble(higher);

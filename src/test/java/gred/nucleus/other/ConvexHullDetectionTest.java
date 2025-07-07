@@ -50,16 +50,16 @@ public class ConvexHullDetectionTest {
 			for (File f : files) {
 				String name      = f.getName();
 				String extension = FilenameUtils.getExtension(name).toLowerCase(Locale.ROOT);
-				if (!extension.equals("tif")) { // Only handle .TIF
-					LOGGER.info("File of type {} skipped", extension);
-				} else {
+				if ("tif".equals(extension)) {
 					LOGGER.info("Beginning process on: {} ({})", name, f.getAbsolutePath());
 					ImagePlus segImp = runGrahamScan(f.getAbsolutePath());
 					LOGGER.info("Finished process on: {}", name);
 					LOGGER.info("Saving {} result", name);
 					
 					LOGGER.info("Checking results:");
-					saveFile(segImp,outputDir + name);
+					saveFile(segImp, outputDir + name);
+				} else { // Only handle .TIF
+					LOGGER.info("File of type {} skipped", extension);
 				}
 			}
 		}

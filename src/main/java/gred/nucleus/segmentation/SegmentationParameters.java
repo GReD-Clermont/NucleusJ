@@ -79,13 +79,13 @@ public class SegmentationParameters extends PluginParameters {
 			System.exit(-1);
 		}
 		for (String idProp : prop.stringPropertyNames()) {
-			if (idProp.equals("ConvexHullDetection")) {
+			if ("ConvexHullDetection".equals(idProp)) {
 				this.ConvexHullDetection = Boolean.parseBoolean(prop.getProperty("ConvexHullDetection"));
 			}
-			if (idProp.equals("maxVolumeNucleus")) {
+			if ("maxVolumeNucleus".equals(idProp)) {
 				this.maxVolumeNucleus = Integer.parseInt(prop.getProperty("maxVolumeNucleus"));
 			}
-			if (idProp.equals("minVolumeNucleus")) {
+			if ("minVolumeNucleus".equals(idProp)) {
 				this.minVolumeNucleus = Integer.parseInt(prop.getProperty("minVolumeNucleus"));
 			}
 		}

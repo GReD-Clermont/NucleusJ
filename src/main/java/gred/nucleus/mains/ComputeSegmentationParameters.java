@@ -126,9 +126,9 @@ public class ComputeSegmentationParameters {
 		for (int k = 0; k < raw.getStackSize(); ++k) {
 			for (int i = 0; i < raw.getWidth(); ++i) {
 				for (int j = 0; j < raw.getHeight(); ++j) {
-					if ((imageStackSeg.getVoxel(i, j, k) == 255) &&
-					    (otsuThreshold >= imageStackRaw.getVoxel(i, j, k))) {
-						otsuThreshold = (int) (imageStackRaw.getVoxel(i, j, k));
+					if (imageStackSeg.getVoxel(i, j, k) == 255 &&
+					    otsuThreshold >= imageStackRaw.getVoxel(i, j, k)) {
+						otsuThreshold = (int) imageStackRaw.getVoxel(i, j, k);
 					}
 				}
 			}

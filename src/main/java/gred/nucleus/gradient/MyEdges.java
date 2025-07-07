@@ -95,7 +95,7 @@ public class MyEdges {
 		
 		final String name = image.name();
 		
-		Image edgeImage = (image instanceof FloatImage) ? image : new FloatImage(image);
+		Image edgeImage = image instanceof FloatImage ? image : new FloatImage(image);
 		
 		differentiator.messenger.log(messenger.log());
 		differentiator.progressor.parent(progressor);
@@ -343,16 +343,14 @@ public class MyEdges {
 					f1mdy = 1 - fdy;
 					f1mdz = 1 - fdz;
 					
-					gmVal1 = (
-							f1mdz * f1mdy * f1mdx * gm[iz][iy][ix] +
-							f1mdz * f1mdy * fdx * gm[iz][iy][ixp1] +
-							f1mdz * fdy * f1mdx * gm[iz][iyp1][ix] +
-							f1mdz * fdy * fdx * gm[iz][iyp1][ixp1] +
-							fdz * f1mdy * f1mdx * gm[izp1][iy][ix] +
-							fdz * f1mdy * fdx * gm[izp1][iy][ixp1] +
-							fdz * fdy * f1mdx * gm[izp1][iyp1][ix] +
-							fdz * fdy * fdx * gm[izp1][iyp1][ixp1]
-					);
+					gmVal1 = f1mdz * f1mdy * f1mdx * gm[iz][iy][ix] +
+					f1mdz * f1mdy * fdx * gm[iz][iy][ixp1] +
+					f1mdz * fdy * f1mdx * gm[iz][iyp1][ix] +
+					f1mdz * fdy * fdx * gm[iz][iyp1][ixp1] +
+					fdz * f1mdy * f1mdx * gm[izp1][iy][ix] +
+					fdz * f1mdy * fdx * gm[izp1][iy][ixp1] +
+					fdz * fdy * f1mdx * gm[izp1][iyp1][ix] +
+					fdz * fdy * fdx * gm[izp1][iyp1][ixp1];
 					
 					// Compute gradient magnitude in opposite direction:
 					fx = xp1 - rx;
@@ -371,16 +369,14 @@ public class MyEdges {
 					f1mdy = 1 - fdy;
 					f1mdz = 1 - fdz;
 					
-					gmVal2 = (
-							f1mdz * f1mdy * f1mdx * gm[iz][iy][ix] +
-							f1mdz * f1mdy * fdx * gm[iz][iy][ixp1] +
-							f1mdz * fdy * f1mdx * gm[iz][iyp1][ix] +
-							f1mdz * fdy * fdx * gm[iz][iyp1][ixp1] +
-							fdz * f1mdy * f1mdx * gm[izp1][iy][ix] +
-							fdz * f1mdy * fdx * gm[izp1][iy][ixp1] +
-							fdz * fdy * f1mdx * gm[izp1][iyp1][ix] +
-							fdz * fdy * fdx * gm[izp1][iyp1][ixp1]
-					);
+					gmVal2 = f1mdz * f1mdy * f1mdx * gm[iz][iy][ix] +
+					f1mdz * f1mdy * fdx * gm[iz][iy][ixp1] +
+					f1mdz * fdy * f1mdx * gm[iz][iyp1][ix] +
+					f1mdz * fdy * fdx * gm[iz][iyp1][ixp1] +
+					fdz * f1mdy * f1mdx * gm[izp1][iy][ix] +
+					fdz * f1mdy * fdx * gm[izp1][iy][ixp1] +
+					fdz * fdy * f1mdx * gm[izp1][iyp1][ix] +
+					fdz * fdy * fdx * gm[izp1][iyp1][ixp1];
 					
 					// Suppress current gradient magnitude if non-maximum:
 					if (gmVal1 >= gmVal || gmVal2 >= gmVal) {

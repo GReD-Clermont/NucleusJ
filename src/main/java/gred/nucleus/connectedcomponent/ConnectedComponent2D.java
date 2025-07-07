@@ -106,7 +106,7 @@ public class ConnectedComponent2D extends ConnectedComponent {
 			for (short ii = iMin; ii <= iMax; ii++) {
 				for (short jj = jMin; jj <= jMax; jj++) {
 					// If the neighbor (different from VoxelRecordShort) is a 1 and not labeled
-					if ((getLabel(ii, jj, 0) == 0) && (imgProc.get(ii, jj) == this.foregroundColor)) {
+					if (getLabel(ii, jj, 0) == 0 && imgProc.get(ii, jj) == this.foregroundColor) {
 						// Set the voxel's label
 						setLabel(ii, jj, 0, currentLabel);
 						// Increment component's cardinality

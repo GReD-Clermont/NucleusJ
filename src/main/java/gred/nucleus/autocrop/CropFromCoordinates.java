@@ -138,8 +138,8 @@ public class CropFromCoordinates {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				
-				if ((!(line.matches("^#.*")))
-				    && (!(line.matches("^FileName.*")))) {
+				if (!line.matches("^#.*")
+				    && !line.matches("^FileName.*")) {
 					String[] splitLine = line.split("\\t");
 					short xMax = (short) (Integer.parseInt(splitLine[3]) + Integer.parseInt(splitLine[6]));
 					short yMax = (short) (Integer.parseInt(splitLine[4]) + Integer.parseInt(splitLine[7]));

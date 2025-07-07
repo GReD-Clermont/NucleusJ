@@ -47,7 +47,7 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 	void runLocal(){
 		String DICfile = GenerateOverlayDialog.getDICInput();
 		String zProjectionFile = GenerateOverlayDialog.getZprojectionInput();
-		if (DICfile == null || DICfile.equals("") || zProjectionFile == null || zProjectionFile.equals("")) {
+		if (DICfile == null || DICfile.isEmpty() || zProjectionFile == null || zProjectionFile.isEmpty()) {
 			IJ.error("Input file or directory is missing");
 		} else {
 			try {
@@ -85,7 +85,7 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 		String DICID  = GenerateOverlayDialog.getzProjectionID();
 		
 		try {
-			if (DICDataType.equals("Dataset") && ZprojectiondataType.equals("Dataset")) {
+			if ("Dataset".equals(DICDataType) && "Dataset".equals(ZprojectiondataType)) {
 				try {
 					LOGGER.info("Begin Overlay process ");
 					DICDataset = client.getDataset(Long.parseLong(DICID));

@@ -625,7 +625,15 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		 *
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (!useOMERO){
+			if (useOMERO) {
+				try {
+					dialogListener.OnStart();
+				} catch (AccessException | ServiceException | ExecutionException e) {
+					throw new RuntimeException(e);
+				}
+				start = true;
+				computeParametersDialog.dispose();
+			} else {
 				if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
 					JOptionPane.showMessageDialog
 							           (
@@ -643,14 +651,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 					}
 					computeParametersDialog.dispose();
 				}
-			}else {
-				try {
-					dialogListener.OnStart();
-				} catch (AccessException | ServiceException | ExecutionException e) {
-					throw new RuntimeException(e);
-				}
-				start = true;
-				computeParametersDialog.dispose();
 			}
 		}
 	}
