@@ -65,7 +65,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 		JButton jButtonStart = new JButton("Start");
 		JButton jButtonQuit  = new JButton("Quit");
-		this.setTitle("Autocrop NucleusJ2");
+		this.setTitle("Autocrop - NucleusJ3");
 		this.setMinimumSize(new Dimension(400, 500));
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);

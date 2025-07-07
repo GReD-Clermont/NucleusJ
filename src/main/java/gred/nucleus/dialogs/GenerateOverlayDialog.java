@@ -75,7 +75,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		JButton jButtonQuit = new JButton("Quit");
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
-		this.setTitle("Generate Overlay - NucleusJ2");
+		this.setTitle("Generate Overlay - NucleusJ3");
 		this.setMinimumSize(new Dimension(500, 390));
 		
 		container = getContentPane();

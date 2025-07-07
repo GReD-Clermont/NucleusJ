@@ -13,7 +13,7 @@ jobs:
       - name: Checkout NJ-image-test
         uses: actions/checkout@v4
         with:
-          repository: GReD-Clermont/NucleusJ2-tests-images
+          repository: GReD-Clermont/NucleusJ-tests-images
           ref: 'v1'
           path: test-images
       - name: Set up JDK 11

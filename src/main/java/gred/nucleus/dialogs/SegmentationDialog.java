@@ -62,7 +62,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		
 		JButton jButtonStart = new JButton("Start");
 		JButton jButtonQuit  = new JButton("Quit");
-		this.setTitle("Segmentation NucleusJ2");
+		this.setTitle("Segmentation - NucleusJ3");
 		this.setMinimumSize(new Dimension(400, 500));
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);

@@ -3,7 +3,7 @@ image: maven:3-jdk-8
 variables:
   CI_PROJECT_PATH: "ReightI/test-nucleusj-ci-cd"
   API_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
-  VERSION: "2.2.0"
+  VERSION: "3.0.0-SNAPSHOT"
 
 stages:
   - compile

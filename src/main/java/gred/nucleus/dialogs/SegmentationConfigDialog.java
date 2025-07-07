@@ -42,7 +42,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	
 	public SegmentationConfigDialog(SegmentationDialog caller) {
 		this.caller = caller;
-		this.setTitle("Segmentation NucleusJ2");
+		this.setTitle("Segmentation - NucleusJ3");
 		this.setSize(300, 340);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		container = getContentPane();

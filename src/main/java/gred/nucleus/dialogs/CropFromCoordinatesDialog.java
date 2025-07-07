@@ -60,7 +60,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		JButton jButtonQuit = new JButton("Quit");
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
-		this.setTitle("Crop From Coordinate - NucleusJ2");
+		this.setTitle("Crop From Coordinate - NucleusJ3");
 		this.setMinimumSize(new Dimension(500, 410));
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		

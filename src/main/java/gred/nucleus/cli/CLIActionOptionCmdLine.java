@@ -44,7 +44,7 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 	/**
 	 * Method to check action parameter
 	 *
-	 * @param action nucleusJ2.0 action to run
+	 * @param action NucleusJ3 action to run
 	 *
 	 * @return boolean existing action
 	 */

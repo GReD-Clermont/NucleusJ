@@ -51,7 +51,7 @@ public class CLIActionOptions {
 	                                                .type(String.class)
 	                                                .desc("Path to config file\n" +
 	                                                      "To generate config file example in current folder:\n" +
-	                                                      "java -jar NucleusJ_2-" +
+	                                                      "java -jar nucleusj-" +
 	                                                      NJ_VERSION +
 	                                                      ".jar -h configFileExample")
 	                                                .numberOfArgs(1)
@@ -82,7 +82,7 @@ public class CLIActionOptions {
 	public               Option omero       = Option.builder("ome")
 	                                                .longOpt("omero")
 	                                                .type(boolean.class)
-	                                                .desc("Use of NucleusJ2.0 in OMERO\n")
+	                                                .desc("Use of NucleusJ3 in OMERO\n")
 	                                                .build();
 	
 	/** List of available actions */
@@ -130,11 +130,11 @@ public class CLIActionOptions {
 	/** @return : helper info */
 	public String getHelperInfo() {
 		return "More details for available actions:\n" +
-		       "java -jar NucleusJ_2-" + NJ_VERSION + ".jar -h \n" +
-		       "java -jar NucleusJ_2-" + NJ_VERSION + ".jar -help \n\n" +
+		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h \n" +
+		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help \n\n" +
 		       "More details for a specific action:\n" +
-		       "java -jar NucleusJ_2-" + NJ_VERSION + ".jar -h <action>\n" +
-		       "java -jar NucleusJ_2-" + NJ_VERSION + ".jar -help <action>";
+		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h <action>\n" +
+		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help <action>";
 	}
 	
 	
