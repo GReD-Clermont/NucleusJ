@@ -17,10 +17,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class SegmentationTestChecker {
-	public static final String PATH_TO_INFO   = "OTSU/result_Segmentation_Analyse_OTSU.csv";
-	public static final String PATH_TO_TARGET = "target/";
-	public static final String PATH_TO_RESULT = "OTSU/";
+public final class SegmentationTestChecker {
+	public static final String PATH_TO_INFO   = "OTSU" + File.separator + "result_Segmentation_Analyse_OTSU.csv";
+	public static final String PATH_TO_TARGET = "target" + File.separator;
+	public static final String PATH_TO_RESULT = "OTSU" + File.separator;
 	
 	public static final int PERCENT_MASK_OVERLAPPED = 5;
 	
@@ -31,12 +31,12 @@ public class SegmentationTestChecker {
 	
 	
 	public SegmentationTestChecker(String targetPath) {
-		File targetFile = new File(SegmentationTest.PATH_TO_INPUT +
+		File targetFile = new File(SegmentationTest.PATH_TO_SEGMENTATION +
 		                           PATH_TO_TARGET +
 		                           targetPath + File.separator +
 		                           PATH_TO_INFO
 		);
-		String resultPath = SegmentationTest.PATH_TO_INPUT +
+		String resultPath = SegmentationTest.PATH_TO_SEGMENTATION +
 		                    PATH_TO_TARGET +
 		                    targetPath + File.separator +
 		                    PATH_TO_RESULT + targetPath;
@@ -53,12 +53,12 @@ public class SegmentationTestChecker {
 	}
 	
 	
-	public SegmentationResult extractGeneralInfo(SegmentationResult result, File file) {
+	public static SegmentationResult extractGeneralInfo(SegmentationResult result, File file) {
 		List<String> list = new ArrayList<>();
 		try {
 			list = Files.readAllLines(file.toPath(), Charset.defaultCharset());
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LOGGER.error("Error reading file: {}", file.getAbsolutePath(), ex);
 		}
 		
 		//String[] resultLine = list.get(list.size() - 1).split("\t");
@@ -91,6 +91,7 @@ public class SegmentationTestChecker {
 		ImagePlus imgDiff = new ImageCalculator().run("difference create stack",
 		                                              target.getImage(),
 		                                              result.getImage());
+		
 		StackStatistics statsTarget      = new StackStatistics(target.getImage());
 		long[]          histogramTarget  = statsTarget.getHistogram();
 		long            targetMaskPixels = histogramTarget[histogramTarget.length - 1];
