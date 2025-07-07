@@ -365,7 +365,7 @@ public class AutoCropCalling {
 		try {
 			Files.deleteIfExists(resultFile.toPath());
 		} catch (IOException io) {
-			LOGGER.error("Problem while deleting file: " + resultPath, io);
+			LOGGER.error("Problem while deleting file: {}", resultPath, io);
 		}
 	}
 

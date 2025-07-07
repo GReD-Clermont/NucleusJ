@@ -125,8 +125,7 @@ public abstract class ConnectedComponent {
 	                                                               int foregroundColor,
 	                                                               boolean removeBorderComponent,
 	                                                               double thresholdVoxelVolume,
-	                                                               boolean setRandomColors)
-	throws Exception {
+	                                                               boolean setRandomColors) {
 		ConnectedComponent cc;
 		if (inputImage.getNSlices() <= 1) {
 			cc = new ConnectedComponent2D(inputImage, foregroundColor);
@@ -161,7 +160,7 @@ public abstract class ConnectedComponent {
 	 *
 	 * @return an instance of a concrete derived class for ConnectedComponent
 	 *
-	 * @throws Exception in case the number of connected components exceeds the Short.MAX_VALUE (32767)
+	 * @throws IllegalStateException in case the number of connected components exceeds the Short.MAX_VALUE (32767)
 	 */
 	public static ConnectedComponent getLabelledConnectedComponent(ImagePlus inputImage,
 	                                                               int foregroundColor,
@@ -169,7 +168,7 @@ public abstract class ConnectedComponent {
 	                                                               double thresholdVoxelVolume,
 	                                                               ComponentRemovalPredicate removalPredicate,
 	                                                               boolean keepPredicate,
-	                                                               boolean setRandomColors) throws Exception {
+	                                                               boolean setRandomColors) {
 		ConnectedComponent cc;
 		if (inputImage.getNSlices() <= 1) {
 			cc = new ConnectedComponent2D(inputImage, foregroundColor);
@@ -265,11 +264,11 @@ public abstract class ConnectedComponent {
 	
 	
 	/**
-	 * labels the connected components of the input image (attribute this.ip)
+	 * Labels the connected components of the input image (attribute this.ip)
 	 *
-	 * @throws Exception in case the number of connected components exceeds the Short.MAX_VALUE (32767)
+	 * @throws IllegalStateException in case the number of connected components exceeds the {@link Integer#MAX_VALUE} ({@value Short#MAX_VALUE})
 	 */
-	abstract void doLabelConnectedComponent() throws Exception;
+	abstract void doLabelConnectedComponent();
 	
 	
 	/**

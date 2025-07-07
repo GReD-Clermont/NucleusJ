@@ -1,5 +1,8 @@
 package gred.nucleus.mains;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
 import gred.nucleus.cli.CLIActionOptionCmdLine;
 import gred.nucleus.cli.CLIActionOptionOMERO;
 import gred.nucleus.cli.CLIHelper;
@@ -7,14 +10,17 @@ import gred.nucleus.cli.CLIRunAction;
 import gred.nucleus.cli.CLIRunActionOMERO;
 import gred.nucleus.dialogs.MainGui;
 
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.SwingUtilities;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class Main {
@@ -22,7 +28,9 @@ public class Main {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args)
+	throws AccessException, ServiceException, OMEROServerError,
+	       IOException, ExecutionException, InterruptedException, FormatException {
 		List<String> listArgs = Arrays.asList(args);
 		
 		/* Allow IJ threads from thread pool to timeout */

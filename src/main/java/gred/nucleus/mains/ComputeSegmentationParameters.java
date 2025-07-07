@@ -86,7 +86,7 @@ public class ComputeSegmentationParameters {
 	}
 	
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException, FormatException {
 		computeNucleusParameters(
 				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/RAW",
 				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/GIFT");

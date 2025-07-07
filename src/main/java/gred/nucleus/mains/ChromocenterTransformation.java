@@ -7,14 +7,16 @@ import gred.nucleus.segmentation.SegmentationParameters;
 import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.plugin.ChannelSplitter;
+import loci.formats.FormatException;
 import loci.plugins.BF;
 
 import java.io.File;
+import java.io.IOException;
 
 
 public class ChromocenterTransformation {
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException, FormatException {
 		String input  = "/home/tridubos/Bureau/IMAGES_TEST_CICD/TEST_CC/SegmentedDataCc";
 		String output = "/home/tridubos/Bureau/IMAGES_TEST_CICD/TEST_CC/out";
 		

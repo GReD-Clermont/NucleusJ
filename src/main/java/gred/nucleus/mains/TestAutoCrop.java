@@ -68,7 +68,7 @@ public class TestAutoCrop {
 	 *
 	 * @param args
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException, FormatException {
 		
 		LOGGER.info("Start program");
 		long maxMemory = Runtime.getRuntime().maxMemory();

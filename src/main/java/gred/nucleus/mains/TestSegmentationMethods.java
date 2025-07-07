@@ -2,6 +2,7 @@ package gred.nucleus.mains;
 
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,8 @@ public class TestSegmentationMethods {
 	 * @param input
 	 * @param output
 	 */
-	public static void testStupidSeveralImages(String input, String output) throws Exception {
+	public static void testStupidSeveralImages(String input, String output)
+	throws FormatException {
 		SegmentationParameters segmentationParameters = new SegmentationParameters(input, output);
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
@@ -48,7 +50,8 @@ public class TestSegmentationMethods {
 	}
 	
 	
-	public static void testStupidSeveralImages(String input, String output, String config) throws Exception {
+	public static void testStupidSeveralImages(String input, String output, String config)
+	throws FormatException {
 		SegmentationParameters segmentationParameters = new SegmentationParameters(input, output, config);
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
@@ -67,7 +70,7 @@ public class TestSegmentationMethods {
 	 *
 	 * @param args
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws FormatException {
 		///home/titus/Bureau/data/Test_Image_Reproducibility/IMAGE_TEST_NJ/AUTOCROP_RAW/RAW_BIOFORMATS
 		String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 		

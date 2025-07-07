@@ -3,6 +3,7 @@ package gred.nucleus.other;
 import gred.nucleus.other.analysistest.OutputFileVerification;
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class SegmentationImageIntegrationCheck {
 	 * @param input
 	 * @param output
 	 */
-	public static void testStupidSeveralImages(String input, String output) throws Exception {
+	public static void testStupidSeveralImages(String input, String output) {
 		SegmentationParameters segmentationParameters = new SegmentationParameters(input, output);
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
@@ -43,13 +44,13 @@ public class SegmentationImageIntegrationCheck {
 			if (!(log.equals(""))) {
 				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 			}
-		} catch (IOException e) {
+		} catch (IOException | FormatException e) {
 			LOGGER.error("Error.", e);
 		}
 	}
 	
 	
-	public static void testStupidSeveralImages(String input, String output, String config) throws Exception {
+	public static void testStupidSeveralImages(String input, String output, String config) {
 		SegmentationParameters segmentationParameters = new SegmentationParameters(input, output, config);
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
@@ -57,7 +58,7 @@ public class SegmentationImageIntegrationCheck {
 			if (!(log.equals(""))) {
 				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 			}
-		} catch (IOException e) {
+		} catch (IOException | FormatException e) {
 			LOGGER.error("Error.", e);
 		}
 	}

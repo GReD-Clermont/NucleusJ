@@ -1,10 +1,12 @@
 package gred.nucleus.segmentation;
 
+import loci.formats.FormatException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +44,8 @@ public final class SegmentationTestRunner {
 	}
 	
 	
-	public static void run(String segDir, String outDir) throws Exception {
+	public static void run(String segDir, String outDir)
+	throws IOException, FormatException, InterruptedException {
 		File file = new File(segDir + PATH_TO_INPUT);
 		File[] files = file.listFiles();
 		LOGGER.info("Running test on directory: {}", segDir + PATH_TO_INPUT);
@@ -72,7 +75,8 @@ public final class SegmentationTestRunner {
 	}
 	
 	
-	private static void runSegmentation(String imageSourceFile, String output) throws Exception {
+	private static void runSegmentation(String imageSourceFile, String output)
+	throws IOException, FormatException {
 		SegmentationParameters segmentationParams = new SegmentationParameters(imageSourceFile, output);
 		SegmentationCalling segmentation = new SegmentationCalling(segmentationParams);
 		segmentation.runOneImage(imageSourceFile);

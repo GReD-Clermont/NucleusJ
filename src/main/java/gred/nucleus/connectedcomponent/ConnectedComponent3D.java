@@ -137,10 +137,10 @@ public class ConnectedComponent3D extends ConnectedComponent {
 	/**
 	 * labels the connected components of the input image (attribute ip)
 	 *
-	 * @throws Exception
+	 * @throws IllegalStateException if the number of connected components exceeds {@value Integer#MAX_VALUE}
 	 */
 	@Override
-	public void doLabelConnectedComponent() throws Exception {
+	public void doLabelConnectedComponent() {
 		int        currentLabel = 0;
 		ImageStack imageStack   = inputImage.getStack();
 		for (short k = 0; k < this.inputImage.getNSlices(); k++) {
@@ -149,7 +149,7 @@ public class ConnectedComponent3D extends ConnectedComponent {
 					if (imageStack.getVoxel(i, j, k) == this.foregroundColor && getLabel(i, j, k) == 0) {
 						currentLabel++;
 						if (currentLabel == Integer.MAX_VALUE) {
-							throw new Exception("Too many connected components.");
+							throw new IllegalStateException("Too many connected components.");
 						}
 						this.labels[i][j][k] = currentLabel;
 						//System.out.println("doLabelConnectedComponent "+currentLabel);
@@ -170,7 +170,6 @@ public class ConnectedComponent3D extends ConnectedComponent {
 					}
 				}
 			}
-			System.gc();
 		}
 	}
 	

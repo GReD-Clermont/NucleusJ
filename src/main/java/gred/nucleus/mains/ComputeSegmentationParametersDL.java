@@ -100,7 +100,7 @@ public class ComputeSegmentationParametersDL {
 	}
 	
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException, FormatException {
 		computeNucleusParametersDL(
 				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/RAW",
 				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/129_TRIER");

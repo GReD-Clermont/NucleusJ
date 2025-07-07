@@ -14,7 +14,7 @@ class AutoCropTest {
 	
 	@Test
 	@Tag("functional")
-	void test() throws Exception {
+	void test() {
 		assumeFalse(AutocropTestRunner.getNumberOfImages(PATH_TO_INPUT) == 0);
 		AutocropTestRunner.run(PATH_TO_INPUT);
 	}

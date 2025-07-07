@@ -24,7 +24,7 @@ public class ConvexHullDetectionTest {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		//run("/home/rongiera/Bureau/DATA_SCAN/DATA_TEST_SCAN/OTSU/","/home/rongiera/Bureau/SCANv2/");
 		// MANUAL STEP BEFORE COMPARING : Compute parameters (using compiled jar/fiji) // TODO call compute parameters here
 		// Uncomment to compare :

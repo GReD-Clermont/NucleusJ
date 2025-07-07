@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -459,7 +460,7 @@ public class AutoCrop {
 		info.append(getSpecificImageInfo()).append(HEADERS);
 		for (int c = 0; c < this.channelNumbers; c++) {
 			DatasetWrapper dataset = client.getDataset(outputsDat[c]);
-			List<ROIWrapper> rois = new ArrayList<>(this.boxes.size());
+			Collection<ROIWrapper> rois = new ArrayList<>(this.boxes.size());
 			for (Map.Entry<Double, Box> entry : new TreeMap<>(this.boxes).entrySet()) {
 				int i = entry.getKey().intValue();
 				LOGGER.info("Processing box number: {} (OMERO)", i);
@@ -508,8 +509,8 @@ public class AutoCrop {
 				File file = new File(tiffPath);
 				try {
 					Files.deleteIfExists(file.toPath());
-				} catch (Exception e) {
-					LOGGER.error("File not deleted: " + tiffPath, e);
+				} catch (IOException e) {
+					LOGGER.error("File not deleted: {}", tiffPath, e);
 				}
 				if (c == 0) {
 					int xMax = xMin + width;
