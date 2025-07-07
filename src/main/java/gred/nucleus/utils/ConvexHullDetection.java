@@ -2,7 +2,8 @@ package gred.nucleus.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.awt.*;
+
+import java.awt.Point;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.Comparator;

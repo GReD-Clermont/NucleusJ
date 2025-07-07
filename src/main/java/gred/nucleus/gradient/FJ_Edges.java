@@ -10,7 +10,11 @@ import imagescience.image.Image;
 import imagescience.segment.Thresholder;
 import imagescience.utility.Progressor;
 
-import java.awt.*;
+import java.awt.Checkbox;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Panel;
+import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;

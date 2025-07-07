@@ -1,10 +1,25 @@
 package gred.nucleus.dialogs;
 
 
-import gred.nucleus.plugins.*;
+import gred.nucleus.plugins.Autocrop_;
+import gred.nucleus.plugins.ChromocentersAnalysisBatchPlugin_;
+import gred.nucleus.plugins.ComputeParametersPlugin_;
+import gred.nucleus.plugins.CropFromCoordinates_;
+import gred.nucleus.plugins.GenerateOverlay_;
+import gred.nucleus.plugins.NODeJ;
+import gred.nucleus.plugins.Segmentation_;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 

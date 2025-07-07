@@ -5,14 +5,20 @@ import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import gred.nucleus.dialogs.IDialogListener;
 
-import java.awt.*;
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.concurrent.ExecutionException;
-import javax.swing.*;
-import javax.swing.border.Border;
 
 
 /**

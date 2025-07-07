@@ -4,7 +4,13 @@ import ij.IJ;
 import ij.gui.GUI;
 import ij.plugin.PlugIn;
 
-import java.awt.*;
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Panel;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;

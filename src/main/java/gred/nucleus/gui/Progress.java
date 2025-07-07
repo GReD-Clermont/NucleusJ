@@ -2,8 +2,10 @@ package gred.nucleus.gui;
 
 
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
+import java.awt.BorderLayout;
+
 
 /**
  *
