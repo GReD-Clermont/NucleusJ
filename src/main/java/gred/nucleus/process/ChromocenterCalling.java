@@ -85,7 +85,7 @@ public class ChromocenterCalling {
 			File currentFile = directoryInput.getFile(i);
 			String fileImg = currentFile.toString();
 			FilesNames outPutFilesNames = new FilesNames(fileImg);
-			FilesNames segCC = new FilesNames(this.chromocenterParameters._segInputFolder +
+			FilesNames segCC = new FilesNames(this.chromocenterParameters.segInputFolder +
 			                                  File.separator + currentFile.getName());
 			this._prefix = outPutFilesNames.prefixNameFile();
 			ImagePlus [] _raw = BF.openImagePlus(currentFile.getAbsolutePath());
@@ -95,14 +95,14 @@ public class ChromocenterCalling {
 			String gradientFileName= diffDir+File.separator+currentFile.getName();
 			
 			if(segCC.fileExists()) {
-				ImagePlus [] segNuc =BF.openImagePlus(this.chromocenterParameters._segInputFolder +
-				                                      File.separator+currentFile.getName());
-				ChromencenterSegmentation chromencenterSegmentation = new ChromencenterSegmentation(
+				ImagePlus [] segNuc =BF.openImagePlus(this.chromocenterParameters.segInputFolder +
+				                                      File.separator + currentFile.getName());
+				ChromocenterSegmentation chromocenterSegmentation = new ChromocenterSegmentation(
 						_raw,
 						segNuc,
 						outputFileName,
 						this.chromocenterParameters);
-				chromencenterSegmentation.runCC3D(gradientFileName);
+				chromocenterSegmentation.runCC3D(gradientFileName);
 				NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 				nucleusChromocenterAnalysis.compute3DParameters(
 						rhfChoice,
@@ -226,13 +226,13 @@ public class ChromocenterCalling {
 		ImagePlus imp = SegImage[0];
 		imageType(imp);
 		/* Processing */
-		ChromencenterSegmentation chromencenterSegmentation = new ChromencenterSegmentation(
+		ChromocenterSegmentation chromocenterSegmentation = new ChromocenterSegmentation(
 				RawImage,
 				SegImage,
 				outputFileName,
 				this.chromocenterParameters);
 		
-		chromencenterSegmentation.runCC3D(gradientFileName);
+		chromocenterSegmentation.runCC3D(gradientFileName);
 		
 		NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 		File[] Parameters3DTab = nucleusChromocenterAnalysis.compute3DParameters(
@@ -295,13 +295,13 @@ public class ChromocenterCalling {
 		ImagePlus imp = rawImage[0];
 		imageType(imp);
 		/* Processing */
-		ChromencenterSegmentation chromencenterSegmentation = new ChromencenterSegmentation(
+		ChromocenterSegmentation chromocenterSegmentation = new ChromocenterSegmentation(
 				rawImage,
 				segImage,
 				outputFileName,
 				this.chromocenterParameters);
 		
-		chromencenterSegmentation.runCC3D(gradientFileName);
+		chromocenterSegmentation.runCC3D(gradientFileName);
 		
 		NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 
@@ -346,7 +346,7 @@ public class ChromocenterCalling {
 			ImagePlus [] _raw = BF.openImagePlus(currentFile.getAbsolutePath());
 			imageType(_raw[0]);
 			String outputFileName= segCcDir+File.separator+currentFile.getName();
-			ImagePlus [] segNuc =BF.openImagePlus(this.chromocenterParameters._segInputFolder+File.separator+currentFile.getName());
+			ImagePlus [] segNuc =BF.openImagePlus(this.chromocenterParameters.segInputFolder + File.separator + currentFile.getName());
 			// ChromocenterAnalysis chromocenterAnalysis = new ChromocenterAnalysis(_raw[0],segNuc[0], IJ.openImage(outputFileName));
 			// chromocenterAnalysis.computeParametersChromocenter();
 			

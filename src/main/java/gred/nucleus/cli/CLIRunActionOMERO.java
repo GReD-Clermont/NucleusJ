@@ -197,27 +197,27 @@ public class CLIRunActionOMERO {
 
 	private void runSegCC() {
 		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(".", ".",".");
-		if (this.cmd.hasOption("isG")) chromocenterParameters._gaussianOnRaw = true;
-		if (this.cmd.hasOption("isF")) chromocenterParameters._sizeFilterConnectedComponent = true;
-		if (this.cmd.hasOption("noC")) chromocenterParameters._noChange = true;
+		if (this.cmd.hasOption("isG")) chromocenterParameters.gaussianOnRaw = true;
+		if (this.cmd.hasOption("isF")) chromocenterParameters.sizeFilterConnectedComponent = true;
+		if (this.cmd.hasOption("noC")) chromocenterParameters.noChange = true;
 		if (this.cmd.hasOption("gX"))
-			chromocenterParameters._gaussianBlurXsigma =  Double.parseDouble(cmd.getOptionValue("gX"));
+			chromocenterParameters.gaussianBlurXsigma =  Double.parseDouble(cmd.getOptionValue("gX"));
 
 		if (this.cmd.hasOption("gY"))
-			chromocenterParameters._gaussianBlurYsigma =  Double.parseDouble(cmd.getOptionValue("gY"));
+			chromocenterParameters.gaussianBlurYsigma =  Double.parseDouble(cmd.getOptionValue("gY"));
 
 		if (this.cmd.hasOption("gZ"))
-			chromocenterParameters._gaussianBlurZsigma =  Double.parseDouble(cmd.getOptionValue("gZ"));
+			chromocenterParameters.gaussianBlurZsigma =  Double.parseDouble(cmd.getOptionValue("gZ"));
 
 		if (this.cmd.hasOption("min"))
-			chromocenterParameters._minSizeConnectedComponent =  Double.parseDouble(cmd.getOptionValue("min"));
+			chromocenterParameters.minSizeConnectedComponent =  Double.parseDouble(cmd.getOptionValue("min"));
 		if (this.cmd.hasOption("max"))
 
-			chromocenterParameters._maxSizeConnectedComponent =  Double.parseDouble(cmd.getOptionValue("max"));
+			chromocenterParameters.maxSizeConnectedComponent =  Double.parseDouble(cmd.getOptionValue("max"));
 		if (this.cmd.hasOption("f"))
-			chromocenterParameters._factor=  Double.parseDouble(cmd.getOptionValue("f"));
+			chromocenterParameters.factor =  Double.parseDouble(cmd.getOptionValue("f"));
 		if (this.cmd.hasOption("n"))
-			chromocenterParameters._neigh=  Integer.parseInt(cmd.getOptionValue("n"));
+			chromocenterParameters.neighbours =  Integer.parseInt(cmd.getOptionValue("n"));
 
 		ChromocenterCalling ccCalling= new ChromocenterCalling(chromocenterParameters);
 
@@ -228,8 +228,11 @@ public class CLIRunActionOMERO {
 		try {
 			LOGGER.info("-Input Folder : {} -Segmentation Folder : {} -Output : {}", inputDirectory, segDirectory, outputDirectory);
 			ccCalling.SegmentationOMERO(inputDirectory,segDirectory,outputDirectory,this.client);
-		} catch (Exception e) {
+		} catch (AccessException | OMEROServerError |ServiceException | IOException | ExecutionException e) {
 			LOGGER.error("An error occurred during chromocenter segmentation.", e);
+		} catch (InterruptedException e) {
+			LOGGER.error("An interruption occurred during chromocenter segmentation.", e);
+			Thread.currentThread().interrupt();
 		}
 		LOGGER.info("End !!! Results available: {}", chromocenterParameters.outputFolder);
 
