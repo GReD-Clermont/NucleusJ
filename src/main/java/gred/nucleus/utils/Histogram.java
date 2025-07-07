@@ -4,6 +4,7 @@ import ij.ImagePlus;
 import ij.ImageStack;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -91,8 +92,8 @@ public class Histogram {
 	
 	
 	/** @return  */
-	public TreeMap<Double, Integer> getHistogram() {
-		return (TreeMap<Double, Integer>) hHistogram;
+	public Map<Double, Integer> getHistogram() {
+		return new TreeMap<>(hHistogram);
 	}
 	
 	

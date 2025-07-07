@@ -49,7 +49,7 @@ public class Directory {
 	
 	
 	public List<File> getFileList() {
-		return fileList;
+		return new ArrayList<>(fileList);
 	}
 	
 	
@@ -151,7 +151,7 @@ public class Directory {
 	
 	/** @return list of files */
 	public List<File> listFiles() {
-		return this.fileList;
+		return new ArrayList<>(this.fileList);
 	}
 	
 	

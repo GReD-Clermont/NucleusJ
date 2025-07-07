@@ -162,7 +162,7 @@ public class AutoCrop {
 		setChannelNumbers();
 		this.imageSeg = this.rawImg;
 		this.infoImageAnalysis = autocropParametersAnalyse.getAnalysisParameters();
-		this.boxes = boxes;
+		this.boxes = new HashMap<>(boxes);
 	}
 	
 	
@@ -607,7 +607,7 @@ public class AutoCrop {
 	 * @return outputFile: ArrayList of String for the path of the output files created.
 	 */
 	public List<String> getOutputFileList() {
-		return this.outputFile;
+		return new ArrayList<>(this.outputFile);
 	}
 	
 	
@@ -617,7 +617,7 @@ public class AutoCrop {
 	 * @return boxCoordinates: ArrayList of String which contain the coordinates of the boxes
 	 */
 	public List<String> getFileCoordinates() {
-		return this.boxCoordinates;
+		return new ArrayList<>(this.boxCoordinates);
 	}
 	
 	
@@ -818,8 +818,8 @@ public class AutoCrop {
 	 *
 	 * @param boxes list of boxes
 	 */
-	public void setBoxes(Map<Double, Box> boxes) {
-		this.boxes = boxes;
+	public void setBoxes(Map<Double, ? extends Box> boxes) {
+		this.boxes = new HashMap(boxes);
 	}
 	
 }

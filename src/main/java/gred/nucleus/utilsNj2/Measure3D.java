@@ -10,7 +10,7 @@ import gred.nucleus.utils.VoxelRecord;
 import ij.ImagePlus;
 import ij.ImageStack;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -46,14 +46,12 @@ public class Measure3D {
 	ImagePlus _imageSeg;
 	ImagePlus _rawImage;
 	
-	
 	double _xCal;
 	double _yCal;
 	double _zCal;
 	
-	TreeMap< Double, Integer> _segmentedNucleusHisto =new TreeMap <Double, Integer>();
-	TreeMap< Double, Integer> _backgroundHisto =new TreeMap <Double, Integer>();
-	
+	Map<Double, Integer> _segmentedNucleusHisto = new TreeMap <>();
+	Map<Double, Integer> _backgroundHisto       = new TreeMap <>();
 	
 	
 	public Measure3D() {
@@ -132,8 +130,8 @@ public class Measure3D {
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusInput);
 		double[] tlabel = histogram.getLabels();
-		double[]                 tObjectVolume = new double[tlabel.length];
-		TreeMap<Double, Integer> hashHisto     = histogram.getHistogram();
+		double[]             tObjectVolume = new double[tlabel.length];
+		Map<Double, Integer> hashHisto     = histogram.getHistogram();
 		for (int i = 0; i < tlabel.length; ++i) {
 			int nbVoxel = hashHisto.get(tlabel[i]);
 			tObjectVolume[i] = nbVoxel * this._xCal* this._zCal* this._yCal;
@@ -161,7 +159,7 @@ public class Measure3D {
 	public double computeVolumeObject(ImagePlus imagePlusInput, double label) {
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusInput);
-		TreeMap<Double, Integer> hashMapHisto = histogram.getHistogram();
+		Map<Double, Integer> hashMapHisto = histogram.getHistogram();
 		return hashMapHisto.get(label) * this._xCal * this._yCal * this._zCal;
 	}
 	
@@ -399,7 +397,7 @@ public class Measure3D {
 	 */
 	public double computeComplexSurface() {
 		Gradient gradient = new Gradient(this._rawImage);
-		ArrayList<Double> tableUnitaire[][][] = gradient.getUnitaire();
+		List<Double> tableUnitaire[][][] = gradient.getUnitaire();
 		ImageStack imageStackSegmented = this._imageSeg.getStack();
 		double surfaceArea = 0, voxelValue, neighborVoxelValue;
 		VoxelRecord voxelRecordIn = new VoxelRecord();
@@ -471,8 +469,8 @@ public class Measure3D {
 	 * @param as
 	 * @return
 	 */
-	private double computeSurfelContribution(ArrayList<Double> listUnitaireIn,
-	                                         ArrayList<Double> listUnitaireOut,
+	private double computeSurfelContribution(List<Double> listUnitaireIn,
+	                                         List<Double> listUnitaireOut,
 	                                         VoxelRecord voxelRecordIn,
 	                                         VoxelRecord voxelRecordOut,
 	                                         double as) {
@@ -703,7 +701,7 @@ public class Measure3D {
 		double voxelMedianValue=0;
 		Histogram histogram = new Histogram();
 		histogram.run(this._rawImage);
-		TreeMap< Double, Integer> _segmentedNucleusHisto =histogram.getHistogram();
+		Map< Double, Integer> _segmentedNucleusHisto = histogram.getHistogram();
 		int medianElementStop= (this._rawImage.getHeight()*this._rawImage.getWidth()*this._rawImage.getNSlices())/2;
 		int increment=0;
 		for (Map.Entry<Double,Integer  > entry :  _segmentedNucleusHisto.entrySet()) {

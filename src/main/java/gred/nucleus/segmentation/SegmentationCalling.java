@@ -241,8 +241,8 @@ public class SegmentationCalling {
 	public String runSeveralImages2() throws IOException, FormatException {
 		String log = "";
 		ExecutorService processExecutor = Executors.newFixedThreadPool(executorThreads);
-		final ConcurrentHashMap<String, String> otsuResultLines = new ConcurrentHashMap<>();
-		final ConcurrentHashMap<String, String> convexHullResultLines = new ConcurrentHashMap<>();
+		Map<String, String> otsuResultLines = new ConcurrentHashMap<>();
+		Map<String, String> convexHullResultLines = new ConcurrentHashMap<>();
 		
 		Directory directoryInput = new Directory(this.segmentationParameters.getInputFolder());
 		directoryInput.listImageFiles(this.segmentationParameters.getInputFolder());

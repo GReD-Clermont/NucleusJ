@@ -437,8 +437,8 @@ public class ChromencenterSegmentation {
 		Histogram histogram = new Histogram();
 		histogram.run(imageGradient);
 		histogram.getHistogram();
-		TreeMap<Double, Integer> parcour = histogram.getHistogram();
-		ImagePlus                imgCc   = imageGradient.duplicate();
+		Map<Double, Integer> parcour = histogram.getHistogram();
+		ImagePlus            imgCc   = imageGradient.duplicate();
 		ImageStack is = imgCc.getStack();
 		for (Map.Entry<Double, Integer> entry : parcour.entrySet()) {
 			Double cle = entry.getKey();
@@ -472,7 +472,7 @@ public class ChromencenterSegmentation {
 		Histogram histogram = new Histogram();
 		histogram.run(imageGradient);
 		histogram.getHistogram();
-		TreeMap<Double, Integer> parcour = histogram.getHistogram();
+		Map<Double, Integer> parcour = histogram.getHistogram();
 		ImagePlus imgCc = imageGradient.duplicate();
 		ImageProcessor ip = imgCc.getProcessor();
 		for (Map.Entry<Double, Integer> entry : parcour.entrySet()) {

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
@@ -97,7 +98,7 @@ public class AnnotateAutoCrop {
 		this.autocropParameters = autocropParameters;
 		this.zProjection =
 				BF.openImagePlus(imageFile.getAbsolutePath())[this.autocropParameters.getSlicesOTSUComputing()];
-		this.boxCoordinates = boxesCoordinates;
+		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
 	}
 
@@ -109,7 +110,7 @@ public class AnnotateAutoCrop {
 							AutocropParameters autocropParameters) {
 		this.autocropParameters = autocropParameters;
 		this.zProjection = imp;
-		this.boxCoordinates = boxesCoordinates;
+		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
 		this.outputFilesPrefix = prefix ;
 		Directory dirOutput = new Directory(this.outputDirPath + "zprojection");

@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import fr.igred.omero.Client;
@@ -254,8 +255,8 @@ public class NucleusChromocentersAnalysis {
 	 * @param img
 	 * @return
 	 */
-	private ArrayList<Float> getLabels(ImagePlus img){
-		ArrayList<Float> label = new ArrayList<Float>();
+	private List<Float> getLabels(ImagePlus img){
+		List<Float> label = new ArrayList<>();
 		ImageProcessor ip = img.getProcessor();
 		
 		for(int i = 0; i < img.getWidth(); ++i){

@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Deque;
 import java.util.LinkedList;
 
 
@@ -55,7 +56,7 @@ public class ConnectedComponent2D extends ConnectedComponent {
 		// FIFO for the Breadth First Search algorithm
 		// LinkedList is more efficient than ArrayList
 		// because poll() (alias Remove(0)) is constant time !!!
-		LinkedList<Voxel> voxelFifo = new LinkedList<>();
+		Deque<Voxel> voxelFifo = new LinkedList<>();
 		
 		// add initial voxel to the FIFO
 		voxelFifo.add(voxelShort);

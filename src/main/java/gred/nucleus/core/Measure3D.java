@@ -45,8 +45,8 @@ public class Measure3D {
 	Map<Double, Integer> segmentedNucleusHistogram = new TreeMap<>();
 	Map<Double, Integer> backgroundHistogram       = new TreeMap<>();
 	private ImagePlus _rawImage;
-	TreeMap< Double, Integer> _segmentedNucleusHisto =new TreeMap <Double, Integer>();
-	TreeMap< Double, Integer> _backgroundHisto =new TreeMap <Double, Integer>();
+	Map<Double, Integer> _segmentedNucleusHisto = new TreeMap <>();
+	Map<Double, Integer> _backgroundHisto       = new TreeMap <>();
 	
 	
 	public Measure3D() {
