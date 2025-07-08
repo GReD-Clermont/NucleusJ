@@ -8,6 +8,9 @@ import gred.nucleus.plugins.CropFromCoordinates_;
 import gred.nucleus.plugins.GenerateOverlay_;
 import gred.nucleus.plugins.NODeJ;
 import gred.nucleus.plugins.Segmentation_;
+import ij.plugin.PlugIn;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -20,123 +23,116 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.LayoutManager;
+import java.lang.invoke.MethodHandles;
 
 
 public class MainGui extends JFrame {
-	private final Container container;
+	/** Logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private JButton AutocropButton            = new JButton("Autocrop");
-	private JButton SegmentationButton        = new JButton("Segmentation");
-	private JButton OverlayButton             = new JButton("Overlay");
-	private JButton NODeJButton               = new JButton("NODeJ");
-	private JButton CropFromCoordinatesButton = new JButton("Crop From Coordinates");
-	private JButton ComputeParametersButton   = new JButton("Compute Parameters Nuc");
-	private JButton ComputeCcParametersButton = new JButton("Compute Parameters Spots");
+	private JButton autocropButton            = new JButton("Autocrop");
+	private JButton segmentationButton        = new JButton("Segmentation");
+	private JButton overlayButton             = new JButton("Overlay");
+	private JButton nodeJButton               = new JButton("NODeJ");
+	private JButton cropFromCoordinatesButton = new JButton("Crop From Coordinates");
+	private JButton computeParametersButton   = new JButton("Compute Parameters Nuc");
+	private JButton computeCcParametersButton = new JButton("Compute Parameters Spots");
 	
 	
 	public MainGui() {
-		this.setTitle("NucleusJ 3");
-		this.setMinimumSize(new Dimension(400, 500));
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
+		super.setTitle("NucleusJ 3");
+		super.setMinimumSize(new Dimension(400, 500));
+		super.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		super.setLocationRelativeTo(null);
 		
-		container = getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
+		Container container = super.getContentPane();
+		
+		LayoutManager mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		container.setLayout(mainBoxLayout);
-		
 		
 		JPanel localPanel = new JPanel();
 		localPanel.setLayout(new GridBagLayout());
 		
+		JLabel welcomeLabel = new JLabel("Welcome to NJ !");
 		
-		JLabel WelcomeLabel = new JLabel("Welcome to NJ !");
-		localPanel.add(WelcomeLabel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                    GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		localPanel.add(welcomeLabel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                    GridBagConstraints.FIRST_LINE_START,
+		                                                    GridBagConstraints.HORIZONTAL,
 		                                                    new Insets(0, 60, 0, 0), 0, 0));
 		
-		localPanel.add(AutocropButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                      GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		localPanel.add(autocropButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                      GridBagConstraints.FIRST_LINE_START,
+		                                                      GridBagConstraints.HORIZONTAL,
 		                                                      new Insets(40, 30, 0, 0), 120, 0));
 		
 		
-		localPanel.add(SegmentationButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                          GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		localPanel.add(segmentationButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                          GridBagConstraints.FIRST_LINE_START,
+		                                                          GridBagConstraints.HORIZONTAL,
 		                                                          new Insets(80, 30, 0, 0), 85, 0));
 		
-		localPanel.add(CropFromCoordinatesButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                                 GridBagConstraints.NORTHWEST,
-		                                                                 GridBagConstraints.NONE,
+		localPanel.add(cropFromCoordinatesButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                                 GridBagConstraints.FIRST_LINE_START,
+		                                                                 GridBagConstraints.HORIZONTAL,
 		                                                                 new Insets(120, 30, 0, 0), 20, 0));
 		
-		localPanel.add(OverlayButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                     GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		localPanel.add(overlayButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                     GridBagConstraints.FIRST_LINE_START,
+		                                                     GridBagConstraints.HORIZONTAL,
 		                                                     new Insets(160, 30, 0, 0), 130, 0));
 		
-		localPanel.add(ComputeParametersButton,
-		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-		                                      GridBagConstraints.NONE, new Insets(200, 30, 0, 0), 35, 0));
+		localPanel.add(computeParametersButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                               GridBagConstraints.FIRST_LINE_START,
+		                                                               GridBagConstraints.HORIZONTAL,
+		                                                               new Insets(200, 30, 0, 0), 35, 0));
 		
-		localPanel.add(NODeJButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                   GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		localPanel.add(nodeJButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                   GridBagConstraints.FIRST_LINE_START,
+		                                                   GridBagConstraints.HORIZONTAL,
 		                                                   new Insets(240, 30, 0, 0), 140, 0));
 		
-		localPanel.add(ComputeCcParametersButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                                 GridBagConstraints.NORTHWEST,
-		                                                                 GridBagConstraints.NONE,
+		localPanel.add(computeCcParametersButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                                 GridBagConstraints.FIRST_LINE_START,
+		                                                                 GridBagConstraints.HORIZONTAL,
 		                                                                 new Insets(280, 30, 0, 0), 12, 0));
 		
 		container.add(localPanel, 0);
 		
-		AutocropButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Autocrop_ autocrop_ = new Autocrop_();
-				autocrop_.run("");
-			}
+		autocropButton.addActionListener(e -> {
+			PlugIn autocrop = new Autocrop_();
+			autocrop.run("");
 		});
 		
-		SegmentationButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Segmentation_ segmentation = new Segmentation_();
-				segmentation.run("");
-			}
+		segmentationButton.addActionListener(e -> {
+			PlugIn segmentation = new Segmentation_();
+			segmentation.run("");
 		});
 		
-		CropFromCoordinatesButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				CropFromCoordinates_ cropFromCoordinates = new CropFromCoordinates_();
-				cropFromCoordinates.run("");
-			}
+		cropFromCoordinatesButton.addActionListener(e -> {
+			PlugIn cropFromCoordinates = new CropFromCoordinates_();
+			cropFromCoordinates.run("");
 		});
 		
-		OverlayButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				GenerateOverlay_ overlay = new GenerateOverlay_();
-				overlay.run("");
-			}
+		overlayButton.addActionListener(e -> {
+			PlugIn overlay = new GenerateOverlay_();
+			overlay.run("");
 		});
 		
-		ComputeParametersButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ComputeParametersPlugin_ computeParameters = new ComputeParametersPlugin_();
-				computeParameters.run("");
-			}
+		computeParametersButton.addActionListener(e -> {
+			PlugIn computeParameters = new ComputeParametersPlugin_();
+			computeParameters.run("");
 		});
 		
 		
-		NODeJButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				NODeJ nodej = new NODeJ();
-				nodej.run("");
-			}
+		nodeJButton.addActionListener(e -> {
+			PlugIn nodej = new NODeJ();
+			nodej.run("");
 		});
 		
-		ComputeCcParametersButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				ChromocentersAnalysisBatchPlugin_ ComputeCcParameters = new ChromocentersAnalysisBatchPlugin_();
-				ComputeCcParameters.run("");
-			}
+		computeCcParametersButton.addActionListener(e -> {
+			PlugIn computeCcParameters = new ChromocentersAnalysisBatchPlugin_();
+			computeCcParameters.run("");
 		});
 		
 	}

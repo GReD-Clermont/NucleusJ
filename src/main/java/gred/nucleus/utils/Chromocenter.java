@@ -26,25 +26,34 @@ public class Chromocenter extends ObjectCharacteristics {
 	}
 	
 	
-	
-	public void setTotalIntensity(double a) {this.totalIntensity = a;}
-	
-	
-	public double getTotalIntensity() {return this.totalIntensity;}
+	public double getTotalIntensity() {
+		return this.totalIntensity;
+	}
 	
 	
-	public void setCCValue(double a, double b) {this.ccValue = a / b;}
+	public void setTotalIntensity(double a) {
+		this.totalIntensity = a;
+	}
 	
 	
-	private void setCCValue(double a) {this.ccValue = a;}
+	public void setCCValue(double a, double b) {
+		this.ccValue = a / b;
+	}
 	
 	
-	public double getCCValue() {return this.ccValue;}
+	public double getCCValue() {
+		return this.ccValue;
+	}
+	
+	
+	private void setCCValue(double a) {
+		this.ccValue = a;
+	}
 	
 	
 	public void addChromocenter(double circularity, int nbPixel, double aspectRatio,
 	                            double perimeter, double area, double solidity, double round,
-	                            double ccValue) {
+	                            double ccVal) {
 		this.setCircularity(this.getCircularity() + circularity);
 		this.setNbPixel(this.getNbPixel() + nbPixel);
 		this.setAspectRatio(this.getAspectRatio() + aspectRatio);
@@ -52,7 +61,7 @@ public class Chromocenter extends ObjectCharacteristics {
 		this.setArea(this.getArea() + area);
 		this.setSolidity(this.getSolidity() + solidity);
 		this.setRound(this.getRound() + round);
-		this.setCCValue(this.getCCValue() + ccValue);
+		this.ccValue += ccVal;
 	}
 	
 	
@@ -68,7 +77,7 @@ public class Chromocenter extends ObjectCharacteristics {
 			this.setArea(this.getArea() / nbCc);
 			this.setSolidity(this.getSolidity() / nbCc);
 			this.setRound(this.getRound() / nbCc);
-			this.setCCValue(this.getCCValue() / nbCc);
+			this.ccValue /= nbCc;
 		} else {
 			this.setCircularity(0);
 			this.setNbPixel(0);
@@ -77,7 +86,7 @@ public class Chromocenter extends ObjectCharacteristics {
 			this.setArea(0);
 			this.setSolidity(0);
 			this.setRound(0);
-			this.setCCValue(0);
+			this.ccValue = 0;
 		}
 	}
 	
@@ -89,7 +98,7 @@ public class Chromocenter extends ObjectCharacteristics {
 		       getCircularity() + "\t" +
 		       getAspectRatio() + "\t" +
 		       getSolidity() + "\t" +
-		       getCCValue();
+		       ccValue;
 	}
 	
 }

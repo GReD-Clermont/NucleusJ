@@ -18,6 +18,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -79,11 +80,11 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		JButton jButtonQuit = new JButton("Quit");
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
-		this.setTitle("Generate Overlay - NucleusJ3");
-		this.setMinimumSize(new Dimension(500, 390));
+		super.setTitle("Generate Overlay - NucleusJ3");
+		super.setMinimumSize(new Dimension(500, 390));
 		
-		container = getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
+		container = super.getContentPane();
+		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.Y_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -272,11 +273,11 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		container.add(startQuitPanel, 2);
 		
 		
-		GenerateOverlayDialog.QuitListener quitListener = new QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		GenerateOverlayDialog.StartListener startListener = new GenerateOverlayDialog.StartListener(this);
+		ActionListener startListener = new GenerateOverlayDialog.StartListener(this);
 		jButtonStart.addActionListener(startListener);
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		
 		// DEFAULT VALUES FOR TESTING :
@@ -363,16 +364,16 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	
 	public void actionPerformed(ActionEvent e) {
 		
-		if (((JButton) e.getSource()).getName().equals(INPUT_CHOOSER)) {
+		if (((Component) e.getSource()).getName().equals(INPUT_CHOOSER)) {
 			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		}
-		if (((JButton) e.getSource()).getName().equals(INPUT_CHOOSER2)) {
+		if (((Component) e.getSource()).getName().equals(INPUT_CHOOSER2)) {
 			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		}
 		fc.setAcceptAllFileFilterUsed(false);
 		
 		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			switch (((JButton) e.getSource()).getName()) {
+			switch (((Component) e.getSource()).getName()) {
 				case INPUT_CHOOSER:
 					File selectedInput = fc.getSelectedFile();
 					DICFileChooser.setText(selectedInput.getPath());
@@ -412,43 +413,39 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	}
 	
 	
-	static class QuitListener implements ActionListener {
-		final GenerateOverlayDialog generateOverlayDialog;
+	private static class QuitListener implements ActionListener {
+		private final GenerateOverlayDialog dialog;
 		
 		
-		/** @param generateOverlayDialog  */
-		public QuitListener(GenerateOverlayDialog generateOverlayDialog) {
-			this.generateOverlayDialog = generateOverlayDialog;
+		/** @param dialog  */
+		QuitListener(GenerateOverlayDialog dialog) {
+			this.dialog = dialog;
 		}
 		
 		
 		public void actionPerformed(ActionEvent actionEvent) {
-			generateOverlayDialog.dispose();
+			dialog.dispose();
 		}
 		
 	}
 	
 	/** Classes listener to interact with the several elements of the window */
-	class StartListener implements ActionListener {
-		final GenerateOverlayDialog generateOverlayDialog;
+	private class StartListener implements ActionListener {
+		private final GenerateOverlayDialog dialog;
 		
 		
-		/** @param generateOverlayDialog  */
-		public StartListener(GenerateOverlayDialog generateOverlayDialog) {
-			this.generateOverlayDialog = generateOverlayDialog;
+		/** @param dialog  */
+		public StartListener(GenerateOverlayDialog dialog) {
+			this.dialog = dialog;
 		}
 		
 		
 		public void actionPerformed(ActionEvent actionEvent) {
 			start = true;
-			generateOverlayDialog.dispose();
+			dialog.dispose();
 			try {
 				dialogListener.OnStart();
-			} catch (AccessException e) {
-				throw new RuntimeException(e);
-			} catch (ServiceException e) {
-				throw new RuntimeException(e);
-			} catch (ExecutionException e) {
+			} catch (AccessException | ServiceException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}
 		}

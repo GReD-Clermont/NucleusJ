@@ -119,7 +119,7 @@ public abstract class ConnectedComponent {
 	 *
 	 * @return an instance of a concrete derived class for ConnectedComponent
 	 *
-	 * @throws Exception in case the number of connected components exceeds the Short.MAX_VALUE (32767)
+	 * @throws IllegalStateException in case the number of connected components exceeds the Short.MAX_VALUE (32767)
 	 */
 	public static ConnectedComponent getLabelledConnectedComponent(ImagePlus inputImage,
 	                                                               int foregroundColor,
@@ -445,4 +445,4 @@ public abstract class ConnectedComponent {
 		return this.compInfo.size();
 	}
 	
-} // end of class
+}

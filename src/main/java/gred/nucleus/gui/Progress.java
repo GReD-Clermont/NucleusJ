@@ -14,7 +14,7 @@ import java.awt.BorderLayout;
  */
 public class Progress extends JFrame {
 	/**  */
-	private static final long serialVersionUID = -1L;
+	private static final long serialVersionUID = -1413087289668250165L;
 	
 	public JProgressBar bar;
 	
@@ -24,16 +24,16 @@ public class Progress extends JFrame {
 	
 	
 	public Progress(String title, int nb) {
-		this.setSize(400, 80);
-		this.setTitle("*** " + title + " ***");
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
+		super.setSize(400, 80);
+		super.setTitle("*** " + title + " ***");
+		super.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		super.setLocationRelativeTo(null);
 		this.bar = new JProgressBar();
 		this.bar.setMaximum(nb);
 		this.bar.setMinimum(0);
 		this.bar.setStringPainted(true);
-		this.getContentPane().add(this.bar, BorderLayout.CENTER);
-		this.setVisible(true);
+		super.getContentPane().add(this.bar, BorderLayout.CENTER);
+		super.setVisible(true);
 	}
 	
 	

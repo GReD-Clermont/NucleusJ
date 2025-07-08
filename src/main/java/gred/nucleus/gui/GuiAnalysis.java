@@ -42,55 +42,12 @@ import java.util.concurrent.ExecutionException;
  */
 public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener {
 	/**  */
-	private static final long serialVersionUID = -1L;
+	private static final long serialVersionUID = 7560518666194907298L;
 	
 	private final IDialogListener dialogListener;
 	
-	/**  */
-	private JPanel _container  = new JPanel();
-	private JPanel _parameters = new JPanel();
-	
-	/**  */
-	private JButton _jbOutputDir = new JButton("Output directory");
-	
-	/**  */
-	private JButton _jbInputDir = new JButton("Raw Nuclei");
-	
-	/**  */
-	private JButton _jbInputSeg = new JButton("Seg. Nuclei");
-	
-	/**  */
-	private JCheckBox _jCbIsGauss = new JCheckBox("Apply Gaussian filter on raw images ?");
-	
-	/**  */
-	private JCheckBox _jCbIs2D     = new JCheckBox("Is it 2D images ?");
-	/**  */
-	private JCheckBox _jCbIsFilter = new JCheckBox("Filter connected components?");
-	
-	/**  */
-	private JTextField _jtfWorkDir = new JTextField();
-	private JTextField _jtfRawData = new JTextField();
-	private JTextField _jtfRawSeg  = new JTextField();
-	
-	private JButton _jbStart = new JButton("Start");
-	private JButton _jbQuit  = new JButton("Quit");
-	
-	/**  */
-	private boolean _start = false;
-	
-	private JFormattedTextField _jtfGX     = new JFormattedTextField(Number.class);
-	private JFormattedTextField _jtfGY     = new JFormattedTextField(Number.class);
-	private JFormattedTextField _jtfGZ     = new JFormattedTextField(Number.class);
-	private JFormattedTextField _jtfMin    = new JFormattedTextField(Number.class);
-	private JFormattedTextField _jtfMax    = new JFormattedTextField(Number.class);
-	private JFormattedTextField _jtfFactor = new JFormattedTextField(Number.class);
-	private JFormattedTextField _jtfNeigh  = new JFormattedTextField(Number.class);
-	
 	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
 	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
-	
-	private Container container;
-	
 	private final JPanel         localModeLayout    = new JPanel();
 	private final JPanel         omeroModeLayout    = new JPanel();
 	private final JTextField     jTextFieldHostname = new JTextField();
@@ -98,7 +55,8 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	private final JTextField     jTextFieldUsername = new JTextField();
 	private final JPasswordField jPasswordField     = new JPasswordField();
 	private final JTextField     jTextFieldGroup    = new JTextField();
-	private final String[]       dataTypes          = {"Dataset", "Image"};
+	
+	private final String[] dataTypes = {"Dataset", "Image"};
 	
 	private final JComboBox<String> jComboBoxDataType          = new JComboBox<>(dataTypes);
 	private final JComboBox<String> jComboBoxDataTypeSegmented = new JComboBox<>(dataTypes);
@@ -107,7 +65,37 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	private final JTextField segmentedNucleiTextField = new JTextField();
 	private final JTextField jTextFieldOutputProject  = new JTextField();
 	
-	private boolean useOMERO = false;
+	/**  */
+	private JButton    jbOutputDir = new JButton("Output directory");
+	/**  */
+	private JButton    jbInputDir  = new JButton("Raw Nuclei");
+	/**  */
+	private JButton    jbInputSeg  = new JButton("Seg. Nuclei");
+	/**  */
+	private JCheckBox  jCbIsGauss  = new JCheckBox("Apply Gaussian filter on raw images ?");
+	/**  */
+	private JCheckBox  jCbIs2D     = new JCheckBox("Is it 2D images ?");
+	/**  */
+	private JCheckBox  jCbIsFilter = new JCheckBox("Filter connected components?");
+	/**  */
+	private JTextField jtfWorkDir  = new JTextField();
+	private JTextField jtfRawData  = new JTextField();
+	private JTextField jtfRawSeg   = new JTextField();
+	private JButton    jbStart     = new JButton("Start");
+	private JButton    jbQuit      = new JButton("Quit");
+	
+	private JFormattedTextField jtfGX     = new JFormattedTextField(Number.class);
+	private JFormattedTextField jtfGY     = new JFormattedTextField(Number.class);
+	private JFormattedTextField jtfGZ     = new JFormattedTextField(Number.class);
+	private JFormattedTextField jtfMin    = new JFormattedTextField(Number.class);
+	private JFormattedTextField jtfMax    = new JFormattedTextField(Number.class);
+	private JFormattedTextField jtfFactor = new JFormattedTextField(Number.class);
+	private JFormattedTextField jtfNeigh  = new JFormattedTextField(Number.class);
+	
+	/**  */
+	private Container container;
+	private boolean   useOMERO = false;
+	private boolean   start    = false;
 	
 	
 	/**
@@ -117,13 +105,13 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		this.dialogListener = dialogListener;
 		
 		// Global parameter of the JFram and def of the gridBaglayout
-		this.setTitle("NODeJ");
-		this.setSize(550, 720);
-		this.setLocationRelativeTo(null);
-		this.setResizable(false);
-		this.setLocationByPlatform(true);
-		this.setBackground(Color.LIGHT_GRAY);
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		super.setTitle("NODeJ");
+		super.setSize(550, 720);
+		super.setLocationRelativeTo(null);
+		super.setResizable(false);
+		super.setLocationByPlatform(true);
+		super.setBackground(Color.LIGHT_GRAY);
+		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		//this._container = getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -131,9 +119,10 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		gridBagLayout.rowHeights = new int[]{17, 500, 124, 7};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.columnWidths = new int[]{270, 120, 72, 20};
-		_parameters.setLayout(gridBagLayout);
-		container = getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
+		JPanel parameters = new JPanel();
+		parameters.setLayout(gridBagLayout);
+		container = super.getContentPane();
+		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.Y_AXIS);
 		
 		container.setLayout(mainBoxLayout);
 		
@@ -155,73 +144,75 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		radioOmeroPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		container.add(radioOmeroPanel, 0);
 		
-		//////////////////////////////////////// First case of the grid bag layout
+		// First case of the grid bag layout
 		// Local mode layout
 		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.Y_AXIS));
 		
-		this._container.setLayout(new GridBagLayout());
+		/**  */
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new GridBagLayout());
 		
 		JLabel label = new JLabel();
 		label.setText("Input and Output directories: ");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		this._container.add(label, new GridBagConstraints(
+		mainPanel.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(10, 10, 0, 0), 0, 0
 		));
 		
-		this._jbInputDir.setPreferredSize(new java.awt.Dimension(150, 21));
-		this._jbInputDir.setFont(new java.awt.Font("arial", 2, 10));
-		this._container.add(this._jbInputDir, new GridBagConstraints(
+		this.jbInputDir.setPreferredSize(new java.awt.Dimension(150, 21));
+		this.jbInputDir.setFont(new java.awt.Font("arial", 2, 10));
+		mainPanel.add(this.jbInputDir, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(35, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfRawData.setPreferredSize(new java.awt.Dimension(280, 21));
-		this._jtfRawData.setFont(new java.awt.Font("arial", 2, 10));
-		this._container.add(this._jtfRawData, new GridBagConstraints(
+		this.jtfRawData.setPreferredSize(new java.awt.Dimension(280, 21));
+		this.jtfRawData.setFont(new java.awt.Font("arial", 2, 10));
+		mainPanel.add(this.jtfRawData, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(35, 190, 0, 0), 0, 0
 		));
 		
-		this._jbInputSeg.setPreferredSize(new java.awt.Dimension(150, 21));
-		this._jbInputSeg.setFont(new java.awt.Font("arial", 2, 10));
-		this._container.add(this._jbInputSeg, new GridBagConstraints(
+		this.jbInputSeg.setPreferredSize(new java.awt.Dimension(150, 21));
+		this.jbInputSeg.setFont(new java.awt.Font("arial", 2, 10));
+		mainPanel.add(this.jbInputSeg, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(65, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfRawSeg.setPreferredSize(new java.awt.Dimension(280, 21));
-		this._jtfRawSeg.setFont(new java.awt.Font("arial", 2, 10));
-		this._container.add(this._jtfRawSeg, new GridBagConstraints(
+		this.jtfRawSeg.setPreferredSize(new java.awt.Dimension(280, 21));
+		this.jtfRawSeg.setFont(new java.awt.Font("arial", 2, 10));
+		mainPanel.add(this.jtfRawSeg, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(65, 190, 0, 0), 0, 0
 		));
 		
-		this._jbOutputDir.setPreferredSize(new java.awt.Dimension(150, 21));
-		this._jbOutputDir.setFont(new java.awt.Font("arial", 2, 10));
-		this._container.add(this._jbOutputDir, new GridBagConstraints(
+		this.jbOutputDir.setPreferredSize(new java.awt.Dimension(150, 21));
+		this.jbOutputDir.setFont(new java.awt.Font("arial", 2, 10));
+		mainPanel.add(this.jbOutputDir, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(95, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfWorkDir.setPreferredSize(new java.awt.Dimension(280, 21));
-		this._jtfWorkDir.setFont(new java.awt.Font("arial", 2, 10));
-		this._container.add(this._jtfWorkDir, new GridBagConstraints(
+		this.jtfWorkDir.setPreferredSize(new java.awt.Dimension(280, 21));
+		this.jtfWorkDir.setFont(new java.awt.Font("arial", 2, 10));
+		mainPanel.add(this.jtfWorkDir, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(95, 190, 0, 0), 0, 0
 		));
 		
-		/////////////////////// group of radio button to choose the input type file
+		// group of radio button to choose the input type file
 		label = new JLabel();
 		label.setFont(new java.awt.Font("arial", 1, 12));
 		label.setText("Parameters:");
-		this._parameters.add(label, new GridBagConstraints(
+		parameters.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(5, 10, 0, 0), 0, 0
 		));
 		
-		this._jCbIs2D.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jCbIs2D, new GridBagConstraints(
+		this.jCbIs2D.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jCbIs2D, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(25, 20, 0, 0), 0, 0
 		));
@@ -229,15 +220,15 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		label = new JLabel();
 		label.setText("Size of the neighborhood:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(label, new GridBagConstraints(
+		parameters.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(55, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfNeigh.setText("3");
-		this._jtfNeigh.setPreferredSize(new java.awt.Dimension(60, 21));
-		this._jtfNeigh.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jtfNeigh, new GridBagConstraints(
+		this.jtfNeigh.setText("3");
+		this.jtfNeigh.setPreferredSize(new java.awt.Dimension(60, 21));
+		this.jtfNeigh.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jtfNeigh, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(52, 245, 0, 0), 0, 0
 		));
@@ -245,21 +236,21 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		label = new JLabel();
 		label.setText("Factor for the threshold value:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(label, new GridBagConstraints(
+		parameters.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(80, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfFactor.setText("1.5");
-		this._jtfFactor.setPreferredSize(new java.awt.Dimension(60, 21));
-		this._jtfFactor.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jtfFactor, new GridBagConstraints(
+		this.jtfFactor.setText("1.5");
+		this.jtfFactor.setPreferredSize(new java.awt.Dimension(60, 21));
+		this.jtfFactor.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jtfFactor, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(78, 245, 0, 0), 0, 0
 		));
 		
-		this._jCbIsGauss.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jCbIsGauss, new GridBagConstraints(
+		this.jCbIsGauss.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jCbIsGauss, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(105, 20, 0, 0), 0, 0
 		));
@@ -267,15 +258,15 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		label = new JLabel();
 		label.setText("Gaussian Blur X sigma:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(label, new GridBagConstraints(
+		parameters.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(135, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfGX.setText("1");
-		this._jtfGX.setPreferredSize(new java.awt.Dimension(60, 21));
-		this._jtfGX.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jtfGX, new GridBagConstraints(
+		this.jtfGX.setText("1");
+		this.jtfGX.setPreferredSize(new java.awt.Dimension(60, 21));
+		this.jtfGX.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jtfGX, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(132, 195, 0, 0), 0, 0
 		));
@@ -283,15 +274,15 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		label = new JLabel();
 		label.setText("Gaussian Blur Y sigma:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(label, new GridBagConstraints(
+		parameters.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(160, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfGY.setText("1");
-		this._jtfGY.setPreferredSize(new java.awt.Dimension(60, 21));
-		this._jtfGY.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jtfGY, new GridBagConstraints(
+		this.jtfGY.setText("1");
+		this.jtfGY.setPreferredSize(new java.awt.Dimension(60, 21));
+		this.jtfGY.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jtfGY, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(158, 195, 0, 0), 0, 0
 		));
@@ -299,15 +290,15 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		label = new JLabel();
 		label.setText("Gaussian Blur Z sigma:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(label, new GridBagConstraints(
+		parameters.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(185, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfGZ.setText("2");
-		this._jtfGZ.setPreferredSize(new java.awt.Dimension(60, 21));
-		this._jtfGZ.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jtfGZ, new GridBagConstraints(
+		this.jtfGZ.setText("2");
+		this.jtfGZ.setPreferredSize(new java.awt.Dimension(60, 21));
+		this.jtfGZ.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jtfGZ, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(182, 195, 0, 0), 0, 0
 		));
@@ -315,13 +306,13 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		label = new JLabel();
 		label.setText("Connected component filtering parameters: ");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(label, new GridBagConstraints(
+		parameters.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(215, 10, 0, 0), 0, 0
 		));
 		
-		this._jCbIsFilter.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jCbIsFilter, new GridBagConstraints(
+		this.jCbIsFilter.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jCbIsFilter, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(240, 20, 0, 0), 0, 0
 		));
@@ -329,15 +320,15 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		label = new JLabel();
 		label.setText("Min volume:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(label, new GridBagConstraints(
+		parameters.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(275, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfMin.setText("0.003");
-		this._jtfMin.setPreferredSize(new java.awt.Dimension(60, 21));
-		this._jtfMin.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jtfMin, new GridBagConstraints(
+		this.jtfMin.setText("0.003");
+		this.jtfMin.setPreferredSize(new java.awt.Dimension(60, 21));
+		this.jtfMin.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jtfMin, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(272, 175, 0, 0), 0, 0
 		));
@@ -345,39 +336,39 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		label = new JLabel();
 		label.setText("Max volume:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(label, new GridBagConstraints(
+		parameters.add(label, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(305, 20, 0, 0), 0, 0
 		));
 		
-		this._jtfMax.setText("3");
-		this._jtfMax.setPreferredSize(new java.awt.Dimension(60, 21));
-		this._jtfMax.setFont(new java.awt.Font("arial", 1, 12));
-		this._parameters.add(this._jtfMax, new GridBagConstraints(
+		this.jtfMax.setText("3");
+		this.jtfMax.setPreferredSize(new java.awt.Dimension(60, 21));
+		this.jtfMax.setFont(new java.awt.Font("arial", 1, 12));
+		parameters.add(this.jtfMax, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(302, 175, 0, 0), 0, 0
 		));
 		
-		_jtfMax.setEnabled(false);
-		_jtfMin.setEnabled(false);
+		jtfMax.setEnabled(false);
+		jtfMin.setEnabled(false);
 		
 		//////////////////////////////////////
 		
-		this._jbStart.setPreferredSize(new java.awt.Dimension(120, 21));
-		this._jbQuit.setPreferredSize(new java.awt.Dimension(120, 21));
+		this.jbStart.setPreferredSize(new java.awt.Dimension(120, 21));
+		this.jbQuit.setPreferredSize(new java.awt.Dimension(120, 21));
 		
-		this._parameters.add(this._jbStart, new GridBagConstraints(
+		parameters.add(this.jbStart, new GridBagConstraints(
 				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(330, 140, 0, 0), 0, 0
 		));
-		this._parameters.add(this._jbQuit, new GridBagConstraints(
+		parameters.add(this.jbQuit, new GridBagConstraints(
 				1, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
 				GridBagConstraints.NONE, new Insets(330, 10, 0, 0), 0, 0
 		));
 		
-		localModeLayout.add(this._container);
+		localModeLayout.add(mainPanel);
 		container.add(localModeLayout, 1);
-		container.add(_parameters, 2);
+		container.add(parameters, 2);
 		
 		// Omero mode layout
 		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.Y_AXIS));
@@ -477,22 +468,22 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		
 		//////////////////////////////////////////////////////////
 		
-		RBDeconvListener analysis = new RBDeconvListener(this);
-		this._jCbIs2D.addActionListener(analysis);
-		this._jCbIsFilter.addActionListener(analysis);
+		ActionListener analysis = new RBDeconvListener(this);
+		this.jCbIs2D.addActionListener(analysis);
+		this.jCbIsFilter.addActionListener(analysis);
 		
-		Listener wdListener = new Listener(this, _jtfWorkDir, false);
-		this._jbOutputDir.addActionListener(wdListener);
-		Listener rawListener = new Listener(this, this._jtfRawData, false);
-		this._jbInputDir.addActionListener(rawListener);
-		Listener segListener = new Listener(this, this._jtfRawSeg, false);
-		this._jbInputSeg.addActionListener(segListener);
+		ActionListener wdListener = new Listener(this, jtfWorkDir, false);
+		this.jbOutputDir.addActionListener(wdListener);
+		ActionListener rawListener = new Listener(this, this.jtfRawData, false);
+		this.jbInputDir.addActionListener(rawListener);
+		ActionListener segListener = new Listener(this, this.jtfRawSeg, false);
+		this.jbInputSeg.addActionListener(segListener);
 		
-		QuitListener quitListener = new QuitListener(this);
-		this._jbQuit.addActionListener(quitListener);
-		StartListener startListener = new StartListener(this);
-		this._jbStart.addActionListener(startListener);
-		this.setVisible(true);
+		ActionListener quitListener = new QuitListener(this);
+		this.jbQuit.addActionListener(quitListener);
+		ActionListener startListener = new StartListener(this);
+		this.jbStart.addActionListener(startListener);
+		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
 		jTextFieldHostname.setText("omero.igred.fr");
@@ -526,7 +517,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	 * @return String workdir path
 	 */
 	public String getOutputDir() {
-		return this._jtfWorkDir.getText();
+		return this.jtfWorkDir.getText();
 	}
 	
 	
@@ -534,74 +525,74 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	 * @return String input path
 	 */
 	public String getInputRaw() {
-		return this._jtfRawData.getText();
+		return this.jtfRawData.getText();
 	}
 	
 	
 	public String getInputSeg() {
-		return this._jtfRawSeg.getText();
+		return this.jtfRawSeg.getText();
 	}
 	
 	
 	public double getMin() {
-		String x = this._jtfMin.getText();
+		String x = this.jtfMin.getText();
 		return Double.parseDouble(x.replaceAll(",", "."));
 	}
 	
 	
 	public double getFactor() {
-		String x = this._jtfFactor.getText();
+		String x = this.jtfFactor.getText();
 		return Double.parseDouble(x.replaceAll(",", "."));
 	}
 	
 	
 	public int getNeigh() {
-		String x = this._jtfNeigh.getText();
+		String x = this.jtfNeigh.getText();
 		return Integer.parseInt(x.replaceAll(",", "."));
 	}
 	
 	
 	public double getMax() {
-		String x = this._jtfMax.getText();
+		String x = this.jtfMax.getText();
 		return Double.parseDouble(x.replaceAll(",", "."));
 	}
 	
 	
 	public double getGaussianX() {
-		String x = this._jtfGX.getText();
+		String x = this.jtfGX.getText();
 		return Double.parseDouble(x.replaceAll(",", "."));
 	}
 	
 	
 	public double getGaussianY() {
-		String x = this._jtfGY.getText();
+		String x = this.jtfGY.getText();
 		return Double.parseDouble(x.replaceAll(",", "."));
 	}
 	
 	
 	public double getGaussianZ() {
-		String x = this._jtfGZ.getText();
+		String x = this.jtfGZ.getText();
 		return Double.parseDouble(x.replaceAll(",", "."));
 	}
 	
 	
 	public boolean isStart() {
-		return this._start;
+		return this.start;
 	}
 	
 	
 	public boolean is2D() {
-		return this._jCbIs2D.isSelected();
+		return this.jCbIs2D.isSelected();
 	}
 	
 	
 	public boolean isGaussian() {
-		return this._jCbIsGauss.isSelected();
+		return this.jCbIsGauss.isSelected();
 	}
 	
 	
 	public boolean isFilter() {
-		return this._jCbIsFilter.isSelected();
+		return this.jCbIsFilter.isSelected();
 	}
 	
 	
@@ -684,34 +675,54 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	
 	@Override
 	public void OnStart() {
-	
 	}
 	
 	
-	/*******************************************************************************************************************************************
-	 Classes listener to interact with the several element of the window
-	 */
-	/*******************************************************************************************************************************************
-	 /********************************************************************************************************************************************
-	 /********************************************************************************************************************************************
-	 /********************************************************************************************************************************************/
+	/* Listener classes to interact with the several element of the window */
 	
+	/**
+	 * Quit button listener
+	 *
+	 * @author axel poulet
+	 */
+	private static class QuitListener implements ActionListener {
+		/**  */
+		private final GuiAnalysis gui;
+		
+		
+		/**
+		 * @param gui
+		 */
+		QuitListener(GuiAnalysis gui) {
+			this.gui = gui;
+		}
+		
+		
+		/**
+		 * dipose the java.trax.gui and quit the program
+		 */
+		public void actionPerformed(ActionEvent actionEvent) {
+			gui.dispose();
+			//System.exit(0);
+		}
+		
+	}
 	
 	/**
 	 * Radio button listener, manage teh access of the different button box etc on function of the parameters choose
 	 *
 	 * @author axel poulet
 	 */
-	class RBDeconvListener implements ActionListener {
+	private class RBDeconvListener implements ActionListener {
 		/**  */
-		GuiAnalysis _gui;
+		private final GuiAnalysis gui;
 		
 		
 		/**
 		 * @param gui
 		 */
-		public RBDeconvListener(GuiAnalysis gui) {
-			_gui = gui;
+		RBDeconvListener(GuiAnalysis gui) {
+			this.gui = gui;
 		}
 		
 		
@@ -719,39 +730,38 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		 * Manages the access of the different java.trax.gui element depending on the chosen parameter
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (_gui.is2D()) {
-				_jtfGY.setEnabled(false);
-				_jtfGZ.setEnabled(false);
-			} else if (!_gui.is2D()) {
-				_jtfGY.setEnabled(true);
-				_jtfGZ.setEnabled(true);
+			if (gui.is2D()) {
+				jtfGY.setEnabled(false);
+				jtfGZ.setEnabled(false);
+			} else if (!gui.is2D()) {
+				jtfGY.setEnabled(true);
+				jtfGZ.setEnabled(true);
 			}
 			
-			if (_gui.isFilter()) {
-				_jtfMax.setEnabled(true);
-				_jtfMin.setEnabled(true);
-			} else if (!_gui.isFilter()) {
-				_jtfMax.setEnabled(false);
-				_jtfMin.setEnabled(false);
+			if (gui.isFilter()) {
+				jtfMax.setEnabled(true);
+				jtfMin.setEnabled(true);
+			} else if (!gui.isFilter()) {
+				jtfMax.setEnabled(false);
+				jtfMin.setEnabled(false);
 			}
 		}
 		
 	}
 	
-	
 	/**
 	 * @author axel poulet Listerner for the start button
 	 */
-	class StartListener implements ActionListener {
+	private class StartListener implements ActionListener {
 		/**  */
-		GuiAnalysis _gui;
+		private final GuiAnalysis gui;
 		
 		
 		/**
 		 * @param gui
 		 */
-		public StartListener(GuiAnalysis gui) {
-			_gui = gui;
+		StartListener(GuiAnalysis gui) {
+			this.gui = gui;
 		}
 		
 		
@@ -760,20 +770,18 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
 			if (useOMERO) {
-				_start = true;
-				_gui.dispose();
+				start = true;
+				gui.dispose();
 				
 			} else {
-				if (_jtfWorkDir.getText().isEmpty() ||
-				    _jtfRawData.getText().isEmpty() ||
-				    _jtfRawSeg.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(
-							null, "You did not choose an input/output directory",
-							"Error", JOptionPane.ERROR_MESSAGE
-					                             );
+				if (jtfWorkDir.getText().isEmpty() ||
+				    jtfRawData.getText().isEmpty() ||
+				    jtfRawSeg.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "You did not choose an input/output directory",
+					                              "Error", JOptionPane.ERROR_MESSAGE);
 				} else {
-					_start = true;
-					_gui.dispose();
+					start = true;
+					gui.dispose();
 				}
 			}
 			try {
@@ -787,44 +795,15 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	}
 	
 	/**
-	 * Quit button listener
-	 *
-	 * @author axel poulet
-	 */
-	class QuitListener implements ActionListener {
-		/**  */
-		GuiAnalysis _gui;
-		
-		
-		/**
-		 * @param gui
-		 */
-		public QuitListener(GuiAnalysis gui) {
-			_gui = gui;
-		}
-		
-		
-		/**
-		 * dipose the java.trax.gui and quit the program
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			_gui.dispose();
-			//System.exit(0);
-		}
-		
-	}
-	
-	
-	/**
 	 *
 	 */
-	class Listener implements ActionListener {
+	private class Listener implements ActionListener {
 		/**  */
-		GuiAnalysis _gui;
+		private final GuiAnalysis gui;
 		/**  */
-		JTextField  _jtf;
+		private final JTextField  jtf;
 		/**  */
-		boolean     _file;
+		private final boolean     file;
 		
 		
 		/**
@@ -832,10 +811,10 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		 * @param jtf
 		 * @param file
 		 */
-		public Listener(GuiAnalysis gui, JTextField jtf, boolean file) {
-			_gui = gui;
-			_jtf = jtf;
-			_file = file;
+		Listener(GuiAnalysis gui, JTextField jtf, boolean file) {
+			this.gui = gui;
+			this.jtf = jtf;
+			this.file = file;
 		}
 		
 		
@@ -844,7 +823,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			JFileChooser jFileChooser = new JFileChooser();
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			if (_file) {
+			if (file) {
 				jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			}
 			int returnValue = jFileChooser.showOpenDialog(getParent());
@@ -852,7 +831,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 				@SuppressWarnings("unused")
 				String run = jFileChooser.getSelectedFile().getName();
 				String text = jFileChooser.getSelectedFile().getAbsolutePath();
-				_jtf.setText(text);
+				jtf.setText(text);
 			}
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}

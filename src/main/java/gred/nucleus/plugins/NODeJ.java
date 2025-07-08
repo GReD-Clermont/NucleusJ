@@ -1,11 +1,21 @@
 package gred.nucleus.plugins;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
 import gred.nucleus.dialogs.IDialogListener;
 import gred.nucleus.gui.GuiAnalysis;
 import gred.nucleus.process.ChromocenterCalling;
 import ij.IJ;
 import ij.plugin.PlugIn;
+import loci.formats.FormatException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -14,7 +24,10 @@ import ij.plugin.PlugIn;
  * @author Tristan Dubos and Axel Poulet
  */
 public class NODeJ implements PlugIn, IDialogListener {
-	GuiAnalysis gui;
+	/** Logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	private GuiAnalysis gui = null;
 	
 	
 	public static Client checkOMEROConnection(String hostname,
@@ -25,7 +38,7 @@ public class NODeJ implements PlugIn, IDialogListener {
 		Client client = new Client();
 		try {
 			client.connect(hostname, Integer.parseInt(port), username, password, Long.valueOf(group));
-		} catch (Exception exp) {
+		} catch (ServiceException | NumberFormatException exp) {
 			IJ.error("Invalid connection values");
 			return null;
 		}
@@ -71,52 +84,55 @@ public class NODeJ implements PlugIn, IDialogListener {
 		String dataType          = gui.getDataType();
 		String dataTypeSegmented = gui.getDataTypeSegmented();
 		
-		ChromocenterParameters CCAnalyseParameters =
-				new ChromocenterParameters(".", ".", ".", client, gui.getGaussianX(),
-				                           gui.getGaussianY(), gui.getGaussianZ(),
-				                           gui.getFactor(), gui.getNeigh(),
-				                           gui.isGaussian(), gui.isFilter(),
-				                           gui.getMax(), gui.getMin());
+		ChromocenterParameters ccAnalyseParams = new ChromocenterParameters(".", ".", ".",
+		                                                                    client,
+		                                                                    gui.getGaussianX(), gui.getGaussianY(),
+		                                                                    gui.getGaussianZ(),
+		                                                                    gui.getFactor(), gui.getNeigh(),
+		                                                                    gui.isGaussian(), gui.isFilter(),
+		                                                                    gui.getMax(), gui.getMin());
 		
-		ChromocenterCalling CCAnalyse = new ChromocenterCalling(CCAnalyseParameters, true);
+		ChromocenterCalling ccAnalyse = new ChromocenterCalling(ccAnalyseParams, true);
 		
 		try {
 			if ("Image".equals(dataType) & "Image".equals(dataTypeSegmented)) {
 				sourceID = "Image/" + gui.getSourceID();
 				segmentedID = "Image/" + gui.getSegmentedNucleiID();
-				CCAnalyse.SegmentationOMERO(sourceID, segmentedID, outputID, client);
+				ccAnalyse.SegmentationOMERO(sourceID, segmentedID, outputID, client);
 			} else if ("Dataset".equals(dataType) & "Dataset".equals(dataTypeSegmented)) {
 				sourceID = "Dataset/" + gui.getSourceID();
 				segmentedID = "Dataset/" + gui.getSegmentedNucleiID();
-				CCAnalyse.SegmentationOMERO(sourceID, segmentedID, outputID, client);
+				ccAnalyse.SegmentationOMERO(sourceID, segmentedID, outputID, client);
 			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
+			LOGGER.error("Error during chromocenter segmentation", e);
+		} catch (InterruptedException e) {
+			LOGGER.error("Chromocenter segmentation interrupted", e);
+			Thread.currentThread().interrupt();
 		}
 	}
 	
 	
 	void runLocal() {
-		ChromocenterParameters CCAnalyseParameters = new ChromocenterParameters(
-				gui.getInputRaw(),
-				gui.getInputSeg(),
-				gui.getOutputDir(),
-				gui.getGaussianX(),
-				gui.getGaussianY(),
-				gui.getGaussianZ(),
-				gui.isGaussian(),
-				gui.isFilter(),
-				gui.getMax(),
-				gui.getMin());
+		ChromocenterParameters ccAnalyseParams = new ChromocenterParameters(gui.getInputRaw(),
+		                                                                    gui.getInputSeg(),
+		                                                                    gui.getOutputDir(),
+		                                                                    gui.getGaussianX(),
+		                                                                    gui.getGaussianY(),
+		                                                                    gui.getGaussianZ(),
+		                                                                    gui.isGaussian(),
+		                                                                    gui.isFilter(),
+		                                                                    gui.getMax(),
+		                                                                    gui.getMin());
 		
-		ChromocenterCalling CCAnalyse = new ChromocenterCalling(CCAnalyseParameters);
+		ChromocenterCalling ccAnalyse = new ChromocenterCalling(ccAnalyseParams);
 		try {
-			CCAnalyse.runSeveralImages2();
-		} catch (Exception e) {
-			e.printStackTrace();
+			ccAnalyse.runSeveralImages2();
+		} catch (IOException | FormatException e) {
+			LOGGER.error("Error during chromocenter segmentation", e);
 		}
-		IJ.log("End of the chromocenter segmentation , the results are in ");
+		LOGGER.info("End of the chromocenter segmentation , the results are in: {}",
+		            ccAnalyseParams.getOutputFolder());
 	}
 	
 }

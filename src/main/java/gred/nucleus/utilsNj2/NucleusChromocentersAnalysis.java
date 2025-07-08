@@ -141,15 +141,14 @@ public class NucleusChromocentersAnalysis {
 	                                       String datasetName,
 	                                       Client client)
 	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
-		
 		this.client = client;
 		long imageId = imageInput.getId();  // Get the image ID
 		
 		// Image to ImagePlus conversion
-		ImagePlus[] RawImage           = new ImagePlus[]{imageInput.toImagePlus(client)};
-		ImagePlus[] SegImage           = new ImagePlus[]{imageSegmented.toImagePlus(client)};
-		ImagePlus   imagePlusInput     = RawImage[0];
-		ImagePlus   imagePlusSegmented = SegImage[0];
+		ImagePlus[] rawImage           = {imageInput.toImagePlus(client)};
+		ImagePlus[] segImage           = {imageSegmented.toImagePlus(client)};
+		ImagePlus   imagePlusInput     = rawImage[0];
+		ImagePlus   imagePlusSegmented = segImage[0];
 		
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusChromocenter);
@@ -194,14 +193,13 @@ public class NucleusChromocentersAnalysis {
 					measure3D.computeVolumeofAllObjects(imagePlusChromocenter);
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
 			int    nbCc         = measure3D.getNumberOfObject(imagePlusChromocenter);
-			double[] tBorderToBorderDistance =
-					computeBorderToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
-			double[] tBarycenterToBorderDistance =
-					computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
-			double[] tIntensity =
-					measure3D.computeIntensityofAllObjects(imagePlusChromocenter);
-			double[] tBarycenterToBorderDistanceTableNucleus =
-					computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusSegmented);
+			double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,
+			                                                                  imagePlusChromocenter);
+			double[] tBarycenterToBorderDistance = computeBarycenterToBorderDistances(imagePlusSegmented,
+			                                                                          imagePlusChromocenter);
+			double[] tIntensity = measure3D.computeIntensityofAllObjects(imagePlusChromocenter);
+			double[] tBarycenterToBorderDistanceTableNucleus = computeBarycenterToBorderDistances(imagePlusSegmented,
+			                                                                                      imagePlusSegmented);
 			
 			text += nbCc + "," + volumeCcMean + "," + volumeCcMean * nbCc + "," +
 			        computeMeanOfTable(tIntensity) + "," +

@@ -3,15 +3,15 @@ package gred.nucleus.utils;
 public class Nucleus extends ObjectCharacteristics {
 	
 	private int          nbCc;
-	private double       RHF;
-	private Chromocenter chromocenter;
+	private double       rhf;
+	private Chromocenter chromocenter = null;
 	
 	
-	public Nucleus(double circularity, int nbPixel, double averageIntesnity,
-	               double stdDevIntesnity, double aspectRatio, double perimeter,
+	public Nucleus(double circularity, int nbPixel, double averageIntensity,
+	               double stdDevIntensity, double aspectRatio, double perimeter,
 	               double area, double solidity, double round, String name) {
-		super(circularity, nbPixel, averageIntesnity,
-		      stdDevIntesnity, aspectRatio, perimeter,
+		super(circularity, nbPixel, averageIntensity,
+		      stdDevIntensity, aspectRatio, perimeter,
 		      area, solidity, round, name);
 	}
 	
@@ -23,7 +23,7 @@ public class Nucleus extends ObjectCharacteristics {
 	
 	
 	public Chromocenter getChromocenter() {
-		return this.chromocenter;
+		return chromocenter;
 	}
 	
 	
@@ -33,7 +33,7 @@ public class Nucleus extends ObjectCharacteristics {
 	
 	
 	public int getNbCc() {
-		return this.nbCc;
+		return nbCc;
 	}
 	
 	
@@ -43,17 +43,17 @@ public class Nucleus extends ObjectCharacteristics {
 	
 	
 	public double getRHF() {
-		return this.RHF;
+		return rhf;
 	}
 	
 	
 	public void setRHF(double a) {
-		RHF = a;
+		rhf = a;
 	}
 	
 	
 	public String ToString() {
-		double nucIntesnity = getAverageIntesnity() * getNbPixel();
+		double nucIntesnity = getAverageIntensity() * getNbPixel();
 		
 		return getName() + "\t" +
 		       getArea() + "\t" +
@@ -62,8 +62,8 @@ public class Nucleus extends ObjectCharacteristics {
 		       getAspectRatio() + "\t" +
 		       getSolidity() + "\t" +
 		       getRound() + "\t" +
-		       getNbCc() + "\t" +
-		       getRHF() + "\t" +
+		       nbCc + "\t" +
+		       rhf + "\t" +
 		       chromocenter.getArea();
 	}
 	

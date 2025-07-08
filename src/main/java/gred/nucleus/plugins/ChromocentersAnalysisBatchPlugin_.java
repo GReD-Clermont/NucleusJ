@@ -119,7 +119,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 			}
 			// Check if all data types are "Dataset"
 			else if ("Dataset".equals(sourceDatatype) && "Dataset".equals(segDatatype) && "Dataset".equals(ccDatatype)) {
-				Long sourceImageId, segImageId, ccImageId;
+				long sourceImageId, segImageId, ccImageId;
 				DatasetWrapper sourceDataset = client.getDataset(inputID),
 						segDataset = client.getDataset(segID),
 						ccDataset = client.getDataset(ccID);
@@ -150,10 +150,9 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 			}
 			// If none of the conditions match
 			else {
-				LOGGER.error("Unsupported data types: sourceDatatype = " + sourceDatatype
-						+ ", segDatatype = " + segDatatype
-						+ ", ccDatatype = " + ccDatatype);
-				IJ.error("Unsupported data types: Please ensure that all data types are either 'Image' or 'Dataset'.");
+				LOGGER.error("Unsupported data types: sourceDatatype = {}, segDatatype = {}, ccDatatype = {}",
+				             sourceDatatype, segDatatype, ccDatatype);
+				LOGGER.error("Please ensure that all data types are either 'Image' or 'Dataset'.");
 				return;  // Stop further execution
 			}
 			Path ccFilePath = Paths.get(mainFolder, "CcParameters.tab");

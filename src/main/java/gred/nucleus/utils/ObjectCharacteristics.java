@@ -1,102 +1,140 @@
 package gred.nucleus.utils;
 
 public class ObjectCharacteristics {
-	private double _circularity;
-	private int    _nbPixel;
-	private double _averageIntesnity;
-	private double _stdDevIntesnity;
-	private double _aspectRatio;
-	private double _perimeter;
-	private double _area;
-	private double _solidity;
-	private double _round;
-	private String _name;
+	private double circularity;
+	private int    nbPixel;
+	private double averageIntensity;
+	private double stdDevIntensity;
+	private double aspectRatio;
+	private double perimeter;
+	private double area;
+	private double solidity;
+	private double round;
+	private String name;
 	
 	
 	public ObjectCharacteristics(double circularity, int nbPixel,
-	                             double averageIntesnity, double stdDevIntesnity,
+	                             double averageIntensity, double stdDevIntensity,
 	                             double aspectRatio, double perimeter, double area,
 	                             double solidity, double round, String name) {
-		this._circularity = circularity;
-		this._nbPixel = nbPixel;
-		this._averageIntesnity = averageIntesnity;
-		this._stdDevIntesnity = stdDevIntesnity;
-		this._aspectRatio = aspectRatio;
-		this._perimeter = perimeter;
-		this._area = area;
-		this._solidity = solidity;
-		this._round = round;
-		this._name = name;
+		this.circularity = circularity;
+		this.nbPixel = nbPixel;
+		this.averageIntensity = averageIntensity;
+		this.stdDevIntensity = stdDevIntensity;
+		this.aspectRatio = aspectRatio;
+		this.perimeter = perimeter;
+		this.area = area;
+		this.solidity = solidity;
+		this.round = round;
+		this.name = name;
 	}
 	
 	
 	public ObjectCharacteristics(double circularity, double aspectRatio,
 	                             double perimeter, double area,
 	                             double solidity, double round, String name) {
-		this._circularity = circularity;
-		this._aspectRatio = aspectRatio;
-		this._perimeter = perimeter;
-		this._area = area;
-		this._solidity = solidity;
-		this._round = round;
-		this._name = name;
+		this.circularity = circularity;
+		this.aspectRatio = aspectRatio;
+		this.perimeter = perimeter;
+		this.area = area;
+		this.solidity = solidity;
+		this.round = round;
+		this.name = name;
 	}
 	
 	
-	public double getArea(){return  this._area;}
+	public double getArea() {
+		return area;
+	}
 	
 	
-	public double getAspectRatio(){return  this._aspectRatio;}
+	public void setArea(double area) {
+		this.area = area;
+	}
 	
 	
-	public double getPerimeter(){return  this._perimeter;}
+	public double getAspectRatio() {
+		return aspectRatio;
+	}
 	
 	
-	public double getCircularity(){return  this._circularity;}
+	public void setAspectRatio(double aspectRatio) {
+		this.aspectRatio = aspectRatio;
+	}
 	
 	
-	public double getAverageIntesnity(){return  this._averageIntesnity;}
+	public double getPerimeter() {
+		return perimeter;
+	}
 	
 	
-	public double getStdDevIntesnity(){return  this._stdDevIntesnity;}
+	public void setPerimeter(double a) {
+		this.perimeter = a;
+	}
 	
 	
-	public double getSolidity(){return  this._solidity;}
+	public double getCircularity() {
+		return circularity;
+	}
 	
 	
-	public double getRound(){return  this._round;}
+	public void setCircularity(double a) {
+		this.circularity = a;
+	}
 	
 	
-	public int getNbPixel(){return  this._nbPixel;}
+	public double getAverageIntensity() {
+		return averageIntensity;
+	}
 	
 	
-	public String getName(){return  this._name;}
+	public void setAverageIntensity(double a) {
+		this.averageIntensity = a;
+	}
 	
 	
-	public void setArea(double area){ this._area = area;}
+	public double getStdDevIntensity() {
+		return stdDevIntensity;
+	}
 	
 	
-	public void setAspectRatio(double aspectRatio){ this._aspectRatio = aspectRatio;}
+	public void setStdDevIntensity(double a) {
+		this.stdDevIntensity = a;
+	}
 	
 	
-	public void setPerimeter(double a){this._perimeter = a;}
+	public double getSolidity() {
+		return solidity;
+	}
 	
 	
-	public void setCircularity(double a){this._circularity = a;}
+	public void setSolidity(double a) {
+		this.solidity = a;
+	}
 	
 	
-	public void setAverageIntesnity(double a){ this._averageIntesnity = a;}
+	public double getRound() {
+		return round;
+	}
 	
 	
-	public void setStdDevIntesnity(double a){this._stdDevIntesnity = a;}
+	public void setRound(double a) {
+		this.round = a;
+	}
 	
 	
-	public void setSolidity(double a){this._solidity = a;}
+	public int getNbPixel() {
+		return nbPixel;
+	}
 	
 	
-	public void setRound(double a){this._round = a;}
+	public void setNbPixel(int a) {
+		this.nbPixel = a;
+	}
 	
 	
-	public void setNbPixel(int a){this._nbPixel = a;}
+	public String getName() {
+		return name;
+	}
 	
 }
