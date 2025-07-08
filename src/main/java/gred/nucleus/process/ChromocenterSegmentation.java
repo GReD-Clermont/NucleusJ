@@ -19,17 +19,17 @@ public class ChromocenterSegmentation {
 	/**
 	 * Parent class for chromocenter  segmentation
 	 */
-	private int nbPixelNuc;
+	private int    nbPixelNuc;
 	private double avgNucIntensity;
 	private double stdDevNucIntensity;
 	
-	private String output;
-	private double threshold;
-	private ImagePlus[] raw;
-	private ImagePlus[] segNuc;
+	private String                 output;
+	private double                 threshold;
+	private ImagePlus[]            raw;
+	private ImagePlus[]            segNuc;
 	private ChromocenterParameters chromocenterParams;
-	private int neigh;
-	private double factor;
+	private int                    neigh;
+	private double                 factor;
 	
 	
 	/**
@@ -104,8 +104,8 @@ public class ChromocenterSegmentation {
 			                1);
 		}
 		
-		ImagePlus imageGradient = this.imgGradient2D();
-		Calibration cal = this.raw[0].getCalibration();
+		ImagePlus   imageGradient = this.imgGradient2D();
+		Calibration cal           = this.raw[0].getCalibration();
 		
 		gb.blurGaussian(imageGradient.getProcessor(), 1, 1, 1);
 		
@@ -150,8 +150,8 @@ public class ChromocenterSegmentation {
 			                    this.chromocenterParams.gaussianBlurZsigma);
 		}
 		
-		ImagePlus imageGradient = imgGradient3D();
-		Calibration cal = this.raw[0].getCalibration();
+		ImagePlus   imageGradient = imgGradient3D();
+		Calibration cal           = this.raw[0].getCalibration();
 		GaussianBlur3D.blur(imageGradient,
 		                    this.chromocenterParams.gaussianBlurXsigma,
 		                    this.chromocenterParams.gaussianBlurYsigma,
@@ -182,14 +182,14 @@ public class ChromocenterSegmentation {
 	 * @return : gradient image
 	 */
 	private ImagePlus imgGradient2D() {
-		ImageProcessor ip = this.raw[0].getProcessor();
+		ImageProcessor ip    = this.raw[0].getProcessor();
 		ImageProcessor ipBin = this.segNuc[0].getProcessor();
 		FloatProcessor pDiff = new FloatProcessor(this.raw[0].getWidth(), this.raw[0].getHeight());
 		
 		for (int i = 0; i < this.raw[0].getWidth(); ++i) {
 			for (int j = 0; j < this.raw[0].getHeight(); ++j) {
 				float sum = 0;
-				int nb = 0;
+				int   nb  = 0;
 				if (ipBin.getf(i, j) > 0) {
 					for (int ii = i - this.neigh; ii < i + this.neigh; ++ii) {
 						for (int jj = j - this.neigh; jj < j + this.neigh; ++jj) {
@@ -224,15 +224,15 @@ public class ChromocenterSegmentation {
 	 * @return : gradient image
 	 */
 	public ImagePlus imgGradient3D() {
-		ImageStack is = this.raw[0].getStack();
-		ImageStack isBin = this.segNuc[0].getStack();
+		ImageStack is     = this.raw[0].getStack();
+		ImageStack isBin  = this.segNuc[0].getStack();
 		ImageStack isDiff = new ImageStack(this.raw[0].getWidth(), this.raw[0].getHeight(), this.raw[0].getNSlices());
 		for (int k = 0; k < this.raw[0].getNSlices(); ++k) {
 			FloatProcessor ipDiff = new FloatProcessor(is.getWidth(), is.getHeight());
 			for (int i = 0; i < this.raw[0].getWidth(); ++i) {
 				for (int j = 0; j < this.raw[0].getHeight(); ++j) {
-					float sum = 0;
-					int nb = 0;
+					float  sum    = 0;
+					int    nb     = 0;
 					double valueA = is.getVoxel(i, j, k);
 					if (isBin.getVoxel(i, j, k) > 0) {
 						for (int kk = k - this.neigh; kk < k + this.neigh; ++kk) {
@@ -272,9 +272,9 @@ public class ChromocenterSegmentation {
 	 * @param : raw image
 	 */
 	private void computeAverage(ImagePlus imgDiff) {
-		ImageProcessor ip2D = imgDiff.getProcessor();
+		ImageProcessor ip2D  = imgDiff.getProcessor();
 		ImageProcessor ipSeg = this.segNuc[0].getProcessor();
-		double sum = 0;
+		double         sum   = 0;
 		for (int i = 0; i < this.raw[0].getWidth(); ++i) {
 			for (int j = 0; j < this.raw[0].getHeight(); ++j) {
 				if (ipSeg.getPixelValue(i, j) > 1) {
@@ -293,9 +293,9 @@ public class ChromocenterSegmentation {
 	 */
 	
 	private void computeStdDev(ImagePlus imgDiff) {
-		ImageProcessor ip2D = imgDiff.getProcessor();
+		ImageProcessor ip2D  = imgDiff.getProcessor();
 		ImageProcessor ipSeg = this.segNuc[0].getProcessor();
-		double sum = 0;
+		double         sum   = 0;
 		for (int i = 0; i < this.raw[0].getWidth(); ++i) {
 			for (int j = 0; j < this.raw[0].getHeight(); ++j) {
 				if (ipSeg.getPixelValue(i, j) > 1) {
@@ -316,7 +316,7 @@ public class ChromocenterSegmentation {
 	private void computeAverage3D(ImagePlus imgDiff) {
 		ImageStack isRaw = imgDiff.getStack();
 		ImageStack isSeg = this.segNuc[0].getStack();
-		double sum = 0;
+		double     sum   = 0;
 		for (int k = 0; k < this.raw[0].getNSlices(); ++k) {
 			for (int i = 0; i < this.raw[0].getWidth(); ++i) {
 				for (int j = 0; j < this.raw[0].getHeight(); ++j) {
@@ -336,9 +336,9 @@ public class ChromocenterSegmentation {
 	 * @param : image gradient
 	 */
 	private void computeStdDev3D(ImagePlus imgDiff) {
-		ImageStack is = imgDiff.getStack();
+		ImageStack is    = imgDiff.getStack();
 		ImageStack isSeg = this.segNuc[0].getStack();
-		double sum = 0;
+		double     sum   = 0;
 		for (int k = 0; k < this.raw[0].getNSlices(); ++k) {
 			for (int i = 0; i < this.raw[0].getWidth(); ++i) {
 				for (int j = 0; j < this.raw[0].getHeight(); ++j) {
@@ -395,8 +395,8 @@ public class ChromocenterSegmentation {
 	 * @return binarized image
 	 */
 	public ImagePlus binarize2D(ImagePlus img) {
-		ImagePlus imgCc = img.duplicate();
-		ImageProcessor ip = imgCc.getProcessor();
+		ImagePlus      imgCc = img.duplicate();
+		ImageProcessor ip    = imgCc.getProcessor();
 		
 		for (int i = 0; i < this.raw[0].getWidth(); ++i) {
 			for (int j = 0; j < this.raw[0].getHeight(); ++j) {
@@ -421,8 +421,8 @@ public class ChromocenterSegmentation {
 	 * @return binarized image
 	 */
 	private ImagePlus binarize3D(ImagePlus img) {
-		ImagePlus imgCc = img.duplicate();
-		ImageStack is = imgCc.getStack();
+		ImagePlus  imgCc = img.duplicate();
+		ImageStack is    = imgCc.getStack();
 		for (int k = 0; k < this.raw[0].getNSlices(); ++k) {
 			for (int i = 0; i < this.raw[0].getWidth(); ++i) {
 				for (int j = 0; j < this.raw[0].getHeight(); ++j) {
@@ -449,10 +449,10 @@ public class ChromocenterSegmentation {
 		histogram.run(imageGradient);
 		histogram.getHistogram();
 		Map<Double, Integer> parcour = histogram.getHistogram();
-		ImagePlus imgCc = imageGradient.duplicate();
-		ImageStack is = imgCc.getStack();
+		ImagePlus            imgCc   = imageGradient.duplicate();
+		ImageStack           is      = imgCc.getStack();
 		for (Map.Entry<Double, Integer> entry : parcour.entrySet()) {
-			Double cle = entry.getKey();
+			Double  cle    = entry.getKey();
 			Integer valeur = entry.getValue();
 			if ((valeur * getVoxelVolume3D() <
 			     this.chromocenterParams.minSizeConnectedComponent ||
@@ -485,10 +485,10 @@ public class ChromocenterSegmentation {
 		histogram.run(imageGradient);
 		histogram.getHistogram();
 		Map<Double, Integer> parcour = histogram.getHistogram();
-		ImagePlus imgCc = imageGradient.duplicate();
-		ImageProcessor ip = imgCc.getProcessor();
+		ImagePlus            imgCc   = imageGradient.duplicate();
+		ImageProcessor       ip      = imgCc.getProcessor();
 		for (Map.Entry<Double, Integer> entry : parcour.entrySet()) {
-			Double cle = entry.getKey();
+			Double  cle    = entry.getKey();
 			Integer valeur = entry.getValue();
 			if ((valeur * getPixelSurface2D() <
 			     this.chromocenterParams.minSizeConnectedComponent ||

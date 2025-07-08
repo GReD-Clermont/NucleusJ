@@ -14,24 +14,32 @@ import static java.lang.Integer.parseInt;
 public class ChromocenterParameters extends PluginParameters {
 	/** Activation of gaussian filter */
 	public boolean gaussianOnRaw = false;
+	
 	/** Factor for gradient thresholding */
 	public double factor = 1.5;
+	
 	/** Number of neighbour to explore */
 	public int neighbours = 3;
+	
 	/** Folder containing segmented images */
 	public String segInputFolder;
 	
 	public Client omeroClient = null;
+	
 	/** Gaussian parameters */
 	public double gaussianBlurXsigma = 1;
 	public double gaussianBlurYsigma = 1;
 	public double gaussianBlurZsigma = 2;
+	
 	/** Filter connected component */
 	public boolean sizeFilterConnectedComponent = false;
+	
 	/** Filter connected component */
 	public boolean noChange = false;
+	
 	/** Max volume connected component filter */
 	public double maxSizeConnectedComponent = 3;
+	
 	/** Min volume connected component filter */
 	public double minSizeConnectedComponent = 0.003;
 	
@@ -80,7 +88,6 @@ public class ChromocenterParameters extends PluginParameters {
 	                              String outputFolder) {
 		super(inputFolder, outputFolder);
 		this.segInputFolder = segInputFolder;
-		
 	}
 	
 	
@@ -290,7 +297,6 @@ public class ChromocenterParameters extends PluginParameters {
 		this.sizeFilterConnectedComponent = sizeFilterConnectedComponent;
 		this.maxSizeConnectedComponent = maxSizeConnectedComponent;
 		this.minSizeConnectedComponent = minSizeConnectedComponent;
-		
 	}
 	
 	

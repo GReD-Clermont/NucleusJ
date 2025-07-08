@@ -24,22 +24,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-
-
-public class MainGui extends JFrame{
-
+public class MainGui extends JFrame {
 	private final Container container;
-	JButton     AutocropButton = new JButton("Autocrop");
-	JButton SegmentationButton  = new JButton("Segmentation");
-	JButton OverlayButton  = new JButton("Overlay");
-	JButton NODeJButton  = new JButton("NODeJ");
-	JButton CropFromCoordinatesButton  = new JButton("Crop From Coordinates");
-	JButton ComputeParametersButton  = new JButton("Compute Parameters Nuc");
-	JButton ComputeCcParametersButton  = new JButton("Compute Parameters Spots");
-	public MainGui(){
+	
+	private JButton AutocropButton            = new JButton("Autocrop");
+	private JButton SegmentationButton        = new JButton("Segmentation");
+	private JButton OverlayButton             = new JButton("Overlay");
+	private JButton NODeJButton               = new JButton("NODeJ");
+	private JButton CropFromCoordinatesButton = new JButton("Crop From Coordinates");
+	private JButton ComputeParametersButton   = new JButton("Compute Parameters Nuc");
+	private JButton ComputeCcParametersButton = new JButton("Compute Parameters Spots");
+	
+	
+	public MainGui() {
 		this.setTitle("NucleusJ 3");
 		this.setMinimumSize(new Dimension(400, 500));
-		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		
 		container = getContentPane();
@@ -47,46 +47,47 @@ public class MainGui extends JFrame{
 		container.setLayout(mainBoxLayout);
 		
 		
-		JPanel        localPanel  = new JPanel();
+		JPanel localPanel = new JPanel();
 		localPanel.setLayout(new GridBagLayout());
 		
 		
 		JLabel WelcomeLabel = new JLabel("Welcome to NJ !");
-		localPanel.add(WelcomeLabel,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		localPanel.add(WelcomeLabel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                    GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		                                                    new Insets(0, 60, 0, 0), 0, 0));
+		
+		localPanel.add(AutocropButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                      GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		                                                      new Insets(40, 30, 0, 0), 120, 0));
+		
+		
+		localPanel.add(SegmentationButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                          GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		                                                          new Insets(80, 30, 0, 0), 85, 0));
+		
+		localPanel.add(CropFromCoordinatesButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                                 GridBagConstraints.NORTHWEST,
+		                                                                 GridBagConstraints.NONE,
+		                                                                 new Insets(120, 30, 0, 0), 20, 0));
+		
+		localPanel.add(OverlayButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                     GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		                                                     new Insets(160, 30, 0, 0), 130, 0));
+		
+		localPanel.add(ComputeParametersButton,
+		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE, new Insets(200, 30, 0, 0), 35, 0));
+		
+		localPanel.add(NODeJButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                                   GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		                                                   new Insets(0, 60, 0, 0), 0, 0));
-	
-		localPanel.add(AutocropButton,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                    GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		                                                    new Insets(40, 30, 0, 0), 120, 0));
+		                                                   new Insets(240, 30, 0, 0), 140, 0));
 		
-
-		localPanel.add(SegmentationButton,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                         GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		                                                         new Insets(80, 30, 0, 0), 85, 0));
-	
-
-		localPanel.add(CropFromCoordinatesButton,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		                                                                new Insets(120, 30, 0, 0), 20, 0));
-
-		localPanel.add(OverlayButton,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                    GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		                                                    new Insets(160, 30, 0, 0), 130, 0));
-
-		localPanel.add(ComputeParametersButton,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                              GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		                                                              new Insets(200, 30, 0, 0), 35, 0));
-
-		localPanel.add(NODeJButton,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                  GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-		                                                  new Insets(240, 30, 0, 0), 140, 0));
-
-		localPanel.add(ComputeCcParametersButton,new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-				GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-				new Insets(280, 30, 0, 0), 12, 0));
+		localPanel.add(ComputeCcParametersButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                                                 GridBagConstraints.NORTHWEST,
+		                                                                 GridBagConstraints.NONE,
+		                                                                 new Insets(280, 30, 0, 0), 12, 0));
 		
-		container.add(localPanel,0);
+		container.add(localPanel, 0);
 		
 		AutocropButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -130,7 +131,7 @@ public class MainGui extends JFrame{
 				nodej.run("");
 			}
 		});
-
+		
 		ComputeCcParametersButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ChromocentersAnalysisBatchPlugin_ ComputeCcParameters = new ChromocentersAnalysisBatchPlugin_();

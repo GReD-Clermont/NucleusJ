@@ -1,17 +1,16 @@
 package gred.nucleus.utils;
 
 
-
 /**
  *
  */
-public class Chromocenter extends ObjectCharacteristics{
+public class Chromocenter extends ObjectCharacteristics {
 	
-	private double _totalIntensity;
-	private double _ccValue;
+	private double totalIntensity;
+	private double ccValue;
+	
 	
 	/**
-	 *
 	 * @param circularity
 	 * @param nbPixel
 	 * @param aspectRatio
@@ -21,42 +20,47 @@ public class Chromocenter extends ObjectCharacteristics{
 	 * @param round
 	 * @param name
 	 */
-	public Chromocenter(double circularity, int nbPixel, double aspectRatio,  double perimeter,
-	                    double area, double solidity, double round, String name){
-		super(circularity, nbPixel, 0, 0, aspectRatio, perimeter,  area, solidity, round, name);
+	public Chromocenter(double circularity, int nbPixel, double aspectRatio, double perimeter,
+	                    double area, double solidity, double round, String name) {
+		super(circularity, nbPixel, 0, 0, aspectRatio, perimeter, area, solidity, round, name);
 	}
 	
 	
 	
-	public void setTotalIntensity(double a){this._totalIntensity = a;}
-	public double getTotalIntensity(){return this._totalIntensity;}
+	public void setTotalIntensity(double a) {this.totalIntensity = a;}
 	
-	public void setCCValue(double a, double b){this._ccValue = a/b;}
-	private void setCCValue(double a){this._ccValue = a;}
-	public double getCCValue(){ return this._ccValue;}
+	
+	public double getTotalIntensity() {return this.totalIntensity;}
+	
+	
+	public void setCCValue(double a, double b) {this.ccValue = a / b;}
+	
+	
+	private void setCCValue(double a) {this.ccValue = a;}
+	
+	
+	public double getCCValue() {return this.ccValue;}
 	
 	
 	public void addChromocenter(double circularity, int nbPixel, double aspectRatio,
 	                            double perimeter, double area, double solidity, double round,
-	                            double ccValue){
-		
-		this.setCircularity(this.getCircularity()+circularity);
-		this.setNbPixel(this.getNbPixel()+nbPixel);
-		this.setAspectRatio(this.getAspectRatio()+aspectRatio);
-		this.setPerimeter(this.getPerimeter()+perimeter);
-		this.setArea(this.getArea()+area);
-		this.setSolidity(this.getSolidity()+solidity);
-		this.setRound(this.getRound()+round);
-		this.setCCValue(this.getCCValue()+ccValue);
-		
+	                            double ccValue) {
+		this.setCircularity(this.getCircularity() + circularity);
+		this.setNbPixel(this.getNbPixel() + nbPixel);
+		this.setAspectRatio(this.getAspectRatio() + aspectRatio);
+		this.setPerimeter(this.getPerimeter() + perimeter);
+		this.setArea(this.getArea() + area);
+		this.setSolidity(this.getSolidity() + solidity);
+		this.setRound(this.getRound() + round);
+		this.setCCValue(this.getCCValue() + ccValue);
 	}
 	
+	
 	/**
-	 *
 	 * @param nbCc
 	 */
-	public void avgChromocenters(int nbCc){
-		if(nbCc > 0) {
+	public void avgChromocenters(int nbCc) {
+		if (nbCc > 0) {
 			this.setCircularity(this.getCircularity() / nbCc);
 			this.setNbPixel(this.getNbPixel() / nbCc);
 			this.setAspectRatio(this.getAspectRatio() / nbCc);
@@ -65,7 +69,7 @@ public class Chromocenter extends ObjectCharacteristics{
 			this.setSolidity(this.getSolidity() / nbCc);
 			this.setRound(this.getRound() / nbCc);
 			this.setCCValue(this.getCCValue() / nbCc);
-		}else{
+		} else {
 			this.setCircularity(0);
 			this.setNbPixel(0);
 			this.setAspectRatio(0);
@@ -75,11 +79,17 @@ public class Chromocenter extends ObjectCharacteristics{
 			this.setRound(0);
 			this.setCCValue(0);
 		}
-		
 	}
 	
-	public String toString(){
-		return getName()+"\t"+getArea()+"\t"+getPerimeter()+"\t"+getCircularity()+"\t"+getAspectRatio()+
-		       "\t"+getSolidity()+"\t"+getCCValue();
+	
+	public String toString() {
+		return getName() + "\t" +
+		       getArea() + "\t" +
+		       getPerimeter() + "\t" +
+		       getCircularity() + "\t" +
+		       getAspectRatio() + "\t" +
+		       getSolidity() + "\t" +
+		       getCCValue();
 	}
+	
 }

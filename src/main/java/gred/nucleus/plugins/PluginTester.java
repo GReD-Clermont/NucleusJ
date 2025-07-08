@@ -1,7 +1,5 @@
-package gred.nucleus.plugins;
-
 /*
- *  Copyright (C) 2021-2022 MICA & GReD
+ *  Copyright (C) 2021-2025 GReD
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
@@ -14,23 +12,23 @@ package gred.nucleus.plugins;
  * this program; if not, write to the Free Software Foundation, Inc., 51 Franklin
  * Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
-
-
+package gred.nucleus.plugins;
 
 import ij.IJ;
 
 
 public class PluginTester {
-
-    public static void main(String[] args) {
-        Class<?> clazz =  ComputeParametersPlugin_.class;
-        String name = clazz.getName();
-        String url = clazz.getResource("/" +
-                name.replace('.', '/') +
-                ".class").toString();
-        String pluginsDir = url.substring(5, url.length() - name.length() - 6);
-        System.setProperty("plugins.dir", pluginsDir);
-        // run the plugin
-        IJ.runPlugIn(name, "");
-    }
+	
+	public static void main(String[] args) {
+		Class<?> clazz = ComputeParametersPlugin_.class;
+		String   name  = clazz.getName();
+		String url = clazz.getResource("/" +
+		                               name.replace('.', '/') +
+		                               ".class").toString();
+		String pluginsDir = url.substring(5, url.length() - name.length() - 6);
+		System.setProperty("plugins.dir", pluginsDir);
+		// run the plugin
+		IJ.runPlugIn(name, "");
+	}
+	
 }
