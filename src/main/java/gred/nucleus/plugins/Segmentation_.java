@@ -2,6 +2,7 @@ package gred.nucleus.plugins;
 
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
@@ -13,6 +14,7 @@ import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
 import ij.IJ;
 import ij.plugin.PlugIn;
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,12 +22,14 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class Segmentation_ implements PlugIn, IDialogListener {
-	SegmentationDialog segmentationDialog;
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	SegmentationDialog segmentationDialog;
 	
 	
 	/**
@@ -116,7 +120,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 		
 		SegmentationCalling segmentation = new SegmentationCalling(segmentationParameters);
 		segmentation.setExecutorThreads(segmentationDialog.getThreads());
-
+		
 		// Handle the source according to the type given
 		String dataType = segmentationDialog.getDataType();
 		Long   inputID  = Long.valueOf(segmentationDialog.getSourceID());
@@ -155,13 +159,17 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				}
 			}
 			LOGGER.info("Segmentation process has ended successfully");
-			IJ.showMessage("Segmentation process ended successfully on "+ segmentationDialog.getDataType()+"\\"+inputID);
+			IJ.showMessage("Segmentation process ended successfully on " +
+			               segmentationDialog.getDataType() + "\\" + inputID);
 		} catch (ServiceException se) {
 			IJ.error("Unable to access to OMERO service");
 		} catch (AccessException ae) {
 			IJ.error("Cannot access " + dataType + "with ID = " + inputID + ".");
-		} catch (Exception e) {
+		} catch (OMEROServerError | IOException | ExecutionException e) {
 			LOGGER.error("An error occurred.", e);
+		} catch (InterruptedException e) {
+			LOGGER.error("Segmentation interrupted", e);
+			Thread.currentThread().interrupt();
 		}
 	}
 	
@@ -191,10 +199,8 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 					case INPUT:
 						SegmentationConfigDialog scd = segmentationDialog.getSegmentationConfigFileDialog();
 						if (scd.isCalibrationSelected()) {
-							LOGGER.info("w/ calibration" +
-							            "\nx: " + scd.getXCalibration() +
-							            "\ny: " + scd.getYCalibration() +
-							            "\nz: " + scd.getZCalibration());
+							LOGGER.info("w/ calibration\tx: {}\ty: {}\tz: {}",
+							            scd.getXCalibration(), scd.getYCalibration(), scd.getZCalibration());
 							
 							segmentationParameters = new SegmentationParameters(input, output,
 							                                                    Integer.parseInt(scd.getXCalibration()),
@@ -205,7 +211,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 							                                                    scd.getConvexHullDetection()
 							);
 						} else {
-							LOGGER.info("w/out calibration");
+							LOGGER.info("without calibration");
 							segmentationParameters = new SegmentationParameters(input, output,
 							                                                    Integer.parseInt(scd.getMinVolume()),
 							                                                    Integer.parseInt(scd.getMaxVolume()),
@@ -214,14 +220,14 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 						}
 						break;
 					case DEFAULT:
-						LOGGER.info("w/out config");
+						LOGGER.info("without config");
 						segmentationParameters = new SegmentationParameters(input, output);
 						break;
 				}
 				
 				SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
 				otsuModified.setExecutorThreads(segmentationDialog.getThreads());
-
+				
 				File   file = new File(input);
 				String log  = "";
 				if (file.isDirectory()) {
@@ -235,14 +241,14 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				}
 				
 				LOGGER.info("Segmentation process has ended successfully");
-				IJ.showMessage("Segmentation process ended successfully on "+ file.getName());
+				IJ.showMessage("Segmentation process ended successfully on " + file.getName());
 			} catch (IOException ioe) {
-				IJ.error("File/Directory does not exist");
-			} catch (Exception e) {
+				IJ.error("File or directory does not exist");
+			} catch (NumberFormatException | FormatException e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		}
-
+		
 	}
 	
 }

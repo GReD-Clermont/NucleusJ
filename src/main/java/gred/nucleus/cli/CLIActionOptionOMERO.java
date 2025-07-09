@@ -13,64 +13,65 @@ import static org.apache.commons.lang.Validate.isTrue;
 /** Inherited class to handle OMERO command line option */
 public class CLIActionOptionOMERO extends CLIActionOptions {
 	/** Host name server */
-	private final Option hostname     = Option.builder("ho")
-	                                          .longOpt("hostname")
-	                                          .type(String.class)
-	                                          .desc("Hostname of the OMERO server")
-	                                          .numberOfArgs(1)
-	                                          .build();
+	private final Option hostname = Option.builder("ho")
+	                                      .longOpt("hostname")
+	                                      .type(String.class)
+	                                      .desc("Hostname of the OMERO server")
+	                                      .numberOfArgs(1)
+	                                      .build();
 	/** Server port connection */
-	private final Option port         = Option.builder("pt")
-	                                          .longOpt("port")
-	                                          .type(Integer.class)
-	                                          .desc("Port used by OMERO")
-	                                          .numberOfArgs(1)
-	                                          .build();
+	private final Option port     = Option.builder("pt")
+	                                      .longOpt("port")
+	                                      .type(Integer.class)
+	                                      .desc("Port used by OMERO")
+	                                      .numberOfArgs(1)
+	                                      .build();
 	/** username connection */
-	private final Option username     = Option.builder("u")
-	                                          .longOpt("username")
-	                                          .type(String.class)
-	                                          .desc("Username in OMERO")
-	                                          .numberOfArgs(1)
-	                                          .build();
+	private final Option username = Option.builder("u")
+	                                      .longOpt("username")
+	                                      .type(String.class)
+	                                      .desc("Username in OMERO")
+	                                      .numberOfArgs(1)
+	                                      .build();
 	/** OMERO password connection */
-	private final Option password     = Option.builder("p")
-	                                          .longOpt("password")
-	                                          .type(String.class)
-	                                          .desc("Password in OMERO")
-	                                          .numberOfArgs(1)
-	                                          .build();
+	private final Option password = Option.builder("p")
+	                                      .longOpt("password")
+	                                      .type(String.class)
+	                                      .desc("Password in OMERO")
+	                                      .numberOfArgs(1)
+	                                      .build();
 	/** Group user connection */
-	private final Option group        = Option.builder("g")
-	                                          .longOpt("group")
-	                                          .type(String.class)
-	                                          .desc("Group in OMERO")
-	                                          .numberOfArgs(1)
-	                                          .build();
-
-
+	private final Option group    = Option.builder("g")
+	                                      .longOpt("group")
+	                                      .type(String.class)
+	                                      .desc("Group in OMERO")
+	                                      .numberOfArgs(1)
+	                                      .build();
+	
+	
 	/** Path to OMERO config file */
 	private final Option omeroConfigFile = Option.builder("oc")
-												.longOpt("omeroConfig")
-												.type(String.class)
-												.desc("Path to OMERO config file")
-												.numberOfArgs(1)
-												.build();
+	                                             .longOpt("omeroConfig")
+	                                             .type(String.class)
+	                                             .desc("Path to OMERO config file")
+	                                             .numberOfArgs(1)
+	                                             .build();
 	
 	private final Option obj = Option.builder("obj")
-			.longOpt("object")
-			.type(String.class)
-			.desc("Result file of interest ( Nucleus, chromocenters,both")
-			.numberOfArgs(1)
-			.build();
+	                                 .longOpt("object")
+	                                 .type(String.class)
+	                                 .desc("Result file of interest ( Nucleus, chromocenters,both")
+	                                 .numberOfArgs(1)
+	                                 .build();
 	
 	private final Option rhf = Option.builder("rhf")
-			.longOpt("rhf")
-			.type(String.class)
-			.desc("Type of Relative Heterochromatin Fraction")
-			.numberOfArgs(1)
-			.build();
-
+	                                 .longOpt("rhf")
+	                                 .type(String.class)
+	                                 .desc("Type of Relative Heterochromatin Fraction")
+	                                 .numberOfArgs(1)
+	                                 .build();
+	
+	
 	/**
 	 * Constructor with argument
 	 *
@@ -79,7 +80,7 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	public CLIActionOptionOMERO(String[] argument) {
 		super(argument);
 		List<String> listArgs = Arrays.asList(argument);
-		if( !(listArgs.contains("-oc") || listArgs.contains("-omeroConfig")) ) {
+		if (!(listArgs.contains("-oc") || listArgs.contains("-omeroConfig"))) {
 			hostname.setRequired(true);
 			port.setRequired(true);
 			username.setRequired(true);
@@ -95,19 +96,18 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		this.options.addOption(this.obj);
 		this.options.addOption(this.rhf);
 		String inputDescription = "OMERO  inputs 2 information separated with slash separator :  " +
-				"Type input: dataset, project, image, tag " +
-				"Input id number" + "\n" +
-				"Example : " + "\n" +
-				"          dataset/1622";
+		                          "Type input: dataset, project, image, tag " +
+		                          "Input id number" + "\n" +
+		                          "Example : " + "\n" +
+		                          "          dataset/1622";
 		this.options.addOption(this.inputFolder);
 		this.inputFolder.setDescription(inputDescription);
 		this.options.addOption(this.inputFolder2);
-
+		
 		this.options.addOption(this.omeroConfigFile);
 		try {
 			this.cmd = this.parser.parse(this.options, argument);
 			isTrue(availableActionOMERO(this.cmd.getOptionValue("action")));
-			
 		} catch (ParseException exp) {
 			System.console().writer().println(exp.getMessage() + "\n");
 			System.console().writer().println(getHelperInfo());
@@ -140,6 +140,6 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		actionAvailableInOMERO.add("computeCcParameters");
 		return actionAvailableInOMERO.contains(action);
 	}
-
-
+	
+	
 }

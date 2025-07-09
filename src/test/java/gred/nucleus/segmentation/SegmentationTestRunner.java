@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 
 public final class SegmentationTestRunner {
-	public static final String PATH_TO_INPUT = "input" + File.separator;
+	public static final String PATH_TO_INPUT  = "input" + File.separator;
 	public static final String PATH_TO_CONFIG = PATH_TO_INPUT +
 	                                            "config" + File.separator +
 	                                            "seg.config";
@@ -28,8 +28,8 @@ public final class SegmentationTestRunner {
 	
 	
 	public static int getNumberOfImages(String dir) {
-		int nImages = 0;
-		File[] files = new File(dir + PATH_TO_INPUT).listFiles();
+		int    nImages = 0;
+		File[] files   = new File(dir + PATH_TO_INPUT).listFiles();
 		if (files != null) {
 			for (File file : files) {
 				String extension = FilenameUtils.getExtension(file.getName())
@@ -46,7 +46,7 @@ public final class SegmentationTestRunner {
 	
 	public static void run(String segDir, String outDir)
 	throws IOException, FormatException, InterruptedException {
-		File file = new File(segDir + PATH_TO_INPUT);
+		File   file  = new File(segDir + PATH_TO_INPUT);
 		File[] files = file.listFiles();
 		LOGGER.info("Running test on directory: {}", segDir + PATH_TO_INPUT);
 		
@@ -78,7 +78,7 @@ public final class SegmentationTestRunner {
 	private static void runSegmentation(String imageSourceFile, String output)
 	throws IOException, FormatException {
 		SegmentationParameters segmentationParams = new SegmentationParameters(imageSourceFile, output);
-		SegmentationCalling segmentation = new SegmentationCalling(segmentationParams);
+		SegmentationCalling    segmentation       = new SegmentationCalling(segmentationParams);
 		segmentation.runOneImage(imageSourceFile);
 		segmentation.saveTestCropGeneralInfo();
 	}

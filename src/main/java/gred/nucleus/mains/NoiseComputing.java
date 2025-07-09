@@ -21,10 +21,8 @@ public final class NoiseComputing {
 	
 	
 	public static void main(String[] args) {
-		computeMeanNoise(
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/RAW/",
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TMP_PARAMETERS/"
-		                );
+		computeMeanNoise("/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/RAW/",
+				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TMP_PARAMETERS/");
 	}
 	
 	
@@ -51,8 +49,7 @@ public final class NoiseComputing {
 			LOGGER.info("Noise mean: {}", meanNoise);
 			
 		}
-		OutputTextFile resultFileOutputOTSU = new OutputTextFile(
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/NoiseGIFT.csv");
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile("/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/NoiseGIFT.csv");
 		resultFileOutputOTSU.saveTextFile(resultNoise.toString(), true);
 	}
 	

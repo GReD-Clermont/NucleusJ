@@ -15,21 +15,25 @@ import inra.ijpb.binary.BinaryImages;
 import java.util.Map;
 
 
+/**
+ * Parent class for chromocenter  segmentation
+ */
 public class ChromocenterSegmentation {
-	/**
-	 * Parent class for chromocenter  segmentation
-	 */
-	private int    nbPixelNuc;
+	private final ImagePlus[] raw;
+	private final ImagePlus[] segNuc;
+	
+	private final ChromocenterParameters chromocenterParams;
+	
+	private final String output;
+	
+	private final int    neigh;
+	private final double factor;
+	
+	private int nbPixelNuc;
+	
 	private double avgNucIntensity;
 	private double stdDevNucIntensity;
-	
-	private String                 output;
-	private double                 threshold;
-	private ImagePlus[]            raw;
-	private ImagePlus[]            segNuc;
-	private ChromocenterParameters chromocenterParams;
-	private int                    neigh;
-	private double                 factor;
+	private double threshold;
 	
 	
 	/**
@@ -42,8 +46,7 @@ public class ChromocenterSegmentation {
 	                                ImagePlus[] segNuc,
 	                                String outputFileName,
 	                                ChromocenterParameters chromocenterParams,
-	                                boolean image2D
-	                               ) {
+	                                boolean image2D) {
 		this.chromocenterParams = chromocenterParams;
 		this.raw = raw;
 		this.segNuc = segNuc;
@@ -68,8 +71,7 @@ public class ChromocenterSegmentation {
 	public ChromocenterSegmentation(ImagePlus[] raw,
 	                                ImagePlus[] segNuc,
 	                                String outputFileName,
-	                                ChromocenterParameters chromocenterParameters
-	                               ) {
+	                                ChromocenterParameters chromocenterParameters) {
 		chromocenterParams = chromocenterParameters;
 		this.raw = raw;
 		this.segNuc = segNuc;
@@ -118,12 +120,9 @@ public class ChromocenterSegmentation {
 		
 		this.threshold = this.avgNucIntensity + this.factor * this.stdDevNucIntensity;
 		System.out.println(this.output +
-		                   " " +
-		                   this.threshold +
-		                   " avg " +
-		                   this.avgNucIntensity +
-		                   " std " +
-		                   this.stdDevNucIntensity);
+		                   " " + this.threshold +
+		                   " avg " + this.avgNucIntensity +
+		                   " std " + this.stdDevNucIntensity);
 		
 		// CC sega
 		imageGradient = binarize2D(imageGradient);
@@ -198,8 +197,12 @@ public class ChromocenterSegmentation {
 								
 								float valueA = ip.getf(i, j);
 								float valueB = ip.getf(ii, jj);
-								if (Double.isNaN(ip.getf(i, j))) valueA = 0;
-								if (Double.isNaN(ip.getf(ii, jj))) valueB = 0;
+								if (Double.isNaN(ip.getf(i, j))) {
+									valueA = 0;
+								}
+								if (Double.isNaN(ip.getf(ii, jj))) {
+									valueB = 0;
+								}
 								float plop = valueA - valueB;
 								
 								sum += plop;
@@ -243,8 +246,12 @@ public class ChromocenterSegmentation {
 									    kk < this.raw[0].getNSlices()) {
 										if (isBin.getVoxel(ii, jj, kk) > 0) {
 											double valueB = is.getVoxel(ii, jj, kk);
-											if (Double.isNaN(is.getVoxel(i, j, k))) valueA = 0;
-											if (Double.isNaN(is.getVoxel(ii, jj, kk))) valueB = 0;
+											if (Double.isNaN(is.getVoxel(i, j, k))) {
+												valueA = 0;
+											}
+											if (Double.isNaN(is.getVoxel(ii, jj, kk))) {
+												valueB = 0;
+											}
 											double plop = valueA - valueB;
 											sum += plop;
 										}

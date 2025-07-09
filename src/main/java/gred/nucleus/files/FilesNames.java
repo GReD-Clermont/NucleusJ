@@ -37,7 +37,9 @@ public class FilesNames {
 	/** Method to check if file exists */
 	public void checkFileExists() {
 		File file = new File(this.fullPathFile);
-		if (!file.exists()) this.fileExists = false;
+		if (!file.exists()) {
+			this.fileExists = false;
+		}
 	}
 	
 	

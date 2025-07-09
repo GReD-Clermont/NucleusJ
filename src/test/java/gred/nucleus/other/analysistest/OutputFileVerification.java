@@ -71,9 +71,8 @@ public class OutputFileVerification {
 				if (f.isDirectory()) {
 					getFileResultExpected(f.getAbsolutePath());
 				} else {
-					String temps = f.getPath().replace(
-							this.rawPathExpectedResult, "");
-					this.myMapInitialFilesInputFolder.put(temps, md5(f.getPath()));
+					String temps = f.getPath().replace(rawPathExpectedResult, "");
+					myMapInitialFilesInputFolder.put(temps, md5(f.getPath()));
 				}
 			}
 		}
@@ -131,9 +130,8 @@ public class OutputFileVerification {
 				this.myMapInitialFilesInputFolder.entrySet()) {
 			String fileName = entry.getKey();
 			String hashCode = entry.getValue();
-			if (hashCode.equals(
-					this.myMapFilesProduceByAnalysis.get(fileName))) {
-				LOGGER.debug("Terrible du cul {}", fileName);
+			if (hashCode.equals(myMapFilesProduceByAnalysis.get(fileName))) {
+				LOGGER.debug("Terrible {}", fileName);
 			} else {
 				LOGGER.debug("le fichier n'existe pas ou diff hash {}\n{}\n{}\n",
 				             fileName,

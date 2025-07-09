@@ -85,9 +85,9 @@ public class RectangleIntersection {
 	
 	/**
 	 * Class to run the boxes merge process
-	 * <p> Step 1 : detecting boxes intersections</li>
-	 * <p> Step 2 : group rectangle intersecting</li>
-	 * <p> Step 3 : compile new rectangle</li>
+	 * <ul><li> Step 1 : detecting boxes intersections</li>
+	 * <li> Step 2 : group rectangle intersecting</li>
+	 * <li> Step 3 : compile new rectangle</li></ul>
 	 */
 	public void runRectangleRecompilation() {
 		this.newBoxesAdded = true;
@@ -218,8 +218,7 @@ public class RectangleIntersection {
 					if (Integer.parseInt(zSliceTMP[0]) < minZSlice || minZSlice == 0) {
 						minZSlice = Integer.parseInt(zSliceTMP[0]);
 					}
-					if (Integer.parseInt(zSliceTMP[0] + Integer.valueOf(zSliceTMP[1])) > maxZSlice ||
-					     maxZSlice == 0) {
+					if (Integer.parseInt(zSliceTMP[0] + Integer.valueOf(zSliceTMP[1])) > maxZSlice || maxZSlice == 0) {
 						maxZSlice = Integer.parseInt(zSliceTMP[0]) + Integer.parseInt(zSliceTMP[1]);
 					}
 					listOfRectangleToRemove.add(new Rectangle((int) this.listRectangle.get(tmp).getX(),
@@ -249,7 +248,7 @@ public class RectangleIntersection {
 		for (Rectangle rectangle : listOfRectangleToRemove) {
 			this.newBoxesAdded = true;
 			int indexRectangleRemove = listRectangle.indexOf(rectangle);
-			if(indexRectangleRemove!= -1) {
+			if (indexRectangleRemove != -1) {
 				listRectangle.remove(indexRectangleRemove);
 				zSlices.remove(indexRectangleRemove);
 			}

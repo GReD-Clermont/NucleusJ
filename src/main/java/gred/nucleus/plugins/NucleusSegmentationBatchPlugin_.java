@@ -6,10 +6,12 @@ import gred.nucleus.utils.FileList;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.PlugIn;
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 
@@ -17,6 +19,7 @@ import java.lang.invoke.MethodHandles;
  * @author Tristan Dubos and Axel Poulet
  * @deprecated Method to segment the nucleus on batch
  */
+@Deprecated
 public class NucleusSegmentationBatchPlugin_ implements PlugIn {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -52,7 +55,7 @@ public class NucleusSegmentationBatchPlugin_ implements PlugIn {
 							                        (short) nucleusSegmentationBatchDialog.getMinVolume(),
 							                        (short) nucleusSegmentationBatchDialog.getMaxVolume());
 					otsuModified.runOneImage();
-				} catch (Exception e) {
+				} catch (IOException | FormatException e) {
 					LOGGER.error("An error occurred.", e);
 				}
 			}

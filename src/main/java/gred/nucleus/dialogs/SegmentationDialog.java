@@ -3,7 +3,21 @@ package gred.nucleus.dialogs;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import java.awt.Color;
 import java.awt.Container;
@@ -24,7 +38,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	private static final String                        INPUT_CHOOSER           = "inputChooser";
 	private static final String                        OUTPUT_CHOOSER          = "outputChooser";
 	private static final String                        CONFIG_CHOOSER          = "configChooser";
-	final                IDialogListener               dialogListener;
+	private final        IDialogListener               dialogListener;
 	private final        Container                     container;
 	private final        JFileChooser                  fc                      = new JFileChooser();
 	private final        JRadioButton                  omeroYesButton          = new JRadioButton("Yes");
@@ -51,8 +65,8 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	private final        JTextField                    jTextFieldSourceID      = new JTextField();
 	private final        JTextField                    jTextFieldOutputProject = new JTextField();
 	private final        JButton                       confButton              = new JButton("...");
-	private final 		 JSpinner			  jSpinnerThreads;
-	private              boolean                       useOMERO                = false;
+	private final        JSpinner                      jSpinnerThreads;
+	private              boolean                       useOMERO;
 	private              SegmentationDialog.ConfigMode configMode;
 	
 	
@@ -64,7 +78,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		JButton jButtonQuit  = new JButton("Quit");
 		this.setTitle("Segmentation - NucleusJ3");
 		this.setMinimumSize(new Dimension(400, 500));
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		segmentationConfigFileDialog = new SegmentationConfigDialog(this);
 		segmentationConfigFileDialog.setVisible(false);
@@ -247,14 +261,14 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		container.add(defConf, 3);
 		defConf.setBorder(padding);
 		configMode = SegmentationDialog.ConfigMode.DEFAULT;
-
+		
 		// Thread preferences
 		JPanel threadPanel = new JPanel();
 		threadPanel.setLayout(new BoxLayout(threadPanel, BoxLayout.X_AXIS));
 		JLabel jLabelThreads = new JLabel("Number of used threads : ");
 		threadPanel.add(jLabelThreads);
-		int maxThreads = Runtime.getRuntime().availableProcessors();
-		SpinnerModel model = new SpinnerNumberModel(Math.min(maxThreads, 1), 1, maxThreads, 1);
+		int          maxThreads = Runtime.getRuntime().availableProcessors();
+		SpinnerModel model      = new SpinnerNumberModel(Math.min(maxThreads, 1), 1, maxThreads, 1);
 		jSpinnerThreads = new JSpinner(model);
 		threadPanel.add(jSpinnerThreads);
 		threadPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 100));
@@ -359,10 +373,13 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	public SegmentationConfigDialog getSegmentationConfigFileDialog() {
 		return segmentationConfigFileDialog;
 	}
-
-	public int getThreads(){return (int) jSpinnerThreads.getValue(); }
-
-
+	
+	
+	public int getThreads() {
+		return (int) jSpinnerThreads.getValue();
+	}
+	
+	
 	public void actionPerformed(ActionEvent e) {
 		switch (((JButton) e.getSource()).getName()) {
 			case INPUT_CHOOSER:
@@ -411,7 +428,9 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 			useOMERO = true;
 		} else {
 			container.remove(3);
-			if (segmentationConfigFileDialog.isVisible()) segmentationConfigFileDialog.setVisible(false);
+			if (segmentationConfigFileDialog.isVisible()) {
+				segmentationConfigFileDialog.setVisible(false);
+			}
 			
 			Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 			if (source == rdoDefault) {

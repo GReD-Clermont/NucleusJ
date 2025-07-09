@@ -218,8 +218,6 @@ public class Voxel {
 	
 	/**
 	 * Returns a human readable representation of a voxel as a string
-	 *
-	 * @see Object#toString()
 	 */
 	@Override
 	public String toString() {

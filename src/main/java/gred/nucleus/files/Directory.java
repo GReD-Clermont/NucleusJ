@@ -22,11 +22,11 @@ public class Directory {
 	/** Directory path */
 	private File       dir;
 	/** Directory path */
-	private String     dirPath       = "";
+	private String     dirPath  = "";
 	/** List of files in current folder + recursive folder */
-	private List<File> fileList      = new ArrayList<>();
+	private List<File> fileList = new ArrayList<>();
 	/** Check if directory contain nd files */
-	private boolean    containNdFile = false;
+	private boolean    containNdFile;
 	/** Path separator */
 	private String     separator;
 	

@@ -93,8 +93,7 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 			
 			case "generateProjectionFiltered":
 				this.inputFolder.setDescription("Path to input folder containing coordinates files\n");
-				this.inputFolder2.setDescription(
-						"Path to input folder containing kept images after segmentation filter\n");
+				this.inputFolder2.setDescription("Path to input folder containing kept images after segmentation filter\n");
 				this.inputFolder3.setDescription("Path to input folder containing initial Zprojection\n");
 				this.options.addOption(this.inputFolder2);
 				this.options.addOption(this.inputFolder3);

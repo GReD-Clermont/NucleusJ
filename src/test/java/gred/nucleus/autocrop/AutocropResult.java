@@ -1,12 +1,11 @@
 package gred.nucleus.autocrop;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
 public class AutocropResult {
-	private int              cropNb      = 0;
+	private int              cropNb;
 	private List<CropResult> coordinates = new ArrayList<>(0);
 	
 	
@@ -21,7 +20,7 @@ public class AutocropResult {
 	
 	
 	public List<CropResult> getCoordinates() {
-		return Collections.unmodifiableList(coordinates);
+		return new ArrayList<>(coordinates);
 	}
 	
 	

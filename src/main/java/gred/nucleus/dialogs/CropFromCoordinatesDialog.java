@@ -2,7 +2,18 @@ package gred.nucleus.dialogs;
 
 import ij.Prefs;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import java.awt.Color;
 import java.awt.Container;
@@ -19,38 +30,44 @@ import java.io.File;
 
 
 public class CropFromCoordinatesDialog extends JFrame implements ActionListener, ItemListener {
-	private static final long              serialVersionUID        = -1113846613817254789L;
-	private final        JTextField        jImageChooser           = new JTextField();
-	private final        JTextField        jCoordFileChooser       = new JTextField();
-	private final        JFileChooser      fc                      = new JFileChooser();
-	private              boolean           start                   = false;
-	private final        JRadioButton      omeroYesButton          = new JRadioButton("Yes");
-	private final        JRadioButton      omeroNoButton           = new JRadioButton("No");
-	private final        JPanel            omeroModeLayout         = new JPanel();
-	private final        JPanel            localModeLayout         = new JPanel();
-	private final        JTextField        jTextFieldHostname      = new JTextField();
-	private final        JTextField        jTextFieldPort          = new JTextField();
-	private final        JTextField        jTextFieldUsername      = new JTextField();
-	private final        JPasswordField    jPasswordField          = new JPasswordField();
-	private final        JTextField        jTextFieldGroup         = new JTextField();
-	private final        String[]          dataTypes               = {"Project", "Dataset", "Tag", "Image"};
-	private final        JComboBox<String> jComboBoxDataType       = new JComboBox<>(dataTypes);
-	private final        JComboBox<String> jComboBoxDataTypeToCrop       = new JComboBox<>(dataTypes);
-	private final        JTextField        jTextFieldSourceID      = new JTextField();
-	private final        JTextField        jTextFieldToCropID      = new JTextField();
-	private final        JTextField        jTextFieldOutputProject = new JTextField();
-	private final        JTextField        jTextFieldChannelToCrop = new JTextField();
-	private              Container         container;
-	private              boolean           useOMERO                = false;
-	private static final String            INPUT_CHOOSER           = "inputChooser";
-	private static final String  OUTPUT_CHOOSER = "outputChooser";
-	private final        JTextField        jInputFileChooser       = new JTextField();
+	private static final long serialVersionUID = -1113846613817254789L;
+	
+	private static final String INPUT_CHOOSER  = "inputChooser";
+	private static final String OUTPUT_CHOOSER = "outputChooser";
+	
+	private final JTextField     jImageChooser      = new JTextField();
+	private final JTextField     jCoordFileChooser  = new JTextField();
+	private final JFileChooser   fc                 = new JFileChooser();
+	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
+	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
+	private final JPanel         omeroModeLayout    = new JPanel();
+	private final JPanel         localModeLayout    = new JPanel();
+	private final JTextField     jTextFieldHostname = new JTextField();
+	private final JTextField     jTextFieldPort     = new JTextField();
+	private final JTextField     jTextFieldUsername = new JTextField();
+	private final JPasswordField jPasswordField     = new JPasswordField();
+	private final JTextField     jTextFieldGroup    = new JTextField();
+	private final String[]       dataTypes          = {"Project", "Dataset", "Tag", "Image"};
+	
+	private final JComboBox<String> jComboBoxDataType       = new JComboBox<>(dataTypes);
+	private final JComboBox<String> jComboBoxDataTypeToCrop = new JComboBox<>(dataTypes);
+	
+	private final JTextField jTextFieldSourceID      = new JTextField();
+	private final JTextField jTextFieldToCropID      = new JTextField();
+	private final JTextField jTextFieldOutputProject = new JTextField();
+	private final JTextField jTextFieldChannelToCrop = new JTextField();
+	private final JTextField jInputFileChooser       = new JTextField();
+	
+	private final Container container;
+	
+	private boolean start;
+	private boolean useOMERO;
 	
 	
 	public CropFromCoordinatesDialog() {
 		
-		String host = Prefs.get("omero.host", "omero.gred-clermont.fr");
-		long port = Prefs.getInt("omero.port", 4);
+		String host     = Prefs.get("omero.host", "omero.gred-clermont.fr");
+		long   port     = Prefs.getInt("omero.port", 4);
 		String username = Prefs.get("omero.user", "");
 		
 		
@@ -62,7 +79,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jButtonQuit.setForeground(Color.white);
 		this.setTitle("Crop From Coordinate - NucleusJ3");
 		this.setMinimumSize(new Dimension(500, 410));
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		container = getContentPane();
 		BoxLayout mainBoxLayout = new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
@@ -210,13 +227,13 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		omeroPanel.add(jTextFieldToCropID, c);
 		jTextFieldToCropID.setMaximumSize(new Dimension(20000, 20));
 		
-		c.gridy=7;
+		c.gridy = 7;
 		JLabel JchannelToCrop = new JLabel("Channel To Crop :");
-		c.gridx=0;
-		omeroPanel.add(JchannelToCrop,c);
-		c.gridx=1;
+		c.gridx = 0;
+		omeroPanel.add(JchannelToCrop, c);
+		c.gridx = 1;
 		jTextFieldToCropID.setMaximumSize(new Dimension(20, 20));
-		omeroPanel.add(jTextFieldChannelToCrop,c);
+		omeroPanel.add(jTextFieldChannelToCrop, c);
 		
 		c.gridy = 8;
 		JLabel jLabelOutputProject = new JLabel("Output Dataset :");
@@ -363,15 +380,22 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		return jTextFieldSourceID.getText();
 	}
 	
+	
 	public String getToCropID() {
 		return jTextFieldToCropID.getText();
 	}
-	public String getChannelToCrop(){ return jTextFieldChannelToCrop.getText(); }
+	
+	
+	public String getChannelToCrop() {
+		return jTextFieldChannelToCrop.getText();
+	}
 	
 	
 	public String getDataType() {
 		return (String) jComboBoxDataType.getSelectedItem();
 	}
+	
+	
 	public String getDataTypeToCrop() {
 		return (String) jComboBoxDataTypeToCrop.getSelectedItem();
 	}

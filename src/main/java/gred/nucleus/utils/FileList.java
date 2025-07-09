@@ -104,7 +104,9 @@ public class FileList {
 	 */
 	public File[] stockFileBefore(int indexMax, File[] tFile) {
 		File[] tTempBeforeElement = new File[indexMax];
-		if (indexMax >= 0) System.arraycopy(tFile, 0, tTempBeforeElement, 0, indexMax);
+		if (indexMax >= 0) {
+			System.arraycopy(tFile, 0, tTempBeforeElement, 0, indexMax);
+		}
 		return tTempBeforeElement;
 	}
 	

@@ -95,13 +95,12 @@ public class MultiThreadingTest {
 	
 	
 	static void localAutocrop(int executorThreads) {
-		AutocropParameters autocropParameters = new AutocropParameters(
-				"E:\\alexw\\Desktop\\GReD\\testinput",
-				"E:\\alexw\\Desktop\\GReD\\testoutput"
-				//"/mnt/e/alexw/Desktop/GReD/testinput",
-				//"/mnt/e/alexw/Desktop/GReD/testoutput"
-				//"/data/home/rongiera/input",
-				//"/data/home/rongiera/output"
+		AutocropParameters autocropParameters = new AutocropParameters("E:\\alexw\\Desktop\\GReD\\testinput",
+		                                                               "E:\\alexw\\Desktop\\GReD\\testoutput"
+		                                                               //"/mnt/e/alexw/Desktop/GReD/testinput",
+		                                                               //"/mnt/e/alexw/Desktop/GReD/testoutput"
+		                                                               //"/data/home/rongiera/input",
+		                                                               //"/data/home/rongiera/output"
 		);
 		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
 		autoCrop.setExecutorThreads(executorThreads); // Set thread number
@@ -148,8 +147,8 @@ public class MultiThreadingTest {
 			               "",
 			               password,
 			               203L);
-		} catch (Exception exp) {
-			LOGGER.error("OMERO connection error: " + exp.getMessage(), exp);
+		} catch (ServiceException exp) {
+			LOGGER.error("OMERO connection error: {}", exp.getMessage(), exp);
 			System.exit(1);
 		}
 	}
@@ -186,14 +185,14 @@ public class MultiThreadingTest {
 	}
 	
 	
-	static class MyDownloader implements Runnable {
+	private static class MyDownloader implements Runnable {
 		/** Logger */
 		private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 		
-		private int id;
+		private final int id;
 		
 		
-		public MyDownloader(int id) {
+		MyDownloader(int id) {
 			this.id = id;
 		}
 		
@@ -213,15 +212,15 @@ public class MultiThreadingTest {
 		
 	}
 	
-	static class MyTask implements Runnable {
+	private static class MyTask implements Runnable {
 		/** Logger */
 		private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 		
-		private long value;
-		private int  id;
+		private final long value;
+		private final int  id;
 		
 		
-		public MyTask(long value, int id) {
+		MyTask(long value, int id) {
 			this.value = value;
 			this.id = id;
 		}

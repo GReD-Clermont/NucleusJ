@@ -13,8 +13,8 @@ import java.io.IOException;
 public class Rd2ToTif {
 	
 	
-	private String pathInput;
-	private String pathOutput;
+	private final String pathInput;
+	private final String pathOutput;
 	
 	
 	/**

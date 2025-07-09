@@ -12,6 +12,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
+import static gred.nucleus.core.RadialDistance.computeBarycenterToBorderDistances;
+import static gred.nucleus.core.RadialDistance.computeBorderToBorderDistances;
+
 
 /**
  * Several method to realise and create the outfile for the nuclear Analysis this class contains the chromocenter
@@ -56,33 +59,43 @@ public class NucleusChromocentersAnalysis {
 		String text = imagePlusSegmented.getTitle() + " " + volume + " "
 		              + measure3D.equivalentSphericalRadius(volume) + " "
 		              + surfaceArea + " "
-				     
 		              + measure3D.computeFlatnessAndElongation(255)[0] + " "
 		              + measure3D.computeFlatnessAndElongation(255)[1] + " "
 		              + measure3D.computeSphericity(volume, surfaceArea);
 		if ("Volume and intensity".equals(rhfChoice)) {
-			LOGGER.info(
-					"ImageTitle Volume ESR SurfaceArea  Flatness Elongation Sphericity IntensityRHF VolumeRHF NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume Moment 1 Moment 2 Moment 3");
-			text += " " + measure3D.computeIntensityRHF(imagePlusInput, imagePlusSegmented, imagePlusChromocenter) + " "
-			        + measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) +   measure3D.computeEigenValue3D(255)[0] + " " + measure3D.computeEigenValue3D(255)[1] + " " + measure3D.computeEigenValue3D(255)[2] +" ";
+			LOGGER.info("ImageTitle Volume ESR SurfaceArea Flatness Elongation Sphericity IntensityRHF VolumeRHF " +
+			            "NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume " +
+			            "Moment 1 Moment 2 Moment 3");
+			text += " " + measure3D.computeIntensityRHF(imagePlusInput, imagePlusSegmented, imagePlusChromocenter) +
+			        " " + measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) +
+			        measure3D.computeEigenValue3D(255)[0] +
+			        " " + measure3D.computeEigenValue3D(255)[1] +
+			        " " + measure3D.computeEigenValue3D(255)[2] + " ";
 		} else if ("Volume".equals(rhfChoice)) {
-			LOGGER.info(
-					"ImageTitle Volume ESR SurfaceArea  Flatness Elongation Sphericity VolumeRHF NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume Moment 1 Moment 2 Moment 3");
-			text += " " + measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) +   measure3D.computeEigenValue3D(255)[0] + " " + measure3D.computeEigenValue3D(255)[1] + " " + measure3D.computeEigenValue3D(255)[2]  + " ";
+			LOGGER.info("ImageTitle Volume ESR SurfaceArea Flatness Elongation Sphericity VolumeRHF " +
+			            "NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume " +
+			            "Moment 1 Moment 2 Moment 3");
+			text += " " + measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) +
+			        measure3D.computeEigenValue3D(255)[0] +
+			        " " + measure3D.computeEigenValue3D(255)[1] +
+			        " " + measure3D.computeEigenValue3D(255)[2] + " ";
 		} else {
-			LOGGER.info(
-					"ImageTitle Volume ESR SurfaceArea  Flatness Elongation Sphericity IntensityRHF NbCc VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume Moment 1 Moment 2 Moment 3");
+			LOGGER.info("ImageTitle Volume ESR SurfaceArea Flatness Elongation Sphericity IntensityRHF NbCc " +
+			            "VCcMean VCcTotal DistanceBorderToBorderMean DistanceBarycenterToBorderMean VoxelVolume " +
+			            "Moment 1 Moment 2 Moment 3");
 			text += " " +
-			        measure3D.computeIntensityRHF(imagePlusInput, imagePlusSegmented, imagePlusChromocenter) +   measure3D.computeEigenValue3D(255)[0] + " " + measure3D.computeEigenValue3D(255)[1] + " " + measure3D.computeEigenValue3D(255)[2] +
+			        measure3D.computeIntensityRHF(imagePlusInput, imagePlusSegmented, imagePlusChromocenter) +
+			        measure3D.computeEigenValue3D(255)[0] + " " + measure3D.computeEigenValue3D(255)[1] + " " +
+			        measure3D.computeEigenValue3D(255)[2] +
 			        " ";
 		}
 		
 		if (histogram.getNbLabels() > 0) {
 			double[] tVolumesObjects = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
-			double[] tBorderToBorderDistance =
-					RadialDistance.computeBorderToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
-			double[] tBarycenterToBorderDistance =
-					RadialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
+			double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,
+			                                                                  imagePlusChromocenter);
+			double[] tBarycenterToBorderDistance = computeBarycenterToBorderDistances(imagePlusSegmented,
+			                                                                          imagePlusChromocenter);
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
 			int    nbCc         = measure3D.getNumberOfObject(imagePlusChromocenter);
 			text += nbCc + " "
@@ -146,9 +159,9 @@ public class NucleusChromocentersAnalysis {
 			        + volume + "\t"
 			        + measure3D.equivalentSphericalRadius(volume) + "\t"
 			        + surfaceArea + "\t"
-					+ measure3D.computeEigenValue3D(255)[0] + "\t"
-					+ measure3D.computeEigenValue3D(255)[1] + "\t"
-					+ measure3D.computeEigenValue3D(255)[2] + "\t"
+			        + measure3D.computeEigenValue3D(255)[0] + "\t"
+			        + measure3D.computeEigenValue3D(255)[1] + "\t"
+			        + measure3D.computeEigenValue3D(255)[2] + "\t"
 			        + measure3D.computeFlatnessAndElongation(255)[0] + "\t"
 			        + measure3D.computeFlatnessAndElongation(255)[1] + "\t"
 			        + measure3D.computeSphericity(volume, surfaceArea) + "\t";
@@ -164,10 +177,10 @@ public class NucleusChromocentersAnalysis {
 				double[] tVolumesObjects = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
 				double   volumeCcMean    = computeMeanOfTable(tVolumesObjects);
 				int      nbCc            = measure3D.getNumberOfObject(imagePlusChromocenter);
-				double[] tBorderToBorderDistance =
-						RadialDistance.computeBorderToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
-				double[] tBarycenterToBorderDistance =
-						RadialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
+				double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,
+				                                                                  imagePlusChromocenter);
+				double[] tBarycenterToBorderDistance = computeBarycenterToBorderDistances(imagePlusSegmented,
+				                                                                          imagePlusChromocenter);
 				text += nbCc + "\t"
 				        + volumeCcMean + "\t"
 				        + volumeCcMean * nbCc + "\t"

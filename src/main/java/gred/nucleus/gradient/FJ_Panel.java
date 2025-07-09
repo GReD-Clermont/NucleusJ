@@ -35,11 +35,13 @@ public class FJ_Panel implements PlugIn, ActionListener, WindowListener {
 	
 	public void run(String arg) {
 		
-		if (!FJ.libCheck()) return;
+		if (!FJ.libCheck()) {
+			return;
+		}
 		
 		FJ.log(FJ.name() + " " + FJ.version() + ": Panel");
 		
-		final Frame parent = IJ.getInstance() != null ? IJ.getInstance() : new Frame();
+		Frame parent = IJ.getInstance() != null ? IJ.getInstance() : new Frame();
 		dialog = new Dialog(parent, FJ.name(), false);
 		dialog.setLayout(new FlowLayout());
 		dialog.addWindowListener(this);
@@ -71,8 +73,7 @@ public class FJ_Panel implements PlugIn, ActionListener, WindowListener {
 	
 	
 	private Button addButton(String label) {
-		
-		final Button b = new Button("   " + label + "   ");
+		Button b = new Button("   " + label + "   ");
 		b.addActionListener(this);
 		panel.add(b);
 		return b;
@@ -80,8 +81,7 @@ public class FJ_Panel implements PlugIn, ActionListener, WindowListener {
 	
 	
 	public void actionPerformed(ActionEvent e) {
-		
-		final Object source = e.getSource();
+		Object source = e.getSource();
 		if (source == derivatives) {
 			IJ.doCommand("FeatureJ Derivatives");
 		} else if (source == edges) {
@@ -98,41 +98,43 @@ public class FJ_Panel implements PlugIn, ActionListener, WindowListener {
 			new FJ_About().run("");
 		} else if (source == options) {
 			IJ.doCommand("FeatureJ Options");
-		} else if (source == website) new FJ_Website().run("");
+		} else if (source == website) {
+			new FJ_Website().run("");
+		}
 	}
 	
 	
-	public void windowActivated(final WindowEvent e) {
+	public void windowActivated(WindowEvent e) {
 	}
 	
 	
-	public void windowClosed(final WindowEvent e) {
+	public void windowClosed(WindowEvent e) {
 		
 		pos.x = e.getWindow().getX();
 		pos.y = e.getWindow().getY();
 	}
 	
 	
-	public void windowClosing(final WindowEvent e) {
+	public void windowClosing(WindowEvent e) {
 		
 		dialog.setVisible(false);
 		dialog.dispose();
 	}
 	
 	
-	public void windowDeactivated(final WindowEvent e) {
+	public void windowDeactivated(WindowEvent e) {
 	}
 	
 	
-	public void windowDeiconified(final WindowEvent e) {
+	public void windowDeiconified(WindowEvent e) {
 	}
 	
 	
-	public void windowIconified(final WindowEvent e) {
+	public void windowIconified(WindowEvent e) {
 	}
 	
 	
-	public void windowOpened(final WindowEvent e) {
+	public void windowOpened(WindowEvent e) {
 	}
 	
 }

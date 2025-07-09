@@ -17,9 +17,9 @@ public class AutocropTestRunner {
 	
 	
 	public static int getNumberOfImages(String dir) {
-		int nImages = 0;
-		File[] files = new File(dir + PATH_TO_INPUT).listFiles();
-		if(files != null) {
+		int    nImages = 0;
+		File[] files   = new File(dir + PATH_TO_INPUT).listFiles();
+		if (files != null) {
 			for (File file : files) {
 				String extension = FilenameUtils.getExtension(file.getName())
 				                                .toLowerCase(Locale.ROOT);

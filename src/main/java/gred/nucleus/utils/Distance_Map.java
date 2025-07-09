@@ -60,8 +60,8 @@ public class Distance_Map implements PlugInFilter {
 	public  int       w;
 	public  int       h;
 	public  int       d;
-	public  int       thresh  = 126;
-	public  boolean   inverse = false;
+	public  int       thresh = 126;
+	public  boolean   inverse;
 	private ImagePlus imp;
 	
 	
@@ -91,7 +91,9 @@ public class Distance_Map implements PlugInFilter {
 		
 		//Create references to input data
 		data = new byte[d][];
-		for (int k = 0; k < d; k++) data[k] = (byte[]) stack.getPixels(k + 1);
+		for (int k = 0; k < d; k++) {
+			data[k] = (byte[]) stack.getPixels(k + 1);
+		}
 		//Create 32 bit floating point stack for output, s.  Will also use it for g in Transformation 1.
 		ImageStack sStack = new ImageStack(w, h);
 		float[][]  s      = new float[d][];
@@ -177,7 +179,7 @@ public class Distance_Map implements PlugInFilter {
 	String stripExtension(String name) {
 		String strippedName = name;
 		if (strippedName != null) {
-			int dotIndex = strippedName.lastIndexOf(".");
+			int dotIndex = strippedName.lastIndexOf('.');
 			if (dotIndex >= 0) {
 				strippedName = strippedName.substring(0, dotIndex);
 			}
@@ -209,8 +211,12 @@ public class Distance_Map implements PlugInFilter {
 		public void run() {
 			float[] sk;
 			int     n = w;
-			if (h > n) n = h;
-			if (d > n) n = d;
+			if (h > n) {
+				n = h;
+			}
+			if (d > n) {
+				n = d;
+			}
 			int     noResult = 3 * (n + 1) * (n + 1);
 			int[]   tempInt  = new int[n];
 			int[]   tempS    = new int[n];
@@ -219,13 +225,15 @@ public class Distance_Map implements PlugInFilter {
 			int     min;
 			int     delta;
 			for (int k = thread; k < d; k += nThreads) {
-				IJ.showProgress(k / (1. * d));
+				IJ.showProgress(k / (1.0 * d));
 				sk = s[k];
 				for (int i = 0; i < w; i++) {
 					nonempty = false;
 					for (int j = 0; j < h; j++) {
 						tempS[j] = (int) sk[i + w * j];
-						if (tempS[j] > 0) nonempty = true;
+						if (tempS[j] > 0) {
+							nonempty = true;
+						}
 					}
 					if (nonempty) {
 						for (int j = 0; j < h; j++) {
@@ -234,7 +242,9 @@ public class Distance_Map implements PlugInFilter {
 							for (int y = 0; y < h; y++) {
 								test = tempS[y] + delta * delta;
 								delta--;
-								if (test < min) min = test;
+								if (test < min) {
+									min = test;
+								}
 							}
 							tempInt[j] = min;
 						}
@@ -276,8 +286,12 @@ public class Distance_Map implements PlugInFilter {
 			float[] sk;
 			byte[]  dk;
 			int     n = w;
-			if (h > n) n = h;
-			if (d > n) n = d;
+			if (h > n) {
+				n = h;
+			}
+			if (d > n) {
+				n = d;
+			}
 			int       noResult   = 3 * (n + 1) * (n + 1);
 			boolean[] background = new boolean[n];
 			@SuppressWarnings("unused")
@@ -285,7 +299,7 @@ public class Distance_Map implements PlugInFilter {
 			int test;
 			int min;
 			for (int k = thread; k < d; k += nThreads) {
-				IJ.showProgress(k / (1. * d));
+				IJ.showProgress(k / (1.0 * d));
 				sk = s[k];
 				dk = data[k];
 				for (int j = 0; j < h; j++) {
@@ -306,7 +320,9 @@ public class Distance_Map implements PlugInFilter {
 							if (background[x]) {
 								test = i - x;
 								test *= test;
-								if (test < min) min = test;
+								if (test < min) {
+									min = test;
+								}
 								break;
 							}
 						}
@@ -348,8 +364,12 @@ public class Distance_Map implements PlugInFilter {
 			@SuppressWarnings("unused")
 			float[] sk;
 			int n = w;
-			if (h > n) n = h;
-			if (d > n) n = d;
+			if (h > n) {
+				n = h;
+			}
+			if (d > n) {
+				n = d;
+			}
 			int     noResult = 3 * (n + 1) * (n + 1);
 			int[]   tempInt  = new int[n];
 			int[]   tempS    = new int[n];
@@ -358,20 +378,30 @@ public class Distance_Map implements PlugInFilter {
 			int     min;
 			int     delta;
 			for (int j = thread; j < h; j += nThreads) {
-				IJ.showProgress(j / (1. * h));
+				IJ.showProgress(j / (1.0 * h));
 				for (int i = 0; i < w; i++) {
 					nonempty = false;
 					for (int k = 0; k < d; k++) {
 						tempS[k] = (int) s[k][i + w * j];
-						if (tempS[k] > 0) nonempty = true;
+						if (tempS[k] > 0) {
+							nonempty = true;
+						}
 					}
 					if (nonempty) {
 						zStart = 0;
-						while (zStart < d - 1 && tempS[zStart] == 0) zStart++;
-						if (zStart > 0) zStart--;
+						while (zStart < d - 1 && tempS[zStart] == 0) {
+							zStart++;
+						}
+						if (zStart > 0) {
+							zStart--;
+						}
 						zStop = d - 1;
-						while (zStop > 0 && tempS[zStop] == 0) zStop--;
-						if (zStop < d - 1) zStop++;
+						while (zStop > 0 && tempS[zStop] == 0) {
+							zStop--;
+						}
+						if (zStop < d - 1) {
+							zStop++;
+						}
 						
 						for (int k = 0; k < d; k++) {
 							//Limit to the non-background to save time,
@@ -379,13 +409,19 @@ public class Distance_Map implements PlugInFilter {
 								min = noResult;
 								zBegin = zStart;
 								zEnd = zStop;
-								if (zBegin > k) zBegin = k;
-								if (zEnd < k) zEnd = k;
+								if (zBegin > k) {
+									zBegin = k;
+								}
+								if (zEnd < k) {
+									zEnd = k;
+								}
 								delta = k - zBegin;
 								for (int z = zBegin; z <= zEnd; z++) {
 									test = tempS[z] + delta * delta;
 									delta--;
-									if (test < min) min = test;
+									if (test < min) {
+										min = test;
+									}
 								}
 								tempInt[k] = min;
 							}

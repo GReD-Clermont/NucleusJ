@@ -23,7 +23,7 @@ import java.awt.event.ItemListener;
 
 
 public class SegmentationConfigDialog extends JFrame implements ItemListener {
-	private final JTextField         minVolume           = new JTextField();
+	private final JTextField         minVolume             = new JTextField();
 	private final JTextField         maxVolume             = new JTextField();
 	private final JCheckBox          convexHullDetection   = new JCheckBox();
 	private final JTextField         xCalibration          = new JTextField();
@@ -44,7 +44,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		this.caller = caller;
 		this.setTitle("Segmentation - NucleusJ3");
 		this.setSize(300, 340);
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		container = getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{1.0};
@@ -89,7 +89,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		JPanel convexHullPane = new JPanel();
 		convexHullPane.setLayout(new BoxLayout(convexHullPane, BoxLayout.X_AXIS));
 		convexHullPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-		JLabel zBox = new JLabel("Convex Hull Detection (" + NucleusSegmentation.CONVEX_HULL_ALGORITHM +":");
+		JLabel zBox = new JLabel("Convex Hull Detection (" + NucleusSegmentation.CONVEX_HULL_ALGORITHM + ":");
 		convexHullPane.add(zBox);
 		convexHullPane.add(Box.createRigidArea(new Dimension(10, 0)));
 		convexHullDetection.setSelected(true);

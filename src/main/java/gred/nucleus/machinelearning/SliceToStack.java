@@ -58,8 +58,8 @@ public class SliceToStack {
 		// Iterate over images from directory
 		for (short i = 0; i < directoryInput.getNumberFiles(); ++i) {
 			String tm = directoryInput.getFile(i).getName();
-			tm = tm.substring(0, tm.lastIndexOf("_"));
-			tm = tm.substring(0, tm.lastIndexOf("_"));
+			tm = tm.substring(0, tm.lastIndexOf('_'));
+			tm = tm.substring(0, tm.lastIndexOf('_'));
 			if (test.get(tm) != null) {
 				test.put(tm, test.get(tm) + 1);
 			} else {

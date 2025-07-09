@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
+import static gred.nucleus.core.NucleusChromocentersAnalysis.computeParameters;
+import static gred.nucleus.core.RadialDistance.computeBarycenterToBorderDistances;
+import static gred.nucleus.core.RadialDistance.computeBorderToBorderDistances;
+
 
 /**
  * Several method to realise and create the outfile for the chromocenter Analysis
@@ -38,13 +42,13 @@ public final class ChromocenterAnalysis {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	/** Gaussian parameters */
-	public boolean _calibration            = false;
-	public String  isRHFVolumeAndIntensity = null;
-	public String  isNucAndCcAnalysis      = null;
-	public double  _Xcalibration;
-	public double  _Ycalibration;
-	public double  _Zcalibration;
-	public String  _unit;
+	public boolean calibration;
+	public String  isRHFVolumeAndIntensity;
+	public String  isNucAndCcAnalysis;
+	public double  xCalibration;
+	public double  yCalibration;
+	public double  zCalibration;
+	public String  unit;
 	
 	
 	public ChromocenterAnalysis() {
@@ -64,14 +68,14 @@ public final class ChromocenterAnalysis {
 		Measure3D measure3D = new Measure3D();
 		double[]  tVolume   = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
 		LOGGER.info("CHROMOCENTER PARAMETERS");
-		LOGGER.info("Titre Volume BorderToBorderDistance BarycenterToBorderDistance BarycenterToBorderDistanceNucleus ");
+		LOGGER.info("Titre Volume BorderToBorderDistance BarycenterToBorderDistance BarycenterToBorderDistanceNucleus");
 		if (histogram.getNbLabels() > 0) {
-			double[] tBorderToBorderDistanceTable =
-					RadialDistance.computeBorderToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
-			double[] tBarycenterToBorderDistanceTable =
-					RadialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
-			double[] tBarycenterToBorderDistanceTableNucleus =
-					RadialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusSegmented);
+			double[] tBorderToBorderDistanceTable = computeBorderToBorderDistances(imagePlusSegmented,
+			                                                                       imagePlusChromocenter);
+			double[] tBarycenterToBorderDistanceTable = computeBarycenterToBorderDistances(imagePlusSegmented,
+			                                                                               imagePlusChromocenter);
+			double[] tBarycenterToBorderDistanceTableNucleus = computeBarycenterToBorderDistances(imagePlusSegmented,
+			                                                                                      imagePlusSegmented);
 			for (int i = 0; i < tBorderToBorderDistanceTable.length; ++i) {
 				LOGGER.info("{}_{} {} {} {} {}",
 				            imagePlusChromocenter.getTitle(),
@@ -109,26 +113,22 @@ public final class ChromocenterAnalysis {
 				                                    imagePlusChromocenter.getCalibration().pixelDepth);
 				double[] tVolume =
 						measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
-				double[] tBorderToBorderDistanceTable =
-						RadialDistance.computeBorderToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
-				double[] tBarycenterToBorderDistanceTableCc =
-						RadialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusChromocenter);
-				double[] tBarycenterToBorderDistanceTableNucleus =
-						RadialDistance.computeBarycenterToBorderDistances(imagePlusSegmented, imagePlusSegmented);
+				double[] tBorderToBorderDistanceTable = computeBorderToBorderDistances(imagePlusSegmented,
+				                                                                       imagePlusChromocenter);
+				double[] tBarycenterToBorderDistanceTableCc = computeBarycenterToBorderDistances(imagePlusSegmented,
+				                                                                                 imagePlusChromocenter);
+				double[] tBarycenterToBorderDistanceTableNucleus = computeBarycenterToBorderDistances(imagePlusSegmented,
+				                                                                                      imagePlusSegmented);
 				if (!exist) {
-					bufferedWriterOutput.write(
-							"Titre\tVolume\tBorderToBorderDistance\tBarycenterToBorderDistance\tBarycenterToBorderDistanceNucleus\n");
+					bufferedWriterOutput.write("Titre\tVolume\tBorderToBorderDistance\tBarycenterToBorderDistance\tBarycenterToBorderDistanceNucleus\n");
 				}
-				for (
-						int i = 0;
-						i < tBorderToBorderDistanceTable.length; ++i) {
-					bufferedWriterOutput.write(
-							imagePlusChromocenter.getTitle() + "_" + i + "\t"
-							+ tVolume[i] + "\t"
-							+ tBorderToBorderDistanceTable[i] + "\t"
-							+ tBarycenterToBorderDistanceTableCc[i] + "\t"
-							+ tBarycenterToBorderDistanceTableNucleus[0] + "\n"
-					                          );
+				for (int i = 0; i < tBorderToBorderDistanceTable.length; ++i) {
+					bufferedWriterOutput.write(imagePlusChromocenter.getTitle() + "_" +
+					                           i + "\t" +
+					                           tVolume[i] + "\t" +
+					                           tBorderToBorderDistanceTable[i] + "\t" +
+					                           tBarycenterToBorderDistanceTableCc[i] + "\t" +
+					                           tBarycenterToBorderDistanceTableNucleus[0] + "\n");
 				}
 				bufferedWriterOutput.flush();
 			}
@@ -146,8 +146,7 @@ public final class ChromocenterAnalysis {
 				    try {
 					    Files.delete(path);  // Delete each file/folder
 				    } catch (IOException e) {
-					    throw new RuntimeException("Failed to delete " + path,
-					                               e);  // Handle any exceptions during deletion
+					    throw new RuntimeException("Failed to delete " + path, e);  // Handle any exceptions during deletion
 				    }
 			    });
 		}
@@ -201,7 +200,6 @@ public final class ChromocenterAnalysis {
 						ccImageId = ccImages.get(i).getId();
 						
 						mainFolder = processAndAnalyze(client, sourceImageId, segImageId, ccImageId);
-						
 					}
 					LOGGER.info("Chromocenter Analysis has ended successfully");
 				} catch (Exception e) {
@@ -232,7 +230,6 @@ public final class ChromocenterAnalysis {
 			deleteFolder(mainFolder);
 			LOGGER.info("Segmentation process has ended successfully");
 			//IJ.showMessage("Segmentation process ended successfully on " + chromocentersPipelineBatchDialog.getDataType() + "\\" + inputID);
-			
 		} catch (ServiceException se) {
 			IJ.error("Unable to access OMERO service.");
 		} catch (AccessException ae) {
@@ -295,7 +292,7 @@ public final class ChromocenterAnalysis {
 		// Verify if the file was successfully saved
 		File resultFile = new File(outputFilePath);
 		if (resultFile.exists()) {
-			System.out.println("File saved at: " + resultFile.getAbsolutePath());
+			LOGGER.info("File saved at: {}", resultFile.getAbsolutePath());
 		} else {
 			throw new IOException("File saving failed: " + outputFilePath);
 		}
@@ -346,11 +343,11 @@ public final class ChromocenterAnalysis {
 					ImagePlus   imagePlusChromocenter = IJ.openImage(listImageChromocenter.get(i));
 					ImagePlus   imagePlusSegmented    = IJ.openImage(pathNucleusSegmented);
 					Calibration calibration           = new Calibration();
-					if (_calibration) {
-						calibration.pixelWidth = _Xcalibration;
-						calibration.pixelHeight = _Ycalibration;
-						calibration.pixelDepth = _Zcalibration;
-						calibration.setUnit(_unit);
+					if (this.calibration) {
+						calibration.pixelWidth = xCalibration;
+						calibration.pixelHeight = yCalibration;
+						calibration.pixelDepth = zCalibration;
+						calibration.setUnit(unit);
 					} else {
 						calibration = imagePlusInput.getCalibration();
 					}
@@ -359,26 +356,26 @@ public final class ChromocenterAnalysis {
 					imagePlusInput.setCalibration(calibration);
 					try {
 						if ("nuc_cc".equals(isNucAndCcAnalysis)) {
-							ChromocenterAnalysis.computeParametersChromocenter(nameFileChromocenter,
-							                                                   imagePlusSegmented,
-							                                                   imagePlusChromocenter);
+							computeParametersChromocenter(nameFileChromocenter,
+							                              imagePlusSegmented,
+							                              imagePlusChromocenter);
 							LOGGER.info("chromocenterAnalysis is computing...");
 							LOGGER.info("nucleusChromocenterAnalysis is computing...");
-							NucleusChromocentersAnalysis.computeParameters(nameFileChromocenterAndNucleus,
+							computeParameters(nameFileChromocenterAndNucleus,
 							                                               rhfChoice,
 							                                               imagePlusInput,
 							                                               imagePlusSegmented,
 							                                               imagePlusChromocenter);
 						} else if ("cc".equals(isNucAndCcAnalysis)) {
-							ChromocenterAnalysis.computeParametersChromocenter(nameFileChromocenter,
-							                                                   imagePlusSegmented,
-							                                                   imagePlusChromocenter);
+							computeParametersChromocenter(nameFileChromocenter,
+							                              imagePlusSegmented,
+							                              imagePlusChromocenter);
 						} else {
-							NucleusChromocentersAnalysis.computeParameters(nameFileChromocenterAndNucleus,
-							                                               rhfChoice,
-							                                               imagePlusInput,
-							                                               imagePlusSegmented,
-							                                               imagePlusChromocenter);
+							computeParameters(nameFileChromocenterAndNucleus,
+							                  rhfChoice,
+							                  imagePlusInput,
+							                  imagePlusSegmented,
+							                  imagePlusChromocenter);
 						}
 					} catch (IOException e) {
 						LOGGER.error("An error occurred.", e);
@@ -402,8 +399,7 @@ public final class ChromocenterAnalysis {
 			}
 			//LOGGER.info("End of the chromocenter analysis , the results are in {}", chromocentersPipelineBatchDialog.getWorkDirectory());
 		} else {
-			IJ.showMessage(
-					"There are no the three subdirectories  (See the directory name) or subDirectories are empty");
+			IJ.showMessage("There are not three subdirectories (See the directory name) or subDirectories are empty");
 		}
 	}
 	

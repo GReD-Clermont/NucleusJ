@@ -130,7 +130,7 @@ public class AutocropTestChecker {
 	public void checkCoordinates(AutocropResult foundResult) {
 		int overlappingCrops = getNbOfOverlappingCrops(foundResult);
 		LOGGER.info("Crops found overlapping (at least 80% overlapped) with targeted ones (={}) = {}",
-		             target.getCropNb(), overlappingCrops);
+		            target.getCropNb(), overlappingCrops);
 		/* To change: valid if 90% of the crops found */
 		assertTrue(overlappingCrops >= target.getCropNb() * VALID_CROP_PERCENTAGE / 100);
 	}
@@ -153,10 +153,13 @@ public class AutocropTestChecker {
 			for (CropResult rCrop : autocropResult.getCoordinates()) {
 				double percent = boxesPercentOverlapping(tCrop.getBox(), rCrop.getBox());
 				LOGGER.debug("\t> FOUND: {} / Overlapping: {}", rCrop.getCropNumber(), percent);
-				if (percent >= 80) cropCounter++; // If more than one there's probably some bad crops
+				if (percent >= 80) {
+					cropCounter++; // If more than one there's probably some bad crops
+				}
 			}
-			if (cropCounter == 1) validCrops++;
-			
+			if (cropCounter == 1) {
+				validCrops++;
+			}
 		}
 		return validCrops;
 	}
@@ -180,10 +183,10 @@ public class AutocropTestChecker {
 		int bTop   = b.getYMin(), bBottom = b.getYMax();
 		int bFront = b.getZMin(), bBack = b.getZMax();
 		
-		int    x_overlap   = Math.max(0, Math.min(aRight, bRight) - Math.max(aLeft, bLeft));
-		int    y_overlap   = Math.max(0, Math.min(aBottom, bBottom) - Math.max(aTop, bTop));
-		int    z_overlap   = Math.max(0, Math.min(aBack, bBack) - Math.max(aFront, bFront));
-		double overlapArea = x_overlap * y_overlap * z_overlap;
+		int    xOverlap    = Math.max(0, Math.min(aRight, bRight) - Math.max(aLeft, bLeft));
+		int    yOverlap    = Math.max(0, Math.min(aBottom, bBottom) - Math.max(aTop, bTop));
+		int    zOverlap    = Math.max(0, Math.min(aBack, bBack) - Math.max(aFront, bFront));
+		double overlapArea = xOverlap * yOverlap * zOverlap;
 		
 		double aVol = (a.getXMax() - a.getXMin()) * (a.getYMax() - a.getYMin()) * (a.getZMax() - a.getZMin());
 		double bVol = (b.getXMax() - b.getXMin()) * (b.getYMax() - b.getYMin()) * (b.getZMax() - b.getZMin());

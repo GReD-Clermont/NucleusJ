@@ -49,9 +49,9 @@ public class AnnotateAutoCrop {
 	/** Parameters for crop analysis */
 	private final AutocropParameters autocropParameters;
 	/** ImagePlus of the Z projection */
-	private ImagePlus zProjection;
+	private       ImagePlus          zProjection;
 	/** The prefix of the names of the output cropped images, which are automatically numbered */
-	private String    outputFilesPrefix;
+	private       String             outputFilesPrefix;
 	
 	
 	/**
@@ -101,22 +101,23 @@ public class AnnotateAutoCrop {
 		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
 	}
-
-
+	
+	
 	public AnnotateAutoCrop(List<String> boxesCoordinates,
-							ImagePlus imp,
-							String outputDirPath,
-							String prefix,
-							AutocropParameters autocropParameters) {
+	                        ImagePlus imp,
+	                        String outputDirPath,
+	                        String prefix,
+	                        AutocropParameters autocropParameters) {
 		this.autocropParameters = autocropParameters;
 		this.zProjection = imp;
 		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
-		this.outputFilesPrefix = prefix ;
+		this.outputFilesPrefix = prefix;
 		Directory dirOutput = new Directory(this.outputDirPath + "zprojection");
 		dirOutput.checkAndCreateDir();
 	}
-
+	
+	
 	/**
 	 * Main method to generate Z projection of wide field 3D image. Parameter use are max intensity projection
 	 * (projectionMax method) and contrast modification of 0,3.
@@ -160,9 +161,9 @@ public class AnnotateAutoCrop {
 			String[] name      = fileName[fileName.length - 1].split("_");
 			LOGGER.info(boxCoordinate);
 			LOGGER.trace("Box number {} saved to file: {}",
-			             Integer.parseInt(name[name.length -1 ]),
+			             Integer.parseInt(name[name.length - 1]),
 			             splitLine[0]);
-			addBoxCropToZProjection(boxCoordinate, Integer.parseInt(name[name.length -1]), Color.BLACK);
+			addBoxCropToZProjection(boxCoordinate, Integer.parseInt(name[name.length - 1]), Color.BLACK);
 		}
 		String outFileZBox = this.outputDirPath + File.separator +
 		                     "zprojection" + File.separator +
@@ -182,17 +183,21 @@ public class AnnotateAutoCrop {
 		FileSaver fileSaver = new FileSaver(imagePlusInput);
 		fileSaver.saveAsTiff(pathFile);
 	}
-
+	
+	
 	public void saveProjectionOMERO(Client client, Long output)
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
-		long datasetID;
-		ProjectWrapper project = client.getProject(output);
+		long                 datasetID;
+		ProjectWrapper       project  = client.getProject(output);
 		List<DatasetWrapper> datasets = project.getDatasets("Z-Projection");
-		if (datasets.isEmpty()) datasetID = project.addDataset(client, "Z-Projection", "").getId();
-		else datasetID = datasets.get(0).getId();
+		if (datasets.isEmpty()) {
+			datasetID = project.addDataset(client, "Z-Projection", "").getId();
+		} else {
+			datasetID = datasets.get(0).getId();
+		}
 		String outFileZBox = this.outputDirPath + File.separator +
-							"zprojection" + File.separator +
-							outputFilesPrefix + "_Zprojection.tif";
+		                     "zprojection" + File.separator +
+		                     outputFilesPrefix + "_Zprojection.tif";
 		client.getDataset(datasetID).importImages(client, outFileZBox);
 		File file = new File(outFileZBox);
 		try {
@@ -201,6 +206,7 @@ public class AnnotateAutoCrop {
 			LOGGER.error("Could not delete file: {}", outFileZBox);
 		}
 	}
+	
 	
 	/**
 	 * Method to project 3D stack to 2D images using Max method projection.
@@ -243,7 +249,7 @@ public class AnnotateAutoCrop {
 		            widthBox, heightBox);
 		
 		/* Calculation of the coordinate to add nuclei Number */
-		int xBorder = Integer.parseInt(currentBox[1]) + font.getSize()/3;
+		int xBorder = Integer.parseInt(currentBox[1]) + font.getSize() / 3;
 		int yBorder = Integer.parseInt(currentBox[3]) + font.getSize();
 		/* Draw the nucleus number aside the box */
 		TextRoi text = new TextRoi(Integer.toString(boxNumber), xBorder, yBorder, font);

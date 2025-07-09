@@ -10,15 +10,12 @@ import java.util.List;
 
 /** @author Tristan Dubos and Axel Poulet */
 public class Gradient {
-	/**
-	 *
-	 */
+	/**  */
 	private final List<Double>[][][] tableGradient;
-	/**
-	 *
-	 */
+	/**  */
 	private final List<Double>[][][] tableUnitNormals;
-	private List<Double> _tableUnitaire[][][] = null;
+	
+	private List<Double>[][][] _tableUnitaire = null;
 	
 	
 	@SuppressWarnings("unchecked")
@@ -68,7 +65,7 @@ public class Gradient {
 					double nx   = 0;
 					double ny   = 0;
 					double nz   = 0;
-					if (norm > 1e-15) {
+					if (norm > 1.0e-15) {
 						nx = dx / norm;
 						ny = dy / norm;
 						nz = dz / norm;
@@ -100,4 +97,5 @@ public class Gradient {
 	public List<Double>[][][] getUnitaire() {
 		return _tableUnitaire;
 	}
+	
 }

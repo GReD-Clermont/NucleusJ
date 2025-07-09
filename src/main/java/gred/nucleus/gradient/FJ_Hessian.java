@@ -22,7 +22,7 @@ public class FJ_Hessian implements PlugIn, WindowListener {
 	private static final Point pos = new Point(-1, -1);
 	
 	private static boolean largest  = true;
-	private static boolean middle   = false;
+	private static boolean middle;
 	private static boolean smallest = true;
 	private static boolean absolute = true;
 	
@@ -34,9 +34,14 @@ public class FJ_Hessian implements PlugIn, WindowListener {
 	
 	public void run(String arg) {
 		
-		if (!FJ.libCheck()) return;
-		final ImagePlus imp = FJ.imageplus();
-		if (imp == null) return;
+		if (!FJ.libCheck()) {
+			return;
+		}
+		
+		ImagePlus imp = FJ.imageplus();
+		if (imp == null) {
+			return;
+		}
 		
 		FJ.log(FJ.name() + " " + FJ.version() + ": Hessian");
 		
@@ -58,7 +63,9 @@ public class FJ_Hessian implements PlugIn, WindowListener {
 		gd.addWindowListener(this);
 		gd.showDialog();
 		
-		if (gd.wasCanceled()) return;
+		if (gd.wasCanceled()) {
+			return;
+		}
 		
 		largest = gd.getNextBoolean();
 		middle = gd.getNextBoolean();
@@ -70,89 +77,91 @@ public class FJ_Hessian implements PlugIn, WindowListener {
 	}
 	
 	
-	public void windowActivated(final WindowEvent e) {
+	public void windowActivated(WindowEvent e) {
 	}
 	
 	
-	public void windowClosed(final WindowEvent e) {
+	public void windowClosed(WindowEvent e) {
 		
 		pos.x = e.getWindow().getX();
 		pos.y = e.getWindow().getY();
 	}
 	
 	
-	public void windowClosing(final WindowEvent e) {
+	public void windowClosing(WindowEvent e) {
 	}
 	
 	
-	public void windowDeactivated(final WindowEvent e) {
+	public void windowDeactivated(WindowEvent e) {
 	}
 	
 	
-	public void windowDeiconified(final WindowEvent e) {
+	public void windowDeiconified(WindowEvent e) {
 	}
 	
 	
-	public void windowIconified(final WindowEvent e) {
+	public void windowIconified(WindowEvent e) {
 	}
 	
 	
-	public void windowOpened(final WindowEvent e) {
+	public void windowOpened(WindowEvent e) {
 	}
 	
 }
 
 class FJHessian {
 	
-	void run(
-			final ImagePlus imp,
-			final boolean largest,
-			final boolean middle,
-			final boolean smallest,
-			final boolean absolute,
-			final String scale
-	        ) {
-		
+	void run(ImagePlus imp, boolean largest, boolean middle, boolean smallest, boolean absolute, String scale) {
 		try {
 			double scaleVal;
 			try {
 				scaleVal = Double.parseDouble(scale);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid smoothing scale value");
 			}
 			
-			final Image   img     = Image.wrap(imp);
-			final Aspects aspects = img.aspects();
-			if (!FJ_Options.isotropic) img.aspects(new Aspects());
-			final Hessian hess = new Hessian();
+			Image   img     = Image.wrap(imp);
+			Aspects aspects = img.aspects();
+			if (!FJ_Options.isotropic) {
+				img.aspects(new Aspects());
+			}
+			Hessian hess = new Hessian();
 			hess.messenger.log(FJ_Options.log);
 			hess.messenger.status(FJ_Options.pgs);
 			hess.progressor.display(FJ_Options.pgs);
 			
-			final Vector<Image> eigenImages = hess.run(new FloatImage(img), scaleVal, absolute);
+			Vector<Image> eigenImages = hess.run(new FloatImage(img), scaleVal, absolute);
 			
-			final int nImages = eigenImages.size();
-			for (Image eigenImage : eigenImages) eigenImage.aspects(aspects);
+			int nImages = eigenImages.size();
+			for (Image eigenImage : eigenImages) {
+				eigenImage.aspects(aspects);
+			}
 			if (nImages == 2) {
-				if (largest) FJ.show(eigenImages.get(0), imp);
-				if (smallest) FJ.show(eigenImages.get(1), imp);
+				if (largest) {
+					FJ.show(eigenImages.get(0), imp);
+				}
+				if (smallest) {
+					FJ.show(eigenImages.get(1), imp);
+				}
 			} else if (nImages == 3) {
-				if (largest) FJ.show(eigenImages.get(0), imp);
-				if (middle) FJ.show(eigenImages.get(1), imp);
-				if (smallest) FJ.show(eigenImages.get(2), imp);
+				if (largest) {
+					FJ.show(eigenImages.get(0), imp);
+				}
+				if (middle) {
+					FJ.show(eigenImages.get(1), imp);
+				}
+				if (smallest) {
+					FJ.show(eigenImages.get(2), imp);
+				}
 			}
 			
 			FJ.close(imp);
-			
 		} catch (OutOfMemoryError e) {
 			FJ.error("Not enough memory for this operation");
-			
 		} catch (IllegalArgumentException | IllegalStateException e) {
 			FJ.error(e.getMessage());
-			
 		} catch (Exception e) {
 			FJ.error("An unidentified error occurred while running the plugin");
-			
 		}
 	}
 	

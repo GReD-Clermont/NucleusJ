@@ -153,11 +153,10 @@ public class ConnectedComponent3D extends ConnectedComponent {
 						}
 						this.labels[i][j][k] = currentLabel;
 						//System.out.println("doLabelConnectedComponent "+currentLabel);
-						ComponentInfo componentInfo = new ComponentInfo(
-								currentLabel,
-								1,
-								new Voxel(i, j, k),
-								false);
+						ComponentInfo componentInfo = new ComponentInfo(currentLabel,
+						                                                1,
+						                                                new Voxel(i, j, k),
+						                                                false);
 						
 						try {
 							breadthFirstSearch(new Voxel(i, j, k), (short) currentLabel, componentInfo);
@@ -173,5 +172,5 @@ public class ConnectedComponent3D extends ConnectedComponent {
 		}
 	}
 	
-} // end of class
+}
 

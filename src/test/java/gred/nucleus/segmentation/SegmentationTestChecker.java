@@ -46,7 +46,7 @@ public final class SegmentationTestChecker {
 	}
 	
 	
-	public File getInfoFile(File file) {
+	public static File getInfoFile(File file) {
 		return new File(SegmentationTest.PATH_TO_OUTPUT +
 		                file.getName() + File.separator +
 		                PATH_TO_INFO);
@@ -68,12 +68,7 @@ public final class SegmentationTestChecker {
 	}
 	
 	
-	public void checkGeneralValues(SegmentationResult foundResult) {
-		// No values to verify currently
-	}
-	
-	
-	public String getResultPath(File file) {
+	public static String getResultPath(File file) {
 		return SegmentationTest.PATH_TO_OUTPUT +
 		       file.getName() + File.separator +
 		       PATH_TO_RESULT +
@@ -81,9 +76,14 @@ public final class SegmentationTestChecker {
 	}
 	
 	
-	public SegmentationResult extractResult(SegmentationResult result, String path) {
+	public static SegmentationResult extractResult(SegmentationResult result, String path) {
 		result.setImage(new ImagePlus(path));
 		return result;
+	}
+	
+	
+	public void checkGeneralValues(SegmentationResult foundResult) {
+		// No values to verify currently
 	}
 	
 	

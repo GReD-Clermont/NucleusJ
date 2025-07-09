@@ -7,9 +7,11 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.plugin.PlugIn;
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 
@@ -31,7 +33,7 @@ public class NucleusSegmentationAndAnalysisPlugin_ implements PlugIn {
 	 */
 	public void run(String arg) {
 		ImagePlus img = WindowManager.getCurrentImage();
-		if (null == img) {
+		if (img == null) {
 			IJ.noImage();
 			return;
 		} else if (img.getStackSize() == 1 || img.getType() != ImagePlus.GRAY8 && img.getType() != ImagePlus.GRAY16) {
@@ -63,7 +65,7 @@ public class NucleusSegmentationAndAnalysisPlugin_ implements PlugIn {
 					//LOGGER.info(nucleusAnalysis.nucleusParameter3D());
 					segMethod.getImageSegmented().show();
 				}
-			} catch (Exception e) {
+			} catch (IOException | FormatException e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		}

@@ -14,18 +14,19 @@ import java.awt.event.WindowListener;
 
 public class FJ_Options implements PlugIn, WindowListener {
 	
+	private static final Point pos = new Point(-1, -1);
+	
 	static boolean isotropic = Prefs.get("fj.isotropic", false);
 	static boolean close     = Prefs.get("fj.close", false);
 	static boolean save      = Prefs.get("fj.save", false);
 	static boolean pgs       = Prefs.get("fj.pgs", true);
 	static boolean log       = Prefs.get("fj.log", false);
 	
-	private static final Point pos = new Point(-1, -1);
-	
 	
 	public void run(String arg) {
-		
-		if (!FJ.libCheck()) return;
+		if (!FJ.libCheck()) {
+			return;
+		}
 		
 		FJ.log(FJ.name() + " " + FJ.version() + ": Options");
 		
@@ -47,7 +48,9 @@ public class FJ_Options implements PlugIn, WindowListener {
 		gd.addWindowListener(this);
 		gd.showDialog();
 		
-		if (gd.wasCanceled()) return;
+		if (gd.wasCanceled()) {
+			return;
+		}
 		
 		isotropic = gd.getNextBoolean();
 		close = gd.getNextBoolean();
@@ -93,34 +96,34 @@ public class FJ_Options implements PlugIn, WindowListener {
 	}
 	
 	
-	public void windowActivated(final WindowEvent e) {
+	public void windowActivated(WindowEvent e) {
 	}
 	
 	
-	public void windowClosed(final WindowEvent e) {
+	public void windowClosed(WindowEvent e) {
 		
 		pos.x = e.getWindow().getX();
 		pos.y = e.getWindow().getY();
 	}
 	
 	
-	public void windowClosing(final WindowEvent e) {
+	public void windowClosing(WindowEvent e) {
 	}
 	
 	
-	public void windowDeactivated(final WindowEvent e) {
+	public void windowDeactivated(WindowEvent e) {
 	}
 	
 	
-	public void windowDeiconified(final WindowEvent e) {
+	public void windowDeiconified(WindowEvent e) {
 	}
 	
 	
-	public void windowIconified(final WindowEvent e) {
+	public void windowIconified(WindowEvent e) {
 	}
 	
 	
-	public void windowOpened(final WindowEvent e) {
+	public void windowOpened(WindowEvent e) {
 	}
 	
 }

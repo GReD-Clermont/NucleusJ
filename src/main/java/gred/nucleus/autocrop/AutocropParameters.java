@@ -18,23 +18,25 @@ public class AutocropParameters extends PluginParameters {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	/** Minimal object volume to crop */
-	int minVolumeNucleus = 1;
+	private int minVolumeNucleus = 1;
 	/** Maximal object volume to crop */
-	int maxVolumeNucleus = 2147483647;
+	private int maxVolumeNucleus = 2147483647;
+	
 	/** Number of pixels take plus object size in x */
-	private int     xCropBoxSize                = 40;
+	private int xCropBoxSize = 40;
 	/** Number of pixels take plus object size in y */
-	private int     yCropBoxSize                = 40;
+	private int yCropBoxSize = 40;
 	/** Number of slice take plus object in y */
-	private int     zCropBoxSize                = 20;
+	private int zCropBoxSize = 20;
+	
 	/** Font size of the box number */
-	private int numberFontSize 					= 30;
+	private int     numberFontSize              = 30;
 	/** Minimal default OTSU threshold */
 	private int     thresholdOTSUComputing      = 20;
 	/** Channel to compute OTSU threshold */
-	private int     channelToComputeThreshold   = 0;
+	private int     channelToComputeThreshold;
 	/** Slice start to compute OTSU threshold */
-	private int     slicesOTSUComputing         = 0;
+	private int     slicesOTSUComputing;
 	/** Surface percent of boxes to groups them */
 	private int     boxesPercentSurfaceToFilter = 50;
 	/** Activation of boxes regrouping */
@@ -376,15 +378,17 @@ public class AutocropParameters extends PluginParameters {
 	public int getZCropBoxSize() {
 		return this.zCropBoxSize;
 	}
-
+	
+	
 	/**
 	 * Getter for the font size of the box number
 	 *
 	 * @return font size
 	 */
-	public int getNumberFontSize(){
+	public int getNumberFontSize() {
 		return this.numberFontSize;
 	}
+	
 	
 	/**
 	 * Getter for OTSU threshold used to compute segmented image

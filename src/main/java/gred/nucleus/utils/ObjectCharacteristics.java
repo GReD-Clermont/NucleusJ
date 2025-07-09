@@ -1,6 +1,8 @@
 package gred.nucleus.utils;
 
 public class ObjectCharacteristics {
+	private final String name;
+	
 	private double circularity;
 	private int    nbPixel;
 	private double averageIntensity;
@@ -10,7 +12,6 @@ public class ObjectCharacteristics {
 	private double area;
 	private double solidity;
 	private double round;
-	private String name;
 	
 	
 	public ObjectCharacteristics(double circularity, int nbPixel,

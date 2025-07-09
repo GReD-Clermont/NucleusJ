@@ -97,16 +97,15 @@ public final class RadialDistance {
 				computeDistanceMap(imagePlusSegmented);
 		ImageStack imageStackDistanceMap = imagePlusDistanceMap.getStack();
 		Measure3D  measure3D             = new Measure3D();
-		VoxelRecord[] tVoxelRecord = measure3D.computeObjectBarycenter(
-				imagePlusChromocenterRescale, false);
-		double[] tRadialDistance = new double[tVoxelRecord.length];
-		double   distance;
+		
+		VoxelRecord[] tVoxelRecord    = measure3D.computeObjectBarycenter(imagePlusChromocenterRescale, false);
+		double[]      tRadialDistance = new double[tVoxelRecord.length];
+		double        distance;
 		for (int i = 0; i < tVoxelRecord.length; ++i) {
 			VoxelRecord voxelRecord = tVoxelRecord[i];
-			distance = imageStackDistanceMap.getVoxel(
-					(int) voxelRecord.i,
-					(int) voxelRecord.j,
-					(int) voxelRecord.k);
+			distance = imageStackDistanceMap.getVoxel((int) voxelRecord.i,
+			                                          (int) voxelRecord.j,
+			                                          (int) voxelRecord.k);
 			tRadialDistance[i] = xCalibration * distance;
 		}
 		return tRadialDistance;

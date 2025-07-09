@@ -23,12 +23,14 @@ import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static java.lang.Integer.parseInt;
+
 
 public class Autocrop_ implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	AutocropDialog autocropDialog;
+	private AutocropDialog autocropDialog;
 	
 	
 	/**
@@ -64,7 +66,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		
 		try {
 			client.connect(hostname,
-			               Integer.parseInt(port),
+			               parseInt(port),
 			               username,
 			               password,
 			               Long.valueOf(group));
@@ -85,7 +87,9 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		char[] password = autocropDialog.getPassword();
 		String group    = autocropDialog.getGroup();
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
+		
 		String typeThresholding = autocropDialog.getTypeThresholding();
+		
 		AutocropParameters autocropParameters = null;
 		// Check config
 		String configFile = autocropDialog.getConfig();
@@ -102,35 +106,35 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 					LOGGER.info("w/ calibration");
 					autocropParameters = new AutocropParameters(".",
 					                                            ".",
-					                                            Integer.parseInt(acd.getXCalibration()),
-					                                            Integer.parseInt(acd.getYCalibration()),
-					                                            Integer.parseInt(acd.getZCalibration()),
-					                                            Integer.parseInt(acd.getXCropBoxSize()),
-					                                            Integer.parseInt(acd.getYCropBoxSize()),
-					                                            Integer.parseInt(acd.getZCropBoxSize()),
-					                                            Integer.parseInt(acd.getBoxNumberFontSize()),
-					                                            Integer.parseInt(acd.getSlicesOTSUComputing()),
-					                                            Integer.parseInt(acd.getThresholdOTSUComputing()),
-					                                            Integer.parseInt(acd.getChannelToComputeThreshold()),
-					                                            Integer.parseInt(acd.getMinVolume()),
-					                                            Integer.parseInt(acd.getMaxVolume()),
-					                                            Integer.parseInt(acd.getBoxesPercentSurfaceToFilter()),
+					                                            parseInt(acd.getXCalibration()),
+					                                            parseInt(acd.getYCalibration()),
+					                                            parseInt(acd.getZCalibration()),
+					                                            parseInt(acd.getXCropBoxSize()),
+					                                            parseInt(acd.getYCropBoxSize()),
+					                                            parseInt(acd.getZCropBoxSize()),
+					                                            parseInt(acd.getBoxNumberFontSize()),
+					                                            parseInt(acd.getSlicesOTSUComputing()),
+					                                            parseInt(acd.getThresholdOTSUComputing()),
+					                                            parseInt(acd.getChannelToComputeThreshold()),
+					                                            parseInt(acd.getMinVolume()),
+					                                            parseInt(acd.getMaxVolume()),
+					                                            parseInt(acd.getBoxesPercentSurfaceToFilter()),
 					                                            acd.isRegroupBoxesSelected()
 					);
 				} else {
 					LOGGER.info("w/out calibration");
 					autocropParameters = new AutocropParameters(".",
 					                                            ".",
-					                                            Integer.parseInt(acd.getXCropBoxSize()),
-					                                            Integer.parseInt(acd.getYCropBoxSize()),
-					                                            Integer.parseInt(acd.getZCropBoxSize()),
-																Integer.parseInt(acd.getBoxNumberFontSize()),
-					                                            Integer.parseInt(acd.getSlicesOTSUComputing()),
-					                                            Integer.parseInt(acd.getThresholdOTSUComputing()),
-					                                            Integer.parseInt(acd.getChannelToComputeThreshold()),
-					                                            Integer.parseInt(acd.getMinVolume()),
-					                                            Integer.parseInt(acd.getMaxVolume()),
-					                                            Integer.parseInt(acd.getBoxesPercentSurfaceToFilter()),
+					                                            parseInt(acd.getXCropBoxSize()),
+					                                            parseInt(acd.getYCropBoxSize()),
+					                                            parseInt(acd.getZCropBoxSize()),
+					                                            parseInt(acd.getBoxNumberFontSize()),
+					                                            parseInt(acd.getSlicesOTSUComputing()),
+					                                            parseInt(acd.getThresholdOTSUComputing()),
+					                                            parseInt(acd.getChannelToComputeThreshold()),
+					                                            parseInt(acd.getMinVolume()),
+					                                            parseInt(acd.getMaxVolume()),
+					                                            parseInt(acd.getBoxesPercentSurfaceToFilter()),
 					                                            acd.isRegroupBoxesSelected()
 					);
 				}
@@ -140,7 +144,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
 		autoCrop.setTypeThresholding(typeThresholding);
 		autoCrop.setExecutorThreads(autocropDialog.getThreads());
-
+		
 		// Handle the source according to the type given
 		
 		String dataType = autocropDialog.getDataType();
@@ -185,7 +189,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 				
 			}
 			LOGGER.info("Autocrop process has ended successfully");
-			IJ.showMessage("Autocrop process ended successfully on "+ autocropDialog.getDataType()+"\\"+inputID);
+			IJ.showMessage("Autocrop process ended successfully on " + autocropDialog.getDataType() + "\\" + inputID);
 		} catch (ServiceException se) {
 			IJ.error("Unable to access to OMERO service");
 		} catch (AccessException ae) {
@@ -200,9 +204,9 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 	
 	
 	private void runLocalAutocrop() {
-		String input  = autocropDialog.getInput();
-		String output = autocropDialog.getOutput();
-		String config = autocropDialog.getConfig();
+		String input            = autocropDialog.getInput();
+		String output           = autocropDialog.getOutput();
+		String config           = autocropDialog.getConfig();
 		String typeThresholding = autocropDialog.getTypeThresholding();
 		if (input == null || input.isEmpty()) {
 			IJ.error("Input file or directory is missing");
@@ -229,46 +233,46 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 							LOGGER.info("w/ calibration");
 							autocropParameters = new AutocropParameters(input,
 							                                            output,
-							                                            Integer.parseInt(acd.getXCalibration()),
-							                                            Integer.parseInt(acd.getYCalibration()),
-							                                            Integer.parseInt(acd.getZCalibration()),
-							                                            Integer.parseInt(acd.getXCropBoxSize()),
-							                                            Integer.parseInt(acd.getYCropBoxSize()),
-							                                            Integer.parseInt(acd.getZCropBoxSize()),
-																		Integer.parseInt(acd.getBoxNumberFontSize()),
-							                                            Integer.parseInt(acd.getSlicesOTSUComputing()),
-							                                            Integer.parseInt(acd.getThresholdOTSUComputing()),
-							                                            Integer.parseInt(acd.getChannelToComputeThreshold()),
-							                                            Integer.parseInt(acd.getMinVolume()),
-							                                            Integer.parseInt(acd.getMaxVolume()),
-							                                            Integer.parseInt(acd.getBoxesPercentSurfaceToFilter()),
+							                                            parseInt(acd.getXCalibration()),
+							                                            parseInt(acd.getYCalibration()),
+							                                            parseInt(acd.getZCalibration()),
+							                                            parseInt(acd.getXCropBoxSize()),
+							                                            parseInt(acd.getYCropBoxSize()),
+							                                            parseInt(acd.getZCropBoxSize()),
+							                                            parseInt(acd.getBoxNumberFontSize()),
+							                                            parseInt(acd.getSlicesOTSUComputing()),
+							                                            parseInt(acd.getThresholdOTSUComputing()),
+							                                            parseInt(acd.getChannelToComputeThreshold()),
+							                                            parseInt(acd.getMinVolume()),
+							                                            parseInt(acd.getMaxVolume()),
+							                                            parseInt(acd.getBoxesPercentSurfaceToFilter()),
 							                                            acd.isRegroupBoxesSelected());
 						} else {
 							LOGGER.info("w/out calibration");
 							autocropParameters = new AutocropParameters(input,
 							                                            output,
-							                                            Integer.parseInt(acd.getXCropBoxSize()),
-							                                            Integer.parseInt(acd.getYCropBoxSize()),
-							                                            Integer.parseInt(acd.getZCropBoxSize()),
-																		Integer.parseInt(acd.getBoxNumberFontSize()),
-							                                            Integer.parseInt(acd.getSlicesOTSUComputing()),
-							                                            Integer.parseInt(acd.getThresholdOTSUComputing()),
-							                                            Integer.parseInt(acd.getChannelToComputeThreshold()),
-							                                            Integer.parseInt(acd.getMinVolume()),
-							                                            Integer.parseInt(acd.getMaxVolume()),
-							                                            Integer.parseInt(acd.getBoxesPercentSurfaceToFilter()),
+							                                            parseInt(acd.getXCropBoxSize()),
+							                                            parseInt(acd.getYCropBoxSize()),
+							                                            parseInt(acd.getZCropBoxSize()),
+							                                            parseInt(acd.getBoxNumberFontSize()),
+							                                            parseInt(acd.getSlicesOTSUComputing()),
+							                                            parseInt(acd.getThresholdOTSUComputing()),
+							                                            parseInt(acd.getChannelToComputeThreshold()),
+							                                            parseInt(acd.getMinVolume()),
+							                                            parseInt(acd.getMaxVolume()),
+							                                            parseInt(acd.getBoxesPercentSurfaceToFilter()),
 							                                            acd.isRegroupBoxesSelected());
 						}
 						break;
 					case DEFAULT:
-						LOGGER.info("w/out config");
+						LOGGER.info("without config");
 						autocropParameters = new AutocropParameters(input, output);
 						break;
 				}
 				AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
 				autoCrop.setTypeThresholding(typeThresholding);
 				autoCrop.setExecutorThreads(autocropDialog.getThreads());
-				File            file     = new File(input);
+				File file = new File(input);
 				if (file.isDirectory()) {
 					autoCrop.runFolder();
 				} else if (file.isFile()) {
@@ -276,8 +280,8 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 					autoCrop.saveGeneralInfo();
 				}
 				LOGGER.info("Autocrop process has ended successfully");
-				IJ.showMessage("Segmentation process ended successfully on "+ file.getName());
-			} catch (NumberFormatException e)  {
+				IJ.showMessage("Segmentation process ended successfully on " + file.getName());
+			} catch (NumberFormatException e) {
 				LOGGER.error("An error occurred during autocrop.", e);
 			}
 		}

@@ -66,36 +66,37 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	private final JTextField jTextFieldOutputProject  = new JTextField();
 	
 	/**  */
-	private JButton    jbOutputDir = new JButton("Output directory");
+	private final JButton    jbOutputDir = new JButton("Output directory");
 	/**  */
-	private JButton    jbInputDir  = new JButton("Raw Nuclei");
+	private final JButton    jbInputDir  = new JButton("Raw Nuclei");
 	/**  */
-	private JButton    jbInputSeg  = new JButton("Seg. Nuclei");
+	private final JButton    jbInputSeg  = new JButton("Seg. Nuclei");
 	/**  */
-	private JCheckBox  jCbIsGauss  = new JCheckBox("Apply Gaussian filter on raw images ?");
+	private final JCheckBox  jCbIsGauss  = new JCheckBox("Apply Gaussian filter on raw images ?");
 	/**  */
-	private JCheckBox  jCbIs2D     = new JCheckBox("Is it 2D images ?");
+	private final JCheckBox  jCbIs2D     = new JCheckBox("Is it 2D images ?");
 	/**  */
-	private JCheckBox  jCbIsFilter = new JCheckBox("Filter connected components?");
+	private final JCheckBox  jCbIsFilter = new JCheckBox("Filter connected components?");
 	/**  */
-	private JTextField jtfWorkDir  = new JTextField();
-	private JTextField jtfRawData  = new JTextField();
-	private JTextField jtfRawSeg   = new JTextField();
-	private JButton    jbStart     = new JButton("Start");
-	private JButton    jbQuit      = new JButton("Quit");
+	private final JTextField jtfWorkDir  = new JTextField();
+	private final JTextField jtfRawData  = new JTextField();
+	private final JTextField jtfRawSeg   = new JTextField();
+	private final JButton    jbStart     = new JButton("Start");
+	private final JButton    jbQuit      = new JButton("Quit");
 	
-	private JFormattedTextField jtfGX     = new JFormattedTextField(Number.class);
-	private JFormattedTextField jtfGY     = new JFormattedTextField(Number.class);
-	private JFormattedTextField jtfGZ     = new JFormattedTextField(Number.class);
-	private JFormattedTextField jtfMin    = new JFormattedTextField(Number.class);
-	private JFormattedTextField jtfMax    = new JFormattedTextField(Number.class);
-	private JFormattedTextField jtfFactor = new JFormattedTextField(Number.class);
-	private JFormattedTextField jtfNeigh  = new JFormattedTextField(Number.class);
+	private final JFormattedTextField jtfGX     = new JFormattedTextField(Number.class);
+	private final JFormattedTextField jtfGY     = new JFormattedTextField(Number.class);
+	private final JFormattedTextField jtfGZ     = new JFormattedTextField(Number.class);
+	private final JFormattedTextField jtfMin    = new JFormattedTextField(Number.class);
+	private final JFormattedTextField jtfMax    = new JFormattedTextField(Number.class);
+	private final JFormattedTextField jtfFactor = new JFormattedTextField(Number.class);
+	private final JFormattedTextField jtfNeigh  = new JFormattedTextField(Number.class);
 	
 	/**  */
-	private Container container;
-	private boolean   useOMERO = false;
-	private boolean   start    = false;
+	private final Container container;
+	
+	private boolean useOMERO;
+	private boolean start;
 	
 	
 	/**
@@ -155,199 +156,224 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		JLabel label = new JLabel();
 		label.setText("Input and Output directories: ");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		mainPanel.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(10, 10, 0, 0), 0, 0
-		));
+		mainPanel.add(label,
+		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(10, 10, 0, 0), 0, 0));
 		
 		this.jbInputDir.setPreferredSize(new java.awt.Dimension(150, 21));
 		this.jbInputDir.setFont(new java.awt.Font("arial", 2, 10));
-		mainPanel.add(this.jbInputDir, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(35, 20, 0, 0), 0, 0
-		));
+		mainPanel.add(this.jbInputDir,
+		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(35, 20, 0, 0), 0, 0));
 		
 		this.jtfRawData.setPreferredSize(new java.awt.Dimension(280, 21));
 		this.jtfRawData.setFont(new java.awt.Font("arial", 2, 10));
-		mainPanel.add(this.jtfRawData, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(35, 190, 0, 0), 0, 0
-		));
+		mainPanel.add(this.jtfRawData,
+		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(35, 190, 0, 0), 0, 0));
 		
 		this.jbInputSeg.setPreferredSize(new java.awt.Dimension(150, 21));
 		this.jbInputSeg.setFont(new java.awt.Font("arial", 2, 10));
-		mainPanel.add(this.jbInputSeg, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(65, 20, 0, 0), 0, 0
-		));
+		mainPanel.add(this.jbInputSeg,
+		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(65, 20, 0, 0), 0, 0));
 		
 		this.jtfRawSeg.setPreferredSize(new java.awt.Dimension(280, 21));
 		this.jtfRawSeg.setFont(new java.awt.Font("arial", 2, 10));
-		mainPanel.add(this.jtfRawSeg, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(65, 190, 0, 0), 0, 0
-		));
+		mainPanel.add(this.jtfRawSeg,
+		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(65, 190, 0, 0), 0, 0));
 		
 		this.jbOutputDir.setPreferredSize(new java.awt.Dimension(150, 21));
 		this.jbOutputDir.setFont(new java.awt.Font("arial", 2, 10));
-		mainPanel.add(this.jbOutputDir, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(95, 20, 0, 0), 0, 0
-		));
+		mainPanel.add(this.jbOutputDir,
+		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(95, 20, 0, 0), 0, 0));
 		
 		this.jtfWorkDir.setPreferredSize(new java.awt.Dimension(280, 21));
 		this.jtfWorkDir.setFont(new java.awt.Font("arial", 2, 10));
-		mainPanel.add(this.jtfWorkDir, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(95, 190, 0, 0), 0, 0
-		));
+		mainPanel.add(this.jtfWorkDir,
+		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(95, 190, 0, 0), 0, 0));
 		
 		// group of radio button to choose the input type file
 		label = new JLabel();
 		label.setFont(new java.awt.Font("arial", 1, 12));
 		label.setText("Parameters:");
-		parameters.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(5, 10, 0, 0), 0, 0
-		));
+		parameters.add(label,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(5, 10, 0, 0), 0, 0));
 		
 		this.jCbIs2D.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jCbIs2D, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(25, 20, 0, 0), 0, 0
-		));
+		parameters.add(this.jCbIs2D,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(25, 20, 0, 0), 0, 0));
 		
 		label = new JLabel();
 		label.setText("Size of the neighborhood:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(55, 20, 0, 0), 0, 0
-		));
+		parameters.add(label,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(55, 20, 0, 0), 0, 0));
 		
 		this.jtfNeigh.setText("3");
 		this.jtfNeigh.setPreferredSize(new java.awt.Dimension(60, 21));
 		this.jtfNeigh.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jtfNeigh, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(52, 245, 0, 0), 0, 0
-		));
+		parameters.add(this.jtfNeigh,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(52, 245, 0, 0), 0, 0));
 		
 		label = new JLabel();
 		label.setText("Factor for the threshold value:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(80, 20, 0, 0), 0, 0
-		));
+		parameters.add(label,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(80, 20, 0, 0), 0, 0));
 		
 		this.jtfFactor.setText("1.5");
 		this.jtfFactor.setPreferredSize(new java.awt.Dimension(60, 21));
 		this.jtfFactor.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jtfFactor, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(78, 245, 0, 0), 0, 0
-		));
+		parameters.add(this.jtfFactor,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(78, 245, 0, 0), 0, 0));
 		
 		this.jCbIsGauss.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jCbIsGauss, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(105, 20, 0, 0), 0, 0
-		));
+		parameters.add(this.jCbIsGauss,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(105, 20, 0, 0), 0, 0));
 		
 		label = new JLabel();
 		label.setText("Gaussian Blur X sigma:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(135, 20, 0, 0), 0, 0
-		));
+		parameters.add(label,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(135, 20, 0, 0), 0, 0));
 		
 		this.jtfGX.setText("1");
 		this.jtfGX.setPreferredSize(new java.awt.Dimension(60, 21));
 		this.jtfGX.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jtfGX, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(132, 195, 0, 0), 0, 0
-		));
+		parameters.add(this.jtfGX,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(132, 195, 0, 0), 0, 0));
 		
 		label = new JLabel();
 		label.setText("Gaussian Blur Y sigma:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(160, 20, 0, 0), 0, 0
-		));
+		parameters.add(label,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(160, 20, 0, 0), 0, 0));
 		
 		this.jtfGY.setText("1");
 		this.jtfGY.setPreferredSize(new java.awt.Dimension(60, 21));
 		this.jtfGY.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jtfGY, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(158, 195, 0, 0), 0, 0
-		));
+		parameters.add(this.jtfGY,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(158, 195, 0, 0), 0, 0));
 		
 		label = new JLabel();
 		label.setText("Gaussian Blur Z sigma:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(185, 20, 0, 0), 0, 0
-		));
+		parameters.add(label,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(185, 20, 0, 0), 0, 0));
 		
 		this.jtfGZ.setText("2");
 		this.jtfGZ.setPreferredSize(new java.awt.Dimension(60, 21));
 		this.jtfGZ.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jtfGZ, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(182, 195, 0, 0), 0, 0
-		));
+		parameters.add(this.jtfGZ,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(182, 195, 0, 0), 0, 0));
 		
 		label = new JLabel();
 		label.setText("Connected component filtering parameters: ");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(215, 10, 0, 0), 0, 0
-		));
+		parameters.add(label, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                             GridBagConstraints.NORTHWEST,
+		                                             GridBagConstraints.NONE,
+		                                             new Insets(215, 10, 0, 0), 0, 0));
 		
 		this.jCbIsFilter.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jCbIsFilter, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(240, 20, 0, 0), 0, 0
-		));
+		parameters.add(this.jCbIsFilter,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(240, 20, 0, 0), 0, 0));
 		
 		label = new JLabel();
 		label.setText("Min volume:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(275, 20, 0, 0), 0, 0
-		));
+		parameters.add(label,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(275, 20, 0, 0), 0, 0));
 		
 		this.jtfMin.setText("0.003");
 		this.jtfMin.setPreferredSize(new java.awt.Dimension(60, 21));
 		this.jtfMin.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jtfMin, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(272, 175, 0, 0), 0, 0
-		));
+		parameters.add(this.jtfMin,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(272, 175, 0, 0), 0, 0));
 		
 		label = new JLabel();
 		label.setText("Max volume:");
 		label.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(label, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(305, 20, 0, 0), 0, 0
-		));
+		parameters.add(label,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(305, 20, 0, 0), 0, 0));
 		
 		this.jtfMax.setText("3");
 		this.jtfMax.setPreferredSize(new java.awt.Dimension(60, 21));
 		this.jtfMax.setFont(new java.awt.Font("arial", 1, 12));
-		parameters.add(this.jtfMax, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(302, 175, 0, 0), 0, 0
-		));
+		parameters.add(this.jtfMax,
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(302, 175, 0, 0), 0, 0));
 		
 		jtfMax.setEnabled(false);
 		jtfMin.setEnabled(false);
@@ -357,14 +383,14 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		this.jbStart.setPreferredSize(new java.awt.Dimension(120, 21));
 		this.jbQuit.setPreferredSize(new java.awt.Dimension(120, 21));
 		
-		parameters.add(this.jbStart, new GridBagConstraints(
-				0, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(330, 140, 0, 0), 0, 0
-		));
-		parameters.add(this.jbQuit, new GridBagConstraints(
-				1, 1, 0, 0, 0.0, 0.0, GridBagConstraints.NORTHWEST,
-				GridBagConstraints.NONE, new Insets(330, 10, 0, 0), 0, 0
-		));
+		parameters.add(this.jbStart, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                                    GridBagConstraints.NORTHWEST,
+		                                                    GridBagConstraints.NONE,
+		                                                    new Insets(330, 140, 0, 0), 0, 0));
+		parameters.add(this.jbQuit, new GridBagConstraints(1, 1, 0, 0, 0.0, 0.0,
+		                                                   GridBagConstraints.NORTHWEST,
+		                                                   GridBagConstraints.NONE,
+		                                                   new Insets(330, 10, 0, 0), 0, 0));
 		
 		localModeLayout.add(mainPanel);
 		container.add(localModeLayout, 1);

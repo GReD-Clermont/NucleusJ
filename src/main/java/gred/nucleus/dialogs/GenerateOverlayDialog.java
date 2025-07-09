@@ -62,10 +62,10 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	private final JTextField jTextFieldOutputProject = new JTextField();
 	private final JTextField DICFileChooser          = new JTextField();
 	private final JTextField ZprojectionFileChooser  = new JTextField();
+	private final Container  container;
 	
-	private boolean   start    = false;
-	private Container container;
-	private boolean   useOMERO = false;
+	private boolean start;
+	private boolean useOMERO;
 	
 	
 	public GenerateOverlayDialog(IDialogListener dialogListener) {

@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
+import static gred.nucleus.imageprocessing.Thresholding.contrastAnd8bits;
+
 
 /**
  * Class dedicate to crop nuclei in a isolate file from 3D wide field image from microscopy. The process use a OTSU
@@ -73,18 +75,19 @@ public class AutoCrop {
 	private final List<String>       boxCoordinates = new ArrayList<>();
 	/** Parameters for crop analysis */
 	private final AutocropParameters autocropParameters;
+	/** The path of the image to be processed */
+	private final String             imageFilePath;
+	
 	/** File to process (Image input) */
-	File currentFile;
+	private File             currentFile;
 	/** Raw image */
 	private ImagePlus        rawImg;
 	/** Segmented image */
 	private ImagePlus        imageSeg;
 	/** Segmented image connect component labelled */
 	private ImagePlus        imageSegLabelled;
-	/** The path of the image to be processed */
-	private String           imageFilePath;
 	/** Number of channels in current image */
-	private int              channelNumbers   = 1;
+	private int              channelNumbers = 1;
 	/** Get current info image analysis */
 	private String           infoImageAnalysis;
 	/** OTSU threshold  used to compute segmented image */
@@ -92,9 +95,9 @@ public class AutoCrop {
 	/** Slice start to compute OTSU */
 	private String           sliceUsedForOTSU;
 	/** Default threshold */
-	private boolean          defaultThreshold = false;
+	private boolean          defaultThreshold;
 	/** List of boxes  to crop link to label value */
-	private Map<Double, Box> boxes            = new HashMap<>();
+	private Map<Double, Box> boxes          = new HashMap<>();
 	
 	
 	/**
@@ -115,11 +118,10 @@ public class AutoCrop {
 		this.outputDirPath = this.autocropParameters.getOutputFolder();
 		this.outputFilesPrefix = outputFilesPrefix;
 		setChannelNumbers();
-		if (this.rawImg.getBitDepth() > 8) {
-			this.imageSeg =
-					Thresholding.contrastAnd8bits(getImageChannel(this.autocropParameters.getChannelToComputeThreshold()));
+		if (rawImg.getBitDepth() > 8) {
+			imageSeg = contrastAnd8bits(getImageChannel(autocropParameters.getChannelToComputeThreshold()));
 		} else {
-			this.imageSeg = getImageChannel(this.autocropParameters.getChannelToComputeThreshold());
+			imageSeg = getImageChannel(autocropParameters.getChannelToComputeThreshold());
 		}
 		this.infoImageAnalysis = autocropParametersAnalyse.getAnalysisParameters();
 	}
@@ -133,21 +135,17 @@ public class AutoCrop {
 		this.outputFilesPrefix = FilenameUtils.removeExtension(image.getName());
 		setChannelNumbersOMERO(image, client);
 		if (this.rawImg.getBitDepth() > 8) {
-			this.imageSeg =
-					Thresholding.contrastAnd8bits(getImageChannelOMERO(this.autocropParameters.getChannelToComputeThreshold(),
-					                                                   image,
-					                                                   client));
+			this.imageSeg = contrastAnd8bits(getImageChannelOMERO(autocropParameters.getChannelToComputeThreshold(),
+			                                                      image,
+			                                                      client));
 		} else {
 			this.imageSeg = this.rawImg;
 		}
 		this.imageFilePath = image.getName();
 		this.infoImageAnalysis = autocropParametersAnalyse.getAnalysisParameters();
-		this.rawImg.setTitle(image.getName()+"-"+image.getId());
+		this.rawImg.setTitle(image.getName() + "-" + image.getId());
 	}
-
-	public ImagePlus getRawImage(){
-		return rawImg;
-	}
+	
 	
 	public AutoCrop(File imageFile,
 	                String outputFilesPrefix,
@@ -163,6 +161,11 @@ public class AutoCrop {
 		this.imageSeg = this.rawImg;
 		this.infoImageAnalysis = autocropParametersAnalyse.getAnalysisParameters();
 		this.boxes = new HashMap<>(boxes);
+	}
+	
+	
+	public ImagePlus getRawImage() {
+		return rawImg;
 	}
 	
 	
@@ -307,8 +310,8 @@ public class AutoCrop {
 	 * or upper threshold volume are removed.
 	 * <p>The coordinates allow the implementation of the box objects which define the bounding box, and these objects
 	 * are stored in a List.
-	 * <p>In order to use with a grey-level image, use either {@link AutoCrop#thresholdKernels(String type)} or your own
-	 * binarization method.
+	 * <p>In order to use with a grey-level image, use either {@link AutoCrop#thresholdKernels(String type)} or your
+	 * own binarization method.
 	 */
 	public void computeBoxes2() {
 		LOGGER.info("Computing boxes.");
@@ -459,20 +462,20 @@ public class AutoCrop {
 		StringBuilder info = new StringBuilder();
 		info.append(getSpecificImageInfo()).append(HEADERS);
 		for (int c = 0; c < this.channelNumbers; c++) {
-			DatasetWrapper dataset = client.getDataset(outputsDat[c]);
-			Collection<ROIWrapper> rois = new ArrayList<>(this.boxes.size());
+			DatasetWrapper         dataset = client.getDataset(outputsDat[c]);
+			Collection<ROIWrapper> rois    = new ArrayList<>(this.boxes.size());
 			for (Map.Entry<Double, Box> entry : new TreeMap<>(this.boxes).entrySet()) {
 				int i = entry.getKey().intValue();
 				LOGGER.info("Processing box number: {} (OMERO)", i);
 				
-				Box    box         = entry.getValue();
-				int    xMin        = box.getXMin();
-				int    yMin        = box.getYMin();
-				int    zMin        = box.getZMin();
-				int       width  = box.getXMax() - box.getXMin() + 1;
-				int       height = box.getYMax() - box.getYMin() + 1;
-				int       depth  = box.getZMax() - box.getZMin() + 1;
-
+				Box box    = entry.getValue();
+				int xMin   = box.getXMin();
+				int yMin   = box.getYMin();
+				int zMin   = box.getZMin();
+				int width  = box.getXMax() - box.getXMin() + 1;
+				int height = box.getYMax() - box.getYMin() + 1;
+				int depth  = box.getZMax() - box.getZMin() + 1;
+				
 				ShapeList shapes = new ShapeList();
 				for (int z = box.getZMin(); z < box.getZMax(); z++) {
 					RectangleWrapper rectangle = new RectangleWrapper(xMin, yMin, width, height);
@@ -494,14 +497,14 @@ public class AutoCrop {
 				                  String.format("%03d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
-						.append(c).append("\t")
-						.append(i).append("\t")
-						.append(xMin).append("\t")
-						.append(yMin).append("\t")
-						.append(zMin).append("\t")
-						.append(width).append("\t")
-						.append(height).append("\t")
-						.append(depth).append("\n");
+				    .append(c).append("\t")
+				    .append(i).append("\t")
+				    .append(xMin).append("\t")
+				    .append(yMin).append("\t")
+				    .append(zMin).append("\t")
+				    .append(width).append("\t")
+				    .append(height).append("\t")
+				    .append(depth).append("\n");
 				fileOutput.saveImage(croppedImage);
 				this.outputFile.add(this.outputFilesPrefix + "_" +
 				                    String.format("%03d", i) + ".tif");
@@ -517,18 +520,18 @@ public class AutoCrop {
 					int yMax = yMin + height;
 					int zMax = zMin + depth;
 					this.boxCoordinates.add(this.outputDirPath + File.separator +
-							this.outputFilesPrefix + "_" +
-							String.format("%03d", i) +  "\t" +
-							xMin + "\t" +
-							xMax + "\t" +
-							yMin + "\t" +
-							yMax + "\t" +
-							zMin + "\t" +
-							zMax);
+					                        this.outputFilesPrefix + "_" +
+					                        String.format("%03d", i) + "\t" +
+					                        xMin + "\t" +
+					                        xMax + "\t" +
+					                        yMin + "\t" +
+					                        yMax + "\t" +
+					                        zMin + "\t" +
+					                        zMax);
 				}
 			}
 			List<ROIWrapper> roisGetter = image.getROIs(client);
-			if(roisGetter.isEmpty()){
+			if (roisGetter.isEmpty()) {
 				image.saveROIs(client, rois);
 			}
 		}
@@ -664,7 +667,7 @@ public class AutoCrop {
 	 */
 	public ImagePlus cropImage(int xMin, int yMin, int zMin, int width, int height, int depth, int channelNumber) {
 		Duplicator duplicator = new Duplicator();
-		ImagePlus cropped = duplicator.run(rawImg, channelNumber, channelNumber, zMin, zMin+depth-1, 0, 0);
+		ImagePlus  cropped    = duplicator.run(rawImg, channelNumber, channelNumber, zMin, zMin + depth - 1, 0, 0);
 		cropped.setRoi(new Roi(xMin, yMin, width, height));
 		ImagePlus result = cropped.crop("stack");
 		result.deleteRoi();
@@ -685,8 +688,8 @@ public class AutoCrop {
 	 */
 	public ImagePlus cropImage2D(int xMin, int yMin, int width, int height, int channelNumber) {
 		Duplicator duplicator = new Duplicator();
-		ImagePlus cropped = duplicator.run(rawImg, channelNumber, channelNumber, 0, 1, 0, 0);
-		Roi roi = new Roi(xMin, yMin, width, height);
+		ImagePlus  cropped    = duplicator.run(rawImg, channelNumber, channelNumber, 0, 1, 0, 0);
+		Roi        roi        = new Roi(xMin, yMin, width, height);
 		cropped.setRoi(roi);
 		cropped = cropped.crop();
 		cropped.deleteRoi();
@@ -754,7 +757,7 @@ public class AutoCrop {
 			resultFileOutput.saveTextFile(this.infoImageAnalysis, false);
 			dataset.addFile(client, file);
 			Files.deleteIfExists(file.toPath());
-		} catch (IOException |AccessException | ServiceException | ExecutionException e) {
+		} catch (IOException | AccessException | ServiceException | ExecutionException e) {
 			LOGGER.error("Error writing analysis information to OMERO.", e);
 		} catch (InterruptedException e) {
 			LOGGER.error("Interruption while writing analysis information to OMERO.", e);

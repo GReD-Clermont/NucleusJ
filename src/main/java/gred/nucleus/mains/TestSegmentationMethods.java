@@ -94,8 +94,8 @@ public class TestSegmentationMethods {
 		String pathToTest = "/home/tridubos/Bureau/IMAGES_TEST/AUTOCROP";
 		long   maxMemory  = Runtime.getRuntime().maxMemory();
 		LOGGER.debug("Maximum memory (bytes) /RAW_CZI: {} {}",
-		             maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1e-9,
-		             Runtime.getRuntime().freeMemory() * 1e-9);
+		             maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1.0e-9,
+		             Runtime.getRuntime().freeMemory() * 1.0e-9);
 		/*
 		 testStupidSeveralImages("/media/tridubos/DATA1/DATA_ANALYSE/MANIP_MANU_KAKU/ANALYSE_OCTOBRE_2019/images_PROBLEMS",
 		 "/media/tridubos/DATA1/DATA_ANALYSE/MANIP_MANU_KAKU/ANALYSE_OCTOBRE_2019/SEG_IMAGE_PB");
@@ -121,9 +121,8 @@ public class TestSegmentationMethods {
 		 testStupidSeveralImages("/media/tridubos/DATA1/DATA_ANALYSE/ANALYSE_BILLES_11-2019/test_calib_segmentation/Raw",
 		 "/media/tridubos/DATA1/DATA_ANALYSE/ANALYSE_BILLES_11-2019/test_calib_segmentation/Segmented");
 		 */
-		testStupidSeveralImages(
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TEST_NEW_PARAMETER/RAW",
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TEST_NEW_PARAMETER/SEG");
+		testStupidSeveralImages("/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TEST_NEW_PARAMETER/RAW",
+		                        "/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TEST_NEW_PARAMETER/SEG");
 		//testStupidSeveralImages("/home/titus/Bureau/TEST_NJ/AUTOCROP/DEBUG/RAWBUG",
 		//"/home/titus/Bureau/TEST_NJ/AUTOCROP/DEBUG/SEGBUG");
 		

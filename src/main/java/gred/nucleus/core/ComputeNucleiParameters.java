@@ -30,8 +30,11 @@ public class ComputeNucleiParameters {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	private final PluginParameters pluginParameters;
+	
 	private String segDatasetName;
-	String currentTime;
+	private String currentTime;
+	
+	
 	/**
 	 * Constructor with input, output and config files
 	 *
@@ -43,8 +46,6 @@ public class ComputeNucleiParameters {
 	                               String segmentedImagesDirectory,
 	                               String pathToConfig) {
 		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory, pathToConfig);
-
-
 	}
 	
 	
@@ -57,16 +58,17 @@ public class ComputeNucleiParameters {
 	public ComputeNucleiParameters(String rawImagesInputDirectory, String segmentedImagesDirectory) {
 		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
 	}
-
-	public ComputeNucleiParameters(){
-		String rawPath = "." + File.separator + "raw-computeNucleiParameters";
+	
+	
+	public ComputeNucleiParameters() {
+		String rawPath       = "." + File.separator + "raw-computeNucleiParameters";
 		String segmentedPath = "." + File.separator + "segmented-computeNucleiParameters";
-
+		
 		Directory rawDirectory = new Directory(rawPath);
 		rawDirectory.checkAndCreateDir();
 		Directory segmentedDirectory = new Directory(segmentedPath);
 		segmentedDirectory.checkAndCreateDir();
-
+		
 		this.pluginParameters = new PluginParameters(rawPath, segmentedPath);
 	}
 	
@@ -85,9 +87,15 @@ public class ComputeNucleiParameters {
 	}
 	
 	
+	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
+		FileSaver fileSaver = new FileSaver(imagePlusInput);
+		fileSaver.saveAsTiff(pathFile);
+	}
+	
+	
 	/**
-	 * Compute nuclei parameters generate from segmentation ( OTSU / Convex Hull)
-	 * Useful if parallel segmentation was used to get results parameter in the same folder.
+	 * Compute nuclei parameters generate from segmentation ( OTSU / Convex Hull) Useful if parallel segmentation was
+	 * used to get results parameter in the same folder.
 	 */
 	public void run() {
 		Directory directoryRawInput = new Directory(this.pluginParameters.getInputFolder());
@@ -116,51 +124,49 @@ public class ComputeNucleiParameters {
 				LOGGER.error("An error occurred.", e);
 			}
 		}
-		Date             date             = new Date() ;
-		SimpleDateFormat dateFormat       = new SimpleDateFormat("-yyyy-MM-dd-HH.mm.ss") ;
-		currentTime= dateFormat.format(date);
-		OutputTextFile resultFileOutputOTSU = new OutputTextFile(
-				this.pluginParameters.getOutputFolder()
-				+ directoryRawInput.getSeparator()
-				+segDatasetName + currentTime +"_.csv");
+		Date             date       = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy-MM-dd-HH.mm.ss");
+		currentTime = dateFormat.format(date);
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile(this.pluginParameters.getOutputFolder()
+		                                                         + directoryRawInput.getSeparator()
+		                                                         + segDatasetName + currentTime + "_.csv");
 		
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU.toString(), true);
 	}
-
-	public void runFromOMERO(String rawDatasetID, String segmentedDatasetID, Client client) throws AccessException, ServiceException, ExecutionException, InterruptedException, IOException {
-		DatasetWrapper rawDataset = client.getDataset(Long.parseLong(rawDatasetID));
-		DatasetWrapper   segmentedDataset = client.getDataset(Long.parseLong(segmentedDatasetID));
+	
+	
+	public void runFromOMERO(String rawDatasetID, String segmentedDatasetID, Client client)
+	throws AccessException, ServiceException, ExecutionException, InterruptedException, IOException {
+		DatasetWrapper rawDataset       = client.getDataset(Long.parseLong(rawDatasetID));
+		DatasetWrapper segmentedDataset = client.getDataset(Long.parseLong(segmentedDatasetID));
 		segDatasetName = segmentedDataset.getName();
 		
 		for (ImageWrapper raw : rawDataset.getImages(client)) {
 			saveFile(raw.toImagePlus(client), pluginParameters.getInputFolder() + File.separator + raw.getName());
 		}
-
+		
 		for (ImageWrapper segmented : segmentedDataset.getImages(client)) {
-			saveFile(segmented.toImagePlus(client), pluginParameters.getOutputFolder() + File.separator + segmented.getName());
+			saveFile(segmented.toImagePlus(client),
+			         pluginParameters.getOutputFolder() + File.separator + segmented.getName());
 		}
-
+		
 		this.run();
 		
-		segmentedDataset.addFile(
-				client,
-				new File(this.pluginParameters.getOutputFolder() + File.separator+ segDatasetName + currentTime  + "_.csv")
-		);
-
+		segmentedDataset.addFile(client,
+		                         new File(this.pluginParameters.getOutputFolder() + File.separator +
+		                                  segDatasetName + currentTime + "_.csv"));
+		
 		FileUtils.deleteDirectory(new File(pluginParameters.getInputFolder()));
 		FileUtils.deleteDirectory(new File(pluginParameters.getOutputFolder()));
 	}
-
-	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiff(pathFile);
-	}
-
+	
+	
 	public void addConfigParameters(String pathToConfig) {
 		this.pluginParameters.addGeneralProperties(pathToConfig);
 		
 	}
-
+	
+	
 	/** @return columns names for results */
 	private String getColNameResult() {
 		return "NucleusFileName\t" +
@@ -178,12 +184,12 @@ public class ComputeNucleiParameters {
 		       "MedianIntensityImage\t" +
 		       "MedianIntensityNucleus\t" +
 		       "MedianIntensityBackground\t" +
-		       "ImageSize\t"+
+		       "ImageSize\t" +
 		       "Moment 1\t" +
 		       "Moment 2\t" +
-				"Moment 3\t" +
-				"Aspect Ratio\t" +
-		       " Circularity \n" ;
+		       "Moment 3\t" +
+		       "Aspect Ratio\t" +
+		       " Circularity \n";
 	}
 	
 }

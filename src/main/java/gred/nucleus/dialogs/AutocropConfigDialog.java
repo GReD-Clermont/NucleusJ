@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.WindowConstants;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -47,7 +46,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	public AutocropConfigDialog(AutocropDialog caller) {
 		this.setTitle("Autocrop - NucleusJ3");
 		this.setSize(600, 350);
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		Container     container     = getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{1.0};
@@ -58,12 +57,10 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		container.setLayout(gridBagLayout);
 		JButton buttonOK = new JButton("Done");
 		getRootPane().setDefaultButton(buttonOK);
-
-
-        /*/\*\
-        -------------------------- Crop Box -----------------------------------
-        \*\/*/
 		
+        /*/\*\
+        -------------------------- Crop Box ------------------------------------
+        \*\/*/
 		
 		cropBoxPane = new JPanel();
 		cropBoxPane.setLayout(new BoxLayout(cropBoxPane, BoxLayout.Y_AXIS));
@@ -99,7 +96,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		zCropBoxSize.setText("20");
 		zCropBoxSize.setMinimumSize(new Dimension(60, 10));
 		zCropBoxPane.add(zCropBoxSize);
-
+		
 		JPanel numberFontSizePane = new JPanel();
 		numberFontSizePane.setLayout(new BoxLayout(numberFontSizePane, BoxLayout.X_AXIS));
 		numberFontSizePane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
@@ -118,12 +115,10 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		cropBoxPane.add(zCropBoxPane);
 		cropBoxPane.add(numberFontSizePane);
 		cropBoxPane.add(Box.createRigidArea(new Dimension(0, 20)));
-
-
-        /*/\*\
-        -------------------------- Calibration -----------------------------------
-        \*\/*/
 		
+        /*/\*\
+        -------------------------- Calibration ---------------------------------
+        \*\/*/
 		
 		JPanel calibrationPanel = new JPanel();
 		JLabel calibrationLabel = new JLabel("Calibration:");
@@ -135,24 +130,15 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		calibrationPanel.add(addCalibrationBox);
 		cropBoxPane.add(calibrationPanel);
 		
-		container.add(cropBoxPane, new GridBagConstraints(0,
-		                                                  0,
-		                                                  0,
-		                                                  0,
-		                                                  0.0,
-		                                                  0.0,
-		                                                  GridBagConstraints.NORTHWEST,
-		                                                  GridBagConstraints.NONE,
-		                                                  new Insets(0, 0, 0, 0),
-		                                                  0,
-		                                                  0));
-
-
-
-        /*/\*\
-        -------------------------- Nucleus Volume -----------------------------------
-        \*\/*/
+		container.add(cropBoxPane,
+		              new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(0, 0, 0, 0), 0, 0));
 		
+        /*/\*\
+        -------------------------- Nucleus Volume ------------------------------
+        \*\/*/
 		
 		JPanel volumeNucleus = new JPanel();
 		volumeNucleus.setLayout(new BoxLayout(volumeNucleus, BoxLayout.Y_AXIS));
@@ -186,11 +172,9 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		volumeNucleus.add(maxVolumeNucleus);
 		volumeNucleus.add(Box.createRigidArea(new Dimension(0, 20)));
 
-
         /*/\*\
-        -------------------------- Other -----------------------------------
+        -------------------------- Other ---------------------------------------
         \*\/*/
-		
 		
 		JPanel thresholdOTSUComputingPanel = new JPanel();
 		thresholdOTSUComputingPanel.setLayout(new BoxLayout(thresholdOTSUComputingPanel, BoxLayout.X_AXIS));
@@ -248,34 +232,24 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		volumeNucleus.add(slicesOTSUComputingPanel);
 		volumeNucleus.add(boxesPercentSurfacePanel);
 		volumeNucleus.add(regroupBoxesPanel);
-
-
-
-        /*/\*\
-        -------------------------- Validation Button -----------------------------------
-        \*\/*/
 		
+        /*/\*\
+        -------------------------- Validation Button ---------------------------
+        \*\/*/
 		
 		volumeNucleus.add(Box.createRigidArea(new Dimension(0, 20)));
 		buttonOK.setPreferredSize(new java.awt.Dimension(80, 21));
 		volumeNucleus.add(buttonOK);
 		
-		container.add(volumeNucleus, new GridBagConstraints(1,
-		                                                    0,
-		                                                    0,
-		                                                    0,
-		                                                    0.0,
-		                                                    0.0,
-		                                                    GridBagConstraints.NORTHEAST,
-		                                                    GridBagConstraints.NONE,
-		                                                    new Insets(0, 0, 0, 0),
-		                                                    0,
-		                                                    0));
-		
+		container.add(volumeNucleus,
+		              new GridBagConstraints(1, 0, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.NORTHEAST,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(0, 0, 0, 0), 0, 0));
 		
 		this.setVisible(false);
 		
-		AutocropConfigDialog.StartListener startListener = new StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		buttonOK.addActionListener(startListener);
 	}
 	
@@ -293,10 +267,12 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	public String getZCropBoxSize() {
 		return zCropBoxSize.getText();
 	}
-
+	
+	
 	public String getBoxNumberFontSize() {
 		return boxNumberFontSize.getText();
 	}
+	
 	
 	public String getXCalibration() {
 		return xCalibration.getText();
@@ -408,12 +384,12 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	}
 	
 	
-	static class StartListener implements ActionListener {
+	private static class StartListener implements ActionListener {
 		AutocropConfigDialog autocropDialog;
 		
 		
 		/** @param autocropDialog  */
-		public StartListener(AutocropConfigDialog autocropDialog) {
+		StartListener(AutocropConfigDialog autocropDialog) {
 			this.autocropDialog = autocropDialog;
 		}
 		

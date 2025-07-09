@@ -13,6 +13,7 @@ import java.lang.invoke.MethodHandles;
  * @author Tristant Dubos and Axel Poulet
  * @deprecated Method to segment and analyse the nucleus on batch
  */
+@Deprecated
 public class NucleusSegmentationAndAnalysisBatchPlugin_ implements PlugIn {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

@@ -3,7 +3,21 @@ package gred.nucleus.dialogs;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import java.awt.Color;
 import java.awt.Container;
@@ -20,43 +34,66 @@ import java.util.concurrent.ExecutionException;
 
 
 public class AutocropDialog extends JFrame implements ActionListener, ItemListener {
+	private static final long serialVersionUID = 1L;
 	
-	private static final long                 serialVersionUID        = 1L;
-	private static final String               INPUT_CHOOSER           = "inputChooser";
-	private static final String               OUTPUT_CHOOSER          = "outputChooser";
-	private static final String               CONFIG_CHOOSER          = "configChooser";
-	final                IDialogListener      dialogListener;
-	private final        Container            container;
-	private final        JFileChooser         fc                      = new JFileChooser();
-	private final        JRadioButton         omeroYesButton          = new JRadioButton("Yes");
-	private final        JRadioButton         omeroNoButton           = new JRadioButton("No");
-	private final        JTextField           jInputFileChooser       = new JTextField();
-	private final        JTextField           jOutputFileChooser      = new JTextField();
-	private final        JPanel               configFilePanel         = new JPanel();
-	private final        JLabel               defConf                 = new JLabel("Default configuration");
-	private final        AutocropConfigDialog autocropConfigFileDialog;
-	private final        JRadioButton         rdoDefault              = new JRadioButton("Default");
-	private final        JRadioButton         rdoAddConfigFile        = new JRadioButton("From file");
-	private final        JTextField           jConfigFileChooser      = new JTextField();
-	private final        JRadioButton         rdoAddConfigDialog      = new JRadioButton("New");
-	private final        JButton              jButtonConfig           = new JButton("Config");
-	private final        JPanel               localModeLayout         = new JPanel();
-	private final        JPanel               omeroModeLayout         = new JPanel();
-	private final        JTextField           jTextFieldHostname      = new JTextField();
-	private final        JTextField           jTextFieldPort          = new JTextField();
-	private final        JTextField           jTextFieldUsername      = new JTextField();
-	private final        JPasswordField       jPasswordField          = new JPasswordField();
-	private final        JTextField           jTextFieldGroup         = new JTextField();
-	private final        String[]             dataTypes               = {"Project", "Dataset", "Tag", "Image"};
-	private final        String[]             tresholdType               = {"Otsu", "RenyiEntropy", "Huang", "Intermodes","IsoData", "Li", "MaxEntropy", "Mean", "MinError", "Minimum", "Moments","Percentile", "Shanbhag", "Triangle", "Yen"};
-	private final        JComboBox<String>    jComboBoxDataType       = new JComboBox<>(dataTypes);
-	private final        JComboBox<String>    jComboBoxThresholdType       = new JComboBox<>(tresholdType);
-	private final        JTextField           jTextFieldSourceID      = new JTextField();
-	private final        JTextField           jTextFieldOutputProject = new JTextField();
-	private final        JButton              confButton              = new JButton("...");
-	private final 		 JSpinner			  jSpinnerThreads;
-	private              boolean              useOMERO                = false;
-	private              ConfigMode           configMode;
+	private static final String INPUT_CHOOSER  = "inputChooser";
+	private static final String OUTPUT_CHOOSER = "outputChooser";
+	private static final String CONFIG_CHOOSER = "configChooser";
+	
+	private final IDialogListener dialogListener;
+	
+	private final Container    container;
+	private final JFileChooser fc                 = new JFileChooser();
+	private final JRadioButton omeroYesButton     = new JRadioButton("Yes");
+	private final JRadioButton omeroNoButton      = new JRadioButton("No");
+	private final JTextField   jInputFileChooser  = new JTextField();
+	private final JTextField   jOutputFileChooser = new JTextField();
+	private final JPanel       configFilePanel    = new JPanel();
+	private final JLabel       defConf            = new JLabel("Default configuration");
+	
+	private final AutocropConfigDialog autocropConfigFileDialog;
+	
+	private final JRadioButton   rdoDefault         = new JRadioButton("Default");
+	private final JRadioButton   rdoAddConfigFile   = new JRadioButton("From file");
+	private final JTextField     jConfigFileChooser = new JTextField();
+	private final JRadioButton   rdoAddConfigDialog = new JRadioButton("New");
+	private final JButton        jButtonConfig      = new JButton("Config");
+	private final JPanel         localModeLayout    = new JPanel();
+	private final JPanel         omeroModeLayout    = new JPanel();
+	private final JTextField     jTextFieldHostname = new JTextField();
+	private final JTextField     jTextFieldPort     = new JTextField();
+	private final JTextField     jTextFieldUsername = new JTextField();
+	private final JPasswordField jPasswordField     = new JPasswordField();
+	private final JTextField     jTextFieldGroup    = new JTextField();
+	
+	private final String[] dataTypes = {"Project", "Dataset", "Tag", "Image"};
+	
+	private final String[] thresholdType = {"Otsu",
+	                                        "RenyiEntropy",
+	                                        "Huang",
+	                                        "Intermodes",
+	                                        "IsoData",
+	                                        "Li",
+	                                        "MaxEntropy",
+	                                        "Mean",
+	                                        "MinError",
+	                                        "Minimum",
+	                                        "Moments",
+	                                        "Percentile",
+	                                        "Shanbhag",
+	                                        "Triangle",
+	                                        "Yen"};
+	
+	private final JComboBox<String> jComboBoxDataType       = new JComboBox<>(dataTypes);
+	private final JComboBox<String> jComboBoxThresholdType  = new JComboBox<>(thresholdType);
+	private final JTextField        jTextFieldSourceID      = new JTextField();
+	private final JTextField        jTextFieldOutputProject = new JTextField();
+	private final JButton           confButton              = new JButton("...");
+	
+	private final JSpinner jSpinnerThreads;
+	
+	private boolean    useOMERO;
+	private ConfigMode configMode;
 	
 	
 	/** Architecture of the graphical windows */
@@ -67,7 +104,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		JButton jButtonQuit  = new JButton("Quit");
 		this.setTitle("Autocrop - NucleusJ3");
 		this.setMinimumSize(new Dimension(400, 500));
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		autocropConfigFileDialog = new AutocropConfigDialog(this);
 		autocropConfigFileDialog.setVisible(false);
@@ -93,7 +130,6 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		radioOmeroPanel.add(omeroNoButton);
 		radioOmeroPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		container.add(radioOmeroPanel, 0);
-		
 		
 		// Local mode layout
 		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.Y_AXIS));
@@ -132,11 +168,10 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		c.insets = new Insets(10, 0, 0, 0);
 		c.gridx = 2;
 		localPanel.add(destButton, c);
-
+		
 		localPanel.setBorder(padding);
 		localModeLayout.add(localPanel);
 		container.add(localModeLayout, 1);
-		
 		
 		// Omero mode layout
 		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.Y_AXIS));
@@ -210,7 +245,6 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		omeroPanel.add(jTextFieldSourceID, c);
 		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
 		
-		
 		c.gridy = 6;
 		JLabel jLabelOutputProject = new JLabel("Output project :");
 		c.gridx = 0;
@@ -220,15 +254,15 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		c.gridwidth = 2;
 		omeroPanel.add(jTextFieldOutputProject, c);
 		jTextFieldOutputProject.setMaximumSize(new Dimension(10000, 20));
-
+		
 		omeroPanel.setBorder(padding);
 		omeroModeLayout.add(omeroPanel);
-
+		
 		// Threshold preferences
 		JPanel thresholdPanel = new JPanel();
 		thresholdPanel.setLayout(new BoxLayout(thresholdPanel, BoxLayout.X_AXIS));
 		c.gridy = 7;
-		JLabel jLabelThresholdType  = new JLabel("Threshold Method :");
+		JLabel jLabelThresholdType = new JLabel("Threshold Method :");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		thresholdPanel.add(jLabelThresholdType, c);
@@ -236,8 +270,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		thresholdPanel.add(jComboBoxThresholdType, c);
 		thresholdPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 100));
 		container.add(thresholdPanel, 2);
-
-
+		
 		// Config panel
 		JPanel configPanel = new JPanel();
 		configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.X_AXIS));
@@ -263,19 +296,19 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		container.add(defConf, 4);
 		defConf.setBorder(padding);
 		configMode = ConfigMode.DEFAULT;
-
+		
 		// Thread preferences
 		JPanel threadPanel = new JPanel();
 		threadPanel.setLayout(new BoxLayout(threadPanel, BoxLayout.X_AXIS));
 		JLabel jLabelThreads = new JLabel("Number of used threads : ");
 		threadPanel.add(jLabelThreads);
-		int maxThreads = Runtime.getRuntime().availableProcessors();
-		SpinnerModel model = new SpinnerNumberModel(Math.min(maxThreads, 1), 1, maxThreads, 1);
+		int          maxThreads = Runtime.getRuntime().availableProcessors();
+		SpinnerModel model      = new SpinnerNumberModel(Math.min(maxThreads, 1), 1, maxThreads, 1);
 		jSpinnerThreads = new JSpinner(model);
 		threadPanel.add(jSpinnerThreads);
 		threadPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 100));
 		container.add(threadPanel, 5);
-
+		
 		// Start/Quit buttons
 		JPanel startQuitPanel = new JPanel();
 		startQuitPanel.setLayout(new BoxLayout(startQuitPanel, BoxLayout.X_AXIS));
@@ -341,11 +374,11 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		return (String) jComboBoxDataType.getSelectedItem();
 	}
 	
-
+	
 	public String getTypeThresholding() {
 		return (String) jComboBoxThresholdType.getSelectedItem();
 	}
-
+	
 	
 	public String getUsername() {
 		return jTextFieldUsername.getText();
@@ -380,8 +413,11 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	public AutocropConfigDialog getAutocropConfigFileDialog() {
 		return autocropConfigFileDialog;
 	}
-
-	public int getThreads(){return (int) jSpinnerThreads.getValue(); }
+	
+	
+	public int getThreads() {
+		return (int) jSpinnerThreads.getValue();
+	}
 	
 	
 	public void actionPerformed(ActionEvent e) {
@@ -432,7 +468,9 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 			useOMERO = true;
 		} else {
 			container.remove(3);
-			if (autocropConfigFileDialog.isVisible()) autocropConfigFileDialog.setVisible(false);
+			if (autocropConfigFileDialog.isVisible()) {
+				autocropConfigFileDialog.setVisible(false);
+			}
 			
 			Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 			if (source == rdoDefault) {

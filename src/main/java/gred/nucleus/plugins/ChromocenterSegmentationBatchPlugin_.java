@@ -90,8 +90,7 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 				LOGGER.info("End of the chromocenter segmentation , the results are in {}",
 				            chromocenterSegmentationPipelineBatchDialog.getWorkDirectory());
 			} else {
-				IJ.showMessage(
-						"There are no the two subdirectories (See the directory name) or subDirectories are empty");
+				IJ.showMessage("There are no the two subdirectories (See the directory name) or subDirectories are empty");
 			}
 		}
 	}

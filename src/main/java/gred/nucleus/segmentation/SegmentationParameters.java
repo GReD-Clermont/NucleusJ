@@ -23,7 +23,7 @@ public class SegmentationParameters extends PluginParameters {
 	/** Minimal object volume to segment */
 	int     minVolumeNucleus    = 1;
 	/** Maximal object volume to segment */
-	int     maxVolumeNucleus = 3000000;
+	int     maxVolumeNucleus    = 3000000;
 	
 	
 	/**
@@ -37,7 +37,10 @@ public class SegmentationParameters extends PluginParameters {
 	}
 	
 	
-	public SegmentationParameters(String inputFolder, String outputFolder, int minVolume, int maxVolume, boolean convexHull) {
+	public SegmentationParameters(String inputFolder,
+	                              String outputFolder,
+	                              int minVolume, int maxVolume,
+	                              boolean convexHull) {
 		super(inputFolder, outputFolder);
 		this.minVolumeNucleus = minVolume;
 		this.maxVolumeNucleus = maxVolume;

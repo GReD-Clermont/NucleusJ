@@ -46,9 +46,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This class call the different segmentation methods available to detect the nucleus. The Otsu method modified and the
- * 3D convex hull algorithm. Methods can be call for analysis of several images or only one. The convex hull algorithm is initialized by
- * the Otsu method modified, then the convex hull algorithm process the result obtain with the first method. If the
- * first method doesn't detect a nucleus, a message is print on the console.
+ * 3D convex hull algorithm. Methods can be call for analysis of several images or only one. The convex hull algorithm
+ * is initialized by the Otsu method modified, then the convex hull algorithm process the result obtain with the first
+ * method. If the first method doesn't detect a nucleus, a message is print on the console.
  * <p>
  * if the nucleus input image is 16bit, a preprocess is done to convert it in 8bit, and also increase the contrast and
  * decrease the noise, then the 8bits image is used for the nuclear segmentation.
@@ -59,29 +59,52 @@ public class SegmentationCalling {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	String prefix = "";
+	/** Number of threads used to download images */
+	private final int downloaderThreads = 1;
+	
+	/** Prefix of the output files */
+	private String prefix = "";
+	
 	/** ImagePlus raw image */
 	private ImagePlus imgInput = new ImagePlus();
-	/** ImagePlus segmented image */
-	private ImagePlus imgSeg   = new ImagePlus();
-	/** String of of the path for the output files */
-	private String    output;
-	/** String of the input dir for several nuclei analysis */
-	private String    inputDir = "";
 	
+	/** ImagePlus segmented image */
+	private ImagePlus imgSeg = new ImagePlus();
+	
+	/** String of the path for the output files */
+	private String output;
+	
+	/** Input directory */
+	private String inputDir = "";
+	
+	/** SegmentationParameters object containing the parameters for the segmentation */
 	private SegmentationParameters segmentationParameters;
 	
+	/** Output file for the Otsu crop general info */
 	private String outputCropGeneralInfoOTSU;
+	
+	/** Output file for the Convex Hull crop general info */
 	private String outputCropGeneralInfoConvexHull;
+	
+	/** String containing the info for Parade */
 	private String outputInfoParade = getResultsColumnNames();
+	
+	/** String containing the info for parade (for Graham) */
 	private String outputInfoParadeGraham = getResultsColumnNames();
-	/** Number of threads to used process images */
+	
+	/** Number of threads used to process images */
 	private int executorThreads = 1;
-	/** Number of threads used to download images */
-	private int downloaderThreads = 1;
+	
+	/** ID of the input dataset in OMERO */
 	private Long tID;
+	
+	/** Name of the image dataset in OMERO */
 	private String imgDatasetName;
+	
+	/** ID of the image dataset in OMERO */
 	private long imgDatasetId;
+	
+	
 	public SegmentationCalling() {
 	}
 	
@@ -93,20 +116,16 @@ public class SegmentationCalling {
 	 */
 	public SegmentationCalling(SegmentationParameters segmentationParameters) {
 		this.segmentationParameters = segmentationParameters;
-		this.outputCropGeneralInfoOTSU =
-				this.segmentationParameters.getAnalysisParameters() ;
-		this.outputCropGeneralInfoConvexHull =
-				this.segmentationParameters.getAnalysisParameters() ;
+		this.outputCropGeneralInfoOTSU = this.segmentationParameters.getAnalysisParameters();
+		this.outputCropGeneralInfoConvexHull = this.segmentationParameters.getAnalysisParameters();
 	}
 	
 	
 	public SegmentationCalling(String inputDir, String outputDir) {
 		this.inputDir = inputDir;
 		this.output = outputDir;
-		this.outputCropGeneralInfoOTSU =
-				this.segmentationParameters.getAnalysisParameters() ;
-		this.outputCropGeneralInfoConvexHull =
-				this.segmentationParameters.getAnalysisParameters() ;
+		this.outputCropGeneralInfoOTSU = this.segmentationParameters.getAnalysisParameters();
+		this.outputCropGeneralInfoConvexHull = this.segmentationParameters.getAnalysisParameters();
 	}
 	
 	
@@ -163,19 +182,19 @@ public class SegmentationCalling {
 	 * @return ImagePlus the segmented nucleus
 	 *
 	 * @deprecated Method to run an ImagePlus input the method will call method in NucleusSegmentation and
-	 * ConvexHullSegmentation to segment the input nucleus. if the input boolean is true the convex hull algorithm will be use,
-	 * if false the Otsu modified method will be used. If a segmentation results is find the method will then computed
-	 * the different parameters with the NucleusAnalysis class, results will be print in the console. If no nucleus is
-	 * detected a log message is print in teh console
+	 * ConvexHullSegmentation to segment the input nucleus. if the input boolean is true the convex hull algorithm will
+	 * be use, if false the Otsu modified method will be used. If a segmentation results is find the method will then
+	 * computed the different parameters with the NucleusAnalysis class, results will be print in the console. If no
+	 * nucleus is detected a log message is print in teh console
 	 */
 	@Deprecated
 	public int runOneImage() throws IOException, FormatException {
 		
-		ImagePlus seg = this.imgInput;
+		ImagePlus seg = imgInput;
 		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(seg,
-		                                                                  this.segmentationParameters.getMinVolumeNucleus(),
-		                                                                  this.segmentationParameters.getMaxVolumeNucleus(),
-		                                                                  this.segmentationParameters);
+		                                                                  segmentationParameters.getMinVolumeNucleus(),
+		                                                                  segmentationParameters.getMaxVolumeNucleus(),
+		                                                                  segmentationParameters);
 		
 		Calibration cal = seg.getCalibration();
 		if (seg.getType() == ImagePlus.GRAY16) {
@@ -193,12 +212,11 @@ public class SegmentationCalling {
 				ConvexHullSegmentation nuc = new ConvexHullSegmentation();
 				seg = nuc.convexHullDetection(seg, this.segmentationParameters);
 			}
-			seg.setTitle(this.output);
+			seg.setTitle(output);
 			if (!this.output.isEmpty()) {
-				saveFile(seg, this.output);
+				saveFile(seg, output);
 			}
-			NucleusAnalysis nucleusAnalysis =
-					new NucleusAnalysis(this.imgInput, seg, this.segmentationParameters);
+			NucleusAnalysis nucleusAnalysis = new NucleusAnalysis(imgInput, seg, segmentationParameters);
 			// System.out.println(nucleusAnalysis.nucleusParameter3D());
 		}
 		this.imgSeg = seg;
@@ -212,22 +230,25 @@ public class SegmentationCalling {
 	 * @return See above.
 	 */
 	public ImagePlus getImageSegmented() {
-		return this.imgSeg;
+		return imgSeg;
 	}
 	
 	
 	/**
 	 * Setter for the number of threads used to process images
+	 *
 	 * @param threadNumber number of executors threads
 	 */
-	public void setExecutorThreads(int threadNumber) { this.executorThreads = threadNumber; }
+	public void setExecutorThreads(int threadNumber) {
+		this.executorThreads = threadNumber;
+	}
 	
 	
 	/**
 	 * Method to run the nuclear segmentation of images stocked in input dir. First listing of the tif files contained
 	 * in input dir. then for each images: the method will call method in NucleusSegmentation and ConvexHullSegmentation
-	 * to segment the input nucleus. if the input boolean is true the convex hull algorithm will be use, if false the Otsu
-	 * modified method will be used. If a segmentation results is find the method will then computed the different
+	 * to segment the input nucleus. if the input boolean is true the convex hull algorithm will be use, if false the
+	 * Otsu modified method will be used. If a segmentation results is find the method will then computed the different
 	 * parameters with the NucleusAnalysis class, and save in file in the outputDir. If no nucleus is detected a log
 	 * message is print in the console
 	 * <p>
@@ -239,73 +260,89 @@ public class SegmentationCalling {
 	 * @throws FormatException Bio-formats exception
 	 */
 	public String runSeveralImages2() throws IOException, FormatException {
-		String log = "";
-		ExecutorService processExecutor = Executors.newFixedThreadPool(executorThreads);
-		Map<String, String> otsuResultLines = new ConcurrentHashMap<>();
+		String              log                   = "";
+		ExecutorService     processExecutor       = Executors.newFixedThreadPool(executorThreads);
+		Map<String, String> otsuResultLines       = new ConcurrentHashMap<>();
 		Map<String, String> convexHullResultLines = new ConcurrentHashMap<>();
 		
 		Directory directoryInput = new Directory(this.segmentationParameters.getInputFolder());
 		directoryInput.listImageFiles(this.segmentationParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
-
+		
 		// Create output directories
 		Path otsuDirectory = Paths.get(this.segmentationParameters.getOutputFolder() + File.separator + "OTSU");
-		Path convexHullDirectory = Paths.get(this.segmentationParameters.getOutputFolder() + File.separator + NucleusSegmentation.CONVEX_HULL_ALGORITHM);
+		Path convexHullDirectory = Paths.get(this.segmentationParameters.getOutputFolder() + File.separator +
+		                                     NucleusSegmentation.CONVEX_HULL_ALGORITHM);
 		File otsuDir = new File(otsuDirectory.toString());
-		if(!otsuDir.exists()) Files.createDirectory(otsuDirectory);
+		if (!otsuDir.exists()) {
+			Files.createDirectory(otsuDirectory);
+		}
 		File convexHullDir = new File(convexHullDirectory.toString());
-		if(!convexHullDir.exists()) Files.createDirectory(convexHullDirectory);
-
-		List<File> files = directoryInput.listFiles();
-		final CountDownLatch latch = new CountDownLatch(files.size());
-
+		if (!convexHullDir.exists()) {
+			Files.createDirectory(convexHullDirectory);
+		}
+		
+		List<File>     files = directoryInput.listFiles();
+		CountDownLatch latch = new CountDownLatch(files.size());
+		
 		class ImageProcessor implements Runnable {
-
+			
 			private final File file;
-
-			public ImageProcessor(File file){
+			
+			
+			private ImageProcessor(File file) {
 				this.file = file;
 			}
-
+			
+			
 			@Override
 			public void run() {
 				try {
-					String     fileImg          = file.toString();
-					FilesNames outPutFilesNames = new FilesNames(fileImg);
-					String prefix = outPutFilesNames.prefixNameFile();
-
-					String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					String     fileImg         = file.toString();
+					FilesNames outputFilenames = new FilesNames(fileImg);
+					String     prefix          = outputFilenames.prefixNameFile();
+					
+					String timeStampStart =
+							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, timeStampStart);
-					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, prefix, segmentationParameters);
-
+					NucleusSegmentation nucleusSegmentation =
+							new NucleusSegmentation(file, prefix, segmentationParameters);
+					
 					nucleusSegmentation.preProcessImage();
 					nucleusSegmentation.findOTSUMaximisingSphericity();
 					nucleusSegmentation.checkBadCrop(segmentationParameters.inputFolder);
 					nucleusSegmentation.saveOTSUSegmented();
-					otsuResultLines.put(file.getName(), nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
+					otsuResultLines.put(file.getName(),
+					                    nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
 					nucleusSegmentation.saveConvexHullSeg();
-					convexHullResultLines.put(file.getName(), nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
-
-					timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					convexHullResultLines.put(file.getName(),
+					                          nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
+					
+					timeStampStart =
+							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 					LOGGER.info("End: {} at {}", fileImg, timeStampStart);
-
+					
 					latch.countDown();
-				} catch (Exception e) {
+				} catch (IOException | FormatException e) {
 					e.printStackTrace();
 				}
 			}
+			
 		}
-
+		
 		for (File currentFile : files) {
 			processExecutor.submit(new ImageProcessor(currentFile));
 		}
-		try { latch.await(); }
-		catch (InterruptedException e) { e.printStackTrace(); }
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		processExecutor.shutdownNow();
-
-		StringBuilder otsuInfoBuilder = new StringBuilder();
+		
+		StringBuilder otsuInfoBuilder       = new StringBuilder();
 		StringBuilder convexHullInfoBuilder = new StringBuilder();
-		for (File file: files) {
+		for (File file : files) {
 			otsuInfoBuilder.append(otsuResultLines.get(file.getName()));
 			convexHullInfoBuilder.append(convexHullResultLines.get(file.getName()));
 		}
@@ -350,26 +387,28 @@ public class SegmentationCalling {
 	
 	
 	public void saveCropGeneralInfo() {
-		Date date = new Date() ;
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss") ;
+		Date             date       = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
 		LOGGER.info("Saving crop general info.");
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(this.segmentationParameters.getOutputFolder()
 		                                                         + "OTSU"
 		                                                         + File.separator
-				                                                 + dateFormat.format(date)
-																 + "-result_Segmentation_Analyse_OTSU.csv");
+		                                                         + dateFormat.format(date)
+		                                                         + "-result_Segmentation_Analyse_OTSU.csv");
 		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, true);
 		if (this.segmentationParameters.getConvexHullDetection()) {
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(this.segmentationParameters.getOutputFolder()
-			                                                         + NucleusSegmentation.CONVEX_HULL_ALGORITHM
-			                                                         + File.separator
-																	 + dateFormat.format(date)
-											                         + "-result_Segmentation_Analyse_" +
-			                                                         NucleusSegmentation.CONVEX_HULL_ALGORITHM +
-			                                                         ".csv");
+			                                                               + NucleusSegmentation.CONVEX_HULL_ALGORITHM
+			                                                               + File.separator
+			                                                               + dateFormat.format(date)
+			                                                               + "-result_Segmentation_Analyse_" +
+			                                                               NucleusSegmentation.CONVEX_HULL_ALGORITHM +
+			                                                               ".csv");
 			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, true);
 		}
 	}
+	
+	
 	public void saveTestCropGeneralInfo() {
 		LOGGER.info("Saving crop general info.");
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(this.segmentationParameters.getOutputFolder()
@@ -392,21 +431,27 @@ public class SegmentationCalling {
 	public String runOneImageOMERO(ImageWrapper image, Long output, Client client)
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
 		String log = "";
-
+		
 		ProjectWrapper project = client.getProject(output);
 		// Get OTSU dataset ID
-		List<DatasetWrapper> datasets = project.getDatasets("OTSU");
-		long otsuDataset, convexHullDataset = -1;
-		if (datasets.isEmpty()) otsuDataset = project.addDataset(client, "OTSU", "").getId();
-		else otsuDataset = datasets.get(0).getId();
+		List<DatasetWrapper> datasets                       = project.getDatasets("OTSU");
+		long                 otsuDataset, convexHullDataset = -1;
+		if (datasets.isEmpty()) {
+			otsuDataset = project.addDataset(client, "OTSU", "").getId();
+		} else {
+			otsuDataset = datasets.get(0).getId();
+		}
 		project = client.getProject(output);
 		// Get Convex Hull dataset ID
-		if(segmentationParameters.getConvexHullDetection()){
+		if (segmentationParameters.getConvexHullDetection()) {
 			datasets = project.getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM);
-			if (datasets.isEmpty()) convexHullDataset = project.addDataset(client, NucleusSegmentation.CONVEX_HULL_ALGORITHM, "").getId();
-			else convexHullDataset = datasets.get(0).getId();
+			if (datasets.isEmpty()) {
+				convexHullDataset = project.addDataset(client, NucleusSegmentation.CONVEX_HULL_ALGORITHM, "").getId();
+			} else {
+				convexHullDataset = datasets.get(0).getId();
+			}
 		}
-
+		
 		String fileImg = image.getName();
 		LOGGER.info("Current image in process: {}", fileImg);
 		
@@ -431,82 +476,99 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERO(List<ImageWrapper> images, Long output, final Client client, Long inputID)
+	public String runSeveralImagesOMERO(List<ImageWrapper> images, Long output, Client client, Long inputID)
 	throws AccessException, ServiceException, ExecutionException, InterruptedException {
-		ExecutorService downloadExecutor = Executors.newFixedThreadPool(downloaderThreads);
-		final ExecutorService processExecutor = Executors.newFixedThreadPool(executorThreads);
-		final Map<Long, String> otsuResultLines = new ConcurrentHashMap<>();
-		final Map<Long, String> convexHullResultLines = new ConcurrentHashMap<>();
+		ExecutorService   downloadExecutor      = Executors.newFixedThreadPool(downloaderThreads);
+		ExecutorService   processExecutor       = Executors.newFixedThreadPool(executorThreads);
+		Map<Long, String> otsuResultLines       = new ConcurrentHashMap<>();
+		Map<Long, String> convexHullResultLines = new ConcurrentHashMap<>();
 		tID = inputID;
-
+		
 		ProjectWrapper project = client.getProject(output);
 		// Get OTSU dataset ID
 		List<DatasetWrapper> datasets = project.getDatasets("OTSU");
-		final long otsuDataset, convexHullDataset;
-		if (datasets.isEmpty()) otsuDataset = project.addDataset(client, "OTSU", "").getId();
-		else otsuDataset = datasets.get(0).getId();
+		long                 otsuDataset, convexHullDataset;
+		if (datasets.isEmpty()) {
+			otsuDataset = project.addDataset(client, "OTSU", "").getId();
+		} else {
+			otsuDataset = datasets.get(0).getId();
+		}
 		project = client.getProject(output);
 		// Get Convex Hull dataset ID
-		if(segmentationParameters.getConvexHullDetection()){
+		if (segmentationParameters.getConvexHullDetection()) {
 			datasets = project.getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM);
-			if (datasets.isEmpty()) convexHullDataset = project.addDataset(client, NucleusSegmentation.CONVEX_HULL_ALGORITHM, "").getId();
-			else convexHullDataset = datasets.get(0).getId();
+			if (datasets.isEmpty()) {
+				convexHullDataset = project.addDataset(client, NucleusSegmentation.CONVEX_HULL_ALGORITHM, "").getId();
+			} else {
+				convexHullDataset = datasets.get(0).getId();
+			}
+		} else {
+			convexHullDataset = -1;
 		}
-		else convexHullDataset = -1;
-
-		final CountDownLatch latch = new CountDownLatch(images.size());
-		final CountDownLatch upload_latch = new CountDownLatch(1);
+		
+		CountDownLatch latch        = new CountDownLatch(images.size());
+		CountDownLatch upload_latch = new CountDownLatch(1);
 		class ImageProcessorOMERO implements Runnable {
-
+			
 			private final ImageWrapper img;
 			private final ImagePlus    imp;
-
-			public ImageProcessorOMERO(ImageWrapper img, ImagePlus imp){
+			
+			
+			ImageProcessorOMERO(ImageWrapper img, ImagePlus imp) {
 				this.img = img;
 				this.imp = imp;
 			}
-
+			
+			
 			@Override
 			public void run() {
 				try {
 					String fileImg = img.getName();
-					String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					String timeStampStart =
+							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, timeStampStart);
-					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(img, imp, segmentationParameters, client);
+					NucleusSegmentation nucleusSegmentation =
+							new NucleusSegmentation(img, imp, segmentationParameters, client);
 					nucleusSegmentation.preProcessImage();
 					nucleusSegmentation.findOTSUMaximisingSphericity();
 					nucleusSegmentation.checkBadCrop(img, client);
-
+					
 					nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset); // Upload
-					otsuResultLines.put(img.getId(), nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
+					otsuResultLines.put(img.getId(),
+					                    nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
 					nucleusSegmentation.saveConvexHullSegOMERO(client, convexHullDataset); // Upload
-					convexHullResultLines.put(img.getId(), nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
-
-					timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					convexHullResultLines.put(img.getId(),
+					                          nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
+					
+					timeStampStart =
+							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 					LOGGER.info("End: {} at {}", fileImg, timeStampStart);
-
+					
 					latch.countDown();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
+			
 		}
-
+		
 		class ImageDownloaderOMERO implements Runnable {
-
+			
 			private final ImageWrapper img;
-
-			public ImageDownloaderOMERO(ImageWrapper img) {
+			
+			
+			ImageDownloaderOMERO(ImageWrapper img) {
 				this.img = img;
 			}
-
+			
+			
 			@Override
 			public void run() {
 				try {
 					LOGGER.info("Acquiring image");
-
-					int[] cBound = {0, 0}; // For each image
-					ImagePlus imp = img.toImagePlus(client, null, null, cBound, null, null); // Download image
+					
+					int[]     cBound = {0, 0}; // For each image
+					ImagePlus imp    = img.toImagePlus(client, null, null, cBound, null, null); // Download image
 					
 					processExecutor.submit(new ImageProcessorOMERO(img, imp)); // Pass img to executor
 					upload_latch.countDown();
@@ -515,9 +577,10 @@ public class SegmentationCalling {
 					LOGGER.error("Error downloading image: {}", img.getName(), e);
 				}
 			}
+			
 		}
-
-		for (ImageWrapper img: images) {
+		
+		for (ImageWrapper img : images) {
 			upload_latch.await(3, TimeUnit.SECONDS);
 			downloadExecutor.submit(new ImageDownloaderOMERO(img));
 		}
@@ -527,27 +590,27 @@ public class SegmentationCalling {
 		downloadExecutor.shutdownNow();
 		processExecutor.shutdownNow();
 		
-		StringBuilder otsuInfoBuilder = new StringBuilder();
+		StringBuilder otsuInfoBuilder       = new StringBuilder();
 		StringBuilder convexHullInfoBuilder = new StringBuilder();
-		for (ImageWrapper img: images) {
+		for (ImageWrapper img : images) {
 			/* create results file compatible with OMERO.Parade*/
 			imgDatasetName = client.getDataset(inputID).getName();
 			imgDatasetId = client.getDataset(inputID).getId();
-			otsuInfoBuilder.append(img.getId()+",");
-			otsuInfoBuilder.append(imgDatasetName+",");
+			otsuInfoBuilder.append(img.getId() + ",");
+			otsuInfoBuilder.append(imgDatasetName + ",");
 			otsuInfoBuilder.append(otsuResultLines.get(img.getId()));
-			convexHullInfoBuilder.append(img.getId()+",");
-			convexHullInfoBuilder.append(imgDatasetName+",");
+			convexHullInfoBuilder.append(img.getId() + ",");
+			convexHullInfoBuilder.append(imgDatasetName + ",");
 			convexHullInfoBuilder.append(convexHullResultLines.get(img.getId()));
 		}
-
+		
 		outputInfoParade += otsuInfoBuilder.toString();
 		outputInfoParadeGraham += convexHullInfoBuilder.toString();
-
+		
 		this.outputCropGeneralInfoOTSU += "#Dataset:" + imgDatasetId + "\n" + getResultsColumnNames();
-
+		
 		outputCropGeneralInfoOTSU += otsuInfoBuilder.toString();
-		this.outputCropGeneralInfoConvexHull += "#Dataset:" + imgDatasetId + "\n" +  getResultsColumnNames();
+		this.outputCropGeneralInfoConvexHull += "#Dataset:" + imgDatasetId + "\n" + getResultsColumnNames();
 		outputCropGeneralInfoConvexHull += convexHullInfoBuilder.toString();
 		saveCropGeneralInfoOmero(client, output);
 		return "";
@@ -556,8 +619,8 @@ public class SegmentationCalling {
 	
 	public void saveCropGeneralInfoOmero(Client client, Long output)
 	throws ServiceException, AccessException, ExecutionException, InterruptedException {
-		Date date = new Date() ;
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss") ;
+		Date             date       = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		ProjectWrapper project = client.getProject(output);
@@ -571,32 +634,36 @@ public class SegmentationCalling {
 		              imgDatasetName +
 		              "_" +
 		              "result_Segmentation_OTSU.csv";
-		String pathGraham = "." + File.separator +  dateFormat.format(date)+"_"+imgDatasetName+"_" + "result_Segmentation_GRAHAM.csv";
+		String pathGraham = "." + File.separator +
+		                    dateFormat.format(date) + "_" +
+		                    imgDatasetName + "_" +
+		                    "result_Segmentation_GRAHAM.csv";
 		String pathParade = "." +
 		                    File.separator +
-		                    dateFormat.format(date) +
-		                    "_" +
-		                    imgDatasetName +
-		                    "_" +
+		                    dateFormat.format(date) + "_" +
+		                    imgDatasetName + "_" +
 		                    "result_Segmentation_OTSU_parade.csv";
-		String pathParadeGraham  = "." + File.separator +  dateFormat.format(date) +"_"+imgDatasetName+"_" + "result_Segmentation_GRAHAM_parade.csv";
+		String pathParadeGraham = "." + File.separator +
+		                          dateFormat.format(date) + "_" +
+		                          imgDatasetName + "_" +
+		                          "result_Segmentation_GRAHAM_parade.csv";
 		try {
 			path = new File(path).getCanonicalPath();
 			pathParade = new File(pathParade).getCanonicalPath();
 			pathParadeGraham = new File(pathParadeGraham).getCanonicalPath();
 		} catch (IOException e) {
-			LOGGER.error("Could not get canonical path for:" + path, e);
+			LOGGER.error("Could not get canonical path for: {}", path, e);
 		}
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(path);
 		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, false);
 		/* Create results file for OMERO.Parade */
-		OutputTextFile resultFileOutputParade = new OutputTextFile(pathParade);
+		OutputTextFile resultFileOutputParade       = new OutputTextFile(pathParade);
 		OutputTextFile resultFileOutputParadeGraham = new OutputTextFile(pathParadeGraham);
 		resultFileOutputParade.saveTextFile(this.outputInfoParade, false);
 		resultFileOutputParadeGraham.saveTextFile(this.outputInfoParadeGraham, false);
 		
-		File file = new File(path);
-		File fileParade = new File(pathParade);
+		File file             = new File(path);
+		File fileParade       = new File(pathParade);
 		File fileParadeGraham = new File(pathParadeGraham);
 		dataset.addFile(client, file);
 		/* Put Otsu results file (for OMERO.Parade) in output Project and input dataset*/
@@ -611,16 +678,16 @@ public class SegmentationCalling {
 			Files.deleteIfExists(fileParade.toPath());
 			Files.deleteIfExists(fileParadeGraham.toPath());
 		} catch (IOException e) {
-			LOGGER.error("File not deleted: " + path, e);
+			LOGGER.error("File not deleted: {}", path, e);
 		}
 		
 		if (this.segmentationParameters.getConvexHullDetection()) {
 			LOGGER.info("Saving Convex Hull algorithm results.");
 			try {
 				pathGraham = new File(pathGraham).getCanonicalPath();
-
+				
 			} catch (IOException e) {
-				LOGGER.error("Could not get canonical path for:" + pathGraham, e);
+				LOGGER.error("Could not get canonical path for: {}", pathGraham, e);
 			}
 			dataset = client.getProject(output).getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM).get(0);
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(pathGraham);
@@ -631,7 +698,7 @@ public class SegmentationCalling {
 			try {
 				Files.deleteIfExists(file.toPath());
 			} catch (IOException e) {
-				LOGGER.error("File not deleted: " + pathGraham, e);
+				LOGGER.error("File not deleted: {}", pathGraham, e);
 			}
 		}
 	}
@@ -681,7 +748,7 @@ public class SegmentationCalling {
 		LOGGER.info("End: {}", timeStampStart);
 		
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
-		String path = "." + File.separator + "result_Segmentation_Analyse.csv";
+		String         path    = "." + File.separator + "result_Segmentation_Analyse.csv";
 		try {
 			path = new File(path).getCanonicalPath();
 		} catch (IOException e) {
@@ -708,7 +775,7 @@ public class SegmentationCalling {
 			try {
 				Files.deleteIfExists(file.toPath());
 			} catch (IOException e) {
-				LOGGER.error("File not deleted: " + path, e);
+				LOGGER.error("File not deleted: {}", path, e);
 			}
 		}
 		
@@ -763,9 +830,9 @@ public class SegmentationCalling {
 	
 	
 	public String getResultsColumnNames() {
-		return "Image,"+
+		return "Image," +
 		       "Dataset," +
-				"ImageName," +
+		       "ImageName," +
 		       "Volume," +
 		       "Flatness," +
 		       "Elongation," +
@@ -781,11 +848,12 @@ public class SegmentationCalling {
 		       "MedianIntensityNucleus," +
 		       "MedianIntensityBackground," +
 		       "ImageSize," +
-				"Moment 1," +
-				"Moment 2," +
-				"Moment 3," +
-				"AspectRatio,"+
-				"Circularity," +
-		       "OTSUThreshold,"+"\n";
+		       "Moment 1," +
+		       "Moment 2," +
+		       "Moment 3," +
+		       "AspectRatio," +
+		       "Circularity," +
+		       "OTSUThreshold," + "\n";
 	}
+	
 }

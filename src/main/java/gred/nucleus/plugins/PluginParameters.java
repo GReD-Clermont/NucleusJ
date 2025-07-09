@@ -21,22 +21,22 @@ public class PluginParameters {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	/** Activation of Gaussian Filter */
-	protected boolean gaussianIsOn = false;
 	/** Activation of manual calibration parameter */
-	public boolean manualParameter = false;
+	public    boolean manualParameter;
 	/** X calibration plugin parameter */
-	public double  xCal            = 1;
+	public    double  xCal = 1;
 	/** y calibration plugin parameter */
-	public double  yCal            = 1;
+	public    double  yCal = 1;
 	/** z calibration plugin parameter */
-	public double  zCal            = 1;
+	public    double  zCal = 1;
 	/** Input folder */
-	public String  inputFolder;
+	public    String  inputFolder;
 	/** Output folder */
-	public String  outputFolder;
+	public    String  outputFolder;
 	/** Autocrop parameters information */
-	public String  headerInfo;
+	public    String  headerInfo;
+	/** Activation of Gaussian Filter */
+	protected boolean gaussianIsOn;
 	
 	
 	/** Constructor with default parameter */
@@ -152,7 +152,7 @@ public class PluginParameters {
 			IJ.error(inputFolder + " : can't find the input folder/file !");
 		}
 		if (outputFolder == null) {
-			IJ.error("Output directory is missing");
+			LOGGER.error("Output directory is missing");
 			System.exit(-1);
 		}
 	}
@@ -195,7 +195,7 @@ public class PluginParameters {
 	}
 	
 	
-	public String getAnalysisParametersNodeJ(){
+	public String getAnalysisParametersNodeJ() {
 		this.headerInfo = "#Header \n"
 		                  + "#Start time analysis: " + getLocalTime() + "\n"
 		                  + "#Input folder: " + this.inputFolder + "\n"

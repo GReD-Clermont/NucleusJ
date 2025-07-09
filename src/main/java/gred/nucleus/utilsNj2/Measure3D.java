@@ -47,8 +47,8 @@ public class Measure3D {
 	private final Map<Double, Integer> segmentedNucleusHisto = new TreeMap<>();
 	private final Map<Double, Integer> backgroundHisto       = new TreeMap<>();
 	
-	private ImagePlus imageSeg = null;
-	private ImagePlus rawImage = null;
+	private ImagePlus imageSeg;
+	private ImagePlus rawImage;
 	
 	private double xCal;
 	private double yCal;
@@ -72,7 +72,7 @@ public class Measure3D {
 		this.xCal = xCal;
 		this.yCal = ycal;
 		this.zCal = zCal;
-		this.histogramSegmentedNucleus();
+		histogramSegmentedNucleus();
 	}
 	
 	
@@ -222,13 +222,13 @@ public class Measure3D {
 		int    compteur = 0;
 		double voxelValue;
 		for (int k = 0; k < imageSeg.getStackSize(); ++k) {
-			double dz = zCal * (double) k - barycenter.getK();
+			double dz = zCal * k - barycenter.getK();
 			for (int i = 0; i < imageSeg.getWidth(); ++i) {
-				double dx = xCal * (double) i - barycenter.getI();
+				double dx = xCal * i - barycenter.getI();
 				for (int j = 0; j < imageSeg.getHeight(); ++j) {
 					voxelValue = imageStackInput.getVoxel(i, j, k);
 					if (voxelValue == label) {
-						double dy = yCal * (double) j - barycenter.getJ();
+						double dy = yCal * j - barycenter.getJ();
 						xx += dx * dx;
 						yy += dy * dy;
 						zz += dz * dz;
@@ -519,8 +519,7 @@ public class Measure3D {
 							segmentedNucleusHisto.put(imageStackRaw.getVoxel(i, j, k), 1);
 						}
 					} else {
-						if (backgroundHisto.containsKey(
-								imageStackRaw.getVoxel(i, j, k))) {
+						if (backgroundHisto.containsKey(imageStackRaw.getVoxel(i, j, k))) {
 							backgroundHisto.put(imageStackRaw.getVoxel(i, j, k),
 							                    backgroundHisto.get(imageStackRaw.getVoxel(i, j, k)) + 1);
 						} else {

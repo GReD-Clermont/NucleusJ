@@ -17,7 +17,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -31,13 +30,13 @@ public class MainGui extends JFrame {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private JButton autocropButton            = new JButton("Autocrop");
-	private JButton segmentationButton        = new JButton("Segmentation");
-	private JButton overlayButton             = new JButton("Overlay");
-	private JButton nodeJButton               = new JButton("NODeJ");
-	private JButton cropFromCoordinatesButton = new JButton("Crop From Coordinates");
-	private JButton computeParametersButton   = new JButton("Compute Parameters Nuc");
-	private JButton computeCcParametersButton = new JButton("Compute Parameters Spots");
+	private final JButton autocropButton            = new JButton("Autocrop");
+	private final JButton segmentationButton        = new JButton("Segmentation");
+	private final JButton overlayButton             = new JButton("Overlay");
+	private final JButton nodeJButton               = new JButton("NODeJ");
+	private final JButton cropFromCoordinatesButton = new JButton("Crop From Coordinates");
+	private final JButton computeParametersButton   = new JButton("Compute Parameters Nuc");
+	private final JButton computeCcParametersButton = new JButton("Compute Parameters Spots");
 	
 	
 	public MainGui() {
@@ -56,46 +55,54 @@ public class MainGui extends JFrame {
 		
 		JLabel welcomeLabel = new JLabel("Welcome to NJ !");
 		
-		localPanel.add(welcomeLabel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                    GridBagConstraints.FIRST_LINE_START,
-		                                                    GridBagConstraints.HORIZONTAL,
-		                                                    new Insets(0, 60, 0, 0), 0, 0));
+		localPanel.add(welcomeLabel,
+		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(0, 60, 0, 0), 0, 0));
 		
-		localPanel.add(autocropButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                      GridBagConstraints.FIRST_LINE_START,
-		                                                      GridBagConstraints.HORIZONTAL,
-		                                                      new Insets(40, 30, 0, 0), 120, 0));
+		localPanel.add(autocropButton,
+		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(40, 30, 0, 0), 120, 0));
 		
 		
-		localPanel.add(segmentationButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                          GridBagConstraints.FIRST_LINE_START,
-		                                                          GridBagConstraints.HORIZONTAL,
-		                                                          new Insets(80, 30, 0, 0), 85, 0));
+		localPanel.add(segmentationButton,
+		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(80, 30, 0, 0), 85, 0));
 		
-		localPanel.add(cropFromCoordinatesButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                                 GridBagConstraints.FIRST_LINE_START,
-		                                                                 GridBagConstraints.HORIZONTAL,
-		                                                                 new Insets(120, 30, 0, 0), 20, 0));
+		localPanel.add(cropFromCoordinatesButton,
+		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(120, 30, 0, 0), 20, 0));
 		
-		localPanel.add(overlayButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                     GridBagConstraints.FIRST_LINE_START,
-		                                                     GridBagConstraints.HORIZONTAL,
-		                                                     new Insets(160, 30, 0, 0), 130, 0));
+		localPanel.add(overlayButton,
+		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(160, 30, 0, 0), 130, 0));
 		
-		localPanel.add(computeParametersButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                               GridBagConstraints.FIRST_LINE_START,
-		                                                               GridBagConstraints.HORIZONTAL,
-		                                                               new Insets(200, 30, 0, 0), 35, 0));
+		localPanel.add(computeParametersButton,
+		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(200, 30, 0, 0), 35, 0));
 		
-		localPanel.add(nodeJButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                   GridBagConstraints.FIRST_LINE_START,
-		                                                   GridBagConstraints.HORIZONTAL,
-		                                                   new Insets(240, 30, 0, 0), 140, 0));
+		localPanel.add(nodeJButton,
+		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(240, 30, 0, 0), 140, 0));
 		
-		localPanel.add(computeCcParametersButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                                 GridBagConstraints.FIRST_LINE_START,
-		                                                                 GridBagConstraints.HORIZONTAL,
-		                                                                 new Insets(280, 30, 0, 0), 12, 0));
+		localPanel.add(computeCcParametersButton,
+		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(280, 30, 0, 0), 12, 0));
 		
 		container.add(localPanel, 0);
 		

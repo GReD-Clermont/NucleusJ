@@ -50,11 +50,11 @@ import java.util.concurrent.ExecutionException;
  * @author Tristan Dubos and Axel Poulet
  */
 public class NucleusSegmentation {
+	/** Currently used algorithm to calculate nuclei convex hull */
+	public static final String CONVEX_HULL_ALGORITHM = "GRAHAM";
+	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-	
-	/** Currently used algorithm to calculate nuclei convex hull*/
-	public static final String CONVEX_HULL_ALGORITHM = "GRAHAM";
 	
 	/** Segmentation parameters for the analysis */
 	private final SegmentationParameters segmentationParameters;
@@ -72,7 +72,7 @@ public class NucleusSegmentation {
 	/** ImagePlus input to process */
 	private       ImagePlus              imgRaw;
 	/** Check if the segmentation is not in border */
-	private       boolean                badCrop       = false;
+	private       boolean                badCrop;
 	/** Current image analysed */
 	private       File                   currentFile;
 	/** String containing the output prefix */
@@ -130,13 +130,14 @@ public class NucleusSegmentation {
 		Directory dirOutputOTSU = new Directory(this.segmentationParameters.getOutputFolder() + "OTSU");
 		dirOutputOTSU.checkAndCreateDir();
 		if (this.segmentationParameters.getConvexHullDetection()) {
-			Directory dirOutputConvexHull = new Directory(this.segmentationParameters.getOutputFolder() + NucleusSegmentation.CONVEX_HULL_ALGORITHM);
+			Directory dirOutputConvexHull = new Directory(this.segmentationParameters.getOutputFolder() +
+			                                              CONVEX_HULL_ALGORITHM);
 			dirOutputConvexHull.checkAndCreateDir();
 		}
 	}
 	
-
-	public NucleusSegmentation(ImageWrapper image,  SegmentationParameters segmentationParameters, Client client)
+	
+	public NucleusSegmentation(ImageWrapper image, SegmentationParameters segmentationParameters, Client client)
 	throws ServiceException, AccessException, ExecutionException {
 		this.segmentationParameters = segmentationParameters;
 		
@@ -150,7 +151,8 @@ public class NucleusSegmentation {
 	
 	
 	// Changed HERE TO RETRIEVE ONLY ID, ALLOWING MULTI THREADING DOWNLOAD
-	public NucleusSegmentation(ImageWrapper image, ImagePlus imp,  SegmentationParameters segmentationParameters, Client client) {
+	public NucleusSegmentation(ImageWrapper image, ImagePlus imp, SegmentationParameters segmentationParameters,
+	                           Client client) {
 		this.segmentationParameters = segmentationParameters;
 		
 		this.imgRaw = imp;
@@ -273,8 +275,8 @@ public class NucleusSegmentation {
 		                     this.imgRaw.getHeight() * this.imgRaw.getStackSize();
 		Gradient gradient       = new Gradient(this.imgRaw);
 		double   bestSphericity = -1;
-		List<Integer> arrayListThreshold = computeMinMaxThreshold(
-				this.imgRawTransformed);  // methode OTSU
+		
+		List<Integer> arrayListThreshold = computeMinMaxThreshold(this.imgRawTransformed);  // methode OTSU
 		for (int t = arrayListThreshold.get(0); t <= arrayListThreshold.get(1); ++t) {
 			ImagePlus tempSeg;
 			tempSeg = generateSegmentedImage(this.imgRawTransformed, t);
@@ -379,15 +381,15 @@ public class NucleusSegmentation {
 	 */
 	@Deprecated
 	public ImagePlus applySegmentation(ImagePlus imagePlusInput) {
-		double       sphericityMax = -1.0;
-		double       sphericity;
-		double       volume;
-		final double xCalibration  = getXCalibration();
-		final double yCalibration  = getYCalibration();
-		final double zCalibration  = getZCalibration();
-		final double imageVolume = xCalibration * imagePlusInput.getWidth() *
-		                           yCalibration * imagePlusInput.getHeight() *
-		                           zCalibration * imagePlusInput.getStackSize();
+		double sphericityMax = -1.0;
+		double sphericity;
+		double volume;
+		double xCalibration  = getXCalibration();
+		double yCalibration  = getYCalibration();
+		double zCalibration  = getZCalibration();
+		double imageVolume = xCalibration * imagePlusInput.getWidth() *
+		                     yCalibration * imagePlusInput.getHeight() *
+		                     zCalibration * imagePlusInput.getStackSize();
 		Calibration   calibration        = imagePlusInput.getCalibration();
 		Measure3D     measure            = new Measure3D(xCalibration, yCalibration, zCalibration);
 		Gradient      gradient           = new Gradient(imagePlusInput);
@@ -404,9 +406,8 @@ public class NucleusSegmentation {
 			boolean lastStack  = isVoxelThresholded(imagePlusSegmentedTemp, 255, imagePlusInput.getStackSize() - 1);
 			
 			if (testRelativeObjectVolume(volume, imageVolume) &&
-			    volume >= vMin &&
-			    volume <= vMax && !firstStack
-			    && !lastStack) {
+			    volume >= vMin && volume <= vMax &&
+			    !firstStack && !lastStack) {
 				sphericity = measure.computeSphericity(volume,
 				                                       measure.computeComplexSurface(imagePlusSegmentedTemp,
 				                                                                     gradient));
@@ -420,7 +421,9 @@ public class NucleusSegmentation {
 			}
 		}
 		
-		if (bestThreshold != -1) morphologicalCorrection(imagePlusSegmented);
+		if (bestThreshold != -1) {
+			morphologicalCorrection(imagePlusSegmented);
+		}
 		
 		checkBorder(imagePlusSegmented);
 		
@@ -582,16 +585,8 @@ public class NucleusSegmentation {
 	 */
 	private void computeClosing(ImagePlus imagePlusInput) {
 		ImageStack imageStackInput = imagePlusInput.getImageStack();
-		imageStackInput = Filters3D.filter(imageStackInput,
-		                                   Filters3D.MAX,
-		                                   1,
-		                                   1,
-		                                   (float) 0.5);
-		imageStackInput = Filters3D.filter(imageStackInput,
-		                                   Filters3D.MIN,
-		                                   1,
-		                                   1,
-		                                   (float) 0.5);
+		imageStackInput = Filters3D.filter(imageStackInput, Filters3D.MAX, 1, 1, 0.5f);
+		imageStackInput = Filters3D.filter(imageStackInput, Filters3D.MIN, 1, 1, 0.5f);
 		imagePlusInput.setStack(imageStackInput);
 	}
 	
@@ -629,7 +624,7 @@ public class NucleusSegmentation {
 	 * @return boolean if ratio object/image > 70% return false else return true
 	 */
 	private boolean testRelativeObjectVolume(double objectVolume, double imageVolume) {
-		final double ratio = objectVolume / imageVolume * 100;
+		double ratio = objectVolume / imageVolume * 100;
 		return ratio < 70;
 	}
 	
@@ -768,7 +763,9 @@ public class NucleusSegmentation {
 				File    fileToMove = new File(inputPathDir + File.separator + this.imgRawTransformed.getTitle());
 				File    newFile    = new File(badCropFolder + File.separator + this.imgRawTransformed.getTitle());
 				boolean renamed    = fileToMove.renameTo(newFile);
-				if (!renamed) LOGGER.info("File not renamed: {}", fileToMove.getAbsolutePath());
+				if (!renamed) {
+					LOGGER.info("File not renamed: {}", fileToMove.getAbsolutePath());
+				}
 			} else {
 				LOGGER.error("Directory does not exist and could not be created: {}", badCropFolder);
 			}
@@ -853,9 +850,10 @@ public class NucleusSegmentation {
 	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
 		LOGGER.info("Computing and saving OTSU segmentation.");
 		if (!badCrop && bestThreshold != -1) {
-			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + "OTSU"
-			              + File.separator  + this.imageSeg[0].getTitle();
-			saveFile(this.imageSeg[0], path);
+			String path = new java.io.File(".").getCanonicalPath() +
+			              // File.separator + "OTSU" +
+			              File.separator + imageSeg[0].getTitle();
+			saveFile(imageSeg[0], path);
 			
 			client.getDataset(output).importImages(client, path);
 			
@@ -869,7 +867,6 @@ public class NucleusSegmentation {
 	}
 	
 	
-	
 	/**
 	 * Method to save the OTSU segmented image.
 	 * <p> TODO verifier cette methode si elle est à sa place
@@ -880,7 +877,7 @@ public class NucleusSegmentation {
 			ConvexHullSegmentation nuc = new ConvexHullSegmentation();
 			this.imageSeg[0] = nuc.convexHullDetection(this.imageSeg[0], this.segmentationParameters);
 			String pathConvexHullSeg = this.segmentationParameters.getOutputFolder() +
-			                     CONVEX_HULL_ALGORITHM + File.separator + this.imageSeg[0].getTitle();
+			                           CONVEX_HULL_ALGORITHM + File.separator + this.imageSeg[0].getTitle();
 			this.imageSeg[0].setTitle(pathConvexHullSeg);
 			saveFile(this.imageSeg[0], pathConvexHullSeg);
 		}
@@ -932,8 +929,8 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Method to get the parameter of the 3D parameters image segmented using convex hull algorithm if the object can't be
-	 * segmented return -1 for parameters.
+	 * Method to get the parameter of the 3D parameters image segmented using convex hull algorithm if the object can't
+	 * be segmented return -1 for parameters.
 	 * <p> TODO verifier DUPLICATION DE getImageCropInfoOTSU à sa place ?
 	 *
 	 * @return

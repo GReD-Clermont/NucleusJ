@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 class SegmentationTest {
 	public static final String PATH_TO_SEGMENTATION = "test-images" + File.separator + "segmentation" + File.separator;
-	public static final String PATH_TO_OUTPUT = PATH_TO_SEGMENTATION + "output" + File.separator;
+	public static final String PATH_TO_OUTPUT       = PATH_TO_SEGMENTATION + "output" + File.separator;
 	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());

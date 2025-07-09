@@ -37,8 +37,10 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	 * Logger
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
 	private DatasetWrapper toCropDataset;
-	CropFromCoordinatesDialog cropFromCoordinatesDialog;
+	
+	private CropFromCoordinatesDialog cropFromCoordinatesDialog;
 	
 	
 	public static void cropFromCoordinates(String coordinateDir) throws IOException, FormatException {
@@ -99,14 +101,17 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		return client;
 	}
 	
-	private void cropImageFromOMERO2(Client client, ImageWrapper image,ImageWrapper imageToCrop, DatasetWrapper outputDataset, int c)
+	
+	private void cropImageFromOMERO2(Client client, ImageWrapper image, ImageWrapper imageToCrop,
+	                                 DatasetWrapper outputDataset, int c)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
-		List<ROIWrapper> rois = image.getROIs(client);
+		List<ROIWrapper>     rois   = image.getROIs(client);
 		List<ChannelWrapper> canaux = imageToCrop.getChannels(client);
-		if(c>canaux.size()-1){
-			System.out.println("Channel doesn't exists, there are only "+ canaux.size()+" channels, first channel index is 0 !");
-		}else {
-			System.out.println("Number of channels detected : "+canaux.size());
+		if (c > canaux.size() - 1) {
+			System.out.println("Channel doesn't exists, there are only " + canaux.size() +
+			                   " channels, first channel index is 0 !");
+		} else {
+			System.out.println("Number of channels detected : " + canaux.size());
 			for (ROIWrapper roi : rois) {
 				// Get the roi names
 				String ROIName = roi.getName();
@@ -129,7 +134,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 				FilesNames outPutFilesNames = new FilesNames(imageToCropName);
 				String     prefix           = outPutFilesNames.prefixNameFile();
 				// Rename the temporary file same as toCrop Image name
-				File toCropNewName = new File(prefix +"_"+ROIName+ "_C" +c);
+				File toCropNewName = new File(prefix + "_" + ROIName + "_C" + c);
 				resultFile.renameTo(toCropNewName);
 				String toCropFile = toCropNewName.toString();
 				// Import Cropped Image to the Dataset
@@ -140,7 +145,9 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		}
 	}
 	
-	private void cropImageFromOMERO(Client client, ImageWrapper image,ImageWrapper imageToCrop, DatasetWrapper outputDataset)
+	
+	private void cropImageFromOMERO(Client client, ImageWrapper image, ImageWrapper imageToCrop,
+	                                DatasetWrapper outputDataset)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		List<ROIWrapper> rois = image.getROIs(client);
 		for (ROIWrapper roi : rois) {
@@ -172,6 +179,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		}
 	}
 	
+	
 	public void runOMERO() throws AccessException, ServiceException, ExecutionException {
 		// Check connection
 		String hostname = cropFromCoordinatesDialog.getHostname();
@@ -180,29 +188,29 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		String password = cropFromCoordinatesDialog.getPassword();
 		String group    = cropFromCoordinatesDialog.getGroup();
 		String output   = cropFromCoordinatesDialog.getOutputProject();
-		int channel = Integer.parseInt(cropFromCoordinatesDialog.getChannelToCrop());
+		int    channel  = Integer.parseInt(cropFromCoordinatesDialog.getChannelToCrop());
 		
 		Prefs.set("omero.host", hostname);
 		Prefs.set("omero.port", port);
 		Prefs.set("omero.user", username);
 		
-		Client client   = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
 		
 		// Handle the source according to the type given
-		String sourceDataType = cropFromCoordinatesDialog.getDataType();
-		String ToCropdataType = cropFromCoordinatesDialog.getDataTypeToCrop();
-		Long   inputID  = Long.valueOf(cropFromCoordinatesDialog.getSourceID());
-		Long   inputToCropID  = Long.valueOf(cropFromCoordinatesDialog.getToCropID());
-		DatasetWrapper outputds = client.getDataset(Long.parseLong(output));
+		String         sourceDataType = cropFromCoordinatesDialog.getDataType();
+		String         ToCropdataType = cropFromCoordinatesDialog.getDataTypeToCrop();
+		Long           inputID        = Long.valueOf(cropFromCoordinatesDialog.getSourceID());
+		Long           inputToCropID  = Long.valueOf(cropFromCoordinatesDialog.getToCropID());
+		DatasetWrapper outputds       = client.getDataset(Long.parseLong(output));
 		
 		try {
-			if ("Image".equals(sourceDataType) && "Image".equals(ToCropdataType) ) {
-				ImageWrapper image      = client.getImage(inputID);
-				ImageWrapper imageToCrop      = client.getImage(inputToCropID);
-			
+			if ("Image".equals(sourceDataType) && "Image".equals(ToCropdataType)) {
+				ImageWrapper image       = client.getImage(inputID);
+				ImageWrapper imageToCrop = client.getImage(inputToCropID);
+				
 				try {
 					LOGGER.info("Begin Autocrop from coordinate process ");
-					cropImageFromOMERO2(client, image, imageToCrop, outputds,channel); // Run cropFromCoordinates
+					cropImageFromOMERO2(client, image, imageToCrop, outputds, channel); // Run cropFromCoordinates
 					LOGGER.info("Autocrop from coordinate process has ended successfully");
 				} catch (Exception e) {
 					LOGGER.info("Autocrop from coordinate process has failed");
@@ -222,8 +230,8 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 				try {
 					LOGGER.info("Begin Autocrop from coordinate process ");
 					for (ImageWrapper sourceImage : sourceImages) {
-						String sourceImageName = sourceImage.getName();
-						List<ImageWrapper> toCropImages = toCropDataset.getImages(client, sourceImageName);
+						String             sourceImageName = sourceImage.getName();
+						List<ImageWrapper> toCropImages    = toCropDataset.getImages(client, sourceImageName);
 						if (!toCropImages.isEmpty()) {
 							ImageWrapper toCropImage = toCropImages.get(0);
 							cropImageFromOMERO(client, sourceImage, toCropImage, outputds); // Run cropFromCoordinates

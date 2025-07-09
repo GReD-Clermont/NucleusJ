@@ -7,12 +7,10 @@ import gred.nucleus.autocrop.GenerateOverlay;
 import gred.nucleus.autocrop.GenerateProjectionFromCoordinates;
 import gred.nucleus.core.ComputeNucleiParameters;
 import gred.nucleus.machinelearning.ComputeNucleiParametersML;
-import gred.nucleus.segmentation.SegmentationCalling;
-import gred.nucleus.segmentation.SegmentationParameters;
-
 import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.process.ChromocenterCalling;
-
+import gred.nucleus.segmentation.SegmentationCalling;
+import gred.nucleus.segmentation.SegmentationParameters;
 import loci.formats.FormatException;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
@@ -83,41 +81,45 @@ public class CLIRunAction {
 		if (this.cmd.hasOption("noC")) {
 			chromocenterParameters.noChange = true;
 		}
-		if (this.cmd.hasOption("gX")){
-			chromocenterParameters.gaussianBlurXsigma =  parseDouble(cmd.getOptionValue("gX"));
+		if (this.cmd.hasOption("gX")) {
+			chromocenterParameters.gaussianBlurXsigma = parseDouble(cmd.getOptionValue("gX"));
 		}
-		if (this.cmd.hasOption("gY")){
-			chromocenterParameters.gaussianBlurYsigma =  parseDouble(cmd.getOptionValue("gY"));
+		if (this.cmd.hasOption("gY")) {
+			chromocenterParameters.gaussianBlurYsigma = parseDouble(cmd.getOptionValue("gY"));
 		}
-		if (this.cmd.hasOption("gZ")){
-			chromocenterParameters.gaussianBlurZsigma =  parseDouble(cmd.getOptionValue("gZ"));
+		if (this.cmd.hasOption("gZ")) {
+			chromocenterParameters.gaussianBlurZsigma = parseDouble(cmd.getOptionValue("gZ"));
 		}
-		if (this.cmd.hasOption("min")){
-			chromocenterParameters.minSizeConnectedComponent =  parseDouble(cmd.getOptionValue("min"));
+		if (this.cmd.hasOption("min")) {
+			chromocenterParameters.minSizeConnectedComponent = parseDouble(cmd.getOptionValue("min"));
 		}
-		if (this.cmd.hasOption("max")){
-			chromocenterParameters.maxSizeConnectedComponent =  parseDouble(cmd.getOptionValue("max"));
+		if (this.cmd.hasOption("max")) {
+			chromocenterParameters.maxSizeConnectedComponent = parseDouble(cmd.getOptionValue("max"));
 		}
-		if (this.cmd.hasOption("f")){
-			chromocenterParameters.factor =  parseDouble(cmd.getOptionValue("f"));
+		if (this.cmd.hasOption("f")) {
+			chromocenterParameters.factor = parseDouble(cmd.getOptionValue("f"));
 		}
-		if (this.cmd.hasOption("n")){
-			chromocenterParameters.neighbours =  parseInt(cmd.getOptionValue("n"));
+		if (this.cmd.hasOption("n")) {
+			chromocenterParameters.neighbours = parseInt(cmd.getOptionValue("n"));
 		}
 		
-		ChromocenterCalling ccCalling= new ChromocenterCalling(chromocenterParameters);
+		ChromocenterCalling ccCalling = new ChromocenterCalling(chromocenterParameters);
 		try {
-			System.out.println("-input " + chromocenterParameters.inputFolder + " -input2 " + chromocenterParameters.segInputFolder + " - " + chromocenterParameters.outputFolder);
+			LOGGER.info("-input {} -input2 {} - {}",
+			            chromocenterParameters.inputFolder,
+			            chromocenterParameters.segInputFolder,
+			            chromocenterParameters.outputFolder);
 			ccCalling.runSeveralImages2();
 		} catch (IOException | FormatException e) {
 			LOGGER.error("An error occurred during chromocenter segmentation.", e);
 		}
 		LOGGER.info("End !!! Results available: {}", chromocenterParameters.outputFolder);
-		
 	}
+	
+	
 	private void runGenerateOV() throws IOException {
 		GenerateOverlay ov = new GenerateOverlay(this.cmd.getOptionValue("input"),
-												 this.cmd.getOptionValue("input2"));
+		                                         this.cmd.getOptionValue("input2"));
 		ov.run();
 	}
 	
@@ -128,7 +130,6 @@ public class CLIRunAction {
 		                                                                  this.cmd.getOptionValue("output"));
 		cropFromCoordinates.run();
 	}
-
 	
 	
 	private void runProjectionFromCoordinates()
@@ -162,7 +163,7 @@ public class CLIRunAction {
 			autoCrop.saveGeneralInfo();
 		} else {
 			AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
-			if(this.cmd.hasOption("threads")) {
+			if (this.cmd.hasOption("threads")) {
 				autoCrop.setExecutorThreads(parseInt(this.cmd.getOptionValue("threads")));
 			}
 			autoCrop.runFolder();
@@ -171,8 +172,8 @@ public class CLIRunAction {
 	
 	
 	private void runSegmentation() throws FormatException {
-		SegmentationParameters segmentationParameters =
-				new SegmentationParameters(this.cmd.getOptionValue("input"), this.cmd.getOptionValue("output"));
+		SegmentationParameters segmentationParameters = new SegmentationParameters(this.cmd.getOptionValue("input"),
+		                                                                           this.cmd.getOptionValue("output"));
 		if (this.cmd.hasOption("config")) {
 			segmentationParameters.addGeneralProperties(this.cmd.getOptionValue("config"));
 			segmentationParameters.addProperties(this.cmd.getOptionValue("config"));
@@ -192,7 +193,7 @@ public class CLIRunAction {
 		} else {
 			SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
 			try {
-				if(this.cmd.hasOption("threads")) {
+				if (this.cmd.hasOption("threads")) {
 					otsuModified.setExecutorThreads(parseInt(this.cmd.getOptionValue("threads")));
 				}
 				String log = otsuModified.runSeveralImages2();
@@ -209,7 +210,9 @@ public class CLIRunAction {
 	private void runComputeNucleiParameters() {
 		ComputeNucleiParameters generateParameters = new ComputeNucleiParameters(this.cmd.getOptionValue("input"),
 		                                                                         this.cmd.getOptionValue("input2"));
-		if (this.cmd.hasOption("config")) generateParameters.addConfigParameters(this.cmd.getOptionValue("config"));
+		if (this.cmd.hasOption("config")) {
+			generateParameters.addConfigParameters(this.cmd.getOptionValue("config"));
+		}
 		generateParameters.run();
 	}
 	

@@ -19,6 +19,13 @@ import gred.nucleus.utils.Voxel;
  */
 public class ComponentInfo {
 	
+	/**
+	 * Voxel representative of the component (one voxel in the component) Currently, this representative has minimal
+	 * depth Z
+	 * <p> TODO extend usage using a comparison predicate possibly other that comparing depth.
+	 */
+	private final Voxel voxelRepresentant;
+	
 	/** Label (ID) of the connected component (i.e. color in the labels image array) */
 	private int label;
 	
@@ -27,13 +34,6 @@ public class ComponentInfo {
 	 * threshold size or border components exclusion)
 	 */
 	private int numberOfPoints;
-	
-	/**
-	 * Voxel representative of the component (one voxel in the component) Currently, this representative has minimal
-	 * depth Z
-	 * <p> TODO extend usage using a comparison predicate possibly other that comparing depth.
-	 */
-	private final Voxel voxelRepresentant;
 	
 	/**
 	 * Flag indicating whether the connected component touches the edge of the image. (allows filtering out connected
@@ -131,11 +131,6 @@ public class ComponentInfo {
 	}
 	
 	
-	/**
-	 * @return a human readable string representation of this instance
-	 *
-	 * @see Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "Component label : " + this.label + ", Number of points : " + this.numberOfPoints;

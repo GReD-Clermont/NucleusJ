@@ -106,7 +106,7 @@ public class AutocropImageIntegration {
 		LOGGER.info("The program ended normally.");
 		
 		LOGGER.info("Total memory (bytes): {}",
-		            Runtime.getRuntime().totalMemory() * 1e-9);
+		            Runtime.getRuntime().totalMemory() * 1.0e-9);
 	}
 	
 }

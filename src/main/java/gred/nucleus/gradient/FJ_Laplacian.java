@@ -12,27 +12,32 @@ import imagescience.utility.Progressor;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.Point;
 import java.awt.Panel;
+import java.awt.Point;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 
 public class FJ_Laplacian implements PlugIn, WindowListener {
 	
-	private static boolean compute   = true;
-	private static boolean zeroCross = false;
+	private static final Point pos = new Point(-1, -1);
+	
+	private static boolean compute = true;
+	private static boolean zeroCross;
 	
 	private static String scale = "1.0";
-	
-	private static final Point pos = new Point(-1, -1);
 	
 	
 	public void run(String arg) {
 		
-		if (!FJ.libCheck()) return;
-		final ImagePlus imp = FJ.imageplus();
-		if (imp == null) return;
+		if (!FJ.libCheck()) {
+			return;
+		}
+		
+		ImagePlus imp = FJ.imageplus();
+		if (imp == null) {
+			return;
+		}
 		
 		FJ.log(FJ.name() + " " + FJ.version() + ": Laplacian");
 		
@@ -52,7 +57,9 @@ public class FJ_Laplacian implements PlugIn, WindowListener {
 		gd.addWindowListener(this);
 		gd.showDialog();
 		
-		if (gd.wasCanceled()) return;
+		if (gd.wasCanceled()) {
+			return;
+		}
 		
 		compute = gd.getNextBoolean();
 		scale = gd.getNextString();
@@ -62,70 +69,66 @@ public class FJ_Laplacian implements PlugIn, WindowListener {
 	}
 	
 	
-	public void windowActivated(final WindowEvent e) {
+	public void windowActivated(WindowEvent e) {
 	}
 	
 	
-	public void windowClosed(final WindowEvent e) {
+	public void windowClosed(WindowEvent e) {
 		
 		pos.x = e.getWindow().getX();
 		pos.y = e.getWindow().getY();
 	}
 	
 	
-	public void windowClosing(final WindowEvent e) {
+	public void windowClosing(WindowEvent e) {
 	}
 	
 	
-	public void windowDeactivated(final WindowEvent e) {
+	public void windowDeactivated(WindowEvent e) {
 	}
 	
 	
-	public void windowDeiconified(final WindowEvent e) {
+	public void windowDeiconified(WindowEvent e) {
 	}
 	
 	
-	public void windowIconified(final WindowEvent e) {
+	public void windowIconified(WindowEvent e) {
 	}
 	
 	
-	public void windowOpened(final WindowEvent e) {
+	public void windowOpened(WindowEvent e) {
 	}
 	
 }
 
 class FJLaplacian {
 	
-	void run(
-			final ImagePlus imp,
-			final boolean compute,
-			final String scale,
-			final boolean zeroCross
-	        ) {
-		
+	void run(ImagePlus imp, boolean compute, String scale, boolean zeroCross) {
 		try {
 			double scaleVal;
 			try {
 				scaleVal = Double.parseDouble(scale);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid smoothing scale value");
 			}
 			
-			final Image img    = Image.wrap(imp);
-			Image       newImg = new FloatImage(img);
+			Image img    = Image.wrap(imp);
+			Image newImg = new FloatImage(img);
 			
 			double[] pls = {0, 1};
 			int      pl  = 0;
 			if (compute && zeroCross) {
 				pls = new double[]{0, 0.95, 1};
 			}
-			final Progressor progressor = new Progressor();
+			Progressor progressor = new Progressor();
 			progressor.display(FJ_Options.pgs);
 			
 			if (compute) {
-				final Aspects aspects = newImg.aspects();
-				if (!FJ_Options.isotropic) newImg.aspects(new Aspects());
-				final Laplacian laplace = new Laplacian();
+				Aspects aspects = newImg.aspects();
+				if (!FJ_Options.isotropic) {
+					newImg.aspects(new Aspects());
+				}
+				Laplacian laplace = new Laplacian();
 				++pl;
 				progressor.range(pls[pl], pls[pl]);
 				laplace.progressor.parent(progressor);
@@ -136,7 +139,7 @@ class FJLaplacian {
 			}
 			
 			if (zeroCross) {
-				final ZeroCrosser zc = new ZeroCrosser();
+				ZeroCrosser zc = new ZeroCrosser();
 				++pl;
 				progressor.range(pls[pl], pls[pl]);
 				zc.progressor.parent(progressor);
@@ -147,16 +150,12 @@ class FJLaplacian {
 			
 			FJ.show(newImg, imp);
 			FJ.close(imp);
-			
 		} catch (OutOfMemoryError e) {
 			FJ.error("Not enough memory for this operation");
-			
 		} catch (IllegalArgumentException | IllegalStateException e) {
 			FJ.error(e.getMessage());
-			
 		} catch (Exception e) {
 			FJ.error("An unidentified error occurred while running the plugin");
-			
 		}
 	}
 	

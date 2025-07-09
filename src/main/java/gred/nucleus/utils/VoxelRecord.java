@@ -24,7 +24,12 @@ public class VoxelRecord {
 		this.j = j;
 		this.k = k;
 	}
-	public void Multiplie (double a, double b, double c ) {  this.setLocation(this.i*a,this.j*b, this.k*c); }
+	
+	
+	public void Multiplie(double a, double b, double c) {
+		this.setLocation(this.i * a, this.j * b, this.k * c);
+	}
+	
 	
 	/**
 	 * Returns the x coordinates of a voxel

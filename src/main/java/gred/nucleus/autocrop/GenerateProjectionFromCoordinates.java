@@ -32,11 +32,13 @@ public class GenerateProjectionFromCoordinates {
 	/**
 	 * Constructor
 	 *
-	 * @param pathToConvexHullSeg     path to segmented image's folder
-	 * @param pathToZProjection path to Zprojection image's from autocrop
-	 * @param pathToCoordinates path to coordinates files from autocrop
+	 * @param pathToConvexHullSeg path to segmented image's folder
+	 * @param pathToZProjection   path to Zprojection image's from autocrop
+	 * @param pathToCoordinates   path to coordinates files from autocrop
 	 */
-	public GenerateProjectionFromCoordinates(String pathToCoordinates, String pathToConvexHullSeg, String pathToZProjection) {
+	public GenerateProjectionFromCoordinates(String pathToCoordinates,
+	                                         String pathToConvexHullSeg,
+	                                         String pathToZProjection) {
 		this.pathToConvexHullSeg = pathToConvexHullSeg;
 		this.pathToZProjection = pathToZProjection;
 		this.pathToCoordinates = pathToCoordinates;
@@ -68,8 +70,8 @@ public class GenerateProjectionFromCoordinates {
 		try (Scanner scanner = new Scanner(boxFile)) {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
-
-				if(Pattern.matches("^((.*(\\\\|/))+)[^\\t]*(\\t\\d*)+\\d+$", line)){
+				
+				if (Pattern.matches("^((.*(\\\\|/))+)[^\\t]*(\\t\\d*)+\\d+$", line)) {
 					String[] splitLine = line.split("\\t");
 					String[] fileName  = splitLine[0].split(Pattern.quote(File.separator));
 					int      xMax      = Integer.parseInt(splitLine[3]) + Integer.parseInt(splitLine[6]);
@@ -101,8 +103,8 @@ public class GenerateProjectionFromCoordinates {
 	
 	
 	/**
-	 * Run new annotation of Zprojection, color in red nuclei which were filtered (in case of convex hull algorithm color in red
-	 * nuclei which doesn't pass the segmentation most of case Z truncated )
+	 * Run new annotation of Zprojection, color in red nuclei which were filtered (in case of convex hull algorithm
+	 * color in red nuclei which doesn't pass the segmentation most of case Z truncated )
 	 *
 	 * @throws IOException
 	 * @throws FormatException
@@ -189,5 +191,5 @@ public class GenerateProjectionFromCoordinates {
 			annotateAutoCrop.run();
 		}
 	}
-
+	
 }

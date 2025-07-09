@@ -9,7 +9,8 @@ import ij.process.ImageProcessor;
 
 
 public class Parameters2D {
-	private ImagePlus    img;
+	private final ImagePlus img;
+	
 	private ImagePlus    raw;
 	private ResultsTable resultsTable;
 	private int          sumIntensity;
@@ -122,12 +123,12 @@ public class Parameters2D {
 	
 	
 	public int getAvgIntensity() {
-		return this.avgIntensity;
+		return avgIntensity;
 	}
 	
 	
 	public int getNbPixelObject() {
-		return this.nbPixel;
+		return nbPixel;
 	}
 	
 	
