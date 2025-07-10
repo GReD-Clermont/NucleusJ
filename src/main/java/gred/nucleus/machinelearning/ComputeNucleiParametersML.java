@@ -24,8 +24,8 @@ public class ComputeNucleiParametersML {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	String rawImagesInputDirectory;
-	String segmentedImagesDirectory;
+	private String rawImagesInputDirectory;
+	private String segmentedImagesDirectory;
 	
 	
 	/**
@@ -48,8 +48,7 @@ public class ComputeNucleiParametersML {
 	 *
 	 * @return
 	 */
-	public static ImagePlus generateSegmentedImage(ImagePlus imagePlusInput,
-	                                               int threshold) {
+	public static ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
 		ImageStack imageStackInput    = imagePlusInput.getStack();
 		ImagePlus  imagePlusSegmented = imagePlusInput.duplicate();
 		
@@ -68,7 +67,6 @@ public class ComputeNucleiParametersML {
 			}
 		}
 		return imagePlusSegmented;
-		
 	}
 	
 	
@@ -80,13 +78,13 @@ public class ComputeNucleiParametersML {
 	 */
 	public void run() throws IOException, FormatException {
 		PluginParameters pluginParameters =
-				new PluginParameters(this.rawImagesInputDirectory, this.segmentedImagesDirectory);
+				new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
 		Directory directoryInput = new Directory(pluginParameters.getOutputFolder());
 		directoryInput.listImageFiles(pluginParameters.getOutputFolder());
 		directoryInput.checkIfEmpty();
 		List<File> segImages = directoryInput.getFileList();
-		StringBuilder outputCropGeneralInfoOTSU =
-				new StringBuilder(pluginParameters.getAnalysisParameters() + getResultsColumnNames());
+		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder(pluginParameters.getAnalysisParameters() +
+		                                                            getResultsColumnNames());
 		for (File currentFile : segImages) {
 			LOGGER.info("Current File: {}", currentFile.getName());
 			ImagePlus raw = new ImagePlus(pluginParameters.getInputFolder() +
@@ -114,7 +112,6 @@ public class ComputeNucleiParametersML {
 		                                                         + directoryInput.getSeparator()
 		                                                         + "result_Segmentation_Analyse.csv");
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU.toString(), true);
-		
 	}
 	
 	
@@ -124,9 +121,9 @@ public class ComputeNucleiParametersML {
 	public String getResultsColumnNames() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
-				"Moment 1\t" +
-				"Moment 2\t" +
-				"Moment 3 \t" +
+		       "Moment 1\t" +
+		       "Moment 2\t" +
+		       "Moment 3 \t" +
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Sphericity\t" +

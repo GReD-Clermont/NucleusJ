@@ -11,6 +11,7 @@ import gred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.measure.Calibration;
+import loci.formats.FormatException;
 import loci.plugins.BF;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -28,7 +31,11 @@ public class ComputeNucleiParameters {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	private final PluginParameters pluginParameters;
-
+	
+	private String segDatasetName;
+	private String currentTime;
+	
+	
 	/**
 	 * Constructor with input, output and config files
 	 *
@@ -40,8 +47,6 @@ public class ComputeNucleiParameters {
 	                               String segmentedImagesDirectory,
 	                               String pathToConfig) {
 		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory, pathToConfig);
-
-
 	}
 	
 	
@@ -54,16 +59,17 @@ public class ComputeNucleiParameters {
 	public ComputeNucleiParameters(String rawImagesInputDirectory, String segmentedImagesDirectory) {
 		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
 	}
-
-	public ComputeNucleiParameters(){
-		String rawPath = "." + File.separator + "raw-computeNucleiParameters";
+	
+	
+	public ComputeNucleiParameters() {
+		String rawPath       = "." + File.separator + "raw-computeNucleiParameters";
 		String segmentedPath = "." + File.separator + "segmented-computeNucleiParameters";
-
+		
 		Directory rawDirectory = new Directory(rawPath);
 		rawDirectory.checkAndCreateDir();
 		Directory segmentedDirectory = new Directory(segmentedPath);
 		segmentedDirectory.checkAndCreateDir();
-
+		
 		this.pluginParameters = new PluginParameters(rawPath, segmentedPath);
 	}
 	
@@ -82,85 +88,90 @@ public class ComputeNucleiParameters {
 	}
 	
 	
+	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
+		FileSaver fileSaver = new FileSaver(imagePlusInput);
+		fileSaver.saveAsTiff(pathFile);
+	}
+	
+	
 	/**
-	 * Compute nuclei parameters generate from segmentation ( OTSU / Convex Hull)
-	 * Useful if parallel segmentation was used to get results parameter in the same folder.
+	 * Compute nuclei parameters generate from segmentation ( OTSU / Convex Hull) Useful if parallel segmentation was
+	 * used to get results parameter in the same folder.
 	 */
 	public void run() {
-		Directory directoryRawInput = new Directory(this.pluginParameters.getInputFolder());
-		directoryRawInput.listImageFiles(this.pluginParameters.getInputFolder());
+		Directory directoryRawInput = new Directory(pluginParameters.getInputFolder());
+		directoryRawInput.listImageFiles(pluginParameters.getInputFolder());
 		directoryRawInput.checkIfEmpty();
-		Directory directorySegmentedInput = new Directory(this.pluginParameters.getOutputFolder());
-		directorySegmentedInput.listImageFiles(this.pluginParameters.getOutputFolder());
+		Directory directorySegmentedInput = new Directory(pluginParameters.getOutputFolder());
+		directorySegmentedInput.listImageFiles(pluginParameters.getOutputFolder());
 		directorySegmentedInput.checkIfEmpty();
 		List<File>    segmentedImages           = directorySegmentedInput.getFileList();
 		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder();
 		
-		outputCropGeneralInfoOTSU.append(this.pluginParameters.getAnalysisParameters()).append(getColNameResult());
+		outputCropGeneralInfoOTSU.append(pluginParameters.getAnalysisParameters()).append(getColNameResult());
 		
 		for (File f : segmentedImages) {
-			ImagePlus raw = new ImagePlus(this.pluginParameters.getInputFolder() + File.separator + f.getName());
+			ImagePlus raw = new ImagePlus(pluginParameters.getInputFolder() + File.separator + f.getName());
 			try {
 				ImagePlus[] segmented = BF.openImagePlus(f.getAbsolutePath());
 				
 				Measure3D measure3D = new Measure3D(segmented,
 				                                    raw,
-				                                    this.pluginParameters.getXCalibration(raw),
-				                                    this.pluginParameters.getYCalibration(raw),
-				                                    this.pluginParameters.getZCalibration(raw));
+				                                    pluginParameters.getXCalibration(raw),
+				                                    pluginParameters.getYCalibration(raw),
+				                                    pluginParameters.getZCalibration(raw));
 				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append("\n");
-			} catch (Exception e) {
+			} catch (IOException | FormatException e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		}
-		OutputTextFile resultFileOutputOTSU = new OutputTextFile(
-				this.pluginParameters.getOutputFolder()
-				+ directoryRawInput.getSeparator()
-				+ "result_Segmentation_Analyse.csv");
+		Date             date       = new Date();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy-MM-dd-HH.mm.ss");
+		currentTime = dateFormat.format(date);
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile(pluginParameters.getOutputFolder()
+		                                                         + directoryRawInput.getSeparator()
+		                                                         + segDatasetName + currentTime + "_.csv");
 		
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU.toString(), true);
 	}
-
-	public void runFromOMERO(String rawDatasetID, String segmentedDatasetID, Client client) throws AccessException, ServiceException, ExecutionException, InterruptedException, IOException {
-		DatasetWrapper rawDataset = client.getDataset(Long.parseLong(rawDatasetID));
+	
+	
+	public void runFromOMERO(String rawDatasetID, String segmentedDatasetID, Client client)
+	throws AccessException, ServiceException, ExecutionException, InterruptedException, IOException {
+		DatasetWrapper rawDataset       = client.getDataset(Long.parseLong(rawDatasetID));
 		DatasetWrapper segmentedDataset = client.getDataset(Long.parseLong(segmentedDatasetID));
-
+		segDatasetName = segmentedDataset.getName();
+		
 		for (ImageWrapper raw : rawDataset.getImages(client)) {
 			saveFile(raw.toImagePlus(client), pluginParameters.getInputFolder() + File.separator + raw.getName());
 		}
-
+		
 		for (ImageWrapper segmented : segmentedDataset.getImages(client)) {
-			saveFile(segmented.toImagePlus(client), pluginParameters.getOutputFolder() + File.separator + segmented.getName());
+			saveFile(segmented.toImagePlus(client),
+			         pluginParameters.getOutputFolder() + File.separator + segmented.getName());
 		}
-
-		this.run();
-
-		rawDataset.addFile(
-				client,
-				new File(this.pluginParameters.getOutputFolder() + File.separator + "result_Segmentation_Analyse.csv")
-		);
-
+		
+		run();
+		
+		segmentedDataset.addFile(client,
+		                         new File(pluginParameters.getOutputFolder() + File.separator +
+		                                  segDatasetName + currentTime + "_.csv"));
+		
 		FileUtils.deleteDirectory(new File(pluginParameters.getInputFolder()));
 		FileUtils.deleteDirectory(new File(pluginParameters.getOutputFolder()));
 	}
-
-	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiff(pathFile);
-	}
-
+	
+	
 	public void addConfigParameters(String pathToConfig) {
-		this.pluginParameters.addGeneralProperties(pathToConfig);
+		pluginParameters.addGeneralProperties(pathToConfig);
 		
 	}
-
+	
+	
 	/** @return columns names for results */
 	private String getColNameResult() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
-				"Moment 1\t" +
-				"Moment 2\t" +
-				"Moment 3 \t" +
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Esr\t" +
@@ -174,7 +185,12 @@ public class ComputeNucleiParameters {
 		       "MedianIntensityImage\t" +
 		       "MedianIntensityNucleus\t" +
 		       "MedianIntensityBackground\t" +
-		       "ImageSize\n";
+		       "ImageSize\t" +
+		       "Moment 1\t" +
+		       "Moment 2\t" +
+		       "Moment 3\t" +
+		       "Aspect Ratio\t" +
+		       " Circularity \n";
 	}
 	
 }

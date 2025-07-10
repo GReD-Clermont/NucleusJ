@@ -1,34 +1,40 @@
 package gred.nucleus.segmentation;
 
+import loci.formats.FormatException;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 
-public class SegmentationTestRunner {
-	public static final String PATH_TO_SEGMENTATION = "input/";
-	public static final String PATH_TO_CONFIG       = SegmentationTest.PATH_TO_INPUT +
-	                                                  PATH_TO_SEGMENTATION +
-	                                                  "config" + File.separator +
-	                                                  "seg.config";
+public final class SegmentationTestRunner {
+	public static final String PATH_TO_INPUT  = "input" + File.separator;
+	public static final String PATH_TO_CONFIG = PATH_TO_INPUT +
+	                                            "config" + File.separator +
+	                                            "seg.config";
 	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
+	/** Private constructor to prevent instantiation. */
+	private SegmentationTestRunner() {
+	}
+	
+	
 	public static int getNumberOfImages(String dir) {
 		int    nImages = 0;
-		File[] files  = new File(dir + PATH_TO_SEGMENTATION).listFiles();
+		File[] files   = new File(dir + PATH_TO_INPUT).listFiles();
 		if (files != null) {
 			for (File file : files) {
 				String extension = FilenameUtils.getExtension(file.getName())
 				                                .toLowerCase(Locale.ROOT);
-				if (file.isFile() && extension.equals("tif")) {
+				if (file.isFile() && "tif".equals(extension)) {
 					nImages++;
 				}
 			}
@@ -38,32 +44,30 @@ public class SegmentationTestRunner {
 	}
 	
 	
-	public static void run(String dir) throws Exception {
-		File   file  = new File(dir + PATH_TO_SEGMENTATION);
+	public static void run(String segDir, String outDir)
+	throws IOException, FormatException, InterruptedException {
+		File   file  = new File(segDir + PATH_TO_INPUT);
 		File[] files = file.listFiles();
-		LOGGER.info("Running test on directory: {}", dir + PATH_TO_SEGMENTATION);
+		LOGGER.info("Running test on directory: {}", segDir + PATH_TO_INPUT);
 		
 		if (files != null) {
 			for (File f : files) {
 				String name = f.getName();
-				
 				if (f.isDirectory()) {
 					LOGGER.info("Directory skipped: {}", name);
 				} else {
 					String extension = FilenameUtils.getExtension(name).toLowerCase(Locale.ROOT);
-					if (!extension.equals("tif")) {
-						LOGGER.info("File of type {} skipped", extension);
-					} else {
+					if ("tif".equals(extension)) {
 						LOGGER.info("Beginning process on: {}", name);
-						runSegmentation(f.toString(),
-						                SegmentationTest.PATH_TO_OUTPUT + name,
-						                PATH_TO_CONFIG);
+						runSegmentation(f.getPath(), outDir + name);
 						LOGGER.info("Finished process on: {}", name);
 						
 						LOGGER.info("Checking results:");
 						TimeUnit.SECONDS.sleep(3);
 						SegmentationTestChecker checker = new SegmentationTestChecker(name);
 						checker.checkValues(f);
+					} else {
+						LOGGER.info("File of type {} skipped", extension);
 					}
 				}
 			}
@@ -71,14 +75,10 @@ public class SegmentationTestRunner {
 	}
 	
 	
-	private static void runSegmentation(String imageSourceFile, String output, String configFile) throws Exception {
-		SegmentationParameters segmentationParameters;
-		if (new File(configFile).exists()) {
-			segmentationParameters = new SegmentationParameters(imageSourceFile, output, configFile);
-		} else {
-			segmentationParameters = new SegmentationParameters(imageSourceFile, output);
-		}
-		SegmentationCalling segmentation = new SegmentationCalling(segmentationParameters);
+	private static void runSegmentation(String imageSourceFile, String output)
+	throws IOException, FormatException {
+		SegmentationParameters segmentationParams = new SegmentationParameters(imageSourceFile, output);
+		SegmentationCalling    segmentation       = new SegmentationCalling(segmentationParams);
 		segmentation.runOneImage(imageSourceFile);
 		segmentation.saveTestCropGeneralInfo();
 	}

@@ -3,11 +3,13 @@ package gred.nucleus.mains;
 import gred.nucleus.autocrop.AnnotateAutoCrop;
 import gred.nucleus.autocrop.AutocropParameters;
 import gred.nucleus.files.Directory;
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ public class MulticropFilter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException, FormatException {
 		
 		Directory directoryCoordinates =
 				new Directory("/home/titus/Bureau/TEST_NJ/AUTOCROP/coordonneeProjection/coordonnee/");
@@ -53,8 +55,8 @@ public class MulticropFilter {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				
-				if ((!(line.matches("^#.*")))
-				    && (!(line.matches("^FileName.*")))) {
+				if (!line.matches("^#.*")
+				    && !line.matches("^FileName.*")) {
 					String[] splitLine = line.split("\\t");
 					int      xMax      = Integer.parseInt(splitLine[3]) + Integer.parseInt(splitLine[6]);
 					int      yMax      = Integer.parseInt(splitLine[4]) + Integer.parseInt(splitLine[7]);

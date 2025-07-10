@@ -7,9 +7,11 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.plugin.PlugIn;
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 
@@ -31,10 +33,10 @@ public class NucleusSegmentationAndAnalysisPlugin_ implements PlugIn {
 	 */
 	public void run(String arg) {
 		ImagePlus img = WindowManager.getCurrentImage();
-		if (null == img) {
+		if (img == null) {
 			IJ.noImage();
 			return;
-		} else if (img.getStackSize() == 1 || (img.getType() != ImagePlus.GRAY8 && img.getType() != ImagePlus.GRAY16)) {
+		} else if (img.getStackSize() == 1 || img.getType() != ImagePlus.GRAY8 && img.getType() != ImagePlus.GRAY16) {
 			IJ.error("image format", "No images in 8 or 16 bits gray scale  in 3D");
 			return;
 		}
@@ -48,6 +50,7 @@ public class NucleusSegmentationAndAnalysisPlugin_ implements PlugIn {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				LOGGER.error("An error occurred.", e);
+				Thread.currentThread().interrupt();
 			}
 		}
 		if (nucleusSegmentationAndAnalysisDialog.isStart()) {
@@ -63,7 +66,7 @@ public class NucleusSegmentationAndAnalysisPlugin_ implements PlugIn {
 					//LOGGER.info(nucleusAnalysis.nucleusParameter3D());
 					segMethod.getImageSegmented().show();
 				}
-			} catch (Exception e) {
+			} catch (IOException | FormatException e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		}

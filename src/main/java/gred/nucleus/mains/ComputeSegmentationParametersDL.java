@@ -31,14 +31,15 @@ public class ComputeSegmentationParametersDL {
 	                                            String pathToConfig)
 	throws IOException, FormatException {
 		
-		PluginParameters pluginParameters =
-				new PluginParameters(rawImageSourceFile, segmentedImagesSourceFile, pathToConfig);
+		PluginParameters pluginParameters = new PluginParameters(rawImageSourceFile,
+		                                                         segmentedImagesSourceFile,
+		                                                         pathToConfig);
 		Directory directoryInput = new Directory(pluginParameters.getInputFolder());
 		directoryInput.listImageFiles(pluginParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
 		List<File> rawImages = directoryInput.getFileList();
-		StringBuilder outputCropGeneralInfoOTSU =
-				new StringBuilder(pluginParameters.getAnalysisParameters() + getResultsColumnNames());
+		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder(pluginParameters.getAnalysisParameters() +
+		                                                            getResultsColumnNames());
 		for (File currentFile : rawImages) {
 			ImagePlus raw = new ImagePlus(currentFile.getAbsolutePath());
 			LOGGER.info("current File: {}", currentFile.getName());
@@ -68,8 +69,8 @@ public class ComputeSegmentationParametersDL {
 		directoryInput.listImageFiles(pluginParameters.getOutputFolder());
 		directoryInput.checkIfEmpty();
 		List<File> segImages = directoryInput.getFileList();
-		StringBuilder outputCropGeneralInfoOTSU =
-				new StringBuilder(pluginParameters.getAnalysisParameters() + getResultsColumnNames());
+		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder(pluginParameters.getAnalysisParameters() +
+		                                                            getResultsColumnNames());
 		for (File currentFile : segImages) {
 			LOGGER.info("current File: {}", currentFile.getName());
 			ImagePlus raw = new ImagePlus(pluginParameters.getInputFolder() +
@@ -100,9 +101,8 @@ public class ComputeSegmentationParametersDL {
 	}
 	
 	
-	public static void main(String[] args) throws Exception {
-		computeNucleusParametersDL(
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/RAW",
+	public static void main(String[] args) throws IOException, FormatException {
+		computeNucleusParametersDL("/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/RAW",
 				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/129_TRIER");
 	}
 	
@@ -140,9 +140,9 @@ public class ComputeSegmentationParametersDL {
 	public static String getResultsColumnNames() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
-				"Moment 1\t" +
-				"Moment 2\t" +
-				"Moment 3 \t" +
+		       "Moment 1\t" +
+		       "Moment 2\t" +
+		       "Moment 3 \t" +
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Esr\t" +

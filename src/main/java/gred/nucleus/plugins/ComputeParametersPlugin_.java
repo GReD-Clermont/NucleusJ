@@ -1,8 +1,11 @@
 package gred.nucleus.plugins;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
 import gred.nucleus.core.ComputeNucleiParameters;
 import gred.nucleus.dialogs.ComputeParametersDialog;
+import gred.nucleus.dialogs.IDialogListener;
 import ij.IJ;
 import ij.Prefs;
 import ij.measure.Calibration;
@@ -10,56 +13,36 @@ import ij.plugin.PlugIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.concurrent.ExecutionException;
 
 
-public class ComputeParametersPlugin_ implements PlugIn {
+public class ComputeParametersPlugin_ implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-	ComputeParametersDialog computeParametersDialog;
 	
-	/** Run computing parameters method. */
+	private ComputeParametersDialog computeParametersDialog;
+	
+	
+	@Override
 	public void run(String arg) {
-		
-		computeParametersDialog = new ComputeParametersDialog();
-		
-		while (computeParametersDialog.isShowing()) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				LOGGER.error("Interrupted exception.", e);
-				Thread.currentThread().interrupt();
-			}
+		if (IJ.versionLessThan("1.32c")) {
+			return;
 		}
-		try {
-			if (computeParametersDialog.isStart()) {
-				if (computeParametersDialog.isOmeroEnabled()){
-					runOMERO();
-				}
-				else {
-					if (computeParametersDialog.getCalibrationStatus()) {
-						Calibration calibration = new Calibration();
-						calibration.pixelDepth = computeParametersDialog.getZCalibration();
-						calibration.pixelWidth = computeParametersDialog.getXCalibration();
-						calibration.pixelHeight = computeParametersDialog.getYCalibration();
-						calibration.setUnit(computeParametersDialog.getUnit());
-						ComputeNucleiParameters generateParameters = new ComputeNucleiParameters(
-								computeParametersDialog.getRawDataDirectory(),
-								computeParametersDialog.getWorkDirectory(),
-								calibration);
-						generateParameters.run();
-					} else {
-						ComputeNucleiParameters generateParameters = new ComputeNucleiParameters(
-								computeParametersDialog.getRawDataDirectory(),
-								computeParametersDialog.getWorkDirectory());
-						generateParameters.run();
-					}
-				}
-			}
-		} catch (Exception e) {
-			LOGGER.error("An error occurred.", e);
+		computeParametersDialog = new ComputeParametersDialog(this);
+	}
+	
+	
+	@Override
+	public void OnStart() {
+		if (computeParametersDialog.isOmeroEnabled()) {
+			runOMERO();
+		} else {
+			runlocal();
 		}
 	}
+	
 	
 	public Client checkOMEROConnection(String hostname,
 	                                   String port,
@@ -73,12 +56,32 @@ public class ComputeParametersPlugin_ implements PlugIn {
 			               username,
 			               password,
 			               Long.valueOf(group));
-		} catch (Exception exp) {
+		} catch (ServiceException | NumberFormatException exp) {
 			IJ.error("Invalid connection values");
 			return null;
 		}
 		return client;
 	}
+	
+	
+	void runlocal() {
+		if (computeParametersDialog.getCalibrationStatus()) {
+			Calibration calibration = new Calibration();
+			calibration.pixelDepth = computeParametersDialog.getZCalibration();
+			calibration.pixelWidth = computeParametersDialog.getXCalibration();
+			calibration.pixelHeight = computeParametersDialog.getYCalibration();
+			calibration.setUnit(computeParametersDialog.getUnit());
+			ComputeNucleiParameters generateParameters = new ComputeNucleiParameters(computeParametersDialog.getRawDataDirectory(),
+			                                                                         computeParametersDialog.getWorkDirectory(),
+			                                                                         calibration);
+			generateParameters.run();
+		} else {
+			ComputeNucleiParameters generateParameters = new ComputeNucleiParameters(computeParametersDialog.getRawDataDirectory(),
+			                                                                         computeParametersDialog.getWorkDirectory());
+			generateParameters.run();
+		}
+	}
+	
 	
 	public void runOMERO() {
 		// Check connection
@@ -95,18 +98,21 @@ public class ComputeParametersPlugin_ implements PlugIn {
 		Prefs.set("omero.user", username);
 		
 		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		
 		ComputeNucleiParameters generateParameters = new ComputeNucleiParameters();
-	
+		
 		try {
-				try {
-					LOGGER.info("Begin Compute parameter process ");
-					generateParameters.runFromOMERO(rawID, segID, client); // Run Compute parameters
-					LOGGER.info("Compute parameter process  has ended successfully");
-				} catch (Exception e) {
-					LOGGER.info("Compute parameter process  has failed");
-					LOGGER.error("An error occurred.", e);
-				}
-			
+			try {
+				LOGGER.info("Begin Compute parameter process ");
+				generateParameters.runFromOMERO(rawID, segID, client); // Run Compute parameters
+				LOGGER.info("Compute parameter process has ended successfully");
+			} catch (AccessException | ServiceException | IOException | ExecutionException e) {
+				LOGGER.info("Compute parameter process has failed");
+				LOGGER.error("An error occurred.", e);
+			} catch (InterruptedException e) {
+				LOGGER.error("Compute parameter process has been interrupted");
+				Thread.currentThread().interrupt();
+			}
 		} catch (Exception e) {
 			LOGGER.error("An error occurred.", e);
 		}

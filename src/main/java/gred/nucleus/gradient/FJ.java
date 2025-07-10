@@ -5,9 +5,9 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.process.LUT;
+import imagescience.ImageScience;
 import imagescience.image.Image;
 import imagescience.utility.I5DResource;
-import imagescience.utility.ImageScience;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,24 +51,23 @@ public final class FJ {
 			if (ImageScience.version().compareTo(MIN_IS_VERSION) < 0) {
 				throw new IllegalStateException();
 			}
-		} catch (Exception e) {
+		} catch (IllegalStateException e) {
 			error("This plugin requires ImageScience version " + MIN_IS_VERSION + " or higher");
 			return false;
 		}
-		
 		return true;
 	}
 	
 	
 	static ImagePlus imageplus() {
 		
-		final ImagePlus imp = WindowManager.getCurrentImage();
+		ImagePlus imp = WindowManager.getCurrentImage();
 		if (imp == null) {
 			error("There are no images open");
 			return null;
 		}
 		
-		final int type = imp.getType();
+		int type = imp.getType();
 		if (type != ImagePlus.GRAY8 && type != ImagePlus.GRAY16 && type != ImagePlus.GRAY32) {
 			error("The image is not a gray-scale image");
 			return null;
@@ -78,13 +77,13 @@ public final class FJ {
 	}
 	
 	
-	static void show(final Image img, final ImagePlus imp) {
+	static void show(Image img, ImagePlus imp) {
 		
 		ImagePlus newImagePlus = img.imageplus();
 		newImagePlus.setCalibration(imp.getCalibration());
-		final double[] minMax = img.extrema();
-		final double   min    = minMax[0];
-		final double   max    = minMax[1];
+		double[] minMax = img.extrema();
+		double   min    = minMax[0];
+		double   max    = minMax[1];
 		newImagePlus.setDisplayRange(min, max);
 		
 		switch (type(imp)) {
@@ -97,12 +96,12 @@ public final class FJ {
 				break;
 			}
 			case COMPOSITE_IMAGE: {
-				final CompositeImage newCompositeImage = new CompositeImage(newImagePlus);
+				CompositeImage newCompositeImage = new CompositeImage(newImagePlus);
 				newCompositeImage.copyLuts(imp);
 				newCompositeImage.setMode(CompositeImage.GRAYSCALE);
-				final int nc = newCompositeImage.getNChannels();
+				int nc = newCompositeImage.getNChannels();
 				for (int c = 1; c <= nc; ++c) {
-					final LUT lut = newCompositeImage.getChannelLut(c);
+					LUT lut = newCompositeImage.getChannelLut(c);
 					lut.min = min;
 					lut.max = max;
 				}
@@ -122,8 +121,7 @@ public final class FJ {
 	}
 	
 	
-	static void close(final ImagePlus imp) {
-		
+	static void close(ImagePlus imp) {
 		if (FJ_Options.close) {
 			log("Closing input image");
 			imp.close();
@@ -131,14 +129,13 @@ public final class FJ {
 	}
 	
 	
-	static int type(final ImagePlus imp) {
-		
+	static int type(ImagePlus imp) {
 		int     type     = SINGLE_IMAGE;
 		boolean i5dExist = false;
 		try {
 			Class.forName("i5d.Image5D");
 			i5dExist = true;
-		} catch (Exception e) {
+		} catch (ClassNotFoundException e) {
 			LOGGER.error("An error occurred.", e);
 		}
 		if (i5dExist && I5DResource.instance(imp)) {
@@ -147,20 +144,24 @@ public final class FJ {
 			type = COMPOSITE_IMAGE;
 		} else if (imp.isHyperStack()) {
 			type = HYPERSTACK;
-		} else if (imp.getImageStackSize() > 1) type = IMAGE_STACK;
+		} else if (imp.getImageStackSize() > 1) {
+			type = IMAGE_STACK;
+		}
 		return type;
 	}
 	
 	
-	static void error(final String message) {
+	static void error(String message) {
 		IJ.showMessage(NAME + ": Error", message + ".");
 		IJ.showProgress(1);
 		IJ.showStatus("");
 	}
 	
 	
-	static void log(final String message) {
-		if (FJ_Options.log) IJ.log(message);
+	static void log(String message) {
+		if (FJ_Options.log) {
+			IJ.log(message);
+		}
 	}
 	
 }

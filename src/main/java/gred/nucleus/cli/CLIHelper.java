@@ -13,6 +13,7 @@ public class CLIHelper {
 		// DO NOTHING
 	}
 	
+	
 	/**
 	 * Main method
 	 *
@@ -31,14 +32,14 @@ public class CLIHelper {
 	 * Method get help for command line with example command line
 	 */
 	private static void cmdHelpFull() {
-		String exampleCommand = "java -jar NucleusJ_2-" + Version.get() + ".jar ";
+		String exampleCommand = "java -jar nucleusj-" + Version.get() + ".jar ";
 		String exampleArgument = "-action segmentation " +
 		                         "-input path/to/input/folder/ " +
 		                         "-output path/to/output/folder/ ";
 		String[]               exampleCMD = exampleArgument.split(" ");
 		CLIActionOptionCmdLine command    = new CLIActionOptionCmdLine(exampleCMD);
 		HelpFormatter          formatter  = new HelpFormatter();
-		formatter.printHelp("NucleusJ2.0 cli : ", command.getOptions());
+		formatter.printHelp("NucleusJ3 cli : ", command.getOptions());
 		System.console().writer().println("\nCommand line example : \n" +
 		                                  exampleCommand + " " + exampleArgument + "\n\n");
 		
@@ -51,7 +52,7 @@ public class CLIHelper {
 		                              "-group 000";
 		String[]             exampleOMEROCMD = exampleArgumentOMERO.split(" ");
 		CLIActionOptionOMERO commandOMERO    = new CLIActionOptionOMERO(exampleOMEROCMD);
-		formatter.printHelp("NucleusJ2.0 OMERO MODE: ", commandOMERO.getOptions());
+		formatter.printHelp("NucleusJ3 OMERO MODE: ", commandOMERO.getOptions());
 		System.console().writer().println("\nCommand line example : \n\n" +
 		                                  exampleCommand + " " + exampleArgumentOMERO);
 		
@@ -65,7 +66,7 @@ public class CLIHelper {
 	 * @param action action
 	 */
 	private static void specificAction(String action) {
-		String                 exampleCommand = "java -jar NucleusJ_2-" + Version.get() + ".jar ";
+		String                 exampleCommand = "java -jar nucleusj-" + Version.get() + ".jar ";
 		String                 exampleArgument;
 		String[]               exampleCMD;
 		HelpFormatter          formatter;
@@ -78,7 +79,7 @@ public class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ2.0 segmentation cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ3 segmentation cli : ", command.getOptions());
 				System.console().writer().println("\nCommand line example : \n" +
 				                                  exampleCommand + exampleArgument + "\n\n");
 				
@@ -92,7 +93,7 @@ public class CLIHelper {
 				
 				String[] exampleOMEROCMD = exampleArgumentOMERO.split(" ");
 				CLIActionOptionOMERO commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
-				formatter.printHelp("NucleusJ2.0 segmentation OMERO MODE: ", commandOMERO.getOptions());
+				formatter.printHelp("NucleusJ3 segmentation OMERO MODE: ", commandOMERO.getOptions());
 				System.console().writer().println("\nCommand line example : \n\n" +
 				                                  exampleCommand + " " + exampleArgumentOMERO);
 				break;
@@ -104,7 +105,7 @@ public class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ2.0 autocrop cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ3 autocrop cli : ", command.getOptions());
 				System.console().writer().println("\nCommand line example : \n" +
 				                                  exampleCommand + exampleArgument + "\n\n");
 				
@@ -118,7 +119,7 @@ public class CLIHelper {
 				                       "-group 000";
 				exampleOMEROCMD = exampleArgumentOMERO.split(" ");
 				commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
-				formatter.printHelp("NucleusJ2.0 autocrop OMERO MODE: ", commandOMERO.getOptions());
+				formatter.printHelp("NucleusJ3 autocrop OMERO MODE: ", commandOMERO.getOptions());
 				System.console().writer().println("\nCommand line example : \n\n" +
 				                                  exampleCommand + exampleArgumentOMERO);
 				break;
@@ -130,7 +131,7 @@ public class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ2.0 computeParameters cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ3 computeParameters cli : ", command.getOptions());
 				System.console().writer().println("\nCommand line example : \n" +
 				                                  exampleCommand + exampleArgument + "\n\n");
 				break;
@@ -142,7 +143,7 @@ public class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ2.0 computeParametersDL cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ3 computeParametersDL cli : ", command.getOptions());
 				System.console().writer().println("\nCommand line example : \n" +
 				                                  exampleCommand + exampleArgument + "\n\n");
 				break;
@@ -154,7 +155,7 @@ public class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ2.0 generateProjection cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ3 generateProjection cli : ", command.getOptions());
 				System.console().writer().println("\nCommand line example : \n" +
 				                                  exampleCommand + exampleArgument + "\n\n");
 				break;
@@ -167,7 +168,7 @@ public class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ2.0 generateProjectionFiltered cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ3 generateProjectionFiltered cli : ", command.getOptions());
 				System.console().writer().println("\nCommand line example : \n" +
 				                                  exampleCommand + exampleArgument + "\n\n");
 				break;
@@ -178,34 +179,34 @@ public class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ2.0 CropFromCoordinate cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ3 CropFromCoordinate cli : ", command.getOptions());
 				System.console().writer().println("\nCommand line example : \n" +
 				                                  exampleCommand + exampleArgument + "\n\n");
 				break;
 			
 			case "GenerateOverlay":
 				exampleArgument = "-action GenerateOverlay " +
-						"-input path/to/input/zprojection/ " +
-						"-input2 path/to/input/dic_images/";
+				                  "-input path/to/input/zprojection/ " +
+				                  "-input2 path/to/input/dic_images/";
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ2.0 GenerateOverlay cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ3 GenerateOverlay cli : ", command.getOptions());
 				System.console().writer().println("\nCommand line example : \n" +
-						exampleCommand + exampleArgument + "\n\n");
-
+				                                  exampleCommand + exampleArgument + "\n\n");
+				
 				exampleArgumentOMERO = "-omero " +
-						"-action GenerateOverlay " +
-						"-input ZProjection_dataset_ID " +
-						"-input2 DIC_dataset_ID " +
-						"-output output_project_ID " +
-						"-port 0 " +
-						"-group 000";
+				                       "-action GenerateOverlay " +
+				                       "-input ZProjection_dataset_ID " +
+				                       "-input2 DIC_dataset_ID " +
+				                       "-output output_project_ID " +
+				                       "-port 0 " +
+				                       "-group 000";
 				exampleOMEROCMD = exampleArgumentOMERO.split(" ");
 				commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
-				formatter.printHelp("NucleusJ2.0 GenerateOverlay OMERO MODE: ", commandOMERO.getOptions());
+				formatter.printHelp("NucleusJ3 GenerateOverlay OMERO MODE: ", commandOMERO.getOptions());
 				System.console().writer().println("\nCommand line example : \n\n" +
-						exampleCommand + exampleArgumentOMERO);
+				                                  exampleCommand + exampleArgumentOMERO);
 				///
 				break;
 			
@@ -236,9 +237,9 @@ public class CLIHelper {
 				saveFile(autocropConfigOption, "autocropConfigListParameters");
 				saveFile(segConfigOption, "segmentationConfigListParameters");
 				System.console().writer().println("autocrop parameters details: " +
-				                                  "https://gitlab.com/DesTristus/NucleusJ2.0/-/wikis/Autocrop#list-of-available-parameters \n" +
+				                                  "https://github.com/GReD-Clermont/NucleusJ/wiki/Autocrop#list-of-available-parameters \n" +
 				                                  "segmentation parameters details: " +
-				                                  "https://gitlab.com/DesTristus/NucleusJ2.0/-/wikis/Nucleus-segmentation#list-of-available-parameters");
+				                                  "https://github.com/GReD-Clermont/NucleusJ/wiki/Autocrop#list-of-available-parameters");
 				break;
 			
 			default:
@@ -262,10 +263,9 @@ public class CLIHelper {
 	 */
 	public static void saveFile(String text, String fileName) {
 		Directory dirOutput = new Directory(System.getProperty("user.dir"));
-		OutputTextFile resultFileOutputOTSU = new OutputTextFile(
-				dirOutput.getDirPath()
-				+ dirOutput.getSeparator()
-				+ fileName);
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile(dirOutput.getDirPath() +
+		                                                         dirOutput.getSeparator() +
+		                                                         fileName);
 		resultFileOutputOTSU.saveTextFile(text, true);
 	}
 	

@@ -34,7 +34,7 @@ public class OutputTextFile extends FilesNames {
 					i++;
 				}
 			}
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.fullPathFile))) {
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullPathFile))) {
 				writer.write(text);
 			}
 
@@ -45,9 +45,9 @@ public class OutputTextFile extends FilesNames {
                 writer.close();
             }*/
 		} catch (IOException e) {
-			LOGGER.error(this.fullPathFile + " creation failed", e);
+			LOGGER.error("{} creation failed", fullPathFile, e);
 		}
-		LOGGER.info("{} created", this.fullPathFile);
+		LOGGER.info("{} created", fullPathFile);
 	}
 	
 }

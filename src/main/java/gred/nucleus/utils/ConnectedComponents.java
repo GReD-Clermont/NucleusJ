@@ -227,7 +227,7 @@ public class ConnectedComponents {
 	 */
 	public List<Double> getListLabel(double labelIni) {
 		computeLabel(labelIni);
-		return listLabel;
+		return new ArrayList<>(listLabel);
 	}
 	
 	

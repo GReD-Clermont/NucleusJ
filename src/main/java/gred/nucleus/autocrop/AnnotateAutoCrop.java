@@ -1,6 +1,9 @@
 package gred.nucleus.autocrop;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.files.Directory;
@@ -12,7 +15,6 @@ import ij.plugin.ZProjector;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import loci.formats.FormatException;
-import loci.plugins.BF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +24,12 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
+
+import static loci.plugins.BF.openImagePlus;
 
 
 /**
@@ -41,12 +47,12 @@ public class AnnotateAutoCrop {
 	private final List<String>       boxCoordinates;
 	/** the path of the directory where image with boxes is saved */
 	private final String             outputDirPath;
-	/** Parameters crop analyse */
+	/** Parameters for crop analysis */
 	private final AutocropParameters autocropParameters;
 	/** ImagePlus of the Z projection */
-	private ImagePlus zProjection;
+	private       ImagePlus          zProjection;
 	/** The prefix of the names of the output cropped images, which are automatically numbered */
-	private String    outputFilesPrefix;
+	private       String             outputFilesPrefix;
 	
 	
 	/**
@@ -91,38 +97,38 @@ public class AnnotateAutoCrop {
 	                        AutocropParameters autocropParameters)
 	throws IOException, FormatException {
 		this.autocropParameters = autocropParameters;
-		this.zProjection =
-				BF.openImagePlus(imageFile.getAbsolutePath())[this.autocropParameters.getSlicesOTSUComputing()];
-		this.boxCoordinates = boxesCoordinates;
+		this.zProjection = openImagePlus(imageFile.getAbsolutePath())[this.autocropParameters.getSlicesOTSUComputing()];
+		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
 	}
-
-
+	
+	
 	public AnnotateAutoCrop(List<String> boxesCoordinates,
-							ImagePlus imp,
-							String outputDirPath,
-							String prefix,
-							AutocropParameters autocropParameters) {
+	                        ImagePlus imp,
+	                        String outputDirPath,
+	                        String prefix,
+	                        AutocropParameters autocropParameters) {
 		this.autocropParameters = autocropParameters;
 		this.zProjection = imp;
-		this.boxCoordinates = boxesCoordinates;
+		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
-		this.outputFilesPrefix = prefix ;
+		this.outputFilesPrefix = prefix;
 		Directory dirOutput = new Directory(this.outputDirPath + "zprojection");
 		dirOutput.checkAndCreateDir();
 	}
-
+	
+	
 	/**
 	 * Main method to generate Z projection of wide field 3D image. Parameter use are max intensity projection
 	 * (projectionMax method) and contrast modification of 0,3.
 	 */
 	public void runAddBadCrop() {
 		ContrastEnhancer enh = new ContrastEnhancer();
-		enh.stretchHistogram(this.zProjection, 0.35);
-		ImageConverter converter = new ImageConverter(this.zProjection);
+		enh.stretchHistogram(zProjection, 0.35);
+		ImageConverter converter = new ImageConverter(zProjection);
 		converter.convertToRGB();
 		
-		for (String boxCoordinate : this.boxCoordinates) {
+		for (String boxCoordinate : boxCoordinates) {
 			String[] splitLine = boxCoordinate.split("\\t");
 			String[] fileName  = splitLine[0].split(Pattern.quote(File.separator));
 			String[] name      = fileName[fileName.length - 1].split("_");
@@ -131,9 +137,9 @@ public class AnnotateAutoCrop {
 			             splitLine[0]);
 			addBoxCropToZProjection(boxCoordinate, Integer.parseInt(name[name.length - 2]), Color.RED);
 		}
-		String outFileZBox = this.outputDirPath + "_BAD_CROP_LESS.tif";
+		String outFileZBox = outputDirPath + "_BAD_CROP_LESS.tif";
 		LOGGER.debug("badCrop outFileZBox: {}", outFileZBox);
-		saveFile(this.zProjection, outFileZBox);
+		saveFile(zProjection, outFileZBox);
 	}
 	
 	
@@ -143,27 +149,27 @@ public class AnnotateAutoCrop {
 	 */
 	public void run() {
 		LOGGER.info("Z projection annotation.");
-		ZProjector zProjectionTmp = new ZProjector(this.zProjection);
+		ZProjector zProjectionTmp = new ZProjector(zProjection);
 		this.zProjection = projectionMax(zProjectionTmp);
 		adjustContrast(0.3);
-		ImageConverter converter = new ImageConverter(this.zProjection);
+		ImageConverter converter = new ImageConverter(zProjection);
 		converter.convertToRGB();
 		
-		for (String boxCoordinate : this.boxCoordinates) {
+		for (String boxCoordinate : boxCoordinates) {
 			String[] splitLine = boxCoordinate.split("\\t");
 			String[] fileName  = splitLine[0].split(Pattern.quote(File.separator));
 			String[] name      = fileName[fileName.length - 1].split("_");
 			LOGGER.info(boxCoordinate);
 			LOGGER.trace("Box number {} saved to file: {}",
-			             Integer.parseInt(name[name.length - 2]),
+			             Integer.parseInt(name[name.length - 1]),
 			             splitLine[0]);
-			addBoxCropToZProjection(boxCoordinate, Integer.parseInt(name[name.length - 2]), Color.BLACK);
+			addBoxCropToZProjection(boxCoordinate, Integer.parseInt(name[name.length - 1]), Color.BLACK);
 		}
-		String outFileZBox = this.outputDirPath + File.separator +
+		String outFileZBox = outputDirPath + File.separator +
 		                     "zprojection" + File.separator +
 		                     outputFilesPrefix + "_Zprojection.tif";
 		LOGGER.info("outFileZBox: {}", outFileZBox);
-		saveFile(this.zProjection, outFileZBox);
+		saveFile(zProjection, outFileZBox);
 	}
 	
 	
@@ -177,16 +183,21 @@ public class AnnotateAutoCrop {
 		FileSaver fileSaver = new FileSaver(imagePlusInput);
 		fileSaver.saveAsTiff(pathFile);
 	}
-
-	public void saveProjectionOMERO(Client client, Long output) throws Exception {
-		long datasetID;
-		ProjectWrapper project = client.getProject(output);
+	
+	
+	public void saveProjectionOMERO(Client client, Long output)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
+		long                 datasetID;
+		ProjectWrapper       project  = client.getProject(output);
 		List<DatasetWrapper> datasets = project.getDatasets("Z-Projection");
-		if (datasets.isEmpty()) datasetID = project.addDataset(client, "Z-Projection", "").getId();
-		else datasetID = datasets.get(0).getId();
-		String outFileZBox = this.outputDirPath + File.separator +
-							"zprojection" + File.separator +
-							outputFilesPrefix + "_Zprojection.tif";
+		if (datasets.isEmpty()) {
+			datasetID = project.addDataset(client, "Z-Projection", "").getId();
+		} else {
+			datasetID = datasets.get(0).getId();
+		}
+		String outFileZBox = outputDirPath + File.separator +
+		                     "zprojection" + File.separator +
+		                     outputFilesPrefix + "_Zprojection.tif";
 		client.getDataset(datasetID).importImages(client, outFileZBox);
 		File file = new File(outFileZBox);
 		try {
@@ -195,6 +206,7 @@ public class AnnotateAutoCrop {
 			LOGGER.error("Could not delete file: {}", outFileZBox);
 		}
 	}
+	
 	
 	/**
 	 * Method to project 3D stack to 2D images using Max method projection.
@@ -223,7 +235,7 @@ public class AnnotateAutoCrop {
 		/* heightBox calculation */
 		int heightBox = Math.abs(Integer.parseInt(currentBox[4])) - Math.abs(Integer.parseInt(currentBox[3]));
 		
-		ImageProcessor ip = this.zProjection.getProcessor();
+		ImageProcessor ip = zProjection.getProcessor();
 		/* Line color size parameter */
 		ip.setColor(color);
 		ip.setLineWidth(4);
@@ -237,7 +249,7 @@ public class AnnotateAutoCrop {
 		            widthBox, heightBox);
 		
 		/* Calculation of the coordinate to add nuclei Number */
-		int xBorder = Integer.parseInt(currentBox[1]) + font.getSize()/3;
+		int xBorder = Integer.parseInt(currentBox[1]) + font.getSize() / 3;
 		int yBorder = Integer.parseInt(currentBox[3]) + font.getSize();
 		/* Draw the nucleus number aside the box */
 		TextRoi text = new TextRoi(Integer.toString(boxNumber), xBorder, yBorder, font);
@@ -252,9 +264,9 @@ public class AnnotateAutoCrop {
 	 */
 	private void adjustContrast(double contrast) {
 		ContrastEnhancer enh = new ContrastEnhancer();
-		enh.stretchHistogram(this.zProjection, contrast);
-		this.zProjection.getProcessor().invertLut();
-		this.zProjection.updateAndDraw();
+		enh.stretchHistogram(zProjection, contrast);
+		zProjection.getProcessor().invertLut();
+		zProjection.updateAndDraw();
 	}
 	
 }

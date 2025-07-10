@@ -2,6 +2,7 @@ package gred.nucleus.autocrop;
 
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
@@ -34,11 +35,14 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
+
+import static gred.nucleus.imageprocessing.Thresholding.contrastAnd8bits;
 
 
 /**
@@ -69,34 +73,35 @@ public class AutoCrop {
 	private final List<String>       outputFile     = new ArrayList<>();
 	/** List of boxes coordinates */
 	private final List<String>       boxCoordinates = new ArrayList<>();
-	/** Parameters crop analyse */
+	/** Parameters for crop analysis */
 	private final AutocropParameters autocropParameters;
+	/** The path of the image to be processed */
+	private final String             imageFilePath;
+	
 	/** File to process (Image input) */
-	File currentFile;
+	private File             currentFile;
 	/** Raw image */
 	private ImagePlus        rawImg;
 	/** Segmented image */
 	private ImagePlus        imageSeg;
 	/** Segmented image connect component labelled */
 	private ImagePlus        imageSegLabelled;
-	/** The path of the image to be processed */
-	private String           imageFilePath;
 	/** Number of channels in current image */
-	private int              channelNumbers   = 1;
-	/** Get current info image analyse */
+	private int              channelNumbers = 1;
+	/** Get current info image analysis */
 	private String           infoImageAnalysis;
 	/** OTSU threshold  used to compute segmented image */
 	private int              otsuThreshold;
 	/** Slice start to compute OTSU */
 	private String           sliceUsedForOTSU;
 	/** Default threshold */
-	private boolean          defaultThreshold = false;
+	private boolean          defaultThreshold;
 	/** List of boxes  to crop link to label value */
-	private Map<Double, Box> boxes            = new HashMap<>();
+	private Map<Double, Box> boxes          = new HashMap<>();
 	
 	
 	/**
-	 * Autocrop constructor : initialisation of analyse parameter
+	 * Autocrop constructor : initialisation of analysis parameter
 	 *
 	 * @param imageFile                 Current image analyse
 	 * @param outputFilesPrefix         Prefix use for output file name
@@ -110,14 +115,13 @@ public class AutoCrop {
 		this.autocropParameters = autocropParametersAnalyse;
 		this.currentFile = imageFile;
 		this.imageFilePath = imageFile.getAbsolutePath();
-		this.outputDirPath = this.autocropParameters.getOutputFolder();
+		this.outputDirPath = autocropParameters.getOutputFolder();
 		this.outputFilesPrefix = outputFilesPrefix;
 		setChannelNumbers();
-		if (this.rawImg.getBitDepth() > 8) {
-			this.imageSeg =
-					Thresholding.contrastAnd8bits(getImageChannel(this.autocropParameters.getChannelToComputeThreshold()));
+		if (rawImg.getBitDepth() > 8) {
+			imageSeg = contrastAnd8bits(getImageChannel(autocropParameters.getChannelToComputeThreshold()));
 		} else {
-			this.imageSeg = getImageChannel(this.autocropParameters.getChannelToComputeThreshold());
+			imageSeg = getImageChannel(autocropParameters.getChannelToComputeThreshold());
 		}
 		this.infoImageAnalysis = autocropParametersAnalyse.getAnalysisParameters();
 	}
@@ -127,25 +131,21 @@ public class AutoCrop {
 	throws ServiceException, AccessException, ExecutionException {
 		this.currentFile = new File(image.getName());
 		this.autocropParameters = autocropParametersAnalyse;
-		this.outputDirPath = this.autocropParameters.getOutputFolder();
+		this.outputDirPath = autocropParameters.getOutputFolder();
 		this.outputFilesPrefix = FilenameUtils.removeExtension(image.getName());
 		setChannelNumbersOMERO(image, client);
-		if (this.rawImg.getBitDepth() > 8) {
-			this.imageSeg =
-					Thresholding.contrastAnd8bits(getImageChannelOMERO(this.autocropParameters.getChannelToComputeThreshold(),
-					                                                   image,
-					                                                   client));
+		if (rawImg.getBitDepth() > 8) {
+			this.imageSeg = contrastAnd8bits(getImageChannelOMERO(autocropParameters.getChannelToComputeThreshold(),
+			                                                      image,
+			                                                      client));
 		} else {
-			this.imageSeg = this.rawImg;
+			this.imageSeg = rawImg;
 		}
 		this.imageFilePath = image.getName();
 		this.infoImageAnalysis = autocropParametersAnalyse.getAnalysisParameters();
-		this.rawImg.setTitle(image.getName()+"-"+image.getId());
+		rawImg.setTitle(image.getName() + "-" + image.getId());
 	}
-
-	public ImagePlus getRawImage(){
-		return rawImg;
-	}
+	
 	
 	public AutoCrop(File imageFile,
 	                String outputFilesPrefix,
@@ -155,12 +155,17 @@ public class AutoCrop {
 		this.autocropParameters = autocropParametersAnalyse;
 		this.currentFile = imageFile;
 		this.imageFilePath = imageFile.getAbsolutePath();
-		this.outputDirPath = this.autocropParameters.getOutputFolder();
+		this.outputDirPath = autocropParameters.getOutputFolder();
 		this.outputFilesPrefix = outputFilesPrefix;
 		setChannelNumbers();
-		this.imageSeg = this.rawImg;
+		this.imageSeg = rawImg;
 		this.infoImageAnalysis = autocropParametersAnalyse.getAnalysisParameters();
-		this.boxes = boxes;
+		this.boxes = new HashMap<>(boxes);
+	}
+	
+	
+	public ImagePlus getRawImage() {
+		return rawImg;
 	}
 	
 	
@@ -175,7 +180,7 @@ public class AutoCrop {
 	 * @throws FormatException
 	 */
 	public ImagePlus getImageChannel(int channelNumber) throws IOException, FormatException {
-		ImagePlus[] currentImage = BF.openImagePlus(this.imageFilePath);
+		ImagePlus[] currentImage = BF.openImagePlus(imageFilePath);
 		currentImage = ChannelSplitter.split(currentImage[0]);
 		return currentImage[channelNumber];
 	}
@@ -195,7 +200,7 @@ public class AutoCrop {
 	 * @throws FormatException
 	 */
 	public void setChannelNumbers() throws IOException, FormatException {
-		ImagePlus[] currentImage = BF.openImagePlus(this.imageFilePath);
+		ImagePlus[] currentImage = BF.openImagePlus(imageFilePath);
 		currentImage = ChannelSplitter.split(currentImage[0]);
 		this.rawImg = currentImage[0];
 		if (currentImage.length > 1) {
@@ -206,8 +211,8 @@ public class AutoCrop {
 	
 	public void setChannelNumbersOMERO(ImageWrapper image, Client client)
 	throws ServiceException, AccessException, ExecutionException {
-		int[] cBound = {this.autocropParameters.getChannelToComputeThreshold(),
-		                this.autocropParameters.getChannelToComputeThreshold()};
+		int[] cBound = {autocropParameters.getChannelToComputeThreshold(),
+		                autocropParameters.getChannelToComputeThreshold()};
 		this.rawImg = image.toImagePlus(client, null, null, cBound, null, null);
 		this.channelNumbers = image.getPixels().getSizeC();
 	}
@@ -220,48 +225,48 @@ public class AutoCrop {
 	 * computation using only half of last slice (useful in case of top slice with lot of noise) If OTSU threshold is
 	 * still under 20 threshold default threshold value is 20.
 	 */
-	public void thresholdKernels() {
+	public void thresholdKernels(String typeThresholding) {
 		LOGGER.info("Thresholding kernels.");
-		if (this.imageSeg == null) {
+		if (imageSeg == null) {
 			return;
 		}
 		this.sliceUsedForOTSU = "default";
-		GaussianBlur3D.blur(this.imageSeg, 0.5, 0.5, 1);
-		int thresh = Thresholding.computeOTSUThreshold(this.imageSeg);
-		if (thresh < this.autocropParameters.getThresholdOTSUComputing()) {
+		GaussianBlur3D.blur(imageSeg, 0.5, 0.5, 1);
+		int thresh = Thresholding.computeThreshold(imageSeg, typeThresholding);
+		if (thresh < autocropParameters.getThresholdOTSUComputing()) {
 			ImagePlus imp2;
 			if (autocropParameters.getSlicesOTSUComputing() == 0) {
 				this.sliceUsedForOTSU =
-						"Start:" + this.imageSeg.getStackSize() / 2 + "-" + this.imageSeg.getStackSize();
-				imp2 = new Duplicator().run(this.imageSeg,
-				                            this.imageSeg.getStackSize() / 2,
-				                            this.imageSeg.getStackSize());
+						"Start:" + imageSeg.getStackSize() / 2 + "-" + imageSeg.getStackSize();
+				imp2 = new Duplicator().run(imageSeg,
+				                            imageSeg.getStackSize() / 2,
+				                            imageSeg.getStackSize());
 			} else {
 				this.sliceUsedForOTSU = "Start:" +
-				                        this.autocropParameters.getSlicesOTSUComputing() +
+				                        autocropParameters.getSlicesOTSUComputing() +
 				                        "-" +
-				                        this.imageSeg.getStackSize();
-				imp2 = new Duplicator().run(this.imageSeg,
-				                            this.autocropParameters.getSlicesOTSUComputing(),
-				                            this.imageSeg.getStackSize());
+				                        imageSeg.getStackSize();
+				imp2 = new Duplicator().run(imageSeg,
+				                            autocropParameters.getSlicesOTSUComputing(),
+				                            imageSeg.getStackSize());
 			}
-			int thresh2 = Thresholding.computeOTSUThreshold(imp2);
-			if (thresh2 < this.autocropParameters.getThresholdOTSUComputing()) {
-				thresh = this.autocropParameters.getThresholdOTSUComputing();
+			int thresh2 = Thresholding.computeThreshold(imp2, typeThresholding);
+			if (thresh2 < autocropParameters.getThresholdOTSUComputing()) {
+				thresh = autocropParameters.getThresholdOTSUComputing();
 				this.defaultThreshold = true;
 			} else {
 				thresh = thresh2;
 			}
 		}
 		this.otsuThreshold = thresh;
-		this.imageSeg = this.generateSegmentedImage(this.imageSeg, thresh);
+		this.imageSeg = generateSegmentedImage(imageSeg, thresh);
 	}
 	
 	
 	/** MorpholibJ Method computing connected components using OTSU segmented image */
 	public void computeConnectedComponent() {
 		LOGGER.info("Computing connected components.");
-		this.imageSegLabelled = BinaryImages.componentsLabeling(this.imageSeg, 26, 32);
+		this.imageSegLabelled = BinaryImages.componentsLabeling(imageSeg, 26, 32);
 	}
 	
 	
@@ -272,30 +277,30 @@ public class AutoCrop {
 	public void componentSizeFilter() {
 		LOGGER.info("Filtering components by size.");
 		Histogram histogram = new Histogram();
-		histogram.run(this.imageSegLabelled);
+		histogram.run(imageSegLabelled);
 		Map<Double, Integer> histogramData = histogram.getHistogram();
 		for (Map.Entry<Double, Integer> entry : new TreeMap<>(histogramData).entrySet()) {
 			Double  key   = entry.getKey();
 			Integer value = entry.getValue();
-			if (!((value * getVoxelVolume() < this.autocropParameters.getMinVolumeNucleus()) ||
-			      (value * getVoxelVolume() > this.autocropParameters.getMaxVolumeNucleus())) && value > 1) {
+			if (!(value * getVoxelVolume() < autocropParameters.getMinVolumeNucleus() ||
+			      value * getVoxelVolume() > autocropParameters.getMaxVolumeNucleus()) && value > 1) {
 				Box initializedBox = new Box(Short.MAX_VALUE,
 				                             Short.MIN_VALUE,
 				                             Short.MAX_VALUE,
 				                             Short.MIN_VALUE,
 				                             Short.MAX_VALUE,
 				                             Short.MIN_VALUE);
-				this.boxes.put(key, initializedBox);
+				boxes.put(key, initializedBox);
 			}
 		}
-		LOGGER.debug("Number of objects found: {}", this.boxes.size());
+		LOGGER.debug("Number of objects found: {}", boxes.size());
 	}
 	
 	
 	/** MorpholibJ Method filtering border connect component */
 	public void componentBorderFilter() {
 		LOGGER.info("Filtering components on border.");
-		LabelImages.removeBorderLabels(this.imageSegLabelled);
+		LabelImages.removeBorderLabels(imageSegLabelled);
 	}
 	
 	
@@ -305,20 +310,20 @@ public class AutoCrop {
 	 * or upper threshold volume are removed.
 	 * <p>The coordinates allow the implementation of the box objects which define the bounding box, and these objects
 	 * are stored in a List.
-	 * <p>In order to use with a grey-level image, use either {@link AutoCrop#thresholdKernels()} or your own
-	 * binarization method.
+	 * <p>In order to use with a grey-level image, use either {@link AutoCrop#thresholdKernels(String type)} or your
+	 * own binarization method.
 	 */
 	public void computeBoxes2() {
 		LOGGER.info("Computing boxes.");
 		try {
-			ImageStack imageStackInput = this.imageSegLabelled.getStack();
+			ImageStack imageStackInput = imageSegLabelled.getStack();
 			Box        box;
-			for (short k = 0; k < this.imageSegLabelled.getNSlices(); ++k) {
-				for (short i = 0; i < this.imageSegLabelled.getWidth(); ++i) {
-					for (short j = 0; j < this.imageSegLabelled.getHeight(); ++j) {
-						if ((imageStackInput.getVoxel(i, j, k) > 0) &&
-						    (this.boxes.containsKey(imageStackInput.getVoxel(i, j, k)))) {
-							box = this.boxes.get(imageStackInput.getVoxel(i, j, k));
+			for (short k = 0; k < imageSegLabelled.getNSlices(); ++k) {
+				for (short i = 0; i < imageSegLabelled.getWidth(); ++i) {
+					for (short j = 0; j < imageSegLabelled.getHeight(); ++j) {
+						if (imageStackInput.getVoxel(i, j, k) > 0 &&
+						    boxes.containsKey(imageStackInput.getVoxel(i, j, k))) {
+							box = boxes.get(imageStackInput.getVoxel(i, j, k));
 							box.setXMin((short) Math.min(i, box.getXMin()));
 							box.setXMax((short) Math.max(i, box.getXMax()));
 							box.setYMin((short) Math.min(j, box.getYMin()));
@@ -346,30 +351,30 @@ public class AutoCrop {
 	 */
 	public void addCROPParameter() {
 		LOGGER.info("Adding CROP parameter.");
-		for (Map.Entry<Double, Box> entry : new TreeMap<>(this.boxes).entrySet()) {
+		for (Map.Entry<Double, Box> entry : new TreeMap<>(boxes).entrySet()) {
 			Box box  = entry.getValue();
-			int xMin = (int) box.getXMin() - this.autocropParameters.getXCropBoxSize();
-			int yMin = (int) box.getYMin() - this.autocropParameters.getYCropBoxSize();
-			int zMin = (int) box.getZMin() - this.autocropParameters.getZCropBoxSize();
+			int xMin = box.getXMin() - autocropParameters.getXCropBoxSize();
+			int yMin = box.getYMin() - autocropParameters.getYCropBoxSize();
+			int zMin = box.getZMin() - autocropParameters.getZCropBoxSize();
 			
 			xMin = Math.max(1, xMin);
 			yMin = Math.max(1, yMin);
 			zMin = Math.max(1, zMin);
 			
-			int width = box.getXMax() + (2 * this.autocropParameters.getXCropBoxSize()) - box.getXMin();
+			int width = box.getXMax() + 2 * autocropParameters.getXCropBoxSize() - box.getXMin();
 			if (width > imageSeg.getWidth()) {
 				width = imageSeg.getWidth() - 1;
 			}
-			if (width + xMin >= this.imageSeg.getWidth() || width < 0) {
-				width = this.imageSeg.getWidth() - xMin;
+			if (width + xMin >= imageSeg.getWidth() || width < 0) {
+				width = imageSeg.getWidth() - xMin;
 			}
-			int height = box.getYMax() + (2 * this.autocropParameters.getYCropBoxSize()) - box.getYMin();
-			if ((height + yMin) >= this.imageSeg.getHeight() || (height < 0)) {
-				height = this.imageSeg.getHeight() - yMin;
+			int height = box.getYMax() + 2 * autocropParameters.getYCropBoxSize() - box.getYMin();
+			if (height + yMin >= imageSeg.getHeight() || height < 0) {
+				height = imageSeg.getHeight() - yMin;
 			}
-			int depth = box.getZMax() + (2 * this.autocropParameters.getZCropBoxSize()) - box.getZMin();
-			if (depth + zMin >= this.imageSeg.getNSlices() || depth < 0) {
-				depth = this.imageSeg.getNSlices() - zMin;
+			int depth = box.getZMax() + 2 * autocropParameters.getZCropBoxSize() - box.getZMin();
+			if (depth + zMin >= imageSeg.getNSlices() || depth < 0) {
+				depth = imageSeg.getNSlices() - zMin;
 			}
 			box.setXMin((short) xMin);
 			box.setXMax((short) (xMin + width));
@@ -391,11 +396,11 @@ public class AutoCrop {
 	public void cropKernels2() {
 		LOGGER.info("Cropping kernels (2).");
 		StringBuilder info      = new StringBuilder();
-		Directory     dirOutput = new Directory(this.outputDirPath + "nuclei");
+		Directory     dirOutput = new Directory(outputDirPath + "nuclei");
 		dirOutput.checkAndCreateDir();
 		info.append(getSpecificImageInfo()).append(HEADERS);
-		for (int c = 0; c < this.channelNumbers; c++) {
-			for (Map.Entry<Double, Box> entry : new TreeMap<>(this.boxes).entrySet()) {
+		for (int c = 0; c < channelNumbers; c++) {
+			for (Map.Entry<Double, Box> entry : new TreeMap<>(boxes).entrySet()) {
 				int i = entry.getKey().intValue();
 				LOGGER.info("Processing box number: {}", i);
 				Box       box    = entry.getValue();
@@ -406,17 +411,16 @@ public class AutoCrop {
 				int       height = box.getYMax() - box.getYMin() + 1;
 				int       depth  = box.getZMax() - box.getZMin() + 1;
 				ImagePlus croppedImage;
-				if (this.rawImg.getNSlices() > 1) {
+				if (rawImg.getNSlices() > 1) {
 					croppedImage = cropImage(xMin, yMin, zMin, width, height, depth, c);
 				} else {
 					croppedImage = cropImage2D(xMin, yMin, width, height, c);
 				}
-				Calibration cal = this.rawImg.getCalibration();
+				Calibration cal = rawImg.getCalibration();
 				croppedImage.setCalibration(cal);
 				String tiffPath = dirOutput.getDirPath() + File.separator +
-				                  this.outputFilesPrefix +
-				                  "_" + String.format("%02d", i) +
-				                  "_C" + c + ".tif";
+				                  outputFilesPrefix +
+				                  "_" + String.format("%03d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
 				    .append(c).append("\t")
@@ -428,23 +432,23 @@ public class AutoCrop {
 				    .append(height).append("\t")
 				    .append(depth).append("\n");
 				fileOutput.saveImage(croppedImage);
-				this.outputFile.add(this.outputDirPath + File.separator +
-				                    this.outputFilesPrefix + File.separator +
-				                    this.outputFilesPrefix + "_" +
-				                    String.format("%02d", i) + ".tif");
+				outputFile.add(outputDirPath + File.separator +
+				               outputFilesPrefix + File.separator +
+				               outputFilesPrefix + "_" +
+				               String.format("%03d", i) + ".tif");
 				if (c == 0) {
 					int xMax = xMin + width;
 					int yMax = yMin + height;
 					int zMax = zMin + depth;
-					this.boxCoordinates.add(this.outputDirPath + File.separator +
-					                        this.outputFilesPrefix + "_" +
-					                        String.format("%02d", i) + "_C0" + "\t" +
-					                        xMin + "\t" +
-					                        xMax + "\t" +
-					                        yMin + "\t" +
-					                        yMax + "\t" +
-					                        zMin + "\t" +
-					                        zMax);
+					boxCoordinates.add(outputDirPath + File.separator +
+					                   outputFilesPrefix + "_" +
+					                   String.format("%02d", i) + "\t" +
+					                   xMin + "\t" +
+					                   xMax + "\t" +
+					                   yMin + "\t" +
+					                   yMax + "\t" +
+					                   zMin + "\t" +
+					                   zMax);
 				}
 			}
 		}
@@ -453,25 +457,25 @@ public class AutoCrop {
 	
 	
 	public void cropKernelsOMERO(ImageWrapper image, Long[] outputsDat, Client client)
-	throws Exception {
+	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		LOGGER.info("Cropping kernels (OMERO).");
 		StringBuilder info = new StringBuilder();
 		info.append(getSpecificImageInfo()).append(HEADERS);
-		for (int c = 0; c < this.channelNumbers; c++) {
-			DatasetWrapper dataset = client.getDataset(outputsDat[c]);
-			List<ROIWrapper> rois = new ArrayList<>(this.boxes.size());
-			for (Map.Entry<Double, Box> entry : new TreeMap<>(this.boxes).entrySet()) {
+		for (int c = 0; c < channelNumbers; c++) {
+			DatasetWrapper         dataset = client.getDataset(outputsDat[c]);
+			Collection<ROIWrapper> rois    = new ArrayList<>(boxes.size());
+			for (Map.Entry<Double, Box> entry : new TreeMap<>(boxes).entrySet()) {
 				int i = entry.getKey().intValue();
 				LOGGER.info("Processing box number: {} (OMERO)", i);
 				
-				Box    box         = entry.getValue();
-				int    xMin        = box.getXMin();
-				int    yMin        = box.getYMin();
-				int    zMin        = box.getZMin();
-				int       width  = box.getXMax() - box.getXMin() + 1;
-				int       height = box.getYMax() - box.getYMin() + 1;
-				int       depth  = box.getZMax() - box.getZMin() + 1;
-
+				Box box    = entry.getValue();
+				int xMin   = box.getXMin();
+				int yMin   = box.getYMin();
+				int zMin   = box.getZMin();
+				int width  = box.getXMax() - box.getXMin() + 1;
+				int height = box.getYMax() - box.getYMin() + 1;
+				int depth  = box.getZMax() - box.getZMin() + 1;
+				
 				ShapeList shapes = new ShapeList();
 				for (int z = box.getZMin(); z < box.getZMax(); z++) {
 					RectangleWrapper rectangle = new RectangleWrapper(xMin, yMin, width, height);
@@ -485,98 +489,114 @@ public class AutoCrop {
 				roi.setName(String.valueOf(i));
 				rois.add(roi);
 				ImagePlus   croppedImage = image.toImagePlus(client, roi);
-				Calibration cal          = this.rawImg.getCalibration();
+				Calibration cal          = rawImg.getCalibration();
 				croppedImage.setCalibration(cal);
 				String tiffPath = new File(".").getCanonicalPath() +
 				                  File.separator +
-				                  this.outputFilesPrefix + "_" +
-				                  String.format("%02d", i) +
-						          "_C" + c +".tif";
+				                  outputFilesPrefix + "_" +
+				                  String.format("%03d", i) + ".tif";
 				OutputTiff fileOutput = new OutputTiff(tiffPath);
 				info.append(tiffPath).append("\t")
-						.append(c).append("\t")
-						.append(i).append("\t")
-						.append(xMin).append("\t")
-						.append(yMin).append("\t")
-						.append(zMin).append("\t")
-						.append(width).append("\t")
-						.append(height).append("\t")
-						.append(depth).append("\n");
+				    .append(c).append("\t")
+				    .append(i).append("\t")
+				    .append(xMin).append("\t")
+				    .append(yMin).append("\t")
+				    .append(zMin).append("\t")
+				    .append(width).append("\t")
+				    .append(height).append("\t")
+				    .append(depth).append("\n");
 				fileOutput.saveImage(croppedImage);
-				this.outputFile.add(this.outputFilesPrefix + "_" +
-				                    String.format("%02d", i) + ".tif");
+				outputFile.add(outputFilesPrefix + "_" +
+				               String.format("%03d", i) + ".tif");
 				dataset.importImages(client, tiffPath);
 				File file = new File(tiffPath);
 				try {
 					Files.deleteIfExists(file.toPath());
-				} catch (Exception e) {
-					LOGGER.error("File not deleted: " + tiffPath, e);
+				} catch (IOException e) {
+					LOGGER.error("File not deleted: {}", tiffPath, e);
 				}
 				if (c == 0) {
 					int xMax = xMin + width;
 					int yMax = yMin + height;
 					int zMax = zMin + depth;
-					this.boxCoordinates.add(this.outputDirPath + File.separator +
-							this.outputFilesPrefix + "_" +
-							String.format("%02d", i) + "_C0" + "\t" +
-							xMin + "\t" +
-							xMax + "\t" +
-							yMin + "\t" +
-							yMax + "\t" +
-							zMin + "\t" +
-							zMax);
+					boxCoordinates.add(outputDirPath + File.separator +
+					                   outputFilesPrefix + "_" +
+					                   String.format("%03d", i) + "\t" +
+					                   xMin + "\t" +
+					                   xMax + "\t" +
+					                   yMin + "\t" +
+					                   yMax + "\t" +
+					                   zMin + "\t" +
+					                   zMax);
 				}
 			}
-			image.saveROIs(client, rois);
+			List<ROIWrapper> roisGetter = image.getROIs(client);
+			if (roisGetter.isEmpty()) {
+				image.saveROIs(client, rois);
+			}
 		}
 		this.infoImageAnalysis += info.toString();
 	}
 	
 	
 	/** Method crops a box of interest, from coordinate files. */
-	public void cropKernels3(int channelToCrop) {
+	public void cropKernels3() {
 		LOGGER.info("Cropping kernels (3).");
 		StringBuilder info      = new StringBuilder();
-		Directory     dirOutput = new Directory(this.outputDirPath);
+		Directory     dirOutput = new Directory(outputDirPath + File.separator + "Nuclei");
 		dirOutput.checkAndCreateDir();
 		info.append(getSpecificImageInfo()).append(HEADERS);
-		for (Map.Entry<Double, Box> entry : new TreeMap<>(this.boxes).entrySet()) {
-			int i = entry.getKey().intValue();
-			LOGGER.info("Processing box number: {}", i);
-			Box       box    = entry.getValue();
-			int       xMin   = box.getXMin();
-			int       yMin   = box.getYMin();
-			int       zMin   = box.getZMin();
-			int       width  = box.getXMax() - box.getXMin() + 1;
-			int       height = box.getYMax() - box.getYMin() + 1;
-			int       depth  = box.getZMax() - box.getZMin() + 1;
-			ImagePlus croppedImage;
-			if (this.rawImg.getNSlices() > 1) {
-				croppedImage = cropImage(xMin, yMin, zMin, width, height, depth, channelToCrop);
-			} else {
-				croppedImage = cropImage2D(xMin, yMin, width, height, channelToCrop);
+		for (int c = 0; c < channelNumbers; c++) {
+			for (Map.Entry<Double, Box> entry : new TreeMap<>(boxes).entrySet()) {
+				int i = entry.getKey().intValue();
+				LOGGER.info("Processing box number: {}", i);
+				Box       box    = entry.getValue();
+				int       xMin   = box.getXMin();
+				int       yMin   = box.getYMin();
+				int       zMin   = box.getZMin();
+				int       width  = box.getXMax() - box.getXMin() + 1;
+				int       height = box.getYMax() - box.getYMin() + 1;
+				int       depth  = box.getZMax() - box.getZMin() + 1;
+				ImagePlus croppedImage;
+				if (rawImg.getNSlices() > 1) {
+					croppedImage = cropImage(xMin, yMin, zMin, width, height, depth, c);
+				} else {
+					croppedImage = cropImage2D(xMin, yMin, width, height, c);
+				}
+				Calibration cal = rawImg.getCalibration();
+				croppedImage.setCalibration(cal);
+				String tiffPath = dirOutput.getDirPath() + File.separator +
+				                  outputFilesPrefix +
+				                  "_" + String.format("%03d", i) + ".tif";
+				OutputTiff fileOutput = new OutputTiff(tiffPath);
+				info.append(tiffPath).append("\t")
+				    .append(c).append("\t")
+				    .append(i).append("\t")
+				    .append(xMin).append("\t")
+				    .append(yMin).append("\t")
+				    .append(zMin).append("\t")
+				    .append(width).append("\t")
+				    .append(height).append("\t")
+				    .append(depth).append("\n");
+				fileOutput.saveImage(croppedImage);
+				outputFile.add(outputDirPath + File.separator +
+				               outputFilesPrefix + File.separator +
+				               outputFilesPrefix + "_" +
+				               String.format("%03d", i) + ".tif");
+				if (c == 0) {
+					int xMax = xMin + width;
+					int yMax = yMin + height;
+					int zMax = zMin + depth;
+					boxCoordinates.add(outputDirPath + File.separator +
+					                   outputFilesPrefix + "_" + i + "\t" +
+					                   xMin + "\t" +
+					                   xMax + "\t" +
+					                   yMin + "\t" +
+					                   yMax + "\t" +
+					                   zMin + "\t" +
+					                   zMax);
+				}
 			}
-			Calibration cal = this.rawImg.getCalibration();
-			croppedImage.setCalibration(cal);
-			String tiffPath = dirOutput.getDirPath() + File.separator +
-							  this.outputFilesPrefix +
-							  "_" + String.format("%02d", i) +
-							  "_C" + channelToCrop + ".tif";
-			OutputTiff fileOutput = new OutputTiff(tiffPath);
-			info.append(tiffPath).append("\t")
-				.append(channelToCrop).append("\t")
-				.append(i).append("\t")
-				.append(xMin).append("\t")
-				.append(yMin).append("\t")
-				.append(zMin).append("\t")
-				.append(width).append("\t")
-				.append(height).append("\t")
-				.append(depth).append("\n");
-			fileOutput.saveImage(croppedImage);
-			this.outputFile.add(this.outputDirPath + File.separator +
-								this.outputFilesPrefix + File.separator +
-								this.outputFilesPrefix + "_" +
-								String.format("%02d", i) + ".tif");
 		}
 		this.infoImageAnalysis += info.toString();
 	}
@@ -588,7 +608,7 @@ public class AutoCrop {
 	 * @return outputFile: ArrayList of String for the path of the output files created.
 	 */
 	public List<String> getOutputFileList() {
-		return this.outputFile;
+		return new ArrayList<>(outputFile);
 	}
 	
 	
@@ -598,7 +618,7 @@ public class AutoCrop {
 	 * @return boxCoordinates: ArrayList of String which contain the coordinates of the boxes
 	 */
 	public List<String> getFileCoordinates() {
-		return this.boxCoordinates;
+		return new ArrayList<>(boxCoordinates);
 	}
 	
 	
@@ -608,7 +628,7 @@ public class AutoCrop {
 	 * @param imagePlusInput ImagePlus raw image to binarize
 	 * @param threshold      integer threshold value
 	 *
-	 * @return
+	 * @return The segmented binary image.
 	 */
 	private ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
 		ImageStack imageStackInput     = imagePlusInput.getStack();
@@ -645,7 +665,7 @@ public class AutoCrop {
 	 */
 	public ImagePlus cropImage(int xMin, int yMin, int zMin, int width, int height, int depth, int channelNumber) {
 		Duplicator duplicator = new Duplicator();
-		ImagePlus cropped = duplicator.run(rawImg, channelNumber, channelNumber, zMin, zMin+depth-1, 0, 0);
+		ImagePlus  cropped    = duplicator.run(rawImg, channelNumber, channelNumber, zMin, zMin + depth - 1, 0, 0);
 		cropped.setRoi(new Roi(xMin, yMin, width, height));
 		ImagePlus result = cropped.crop("stack");
 		result.deleteRoi();
@@ -666,8 +686,8 @@ public class AutoCrop {
 	 */
 	public ImagePlus cropImage2D(int xMin, int yMin, int width, int height, int channelNumber) {
 		Duplicator duplicator = new Duplicator();
-		ImagePlus cropped = duplicator.run(rawImg, channelNumber, channelNumber, 0, 1, 0, 0);
-		Roi roi = new Roi(xMin, yMin, width, height);
+		ImagePlus  cropped    = duplicator.run(rawImg, channelNumber, channelNumber, 0, 1, 0, 0);
+		Roi        roi        = new Roi(xMin, yMin, width, height);
 		cropped.setRoi(roi);
 		cropped = cropped.crop();
 		cropped.deleteRoi();
@@ -681,18 +701,18 @@ public class AutoCrop {
 	 * @return int the nb of nuclei
 	 */
 	public int getNbOfNuc() {
-		return this.boxes.size();
+		return boxes.size();
 	}
 	
 	
-	/** @return Header current image info analyse */
+	/** @return Header current image info analysis */
 	public String getSpecificImageInfo() {
 		return "#Image: " +
-		       this.imageFilePath +
+		       imageFilePath +
 		       "\n#OTSU threshold: " +
-		       this.otsuThreshold +
+		       otsuThreshold +
 		       "\n#Slice used for OTSU threshold: " +
-		       this.sliceUsedForOTSU +
+		       sliceUsedForOTSU +
 		       "\n";
 	}
 	
@@ -712,31 +732,34 @@ public class AutoCrop {
 	 */
 	public void writeAnalyseInfo() {
 		LOGGER.info("Writing analysis to file.");
-		Directory dirOutput = new Directory(this.outputDirPath + "coordinates");
+		Directory dirOutput = new Directory(outputDirPath + "coordinates");
 		dirOutput.checkAndCreateDir();
-		OutputTextFile resultFileOutput = new OutputTextFile(this.outputDirPath +
+		OutputTextFile resultFileOutput = new OutputTextFile(outputDirPath +
 		                                                     "coordinates" +
 		                                                     File.separator +
-		                                                     this.outputFilesPrefix +
+		                                                     outputFilesPrefix +
 		                                                     ".txt");
-		resultFileOutput.saveTextFile(this.infoImageAnalysis, true);
+		resultFileOutput.saveTextFile(infoImageAnalysis, true);
 	}
 	
 	
-	/** Write analyse info in output text file */
+	/** Write analysis info in output text file */
 	public void writeAnalyseInfoOMERO(Long id, Client client) {
 		try {
-			String path = new File(".").getCanonicalPath() + File.separator + this.outputFilesPrefix + ".txt";
+			String path = new File(".").getCanonicalPath() + File.separator + outputFilesPrefix + ".txt";
 			
 			File           file             = new File(path);
 			OutputTextFile resultFileOutput = new OutputTextFile(path);
 			DatasetWrapper dataset          = client.getDataset(id);
 			
-			resultFileOutput.saveTextFile(this.infoImageAnalysis, false);
+			resultFileOutput.saveTextFile(infoImageAnalysis, false);
 			dataset.addFile(client, file);
 			Files.deleteIfExists(file.toPath());
-		} catch (Exception e) {
+		} catch (IOException | AccessException | ServiceException | ExecutionException e) {
 			LOGGER.error("Error writing analysis information to OMERO.", e);
+		} catch (InterruptedException e) {
+			LOGGER.error("Interruption while writing analysis information to OMERO.", e);
+			Thread.currentThread().interrupt();
 		}
 	}
 	
@@ -748,18 +771,18 @@ public class AutoCrop {
 	 */
 	public String getImageCropInfo() {
 		LOGGER.info("Getting image crop info.");
-		return this.imageFilePath + "\t" +
+		return imageFilePath + "\t" +
 		       getNbOfNuc() + "\t" +
-		       this.otsuThreshold + "\t" +
-		       this.defaultThreshold + "\n";
+		       otsuThreshold + "\t" +
+		       defaultThreshold + "\n";
 	}
 	
 	
 	public String getImageCropInfoOmero(String imageName) {
 		return imageName + "\t" +
 		       getNbOfNuc() + "\t" +
-		       this.otsuThreshold + "\t" +
-		       this.defaultThreshold + "\n";
+		       otsuThreshold + "\t" +
+		       defaultThreshold + "\n";
 	}
 	
 	
@@ -770,10 +793,10 @@ public class AutoCrop {
 	 */
 	public double getVoxelVolume() {
 		double calibration;
-		if (this.autocropParameters.manualParameter) {
+		if (autocropParameters.manualParameter) {
 			calibration = autocropParameters.getVoxelVolume();
 		} else {
-			Calibration cal = this.rawImg.getCalibration();
+			Calibration cal = rawImg.getCalibration();
 			calibration = cal.pixelDepth * cal.pixelWidth * cal.pixelHeight;
 		}
 		return calibration;
@@ -782,9 +805,9 @@ public class AutoCrop {
 	
 	/** Compute boxes merging if intersecting */
 	public void boxIntersection() {
-		if (this.autocropParameters.getBoxesRegrouping()) {
+		if (autocropParameters.getBoxesRegrouping()) {
 			LOGGER.info("Computing boxes intersections.");
-			RectangleIntersection recompute = new RectangleIntersection(this.boxes, this.autocropParameters);
+			RectangleIntersection recompute = new RectangleIntersection(boxes, autocropParameters);
 			recompute.runRectangleRecompilation();
 			this.boxes = recompute.getNewBoxes();
 		}
@@ -796,8 +819,8 @@ public class AutoCrop {
 	 *
 	 * @param boxes list of boxes
 	 */
-	public void setBoxes(Map<Double, Box> boxes) {
-		this.boxes = boxes;
+	public void setBoxes(Map<Double, ? extends Box> boxes) {
+		this.boxes = new HashMap<>(boxes);
 	}
 	
 }

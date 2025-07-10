@@ -16,16 +16,15 @@ import java.util.TreeMap;
 public class Histogram {
 	/** HashMap which stock the different values of voxels and the number of voxels for each value present on the image */
 	private final Map<Double, Integer> hHistogram = new TreeMap<>();
+	
 	/** All the value present on the image */
-	private       double[]             label;
-	/**
-	 *
-	 */
-	private       double               labelMax   = -1;
-	/**
-	 *
-	 */
-	private       int                  nbLabel    = 0;
+	private double[] label;
+	
+	/**  */
+	private double labelMax = -1;
+	
+	/**  */
+	private int nbLabel;
 	
 	
 	/**
@@ -92,7 +91,7 @@ public class Histogram {
 	
 	/** @return  */
 	public Map<Double, Integer> getHistogram() {
-		return hHistogram;
+		return new TreeMap<>(hHistogram);
 	}
 	
 	

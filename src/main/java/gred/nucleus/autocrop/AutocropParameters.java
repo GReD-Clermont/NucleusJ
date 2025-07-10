@@ -18,23 +18,25 @@ public class AutocropParameters extends PluginParameters {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	/** Minimal object volume to crop */
-	int minVolumeNucleus = 1;
+	private int minVolumeNucleus = 1;
 	/** Maximal object volume to crop */
-	int maxVolumeNucleus = 2147483647;
+	private int maxVolumeNucleus = 2147483647;
+	
 	/** Number of pixels take plus object size in x */
-	private int     xCropBoxSize                = 40;
+	private int xCropBoxSize = 40;
 	/** Number of pixels take plus object size in y */
-	private int     yCropBoxSize                = 40;
+	private int yCropBoxSize = 40;
 	/** Number of slice take plus object in y */
-	private int     zCropBoxSize                = 20;
+	private int zCropBoxSize = 20;
+	
 	/** Font size of the box number */
-	private int numberFontSize 					= 30;
+	private int     numberFontSize              = 30;
 	/** Minimal default OTSU threshold */
 	private int     thresholdOTSUComputing      = 20;
 	/** Channel to compute OTSU threshold */
-	private int     channelToComputeThreshold   = 0;
+	private int     channelToComputeThreshold;
 	/** Slice start to compute OTSU threshold */
-	private int     slicesOTSUComputing         = 0;
+	private int     slicesOTSUComputing;
 	/** Surface percent of boxes to groups them */
 	private int     boxesPercentSurfaceToFilter = 50;
 	/** Activation of boxes regrouping */
@@ -268,12 +270,10 @@ public class AutocropParameters extends PluginParameters {
 	                          String pathToConfigFile) {
 		super(inputFolder, outputFolder, pathToConfigFile);
 		addProperties(pathToConfigFile);
-		
 	}
 	
 	
 	public void addProperties(String pathToConfigFile) {
-		
 		Properties prop = new Properties();
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
 			prop.load(is);
@@ -326,7 +326,7 @@ public class AutocropParameters extends PluginParameters {
 	
 	
 	/**
-	 * Method to get parameters of the analyse
+	 * Method to get parameters of the analysis
 	 *
 	 * @return : list of the parameters used for the analyse
 	 */
@@ -340,8 +340,11 @@ public class AutocropParameters extends PluginParameters {
 		                   + "#slicesOTSUComputing: " + slicesOTSUComputing + "\n"
 		                   + "#channelToComputeThreshold: " + channelToComputeThreshold + "\n"
 		                   + "#maxVolumeNucleus:" + maxVolumeNucleus + "\n"
-		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n";
-		return this.headerInfo;
+		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n"
+		                   + "#boxesRegrouping: " + boxesRegrouping + "\n"
+		                   + "#boxesPercentSurfaceToFilter: " + boxesPercentSurfaceToFilter + "\n";
+		
+		return headerInfo;
 	}
 	
 	
@@ -351,7 +354,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return x box size in pixel
 	 */
 	public int getXCropBoxSize() {
-		return this.xCropBoxSize;
+		return xCropBoxSize;
 	}
 	
 	
@@ -361,7 +364,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return y box size in pixel
 	 */
 	public int getYCropBoxSize() {
-		return this.yCropBoxSize;
+		return yCropBoxSize;
 	}
 	
 	
@@ -371,17 +374,19 @@ public class AutocropParameters extends PluginParameters {
 	 * @return z box size in pixel
 	 */
 	public int getZCropBoxSize() {
-		return this.zCropBoxSize;
+		return zCropBoxSize;
 	}
-
+	
+	
 	/**
 	 * Getter for the font size of the box number
 	 *
 	 * @return font size
 	 */
-	public int getNumberFontSize(){
-		return this.numberFontSize;
+	public int getNumberFontSize() {
+		return numberFontSize;
 	}
+	
 	
 	/**
 	 * Getter for OTSU threshold used to compute segmented image
@@ -389,7 +394,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return OTSU threshold used
 	 */
 	public int getThresholdOTSUComputing() {
-		return this.thresholdOTSUComputing;
+		return thresholdOTSUComputing;
 	}
 	
 	
@@ -399,7 +404,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return channel number
 	 */
 	public int getChannelToComputeThreshold() {
-		return this.channelToComputeThreshold;
+		return channelToComputeThreshold;
 	}
 	
 	
@@ -409,7 +414,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return minimum volume
 	 */
 	public int getMinVolumeNucleus() {
-		return this.minVolumeNucleus;
+		return minVolumeNucleus;
 	}
 	
 	
@@ -419,7 +424,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return maximum volume
 	 */
 	public int getMaxVolumeNucleus() {
-		return this.maxVolumeNucleus;
+		return maxVolumeNucleus;
 	}
 	
 	
@@ -429,7 +434,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return start slice
 	 */
 	public int getSlicesOTSUComputing() {
-		return this.slicesOTSUComputing;
+		return slicesOTSUComputing;
 	}
 	
 	
@@ -439,7 +444,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return status
 	 */
 	public boolean getBoxesRegrouping() {
-		return this.boxesRegrouping;
+		return boxesRegrouping;
 	}
 	
 	
@@ -449,7 +454,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return percentage surface
 	 */
 	public int getBoxesPercentSurfaceToFilter() {
-		return this.boxesPercentSurfaceToFilter;
+		return boxesPercentSurfaceToFilter;
 	}
 	
 }

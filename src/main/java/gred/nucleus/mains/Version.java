@@ -20,8 +20,8 @@ public class Version {
 	
 	public static String get() {
 		
-		final Properties properties = new Properties();
-		String           version    = "undefined";
+		Properties properties = new Properties();
+		String     version    = "undefined";
 		try {
 			properties.load(Version.class.getClassLoader().getResourceAsStream("nucleusj.properties"));
 			version = properties.getProperty("version");

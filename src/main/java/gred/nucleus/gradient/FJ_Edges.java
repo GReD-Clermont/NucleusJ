@@ -10,7 +10,11 @@ import imagescience.image.Image;
 import imagescience.segment.Thresholder;
 import imagescience.utility.Progressor;
 
-import java.awt.*;
+import java.awt.Checkbox;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Panel;
+import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowEvent;
@@ -21,7 +25,7 @@ public class FJ_Edges implements PlugIn, ItemListener, WindowListener {
 	
 	private static final Point    pos      = new Point(-1, -1);
 	private static       boolean  compute  = true;
-	private static       boolean  suppress = false;
+	private static       boolean  suppress;
 	private static       String   scale    = "1.0";
 	private static       String   lower    = "";
 	private static       String   higher   = "";
@@ -31,18 +35,22 @@ public class FJ_Edges implements PlugIn, ItemListener, WindowListener {
 	
 	public void run(String arg) {
 		
-		if (!FJ.libCheck()) return;
-		final ImagePlus imp = FJ.imageplus();
-		if (imp == null) return;
+		if (!FJ.libCheck()) {
+			return;
+		}
+		ImagePlus imp = FJ.imageplus();
+		if (imp == null) {
+			return;
+		}
 		
 		FJ.log(FJ.name() + " " + FJ.version() + ": Edges");
 		
 		GenericDialog gd = new GenericDialog(FJ.name() + ": Edges");
 		gd.addCheckbox(" Compute gradient-magnitude image     ", compute);
 		gd.addStringField("                Smoothing scale:", scale);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(0, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(0, 0, 0, 0));
 		gd.addCheckbox(" Suppress non-maximum gradients     ", suppress);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(0, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(0, 0, 0, 0));
 		gd.addStringField("                Lower threshold value:", lower);
 		gd.addStringField("                Higher threshold value:", higher);
 		computeBox = (Checkbox) gd.getCheckboxes().get(0);
@@ -59,7 +67,9 @@ public class FJ_Edges implements PlugIn, ItemListener, WindowListener {
 		gd.addWindowListener(this);
 		gd.showDialog();
 		
-		if (gd.wasCanceled()) return;
+		if (gd.wasCanceled()) {
+			return;
+		}
 		
 		compute = gd.getNextBoolean();
 		scale = gd.getNextString();
@@ -67,60 +77,64 @@ public class FJ_Edges implements PlugIn, ItemListener, WindowListener {
 		lower = gd.getNextString();
 		higher = gd.getNextString();
 		
-		(new FJEdges()).run(imp, compute, scale, suppress, lower, higher);
+		new FJEdges().run(imp, compute, scale, suppress, lower, higher);
 	}
 	
 	
-	public void itemStateChanged(final ItemEvent e) {
+	public void itemStateChanged(ItemEvent e) {
 		
 		if (e.getSource() == computeBox) {
-			if (!computeBox.getState()) suppressBox.setState(false);
+			if (!computeBox.getState()) {
+				suppressBox.setState(false);
+			}
 		} else if (e.getSource() == suppressBox) {
-			if (suppressBox.getState()) computeBox.setState(true);
+			if (suppressBox.getState()) {
+				computeBox.setState(true);
+			}
 		}
 	}
 	
 	
-	public void windowActivated(final WindowEvent e) {
+	public void windowActivated(WindowEvent e) {
 	}
 	
 	
-	public void windowClosed(final WindowEvent e) {
+	public void windowClosed(WindowEvent e) {
 		
 		pos.x = e.getWindow().getX();
 		pos.y = e.getWindow().getY();
 	}
 	
 	
-	public void windowClosing(final WindowEvent e) {
+	public void windowClosing(WindowEvent e) {
 	}
 	
 	
-	public void windowDeactivated(final WindowEvent e) {
+	public void windowDeactivated(WindowEvent e) {
 	}
 	
 	
-	public void windowDeiconified(final WindowEvent e) {
+	public void windowDeiconified(WindowEvent e) {
 	}
 	
 	
-	public void windowIconified(final WindowEvent e) {
+	public void windowIconified(WindowEvent e) {
 	}
 	
 	
-	public void windowOpened(final WindowEvent e) {
+	public void windowOpened(WindowEvent e) {
 	}
 	
 }
 
 class FJEdges {
 	
-	void run(final ImagePlus imp,
-	         final boolean compute,
-	         final String scale,
-	         final boolean suppress,
-	         final String lower,
-	         final String higher) {
+	void run(ImagePlus imp,
+	         boolean compute,
+	         String scale,
+	         boolean suppress,
+	         String lower,
+	         String higher) {
 		
 		try {
 			double  scaleVal;
@@ -130,30 +144,30 @@ class FJEdges {
 			boolean highThreshold = true;
 			try {
 				scaleVal = Double.parseDouble(scale);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid smoothing scale value");
 			}
 			try {
-				if (lower.equals("")) {
+				if (lower.isEmpty()) {
 					lowThreshold = false;
 				} else {
 					lowVal = Double.parseDouble(lower);
 				}
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid lower threshold value");
 			}
 			try {
-				if (higher.equals("")) {
+				if (higher.isEmpty()) {
 					highThreshold = false;
 				} else {
 					highVal = Double.parseDouble(higher);
 				}
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid higher threshold value");
 			}
-			final int thresholdMode = (lowThreshold ? 10 : 0) + (highThreshold ? 1 : 0);
+			int thresholdMode = (lowThreshold ? 10 : 0) + (highThreshold ? 1 : 0);
 			
-			final Image img    = Image.wrap(imp);
+			Image img    = Image.wrap(imp);
 			Image       newImg = new FloatImage(img);
 			
 			double[] pls = {0, 1};
@@ -161,13 +175,15 @@ class FJEdges {
 			if ((compute || suppress) && thresholdMode > 0) {
 				pls = new double[]{0, 0.9, 1};
 			}
-			final Progressor progressor = new Progressor();
+			Progressor progressor = new Progressor();
 			progressor.display(FJ_Options.pgs);
 			
 			if (compute || suppress) {
-				final Aspects aspects = newImg.aspects();
-				if (!FJ_Options.isotropic) newImg.aspects(new Aspects());
-				final Edges edges = new Edges();
+				Aspects aspects = newImg.aspects();
+				if (!FJ_Options.isotropic) {
+					newImg.aspects(new Aspects());
+				}
+				Edges edges = new Edges();
 				++pl;
 				progressor.range(pls[pl], pls[pl]);
 				edges.progressor.parent(progressor);
@@ -178,7 +194,7 @@ class FJEdges {
 			}
 			
 			if (thresholdMode > 0) {
-				final Thresholder thresholder = new Thresholder();
+				Thresholder thresholder = new Thresholder();
 				++pl;
 				progressor.range(pls[pl], pls[pl]);
 				thresholder.progressor.parent(progressor);
@@ -205,13 +221,10 @@ class FJEdges {
 			
 		} catch (OutOfMemoryError e) {
 			FJ.error("Not enough memory for this operation");
-			
 		} catch (IllegalArgumentException | IllegalStateException e) {
 			FJ.error(e.getMessage());
-			
 		} catch (Exception e) {
 			FJ.error("An unidentified error occurred while running the plugin");
-			
 		}
 	}
 	

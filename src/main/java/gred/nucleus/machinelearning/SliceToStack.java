@@ -18,8 +18,8 @@ public class SliceToStack {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	String pathToSliceDir;
-	String pathToOutputDir;
+	private final String pathToSliceDir;
+	private final String pathToOutputDir;
 	
 	
 	/**
@@ -52,14 +52,14 @@ public class SliceToStack {
 	public void run() {
 		Map<String, Integer> test = new HashMap<>();
 		
-		Directory directoryOutput = new Directory(this.pathToOutputDir);
-		Directory directoryInput  = new Directory(this.pathToSliceDir);
-		directoryInput.listImageFiles(this.pathToSliceDir);
+		Directory directoryOutput = new Directory(pathToOutputDir);
+		Directory directoryInput  = new Directory(pathToSliceDir);
+		directoryInput.listImageFiles(pathToSliceDir);
 		// Iterate over images from directory
 		for (short i = 0; i < directoryInput.getNumberFiles(); ++i) {
 			String tm = directoryInput.getFile(i).getName();
-			tm = tm.substring(0, tm.lastIndexOf("_"));
-			tm = tm.substring(0, tm.lastIndexOf("_"));
+			tm = tm.substring(0, tm.lastIndexOf('_'));
+			tm = tm.substring(0, tm.lastIndexOf('_'));
 			if (test.get(tm) != null) {
 				test.put(tm, test.get(tm) + 1);
 			} else {
@@ -73,12 +73,12 @@ public class SliceToStack {
 			LOGGER.info("image: {}", entry.getKey());
 			for (short i = 0; i < image.length; ++i) {
 				//image= BF.openImagePlus((directoryInput.dirPath
-				image[i] = IJ.openImage((directoryInput.getDirPath() +
-				                         File.separator +
-				                         entry.getKey() +
-				                         "_" +
-				                         i +
-				                         "_MLprediction.tif"));
+				image[i] = IJ.openImage(directoryInput.getDirPath() +
+				                        File.separator +
+				                        entry.getKey() +
+				                        "_" +
+				                        i +
+				                        "_MLprediction.tif");
 				IJ.run(image[i], "8-bit", "");
 				//
 			}

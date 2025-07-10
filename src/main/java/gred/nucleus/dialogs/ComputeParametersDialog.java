@@ -1,68 +1,106 @@
 package gred.nucleus.dialogs;
 
-import javax.swing.*;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.concurrent.ExecutionException;
 
 
 public class ComputeParametersDialog extends JFrame implements ItemListener {
-	private static final long       serialVersionUID        = 1L;
-	private static final JButton    jButtonWorkDirectory    = new JButton("Seg Data folder");
-	private final        JTextField jTextFieldWorkDirectory = new JTextField();
-	private final        JTextField jTextFieldRawData       = new JTextField();
-	private final        JTextPane  readUnit                = new JTextPane();
-	private final        JLabel     jLabelUnit              = new JLabel();
-	private final        JLabel     jLabelXCalibration      = new JLabel();
-	private final        JLabel     jLabelYCalibration      = new JLabel();
-	private final        JLabel     jLabelZCalibration      = new JLabel();
-	private final        JTextPane  readXCalibration        = new JTextPane();
-	private final        JTextPane  readYCalibration        = new JTextPane();
-	private final        JTextPane  readZCalibration        = new JTextPane();
-	private final        JCheckBox  addCalibrationBox       = new JCheckBox();
-	private final        JPanel     calibration;
-	private              boolean    start                   = false;
-	private final        JRadioButton                  omeroYesButton          = new JRadioButton("Yes");
-	private final        JRadioButton                  omeroNoButton           = new JRadioButton("No");
-	private final        JPanel                        localModeLayout         = new JPanel();
-	private final        JPanel                        omeroModeLayout         = new JPanel();
-	private final        JTextField                    jTextFieldHostname      = new JTextField();
-	private final        JTextField                    jTextFieldPort          = new JTextField();
-	private final        JTextField                    jTextFieldUsername      = new JTextField();
-	private final        JPasswordField                jPasswordField          = new JPasswordField();
-	private final        JTextField                    jTextFieldGroup         = new JTextField();
-	private final        String[]                      dataTypes               = {"Dataset"};
-	private final        JComboBox<String>             jComboBoxDataType       = new JComboBox<>(dataTypes);
-	private final        JComboBox<String>             jComboBoxDataType2       = new JComboBox<>(dataTypes);
-	private final        JTextField                    jTextFieldRawID      = new JTextField();
-	private final        JTextField                    jTextFieldSegmentedID      = new JTextField();
-	private final        JTextField                    jTextFieldOutputProject = new JTextField();
-	private final        Container                     container;
-	private              boolean                       useOMERO                = false;
+	private static final long serialVersionUID = 1L;
+	
+	private static final JButton jButtonWorkDirectory = new JButton("Seg Data folder");
+	
+	private final IDialogListener dialogListener;
+	
+	private final JTextField jTextFieldWorkDirectory = new JTextField();
+	private final JTextField jTextFieldRawData       = new JTextField();
+	private final JTextPane  readUnit                = new JTextPane();
+	private final JLabel     jLabelUnit              = new JLabel();
+	private final JLabel     jLabelXCalibration      = new JLabel();
+	private final JLabel     jLabelYCalibration      = new JLabel();
+	private final JLabel     jLabelZCalibration      = new JLabel();
+	private final JTextPane  readXCalibration        = new JTextPane();
+	private final JTextPane  readYCalibration        = new JTextPane();
+	private final JTextPane  readZCalibration        = new JTextPane();
+	private final JCheckBox  addCalibrationBox       = new JCheckBox();
+	
+	private final JPanel calibration;
+	
+	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
+	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
+	private final JPanel         localModeLayout    = new JPanel();
+	private final JPanel         omeroModeLayout    = new JPanel();
+	private final JTextField     jTextFieldHostname = new JTextField();
+	private final JTextField     jTextFieldPort     = new JTextField();
+	private final JTextField     jTextFieldUsername = new JTextField();
+	private final JPasswordField jPasswordField     = new JPasswordField();
+	private final JTextField     jTextFieldGroup    = new JTextField();
+	private final String[]       dataTypes          = {"Dataset"};
+	
+	private final JComboBox<String> jComboBoxDataType  = new JComboBox<>(dataTypes);
+	private final JComboBox<String> jComboBoxDataType2 = new JComboBox<>(dataTypes);
+	
+	private final JTextField jTextFieldRawID         = new JTextField();
+	private final JTextField jTextFieldSegmentedID   = new JTextField();
+	private final JTextField jTextFieldOutputProject = new JTextField();
+	
+	private final Container container;
+	
+	private boolean start;
+	private boolean useOMERO;
+	
 	
 	/** Architecture of the graphical windows */
-	public ComputeParametersDialog() {
-		final String    font                = "Albertus";
-		container           = getContentPane();
-		final JLabel    jLabelWorkDirectory = new JLabel();
-		final JLabel    jLabelCalibration   = new JLabel();
-		final JButton   jButtonStart        = new JButton("Start");
+	public ComputeParametersDialog(IDialogListener dialogListener) {
+		this.dialogListener = dialogListener;
+		final String font = "Albertus";
+		container = super.getContentPane();
+		JLabel  jLabelWorkDirectory = new JLabel();
+		JLabel  jLabelCalibration   = new JLabel();
+		JButton jButtonStart        = new JButton("Start");
 		jButtonStart.setBackground(new Color(0x2dce98));
 		jButtonStart.setForeground(Color.white);
-		final JButton   jButtonQuit         = new JButton("Quit");
+		JButton jButtonQuit = new JButton("Quit");
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
-		final JButton   jButtonRawData      = new JButton("Raw Data folder");
-		this.setTitle("Compute morphological parameters");
-		this.setSize(500, 500);
-		this.setLocationRelativeTo(null);
+		JButton jButtonRawData = new JButton("Raw Data folder");
+		super.setTitle("Compute morphological parameters");
+		super.setSize(500, 500);
+		super.setLocationRelativeTo(null);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowHeights = new int[]{17, 200, 124, 7, 10};
 		gridBagLayout.columnWidths = new int[]{236, 120, 72, 20};
-		container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
 		
 		
 		// Use Omero ?
@@ -73,8 +111,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		omeroNoButton.setSelected(true);
 		omeroNoButton.addItemListener(this);
 		JPanel radioOmeroPanel = new JPanel();
-		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.X_AXIS));
-		JLabel jLabelOmero = new JLabel("Select from omero :");
+		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.LINE_AXIS));
+		JLabel jLabelOmero = new JLabel("Select from omero:");
 		radioOmeroPanel.add(jLabelOmero);
 		radioOmeroPanel.add(omeroYesButton);
 		radioOmeroPanel.add(omeroNoButton);
@@ -83,7 +121,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		
 		// local mode layout
 		
-		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.Y_AXIS));
+		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        localPanel  = new JPanel();
 		GridBagLayout localLayout = new GridBagLayout();
@@ -93,20 +131,11 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
 		
-		
-		
 		localPanel.add(jLabelWorkDirectory,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(0, 10, 0, 0),
-		                                     0,
-		                                     0));
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(0, 10, 0, 0), 0, 0));
 		jLabelWorkDirectory.setText("Work directory and Raw data choice : ");
 		JTextPane jTextPane = new JTextPane();
 		jTextPane.setText("You must select 2 directories:\n" +
@@ -115,92 +144,50 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                  "Images must have same file name.");
 		jTextPane.setEditable(false);
 		localPanel.add(jTextPane,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(20, 20, 0, 0),
-		                                     0,
-		                                     0));
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(20, 20, 0, 0), 0, 0));
 		localPanel.add(jButtonRawData,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(100, 10, 0, 0),
-		                                     0,
-		                                     0));
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(100, 10, 0, 0), 0, 0));
 		jButtonRawData.setPreferredSize(new java.awt.Dimension(120, 21));
 		jButtonRawData.setFont(new java.awt.Font(font, Font.ITALIC, 10));
 		localPanel.add(jTextFieldRawData,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(100, 160, 0, 0),
-		                                     0,
-		                                     0));
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(100, 160, 0, 0), 0, 0));
 		jTextFieldRawData.setPreferredSize(new java.awt.Dimension(280, 21));
 		jTextFieldRawData.setFont(new java.awt.Font(font, Font.ITALIC, 10));
 		localPanel.add(jButtonWorkDirectory,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(140, 10, 0, 0),
-		                                     0,
-		                                     0));
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(140, 10, 0, 0), 0, 0));
 		jButtonWorkDirectory.setPreferredSize(new java.awt.Dimension(120, 21));
 		jButtonWorkDirectory.setFont(new java.awt.Font(font, Font.ITALIC, 10));
 		localPanel.add(jTextFieldWorkDirectory,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(140, 160, 0, 0),
-		                                     0,
-		                                     0));
+		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(140, 160, 0, 0), 0, 0));
 		jTextFieldWorkDirectory.setPreferredSize(new java.awt.Dimension(280, 21));
 		jTextFieldWorkDirectory.setFont(new java.awt.Font(font, Font.ITALIC, 10));
 		localPanel.add(jLabelCalibration,
-		              new GridBagConstraints(0,
-		                                     2,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(20, 10, 0, 0),
-		                                     0,
-		                                     0));
+		               new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(20, 10, 0, 0), 0, 0));
 		calibration = new JPanel();
 		calibration.setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.weightx = 2;
 		gc.weighty = 5;
-		gc.anchor = GridBagConstraints.NORTHWEST;
-		gc.ipady = GridBagConstraints.NORTHWEST;
+		gc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gc.ipady = GridBagConstraints.FIRST_LINE_START;
 		JLabel calibrationLabel = new JLabel("Calibration:");
 		gc.gridx = 0;
 		gc.gridy = 0;
@@ -211,17 +198,10 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		addCalibrationBox.addItemListener(this);
 		calibration.add(addCalibrationBox, gc);
 		localPanel.add(calibration,
-		              new GridBagConstraints(0,
-		                                     2,
-		                                     2,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(0, 0, 0, 0),
-		                                     0,
-		                                     0));
+		               new GridBagConstraints(0, 2, 2, 0, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(0, 0, 0, 0), 0, 0));
 		
 		
 		Border padding2 = BorderFactory.createEmptyBorder(10, 120, 10, 120);
@@ -229,51 +209,30 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		JPanel startExit = new JPanel();
 		startExit.setLayout(new GridLayout(1, 2, 30, 10));
 		startExit.add(jButtonStart,
-		new GridBagConstraints(0,
-		                       2,
-		                       0,
-		                       0,
-		                       0.0,
-		                       0.0,
-		                       GridBagConstraints.NORTHWEST,
-		                       GridBagConstraints.NONE,
-		                       new Insets(190, 140, 0, 0),
-		                       0,
-		                       0));
-		startExit.add(jButtonQuit,
-		              new GridBagConstraints(0,
-		                                     2,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
-		                                     new Insets(190, 10, 0, 0),
-		                                     0,
-		                                     0));
+		                                     new Insets(190, 140, 0, 0), 0, 0));
+		startExit.add(jButtonQuit,
+		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.FIRST_LINE_START,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(190, 10, 0, 0), 0, 0));
 		startExit.setBorder(padding2);
-		container.add(startExit, new GridBagConstraints(0,
-		                                                 3,
-		                                                 0,
-		                                                 0,
-		                                                 0.0,
-		                                                 0.0,
-		                                                 GridBagConstraints.NORTHWEST,
-		                                                 GridBagConstraints.NONE,
-		                                                 new Insets(20, 10, 0, 0),
-		                                                 0,
-		                                                 0));
+		container.add(startExit,
+		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
+		                                     GridBagConstraints.FIRST_LINE_START,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(20, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
-		this.setVisible(true);
-		ComputeParametersDialog.WorkDirectoryListener wdListener = new ComputeParametersDialog.WorkDirectoryListener();
+		super.setVisible(true);
+		ActionListener wdListener = new ComputeParametersDialog.WorkDirectoryListener();
 		jButtonWorkDirectory.addActionListener(wdListener);
-		ComputeParametersDialog.RawDataDirectoryListener ddListener =
-				new ComputeParametersDialog.RawDataDirectoryListener();
+		ActionListener ddListener = new ComputeParametersDialog.RawDataDirectoryListener();
 		jButtonRawData.addActionListener(ddListener);
-		ComputeParametersDialog.QuitListener quitListener = new QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		ComputeParametersDialog.StartListener startListener = new ComputeParametersDialog.StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
 		
 		
@@ -283,12 +242,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		container.add(localModeLayout, 1);
 		
 		
-		
-		
-		
-		
 		// Omero mode layout
-		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.Y_AXIS));
+		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        omeroPanel  = new JPanel();
 		GridBagLayout omeroLayout = new GridBagLayout();
@@ -300,7 +255,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                   "2 containing segmented nuclei images.\n" +
 		                   "Images must have same file name and the same calibration.");
 		jTextPane2.setEditable(false);
-		omeroModeLayout.add(jTextPane2,0);
+		omeroModeLayout.add(jTextPane2, 0);
 		jTextPane2.setMaximumSize(new Dimension(250, 50));
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -308,7 +263,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		
 		
 		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname :");
+		JLabel jLabelHostname = new JLabel("Hostname:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelHostname, c);
@@ -318,7 +273,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port :");
+		JLabel jLabelPort = new JLabel("Port:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPort, c);
@@ -328,7 +283,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username :");
+		JLabel jLabelUsername = new JLabel("Username:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelUsername, c);
@@ -338,7 +293,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password :");
+		JLabel jLabelPassword = new JLabel("Password:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPassword, c);
@@ -348,7 +303,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jPasswordField.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID :");
+		JLabel jLabelGroup = new JLabel("Group ID:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelGroup, c);
@@ -358,7 +313,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Raw :");
+		JLabel jLabelSource = new JLabel("Raw:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
@@ -370,7 +325,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		
 		
 		c.gridy = 6;
-		JLabel jLabelSegmentedDataset = new JLabel("Segmented  :");
+		JLabel jLabelSegmentedDataset = new JLabel("Segmented:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSegmentedDataset, c);
@@ -385,7 +340,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		omeroModeLayout.add(omeroPanel);
 		
 		
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
 		jTextFieldHostname.setText("omero.igred.fr");
@@ -394,11 +349,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jTextFieldUsername.setText("");
 		jTextFieldGroup.setText("553");
 		jPasswordField.setText("");
-		jTextFieldRawID.setText("19699");
-		jTextFieldSegmentedID.setText("27349");
-		
-		
-		
+		jTextFieldRawID.setText("");
+		jTextFieldSegmentedID.setText("");
 	}
 	
 	
@@ -413,9 +365,11 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		chromocenterSegmentationPipelineBatchDialog.setLocationRelativeTo(null);
 	}
 	
+	
 	public boolean isOmeroEnabled() {
 		return useOMERO;
 	}
+	
 	
 	public double getXCalibration() {
 		String xCal = readXCalibration.getText();
@@ -459,6 +413,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		return start;
 	}
 	
+	
 	public String getUsername() {
 		return jTextFieldUsername.getText();
 	}
@@ -473,12 +428,17 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		return jTextFieldGroup.getText();
 	}
 	
+	
 	public String getRawDatasetID() {
 		return jTextFieldRawID.getText();
 	}
+	
+	
 	public String getSegDatasetID() {
 		return jTextFieldSegmentedID.getText();
 	}
+	
+	
 	public String getHostname() {
 		return jTextFieldHostname.getText();
 	}
@@ -487,8 +447,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	public String getPort() {
 		return jTextFieldPort.getText();
 	}
-	
-	
 	
 	
 	public void itemStateChanged(ItemEvent e) {
@@ -566,9 +524,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 				readYCalibration.setVisible(false);
 				readZCalibration.setVisible(false);
 				readUnit.setVisible(false);
-				
 			}
-			
 		}
 		validate();
 		repaint();
@@ -578,12 +534,12 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	/**
 	 *
 	 */
-	static class QuitListener implements ActionListener {
-		final ComputeParametersDialog computeParametersDialog;
+	private static class QuitListener implements ActionListener {
+		private final ComputeParametersDialog computeParametersDialog;
 		
 		
 		/** @param computeParametersDialog Dialog parameters */
-		public QuitListener(ComputeParametersDialog computeParametersDialog) {
+		QuitListener(ComputeParametersDialog computeParametersDialog) {
 			this.computeParametersDialog = computeParametersDialog;
 		}
 		
@@ -597,12 +553,12 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		
 	}
 	
-	class StartListener implements ActionListener {
-		final ComputeParametersDialog computeParametersDialog;
+	private class StartListener implements ActionListener {
+		private final ComputeParametersDialog computeParametersDialog;
 		
 		
 		/** @param computeParametersDialog Dialog parameters */
-		public StartListener(ComputeParametersDialog computeParametersDialog) {
+		StartListener(ComputeParametersDialog computeParametersDialog) {
 			this.computeParametersDialog = computeParametersDialog;
 		}
 		
@@ -611,24 +567,32 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		 *
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (useOMERO==false){
-				if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
-					JOptionPane.showMessageDialog
-							           (
-									           null,
-									           "You did not choose a work directory or the raw data",
-									           "Error",
-									           JOptionPane.ERROR_MESSAGE
-							           );
-				} else {
-					start = true;
-					computeParametersDialog.dispose();
+			if (useOMERO) {
+				try {
+					dialogListener.OnStart();
+				} catch (AccessException | ServiceException | ExecutionException e) {
+					throw new RuntimeException(e);
 				}
-			}else {
 				start = true;
 				computeParametersDialog.dispose();
+			} else {
+				if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null,
+					                              "You did not choose a work directory or the raw data",
+					                              "Error",
+					                              JOptionPane.ERROR_MESSAGE);
+				} else {
+					start = true;
+					try {
+						dialogListener.OnStart();
+					} catch (AccessException | ServiceException | ExecutionException e) {
+						throw new RuntimeException(e);
+					}
+					computeParametersDialog.dispose();
+				}
 			}
 		}
+		
 	}
 	
 	/**

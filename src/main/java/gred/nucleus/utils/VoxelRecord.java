@@ -9,7 +9,7 @@ public class VoxelRecord {
 	/** Coordinates voxel */
 	public double i, j, k;
 	/** Voxel value */
-	double value;
+	private double value;
 	
 	
 	/**
@@ -23,6 +23,11 @@ public class VoxelRecord {
 		this.i = i;
 		this.j = j;
 		this.k = k;
+	}
+	
+	
+	public void multiplie(double a, double b, double c) {
+		setLocation(i * a, j * b, k * c);
 	}
 	
 	
@@ -121,7 +126,7 @@ public class VoxelRecord {
 	 * @param p a VoxelRecord
 	 */
 	public void shiftCoordinates(VoxelRecord p) {
-		this.setLocation(this.i + p.i, this.j + p.j, this.k + p.k);
+		setLocation(i + p.i, j + p.j, k + p.k);
 	}
 	
 	
@@ -133,7 +138,7 @@ public class VoxelRecord {
 	 * @param c
 	 */
 	public void multiply(double a, double b, double c) {
-		this.setLocation(this.i * a, this.j * b, this.k * c);
+		setLocation(i * a, j * b, k * c);
 	}
 	
 	
@@ -143,7 +148,7 @@ public class VoxelRecord {
 	 * @param a
 	 */
 	public void multiply(double a) {
-		this.setLocation(this.i * a, this.j * a, this.k * a);
+		setLocation(i * a, j * a, k * a);
 	}
 	
 }

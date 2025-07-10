@@ -28,7 +28,15 @@ public final class Thresholding {
 		AutoThresholder autoThresholder = new AutoThresholder();
 		ImageStatistics imageStatistics = new StackStatistics(imagePlusInput);
 		int[]           tHistogram      = imageStatistics.histogram;
-		return autoThresholder.getThreshold(AutoThresholder.Method.RenyiEntropy, tHistogram);
+		return autoThresholder.getThreshold(AutoThresholder.Method.Otsu, tHistogram);
+	}
+	
+	
+	public static int computeThreshold(ImagePlus imagePlusInput, String typeThresholding) {
+		AutoThresholder autoThresholder = new AutoThresholder();
+		ImageStatistics imageStatistics = new StackStatistics(imagePlusInput);
+		int[]           tHistogram      = imageStatistics.histogram;
+		return autoThresholder.getThreshold(AutoThresholder.Method.valueOf(typeThresholding), tHistogram);
 	}
 	
 	

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AutocropTestChecker {
 	public static final String PATH_TO_INFO   = "result_Autocrop_Analyse.csv";
-	public static final String PATH_TO_TARGET = "target/";
+	public static final String PATH_TO_TARGET = "target" + File.separator;
 	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -32,15 +32,15 @@ public class AutocropTestChecker {
 	
 	
 	public AutocropTestChecker(String targetPath) {
-		PATH_TO_COORDINATES = "coordinates/" + FilenameUtils.removeExtension(targetPath) + ".txt";
+		PATH_TO_COORDINATES = "coordinates" + File.separator + FilenameUtils.removeExtension(targetPath) + ".txt";
 		
-		File targetInfoFile = new File(AutoCropTest.PATH_TO_INPUT +
+		File targetInfoFile = new File(AutoCropTest.PATH_TO_AUTOCROP +
 		                               PATH_TO_TARGET +
 		                               targetPath + File.separator +
 		                               PATH_TO_INFO
 		);
 		
-		File targetCoordinatesFile = new File(AutoCropTest.PATH_TO_INPUT +
+		File targetCoordinatesFile = new File(AutoCropTest.PATH_TO_AUTOCROP +
 		                                      PATH_TO_TARGET +
 		                                      targetPath + File.separator +
 		                                      PATH_TO_COORDINATES
@@ -77,11 +77,11 @@ public class AutocropTestChecker {
 	
 	public AutocropResult extractGeneralInfo(AutocropResult result, File file) {
 		LOGGER.debug("Extracting info from file: {}", file);
-		List<String> resultList = new ArrayList<>();
+		List<String> resultList = new ArrayList<>(0);
 		try {
 			resultList = Files.readAllLines(file.toPath(), Charset.defaultCharset());
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LOGGER.error("Could not read file: {}", file, ex);
 		}
 		String[] resultLine = resultList.get(resultList.size() - 1).split("\t");
 		result.setCropNb(Integer.parseInt(resultLine[1]));
@@ -91,17 +91,18 @@ public class AutocropTestChecker {
 	
 	
 	public AutocropResult extractCoordinates(AutocropResult result, File file) {
-		List<String> fileList = new ArrayList<>();
+		List<String> fileList = new ArrayList<>(0);
 		try {
 			fileList = Files.readAllLines(file.toPath(), Charset.defaultCharset());
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LOGGER.error("Could not read file: {}", file, ex);
 		}
 		
-		List<String> coordinateList = fileList.subList(17, fileList.size());
+		fileList.removeIf(line -> line.startsWith("#"));
+		fileList.removeIf(line -> line.startsWith("FileName"));
 		
 		List<CropResult> coordinates = new ArrayList<>();
-		for (String line : coordinateList) {
+		for (String line : fileList) {
 			String[] resultLine = line.split("\t");
 			coordinates.add(new CropResult(Integer.parseInt(resultLine[2]),
 			                               Integer.parseInt(resultLine[1]),
@@ -129,7 +130,7 @@ public class AutocropTestChecker {
 	public void checkCoordinates(AutocropResult foundResult) {
 		int overlappingCrops = getNbOfOverlappingCrops(foundResult);
 		LOGGER.info("Crops found overlapping (at least 80% overlapped) with targeted ones (={}) = {}",
-		             target.getCropNb(), overlappingCrops);
+		            target.getCropNb(), overlappingCrops);
 		/* To change: valid if 90% of the crops found */
 		assertTrue(overlappingCrops >= target.getCropNb() * VALID_CROP_PERCENTAGE / 100);
 	}
@@ -152,10 +153,13 @@ public class AutocropTestChecker {
 			for (CropResult rCrop : autocropResult.getCoordinates()) {
 				double percent = boxesPercentOverlapping(tCrop.getBox(), rCrop.getBox());
 				LOGGER.debug("\t> FOUND: {} / Overlapping: {}", rCrop.getCropNumber(), percent);
-				if (percent >= 80) cropCounter++; // If more than one there's probably some bad crops
+				if (percent >= 80) {
+					cropCounter++; // If more than one there's probably some bad crops
+				}
 			}
-			if (cropCounter == 1) validCrops++;
-			
+			if (cropCounter == 1) {
+				validCrops++;
+			}
 		}
 		return validCrops;
 	}
@@ -179,10 +183,10 @@ public class AutocropTestChecker {
 		int bTop   = b.getYMin(), bBottom = b.getYMax();
 		int bFront = b.getZMin(), bBack = b.getZMax();
 		
-		int    x_overlap   = Math.max(0, Math.min(aRight, bRight) - Math.max(aLeft, bLeft));
-		int    y_overlap   = Math.max(0, Math.min(aBottom, bBottom) - Math.max(aTop, bTop));
-		int    z_overlap   = Math.max(0, Math.min(aBack, bBack) - Math.max(aFront, bFront));
-		double overlapArea = x_overlap * y_overlap * z_overlap;
+		int    xOverlap    = Math.max(0, Math.min(aRight, bRight) - Math.max(aLeft, bLeft));
+		int    yOverlap    = Math.max(0, Math.min(aBottom, bBottom) - Math.max(aTop, bTop));
+		int    zOverlap    = Math.max(0, Math.min(aBack, bBack) - Math.max(aFront, bFront));
+		double overlapArea = xOverlap * yOverlap * zOverlap;
 		
 		double aVol = (a.getXMax() - a.getXMin()) * (a.getYMax() - a.getYMin()) * (a.getZMax() - a.getZMin());
 		double bVol = (b.getXMax() - b.getXMin()) * (b.getYMax() - b.getYMin()) * (b.getZMax() - b.getZMin());

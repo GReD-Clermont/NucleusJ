@@ -2,8 +2,20 @@ package gred.nucleus.dialogs;
 
 import gred.nucleus.core.NucleusSegmentation;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -11,7 +23,7 @@ import java.awt.event.ItemListener;
 
 
 public class SegmentationConfigDialog extends JFrame implements ItemListener {
-	private final JTextField         minVolume           = new JTextField();
+	private final JTextField         minVolume             = new JTextField();
 	private final JTextField         maxVolume             = new JTextField();
 	private final JCheckBox          convexHullDetection   = new JCheckBox();
 	private final JTextField         xCalibration          = new JTextField();
@@ -30,10 +42,10 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	
 	public SegmentationConfigDialog(SegmentationDialog caller) {
 		this.caller = caller;
-		this.setTitle("Segmentation NucleusJ2");
-		this.setSize(300, 340);
-		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		container = getContentPane();
+		super.setTitle("Segmentation - NucleusJ3");
+		super.setSize(300, 340);
+		super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		container = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{1.0};
 		gridBagLayout.rowHeights = new int[]{300};
@@ -41,7 +53,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		gridBagLayout.columnWidths = new int[]{180, 500};
 		
 		container.setLayout(gridBagLayout);
-		getRootPane().setDefaultButton(buttonOK);
+		super.getRootPane().setDefaultButton(buttonOK);
 
 
         /*/\*\
@@ -50,12 +62,12 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		
 		
 		volumePane = new JPanel();
-		volumePane.setLayout(new BoxLayout(volumePane, BoxLayout.Y_AXIS));
+		volumePane.setLayout(new BoxLayout(volumePane, BoxLayout.PAGE_AXIS));
 		volumePane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		volumePane.setAlignmentX(0);
 		
 		JPanel minVolumePane = new JPanel();
-		minVolumePane.setLayout(new BoxLayout(minVolumePane, BoxLayout.X_AXIS));
+		minVolumePane.setLayout(new BoxLayout(minVolumePane, BoxLayout.LINE_AXIS));
 		minVolumePane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		JLabel xBox = new JLabel("Min:");
 		minVolumePane.add(xBox);
@@ -65,7 +77,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		minVolumePane.add(minVolume);
 		
 		JPanel maxVolumePane = new JPanel();
-		maxVolumePane.setLayout(new BoxLayout(maxVolumePane, BoxLayout.X_AXIS));
+		maxVolumePane.setLayout(new BoxLayout(maxVolumePane, BoxLayout.LINE_AXIS));
 		maxVolumePane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		JLabel yBox = new JLabel("Max:");
 		maxVolumePane.add(yBox);
@@ -75,9 +87,9 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		maxVolumePane.add(maxVolume);
 		
 		JPanel convexHullPane = new JPanel();
-		convexHullPane.setLayout(new BoxLayout(convexHullPane, BoxLayout.X_AXIS));
+		convexHullPane.setLayout(new BoxLayout(convexHullPane, BoxLayout.LINE_AXIS));
 		convexHullPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-		JLabel zBox = new JLabel("Convex Hull Detection (" + NucleusSegmentation.CONVEX_HULL_ALGORITHM +":");
+		JLabel zBox = new JLabel("Convex Hull Detection (" + NucleusSegmentation.CONVEX_HULL_ALGORITHM + ":");
 		convexHullPane.add(zBox);
 		convexHullPane.add(Box.createRigidArea(new Dimension(10, 0)));
 		convexHullDetection.setSelected(true);
@@ -125,15 +137,15 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		                                                 0,
 		                                                 0.0,
 		                                                 0.0,
-		                                                 GridBagConstraints.NORTHWEST,
+		                                                 GridBagConstraints.FIRST_LINE_START,
 		                                                 GridBagConstraints.NONE,
 		                                                 new Insets(0, 0, 0, 0),
 		                                                 0,
 		                                                 0));
 		
-		this.setVisible(false);
+		super.setVisible(false);
 		
-		SegmentationConfigDialog.StartListener startListener = new StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		buttonOK.addActionListener(startListener);
 	}
 	
@@ -181,7 +193,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 			if (addCalibrationBox.isSelected()) {
 				
 				xCalibrationPanel = new JPanel();
-				xCalibrationPanel.setLayout(new BoxLayout(xCalibrationPanel, BoxLayout.X_AXIS));
+				xCalibrationPanel.setLayout(new BoxLayout(xCalibrationPanel, BoxLayout.LINE_AXIS));
 				xCalibrationPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 				JLabel xBox2 = new JLabel("X:");
 				xCalibrationPanel.add(xBox2);
@@ -191,7 +203,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 				xCalibrationPanel.add(xCalibration);
 				
 				yCalibrationPanel = new JPanel();
-				yCalibrationPanel.setLayout(new BoxLayout(yCalibrationPanel, BoxLayout.X_AXIS));
+				yCalibrationPanel.setLayout(new BoxLayout(yCalibrationPanel, BoxLayout.LINE_AXIS));
 				yCalibrationPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 				JLabel yBox2 = new JLabel("Y:");
 				yCalibrationPanel.add(yBox2);
@@ -201,7 +213,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 				yCalibrationPanel.add(yCalibration);
 				
 				zCalibrationPanel = new JPanel();
-				zCalibrationPanel.setLayout(new BoxLayout(zCalibrationPanel, BoxLayout.X_AXIS));
+				zCalibrationPanel.setLayout(new BoxLayout(zCalibrationPanel, BoxLayout.LINE_AXIS));
 				zCalibrationPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 				JLabel zBox2 = new JLabel("Z:");
 				zCalibrationPanel.add(zBox2);
@@ -232,12 +244,12 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	}
 	
 	
-	static class StartListener implements ActionListener {
-		SegmentationConfigDialog segmentationDialog;
+	private static class StartListener implements ActionListener {
+		private final SegmentationConfigDialog segmentationDialog;
 		
 		
 		/** @param segmentationDialog  */
-		public StartListener(SegmentationConfigDialog segmentationDialog) {
+		StartListener(SegmentationConfigDialog segmentationDialog) {
 			this.segmentationDialog = segmentationDialog;
 		}
 		

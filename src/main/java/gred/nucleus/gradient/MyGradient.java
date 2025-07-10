@@ -22,8 +22,9 @@ public class MyGradient {
 	private static final String  LOWER    = "";
 	private static final String  HIGHER   = "";
 	private final        boolean mask;
-	ImagePlus imagePlus;
-	ImagePlus imagePlusBinary;
+	
+	private final ImagePlus imagePlus;
+	private ImagePlus imagePlusBinary;
 	
 	
 	public MyGradient(ImagePlus imp, ImagePlus imagePlusBinary) {
@@ -50,42 +51,46 @@ public class MyGradient {
 			boolean highThreshold = true;
 			try {
 				scaleVal = Double.parseDouble(SCALE);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid smoothing scale value");
 			}
 			try {
-				if (LOWER.equals("")) {
+				if (LOWER.isEmpty()) {
 					lowThreshold = false;
 				} else {
 					lowVal = Double.parseDouble(LOWER);
 				}
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid lower threshold value");
 			}
 			try {
-				if (HIGHER.equals("")) {
+				if (HIGHER.isEmpty()) {
 					highThreshold = false;
 				} else {
 					highVal = Double.parseDouble(HIGHER);
 				}
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid higher threshold value");
 			}
-			final int   threshMode = (lowThreshold ? 10 : 0) + (highThreshold ? 1 : 0);
-			final Image image      = Image.wrap(imagePlus);
-			Image       newImage   = new FloatImage(image);
-			double[]    pls        = {0, 1};
-			int         pl         = 0;
+			int      threshMode = (lowThreshold ? 10 : 0) + (highThreshold ? 1 : 0);
+			Image    image      = Image.wrap(imagePlus);
+			Image    newImage   = new FloatImage(image);
+			double[] pls        = {0, 1};
+			int      pl         = 0;
 			if ((COMPUTE || SUPPRESS) && threshMode > 0) {
 				pls = new double[]{0, 0.9, 1};
 			}
-			final Progressor progressor = new Progressor();
+			Progressor progressor = new Progressor();
 			progressor.display(FJ_Options.pgs);
 			if (COMPUTE || SUPPRESS) {
-				final Aspects aspects = newImage.aspects();
-				if (!FJ_Options.isotropic) newImage.aspects(new Aspects());
-				final MyEdges myEdges = new MyEdges();
-				if (mask) myEdges.setMask(imagePlusBinary);
+				Aspects aspects = newImage.aspects();
+				if (!FJ_Options.isotropic) {
+					newImage.aspects(new Aspects());
+				}
+				MyEdges myEdges = new MyEdges();
+				if (mask) {
+					myEdges.setMask(imagePlusBinary);
+				}
 				++pl;
 				progressor.range(pls[pl], pls[pl]);
 				myEdges.progressor.parent(progressor);
@@ -96,9 +101,9 @@ public class MyGradient {
 			}
 			newImagePlus = newImage.imageplus();
 			imagePlus.setCalibration(newImagePlus.getCalibration());
-			final double[] minMax = newImage.extrema();
-			final double   min    = minMax[0];
-			final double   max    = minMax[1];
+			double[] minMax = newImage.extrema();
+			double   min    = minMax[0];
+			double   max    = minMax[1];
 			newImagePlus.setDisplayRange(min, max);
 		} catch (OutOfMemoryError e) {
 			FJ.error("Not enough memory for this operation");

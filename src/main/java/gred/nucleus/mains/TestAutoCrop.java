@@ -31,7 +31,7 @@ public class TestAutoCrop {
 	 *
 	 * @param imageSourceFile the input image file on disk
 	 */
-	static ArrayList<String> test;
+	private static ArrayList<String> test;
 	
 	
 	public static void runAutoCropFolder(String imageSourceFile, String output, String pathToConfig) {
@@ -68,13 +68,13 @@ public class TestAutoCrop {
 	 *
 	 * @param args
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException, FormatException {
 		
 		LOGGER.info("Start program");
 		long maxMemory = Runtime.getRuntime().maxMemory();
 		/* Maximum amount of memory the JVM will attempt to use */
 		LOGGER.info("Maximum memory (bytes): {}",
-		            (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1e-9));
+		            maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1.0e-9);
 
 //		runAutoCropFolder("C:/Users/Martin/Documents/IMAGE_TEST_NJ/AUTOCROP/RAW_ND/","C:/Users/Martin/Documents/IMAGE_TEST_NJ/AUTOCROP/RESULTS/RAW_ND/");
 		runCropFromCoordinates("C:/Users/Martin/Documents/IMAGE_TEST_NJ/AUTOCROP/RESULTS/TIF_3D/tab_file.txt");
@@ -82,7 +82,7 @@ public class TestAutoCrop {
 		LOGGER.info("The program ended normally.");
 		
 		LOGGER.info("Total memory (bytes): {}",
-		            Runtime.getRuntime().totalMemory() * 1e-9);
+		            Runtime.getRuntime().totalMemory() * 1.0e-9);
 	}
 	
 }

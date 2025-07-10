@@ -32,8 +32,8 @@ public class ComputeSegmentationParameters {
 		directoryInput.listImageFiles(pluginParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
 		List<File> rawImages = directoryInput.getFileList();
-		StringBuilder outputCropGeneralInfoOTSU =
-				new StringBuilder(pluginParameters.getAnalysisParameters() + getResultsColumnNames());
+		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder(pluginParameters.getAnalysisParameters() +
+		                                                            getResultsColumnNames());
 		for (File currentFile : rawImages) {
 			ImagePlus   raw       = new ImagePlus(currentFile.getAbsolutePath());
 			ImagePlus[] segmented = BF.openImagePlus(pluginParameters.getOutputFolder() + currentFile.getName());
@@ -62,8 +62,8 @@ public class ComputeSegmentationParameters {
 		directoryInput.listImageFiles(pluginParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
 		List<File> rawImages = directoryInput.getFileList();
-		StringBuilder outputCropGeneralInfoOTSU =
-				new StringBuilder(pluginParameters.getAnalysisParameters() + getResultsColumnNames());
+		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder(pluginParameters.getAnalysisParameters() +
+		                                                            getResultsColumnNames());
 		for (File currentFile : rawImages) {
 			LOGGER.info("current File: {}", currentFile.getName());
 			
@@ -86,19 +86,18 @@ public class ComputeSegmentationParameters {
 	}
 	
 	
-	public static void main(String[] args) throws Exception {
-		computeNucleusParameters(
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/RAW",
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/GIFT");
+	public static void main(String[] args) throws IOException, FormatException {
+		computeNucleusParameters("/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/RAW",
+		                         "/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/GIFT");
 	}
 	
 	
 	public static String getResultsColumnNames() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
-				"Moment 1\t" +
-				"Moment 2\t" +
-				"Moment 3 \t" +
+		       "Moment 1\t" +
+		       "Moment 2\t" +
+		       "Moment 3 \t" +
 		       "Flatness\t" +
 		       "Elongation\t" +
 		       "Esr\t" +
@@ -113,6 +112,8 @@ public class ComputeSegmentationParameters {
 		       "MedianIntensityNucleus\t" +
 		       "MedianIntensityBackground\t" +
 		       "ImageSize\t" +
+		       "AspectRatio\t" +
+		       "Circularity\t" +
 		       "OTSUThreshold\n";
 	}
 	
@@ -124,9 +125,9 @@ public class ComputeSegmentationParameters {
 		for (int k = 0; k < raw.getStackSize(); ++k) {
 			for (int i = 0; i < raw.getWidth(); ++i) {
 				for (int j = 0; j < raw.getHeight(); ++j) {
-					if ((imageStackSeg.getVoxel(i, j, k) == 255) &&
-					    (otsuThreshold >= imageStackRaw.getVoxel(i, j, k))) {
-						otsuThreshold = (int) (imageStackRaw.getVoxel(i, j, k));
+					if (imageStackSeg.getVoxel(i, j, k) == 255 &&
+					    otsuThreshold >= imageStackRaw.getVoxel(i, j, k)) {
+						otsuThreshold = (int) imageStackRaw.getVoxel(i, j, k);
 					}
 				}
 			}

@@ -38,9 +38,9 @@ public class Voxel {
 	 */
 	public Voxel(short x, short y, short z) {
 		this.coordinates = new short[3];
-		this.coordinates[0] = x;
-		this.coordinates[1] = y;
-		this.coordinates[2] = z;
+		coordinates[0] = x;
+		coordinates[1] = y;
+		coordinates[2] = z;
 	}
 	
 	
@@ -53,9 +53,9 @@ public class Voxel {
 	 */
 	public Voxel(short x, short y, short z, short value) {
 		this.coordinates = new short[3];
-		this.coordinates[0] = x;
-		this.coordinates[1] = y;
-		this.coordinates[2] = z;
+		coordinates[0] = x;
+		coordinates[1] = y;
+		coordinates[2] = z;
 		this.value = value;
 	}
 	
@@ -68,9 +68,9 @@ public class Voxel {
 	 * @param z third coordinate of the voxel
 	 */
 	public void setCoordinates(short x, short y, short z) {
-		this.coordinates[0] = x;
-		this.coordinates[1] = y;
-		this.coordinates[2] = z;
+		coordinates[0] = x;
+		coordinates[1] = y;
+		coordinates[2] = z;
 	}
 	
 	
@@ -91,7 +91,7 @@ public class Voxel {
 	 * @param i the coordinate's index (0, 1 or 2)
 	 */
 	public void incrementCoordinate(int i) {
-		this.coordinates[i]++;
+		coordinates[i]++;
 	}
 	
 	
@@ -102,7 +102,7 @@ public class Voxel {
 	 * @param value the new value of the i^th coordinate of the voxel
 	 */
 	public void setCoordinates(int i, short value) {
-		this.coordinates[i] = value;
+		coordinates[i] = value;
 	}
 	
 	
@@ -114,7 +114,7 @@ public class Voxel {
 	 * @return the i^th coordinate of the voxel
 	 */
 	public short getCoordinate(int i) {
-		return this.coordinates[i];
+		return coordinates[i];
 	}
 	
 	
@@ -124,7 +124,7 @@ public class Voxel {
 	 * @return the first coordinate of the voxel
 	 */
 	public short getX() {
-		return this.coordinates[0];
+		return coordinates[0];
 	}
 	
 	
@@ -134,7 +134,7 @@ public class Voxel {
 	 * @param value the new value of the first coordinate of the voxel
 	 */
 	public void setX(short value) {
-		this.coordinates[0] = value;
+		coordinates[0] = value;
 	}
 	
 	
@@ -144,7 +144,7 @@ public class Voxel {
 	 * @return the second coordinate of the voxel
 	 */
 	public short getY() {
-		return this.coordinates[1];
+		return coordinates[1];
 	}
 	
 	
@@ -154,7 +154,7 @@ public class Voxel {
 	 * @param value the new value of the first coordinate of the voxel
 	 */
 	public void setY(short value) {
-		this.coordinates[1] = value;
+		coordinates[1] = value;
 	}
 	
 	
@@ -164,7 +164,7 @@ public class Voxel {
 	 * @return the third coordinate of a voxel
 	 */
 	public short getZ() {
-		return this.coordinates[2];
+		return coordinates[2];
 	}
 	
 	
@@ -174,7 +174,7 @@ public class Voxel {
 	 * @param value the new value of the first coordinate of the voxel
 	 */
 	public void setZ(short value) {
-		this.coordinates[2] = value;
+		coordinates[2] = value;
 	}
 	
 	
@@ -184,9 +184,9 @@ public class Voxel {
 	 * @param voxel another voxel
 	 */
 	public void shiftCoordinates(Voxel voxel) {
-		this.coordinates[0] += voxel.coordinates[0];
-		this.coordinates[1] += voxel.coordinates[1];
-		this.coordinates[2] += voxel.coordinates[2];
+		coordinates[0] += voxel.coordinates[0];
+		coordinates[1] += voxel.coordinates[1];
+		coordinates[2] += voxel.coordinates[2];
 	}
 	
 	
@@ -198,9 +198,9 @@ public class Voxel {
 	 * @param c factor on the third coordinate
 	 */
 	public void multiply(short a, short b, short c) {
-		this.coordinates[0] *= a;
-		this.coordinates[1] *= b;
-		this.coordinates[2] *= c;
+		coordinates[0] *= a;
+		coordinates[1] *= b;
+		coordinates[2] *= c;
 	}
 	
 	
@@ -210,20 +210,18 @@ public class Voxel {
 	 * @param a factor for all the coordinates
 	 */
 	public void multiply(short a) {
-		this.coordinates[0] *= a;
-		this.coordinates[1] *= a;
-		this.coordinates[2] *= a;
+		coordinates[0] *= a;
+		coordinates[1] *= a;
+		coordinates[2] *= a;
 	}
 	
 	
 	/**
 	 * Returns a human readable representation of a voxel as a string
-	 *
-	 * @see Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "(" + this.coordinates[0] + ", " + this.coordinates[1] + ", " + this.coordinates[2] + ")";
+		return "(" + coordinates[0] + ", " + coordinates[1] + ", " + coordinates[2] + ")";
 	}
 	
 	

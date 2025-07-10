@@ -2,6 +2,7 @@ package gred.nucleus.mains;
 
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +35,13 @@ public class TestSegmentationMethods {
 	 * @param input
 	 * @param output
 	 */
-	public static void testStupidSeveralImages(String input, String output) throws Exception {
+	public static void testStupidSeveralImages(String input, String output)
+	throws FormatException {
 		SegmentationParameters segmentationParameters = new SegmentationParameters(input, output);
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
 			String log = otsuModified.runSeveralImages2();
-			if (!(log.equals(""))) {
+			if (!log.isEmpty()) {
 				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 			}
 		} catch (IOException e) {
@@ -48,12 +50,13 @@ public class TestSegmentationMethods {
 	}
 	
 	
-	public static void testStupidSeveralImages(String input, String output, String config) throws Exception {
+	public static void testStupidSeveralImages(String input, String output, String config)
+	throws FormatException {
 		SegmentationParameters segmentationParameters = new SegmentationParameters(input, output, config);
 		SegmentationCalling    otsuModified           = new SegmentationCalling(segmentationParameters);
 		try {
 			String log = otsuModified.runSeveralImages2();
-			if (!(log.equals(""))) {
+			if (!log.isEmpty()) {
 				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 			}
 		} catch (IOException e) {
@@ -67,7 +70,7 @@ public class TestSegmentationMethods {
 	 *
 	 * @param args
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws FormatException {
 		///home/titus/Bureau/data/Test_Image_Reproducibility/IMAGE_TEST_NJ/AUTOCROP_RAW/RAW_BIOFORMATS
 		String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 		
@@ -91,8 +94,8 @@ public class TestSegmentationMethods {
 		String pathToTest = "/home/tridubos/Bureau/IMAGES_TEST/AUTOCROP";
 		long   maxMemory  = Runtime.getRuntime().maxMemory();
 		LOGGER.debug("Maximum memory (bytes) /RAW_CZI: {} {}",
-		             (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1e-9),
-		             Runtime.getRuntime().freeMemory() * 1e-9);
+		             maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory * 1.0e-9,
+		             Runtime.getRuntime().freeMemory() * 1.0e-9);
 		/*
 		 testStupidSeveralImages("/media/tridubos/DATA1/DATA_ANALYSE/MANIP_MANU_KAKU/ANALYSE_OCTOBRE_2019/images_PROBLEMS",
 		 "/media/tridubos/DATA1/DATA_ANALYSE/MANIP_MANU_KAKU/ANALYSE_OCTOBRE_2019/SEG_IMAGE_PB");
@@ -118,9 +121,8 @@ public class TestSegmentationMethods {
 		 testStupidSeveralImages("/media/tridubos/DATA1/DATA_ANALYSE/ANALYSE_BILLES_11-2019/test_calib_segmentation/Raw",
 		 "/media/tridubos/DATA1/DATA_ANALYSE/ANALYSE_BILLES_11-2019/test_calib_segmentation/Segmented");
 		 */
-		testStupidSeveralImages(
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TEST_NEW_PARAMETER/RAW",
-				"/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TEST_NEW_PARAMETER/SEG");
+		testStupidSeveralImages("/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TEST_NEW_PARAMETER/RAW",
+		                        "/media/titus/DATA/ML_ANALYSE_DATA/ANALYSE_COMPARAISON_REANALYSE/129_ANNOTATION_FULL/TEST_NEW_PARAMETER/SEG");
 		//testStupidSeveralImages("/home/titus/Bureau/TEST_NJ/AUTOCROP/DEBUG/RAWBUG",
 		//"/home/titus/Bureau/TEST_NJ/AUTOCROP/DEBUG/SEGBUG");
 		

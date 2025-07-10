@@ -32,18 +32,17 @@ public class OutputFileVerification {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	/** Key of files expected in the result directory */
-	Map<String, String> myMapInitialFilesInputFolder = new HashMap<>();
-	/** Key of files produce by the analysis */
-	Map<String, String> myMapInitialFileOutputFolder = new HashMap<>();
-	/** list of files produce by the analysis */
-	Map<String, String> myMapFilesProduceByAnalysis  = new HashMap<>();
-	
-	
 	/** Path output analysis files */
-	String rawPathOutPut;
+	private final String rawPathOutPut;
 	/** Raw path expected files */
-	String rawPathExpectedResult;
+	private final String rawPathExpectedResult;
+	
+	/** Key of files expected in the result directory */
+	private Map<String, String> myMapInitialFilesInputFolder = new HashMap<>();
+	/** Key of files produce by the analysis */
+	private Map<String, String> myMapInitialFileOutputFolder = new HashMap<>();
+	/** list of files produce by the analysis */
+	private Map<String, String> myMapFilesProduceByAnalysis  = new HashMap<>();
 	
 	
 	/**
@@ -71,9 +70,8 @@ public class OutputFileVerification {
 				if (f.isDirectory()) {
 					getFileResultExpected(f.getAbsolutePath());
 				} else {
-					String temps = f.getPath().replace(
-							this.rawPathExpectedResult, "");
-					this.myMapInitialFilesInputFolder.put(temps, md5(f.getPath()));
+					String temps = f.getPath().replace(rawPathExpectedResult, "");
+					myMapInitialFilesInputFolder.put(temps, md5(f.getPath()));
 				}
 			}
 		}
@@ -93,8 +91,8 @@ public class OutputFileVerification {
 				if (f.isDirectory()) {
 					getFilesOutputFolder(f.getAbsolutePath());
 				} else {
-					String temps = f.getPath().replace(this.rawPathOutPut, "");
-					this.myMapInitialFileOutputFolder.put(temps, md5(f.getPath()));
+					String temps = f.getPath().replace(rawPathOutPut, "");
+					myMapInitialFileOutputFolder.put(temps, md5(f.getPath()));
 				}
 			}
 		}
@@ -102,12 +100,11 @@ public class OutputFileVerification {
 	
 	
 	/**
-	 * List files output folder produce by the analyse and compute md5sum stored in hashMap (read recursively folders)
+	 * List files output folder produce by the analysis and compute md5sum stored in hashMap (read recursively folders)
 	 *
 	 * @param path Path of folder which contains files expected
 	 */
 	public void getFilesResultingOfAnalysis(String path) {
-		
 		File   root = new File(path);
 		File[] list = root.listFiles();
 		if (list != null) {
@@ -115,10 +112,10 @@ public class OutputFileVerification {
 				if (f.isDirectory()) {
 					getFilesResultingOfAnalysis(f.getAbsolutePath());
 				} else {
-					String temps = f.getPath().replace(this.rawPathOutPut
+					String temps = f.getPath().replace(rawPathOutPut
 							, "");
 					LOGGER.debug(temps);
-					this.myMapFilesProduceByAnalysis.put(temps, md5(f.getPath()));
+					myMapFilesProduceByAnalysis.put(temps, md5(f.getPath()));
 				}
 			}
 		}
@@ -127,18 +124,16 @@ public class OutputFileVerification {
 	
 	/** Method to compare md5sum of files from output analysis with expected results */
 	public void compareAnalysisResult() {
-		for (Map.Entry<String, String> entry :
-				this.myMapInitialFilesInputFolder.entrySet()) {
+		for (Map.Entry<String, String> entry : myMapInitialFilesInputFolder.entrySet()) {
 			String fileName = entry.getKey();
 			String hashCode = entry.getValue();
-			if (hashCode.equals(
-					this.myMapFilesProduceByAnalysis.get(fileName))) {
-				LOGGER.debug("Terrible du cul {}", fileName);
+			if (hashCode.equals(myMapFilesProduceByAnalysis.get(fileName))) {
+				LOGGER.debug("Terrible {}", fileName);
 			} else {
 				LOGGER.debug("le fichier n'existe pas ou diff hash {}\n{}\n{}\n",
 				             fileName,
 				             hashCode,
-				             this.myMapFilesProduceByAnalysis.get(fileName));
+				             myMapFilesProduceByAnalysis.get(fileName));
 			}
 		}
 	}

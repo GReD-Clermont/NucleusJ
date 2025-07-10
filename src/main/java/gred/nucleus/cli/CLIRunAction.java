@@ -7,6 +7,8 @@ import gred.nucleus.autocrop.GenerateOverlay;
 import gred.nucleus.autocrop.GenerateProjectionFromCoordinates;
 import gred.nucleus.core.ComputeNucleiParameters;
 import gred.nucleus.machinelearning.ComputeNucleiParametersML;
+import gred.nucleus.plugins.ChromocenterParameters;
+import gred.nucleus.process.ChromocenterCalling;
 import gred.nucleus.segmentation.SegmentationCalling;
 import gred.nucleus.segmentation.SegmentationParameters;
 import loci.formats.FormatException;
@@ -17,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+
+import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
 
 
 public class CLIRunAction {
@@ -32,8 +37,8 @@ public class CLIRunAction {
 	}
 	
 	
-	public void run() throws Exception {
-		switch (this.cmd.getOptionValue("action")) {
+	public void run() throws FormatException, IOException {
+		switch (cmd.getOptionValue("action")) {
 			case "autocrop":
 				runAutocrop();
 				break;
@@ -55,82 +60,131 @@ public class CLIRunAction {
 			case "generateOverlay":
 				runGenerateOV();
 				break;
+			case "segCC":
+				runSegCC();
 			default:
 				throw new IllegalArgumentException("Invalid action.");
 		}
 	}
 	
 	
-	private void runGenerateOV() throws Exception {
-		GenerateOverlay ov = new GenerateOverlay(this.cmd.getOptionValue("input"),
-												 this.cmd.getOptionValue("input2"));
+	private void runSegCC() {
+		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(cmd.getOptionValue("input"),
+		                                                                           cmd.getOptionValue("input2"),
+		                                                                           cmd.getOptionValue("o"));
+		if (cmd.hasOption("isG")) {
+			chromocenterParameters.gaussianOnRaw = true;
+		}
+		if (cmd.hasOption("isF")) {
+			chromocenterParameters.sizeFilterConnectedComponent = true;
+		}
+		if (cmd.hasOption("noC")) {
+			chromocenterParameters.noChange = true;
+		}
+		if (cmd.hasOption("gX")) {
+			chromocenterParameters.gaussianBlurXsigma = parseDouble(cmd.getOptionValue("gX"));
+		}
+		if (cmd.hasOption("gY")) {
+			chromocenterParameters.gaussianBlurYsigma = parseDouble(cmd.getOptionValue("gY"));
+		}
+		if (cmd.hasOption("gZ")) {
+			chromocenterParameters.gaussianBlurZsigma = parseDouble(cmd.getOptionValue("gZ"));
+		}
+		if (cmd.hasOption("min")) {
+			chromocenterParameters.minSizeConnectedComponent = parseDouble(cmd.getOptionValue("min"));
+		}
+		if (cmd.hasOption("max")) {
+			chromocenterParameters.maxSizeConnectedComponent = parseDouble(cmd.getOptionValue("max"));
+		}
+		if (cmd.hasOption("f")) {
+			chromocenterParameters.factor = parseDouble(cmd.getOptionValue("f"));
+		}
+		if (cmd.hasOption("n")) {
+			chromocenterParameters.neighbours = parseInt(cmd.getOptionValue("n"));
+		}
+		
+		ChromocenterCalling ccCalling = new ChromocenterCalling(chromocenterParameters);
+		try {
+			LOGGER.info("-input {} -input2 {} - {}",
+			            chromocenterParameters.inputFolder,
+			            chromocenterParameters.segInputFolder,
+			            chromocenterParameters.outputFolder);
+			ccCalling.runSeveralImages2();
+		} catch (IOException | FormatException e) {
+			LOGGER.error("An error occurred during chromocenter segmentation.", e);
+		}
+		LOGGER.info("End !!! Results available: {}", chromocenterParameters.outputFolder);
+	}
+	
+	
+	private void runGenerateOV() throws IOException {
+		GenerateOverlay ov = new GenerateOverlay(cmd.getOptionValue("input"),
+		                                         cmd.getOptionValue("input2"));
 		ov.run();
 	}
 	
 	
 	private void runCropFromCoordinates() throws IOException, FormatException {
-		CropFromCoordinates cropFromCoordinates = new CropFromCoordinates(
-				this.cmd.getOptionValue("input"),
-				this.cmd.getOptionValue("input2"),
-				this.cmd.getOptionValue("output")
-				);
+		CropFromCoordinates cropFromCoordinates = new CropFromCoordinates(cmd.getOptionValue("input"),
+		                                                                  cmd.getOptionValue("input2"),
+		                                                                  cmd.getOptionValue("output"));
 		cropFromCoordinates.run();
 	}
-
 	
 	
-	private void runProjectionFromCoordinates() throws Exception {
-		if (this.cmd.hasOption("coordinateFiltered")) {
+	private void runProjectionFromCoordinates()
+	throws IOException, FormatException {
+		if (cmd.hasOption("coordinateFiltered")) {
 			GenerateProjectionFromCoordinates projection =
-					new GenerateProjectionFromCoordinates(this.cmd.getOptionValue("input"),
-					                                      this.cmd.getOptionValue("input2"),
-					                                      this.cmd.getOptionValue("input3"));
+					new GenerateProjectionFromCoordinates(cmd.getOptionValue("input"),
+					                                      cmd.getOptionValue("input2"),
+					                                      cmd.getOptionValue("input3"));
 			projection.generateProjectionFiltered();
 		} else {
 			GenerateProjectionFromCoordinates projection =
-					new GenerateProjectionFromCoordinates(this.cmd.getOptionValue("input"),
-					                                      this.cmd.getOptionValue("input2"));
+					new GenerateProjectionFromCoordinates(cmd.getOptionValue("input"),
+					                                      cmd.getOptionValue("input2"));
 			projection.generateProjection();
 		}
 	}
 	
 	
 	private void runAutocrop() {
-		AutocropParameters autocropParameters = new AutocropParameters(this.cmd.getOptionValue("input"),
-		                                                               this.cmd.getOptionValue("output"));
-		if (this.cmd.hasOption("config")) {
-			autocropParameters.addGeneralProperties(this.cmd.getOptionValue("config"));
-			autocropParameters.addProperties(this.cmd.getOptionValue("config"));
+		AutocropParameters autocropParameters = new AutocropParameters(cmd.getOptionValue("input"),
+		                                                               cmd.getOptionValue("output"));
+		if (cmd.hasOption("config")) {
+			autocropParameters.addGeneralProperties(cmd.getOptionValue("config"));
+			autocropParameters.addProperties(cmd.getOptionValue("config"));
 		}
-		File path = new File(this.cmd.getOptionValue("input"));
+		File path = new File(cmd.getOptionValue("input"));
 		if (path.isFile()) {
 			AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
-			autoCrop.runFile(this.cmd.getOptionValue("input"));
+			autoCrop.runFile(cmd.getOptionValue("input"));
 			autoCrop.saveGeneralInfo();
 		} else {
 			AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
-			if(this.cmd.hasOption("threads")) {
-				autoCrop.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
+			if (cmd.hasOption("threads")) {
+				autoCrop.setExecutorThreads(parseInt(cmd.getOptionValue("threads")));
 			}
 			autoCrop.runFolder();
 		}
 	}
 	
 	
-	private void runSegmentation() throws Exception {
-		SegmentationParameters segmentationParameters =
-				new SegmentationParameters(this.cmd.getOptionValue("input"), this.cmd.getOptionValue("output"));
-		if (this.cmd.hasOption("config")) {
-			segmentationParameters.addGeneralProperties(this.cmd.getOptionValue("config"));
-			segmentationParameters.addProperties(this.cmd.getOptionValue("config"));
+	private void runSegmentation() throws FormatException {
+		SegmentationParameters segmentationParameters = new SegmentationParameters(cmd.getOptionValue("input"),
+		                                                                           cmd.getOptionValue("output"));
+		if (cmd.hasOption("config")) {
+			segmentationParameters.addGeneralProperties(cmd.getOptionValue("config"));
+			segmentationParameters.addProperties(cmd.getOptionValue("config"));
 		}
-		File path = new File(this.cmd.getOptionValue("input"));
+		File path = new File(cmd.getOptionValue("input"));
 		if (path.isFile()) {
 			SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
 			try {
-				String log = otsuModified.runOneImage(this.cmd.getOptionValue("input"));
+				String log = otsuModified.runOneImage(cmd.getOptionValue("input"));
 				otsuModified.saveCropGeneralInfo();
-				if (!(log.equals(""))) {
+				if (!log.isEmpty()) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}
 			} catch (IOException e) {
@@ -139,11 +193,11 @@ public class CLIRunAction {
 		} else {
 			SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
 			try {
-				if(this.cmd.hasOption("threads")) {
-					otsuModified.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
+				if (cmd.hasOption("threads")) {
+					otsuModified.setExecutorThreads(parseInt(cmd.getOptionValue("threads")));
 				}
 				String log = otsuModified.runSeveralImages2();
-				if (!(log.equals(""))) {
+				if (!log.isEmpty()) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}
 			} catch (IOException e) {
@@ -154,16 +208,19 @@ public class CLIRunAction {
 	
 	
 	private void runComputeNucleiParameters() {
-		ComputeNucleiParameters generateParameters = new ComputeNucleiParameters(this.cmd.getOptionValue("input"),
-		                                                                         this.cmd.getOptionValue("input2"));
-		if (this.cmd.hasOption("config")) generateParameters.addConfigParameters(this.cmd.getOptionValue("config"));
+		ComputeNucleiParameters generateParameters = new ComputeNucleiParameters(cmd.getOptionValue("input"),
+		                                                                         cmd.getOptionValue("input2"));
+		if (cmd.hasOption("config")) {
+			generateParameters.addConfigParameters(cmd.getOptionValue("config"));
+		}
 		generateParameters.run();
 	}
 	
 	
-	private void runComputeNucleiParametersDL() throws Exception {
-		ComputeNucleiParametersML computeParameters = new ComputeNucleiParametersML(this.cmd.getOptionValue("input"),
-		                                                                            this.cmd.getOptionValue("input2"));
+	private void runComputeNucleiParametersDL()
+	throws IOException, FormatException {
+		ComputeNucleiParametersML computeParameters = new ComputeNucleiParametersML(cmd.getOptionValue("input"),
+		                                                                            cmd.getOptionValue("input2"));
 		computeParameters.run();
 	}
 	

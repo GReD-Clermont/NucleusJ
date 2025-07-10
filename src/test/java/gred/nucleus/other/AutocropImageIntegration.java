@@ -13,7 +13,7 @@ public class AutocropImageIntegration {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	static ArrayList<String> test;
+	private static ArrayList<String> test;
 	
 	
 	public static void runAutoCrop(String imageSourceFile, String output, String pathToConfig) {
@@ -106,7 +106,7 @@ public class AutocropImageIntegration {
 		LOGGER.info("The program ended normally.");
 		
 		LOGGER.info("Total memory (bytes): {}",
-		            Runtime.getRuntime().totalMemory() * 1e-9);
+		            Runtime.getRuntime().totalMemory() * 1.0e-9);
 	}
 	
 }
