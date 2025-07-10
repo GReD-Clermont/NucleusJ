@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.Point;
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 
 /*
@@ -57,7 +58,7 @@ public class ConvexHullDetection {
 	 * @return voxels of the convex hull
 	 */
 	public static List<VoxelRecord> runGrahamScan(String axesName, List<? extends VoxelRecord> lVoxelBoundary) {
-		List<Point> points      = new ArrayList<>();
+		List<Point> points      = new ArrayList<>(lVoxelBoundary.size());
 		double      constantAxe = 0;
 		
 		switch (axesName) {
@@ -79,10 +80,15 @@ public class ConvexHullDetection {
 					points.add(new Point((int) v.j, (int) v.k));
 				}
 				break;
+			default:
+				// This should never happen
+				LOGGER.error("Invalid axes name: {}", axesName);
+				throw new IllegalArgumentException("Invalid axes name: " + axesName);
 		}
 		
-		List<Point>       pointsConvexHull = getConvexHull(points);
-		List<VoxelRecord> convexHull       = new ArrayList<>();
+		List<Point> pointsConvexHull = getConvexHull(points);
+		
+		List<VoxelRecord> convexHull = new ArrayList<>(pointsConvexHull.size());
 		switch (axesName) {
 			case "xy":
 				for (Point p : pointsConvexHull) {
@@ -105,6 +111,10 @@ public class ConvexHullDetection {
 					convexHull.add(voxel);
 				}
 				break;
+			default:
+				// This should never happen
+				LOGGER.error("Invalid axes name: {}", axesName);
+				throw new IllegalArgumentException("Invalid axes name: " + axesName);
 		}
 		convexHull.remove(0); // Remove the duplicate voxel (begin/end)
 		return convexHull;
@@ -112,8 +122,8 @@ public class ConvexHullDetection {
 	
 	
 	/**
-	 * Returns the convex hull of the points created from {@code xs} and {@code ys}. Note that the first and last
-	 * point in the returned {@code List<java.awt.Point>} are the same point.
+	 * Returns the convex hull of the points created from {@code xs} and {@code ys}. Note that the first and last point
+	 * in the returned {@code List<java.awt.Point>} are the same point.
 	 *
 	 * @param xs the x coordinates.
 	 * @param ys the y coordinates.
@@ -128,7 +138,7 @@ public class ConvexHullDetection {
 			throw new IllegalArgumentException("xs and ys don't have the same size");
 		}
 		
-		List<Point> points = new ArrayList<>();
+		List<Point> points = new ArrayList<>(xs.length);
 		
 		for (int i = 0; i < xs.length; i++) {
 			points.add(new Point(xs[i], ys[i]));
@@ -155,12 +165,11 @@ public class ConvexHullDetection {
 			throw new IllegalArgumentException("can only create a convex hull of 3 or more unique points");
 		}
 		
-		Stack<Point> stack = new Stack<>();
+		Deque<Point> stack = new ArrayDeque<>(sorted.size());
 		stack.push(sorted.get(0));
 		stack.push(sorted.get(1));
 		
 		for (int i = 2; i < sorted.size(); i++) {
-			
 			Point head   = sorted.get(i);
 			Point middle = stack.pop();
 			Point tail   = stack.peek();
@@ -270,21 +279,19 @@ public class ConvexHullDetection {
 	
 	
 	/**
-	 * Returns the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and
-	 * {@code c}. More specifically, the cross product {@code C} between the 3 points (vectors) is calculated:
-	 *
+	 * Returns the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and {@code c}.
+	 * More specifically, the cross product {@code C} between the 3 points (vectors) is calculated:
+	 * <p>
 	 * {@code (b.x-a.x * c.y-a.y) - (b.y-a.y * c.x-a.x)}
 	 * <p>
-	 * and if {@code C} is less than 0, the turn is CLOCKWISE, if
-	 * {@code C} is more than 0, the turn is COUNTER_CLOCKWISE, else
-	 * the three points are COLLINEAR.
+	 * and if {@code C} is less than 0, the turn is CLOCKWISE, if {@code C} is more than 0, the turn is
+	 * COUNTER_CLOCKWISE, else the three points are COLLINEAR.
 	 *
 	 * @param a the starting point.
 	 * @param b the second point.
 	 * @param c the end point.
 	 *
-	 * @return the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and
-	 * {@code c}.
+	 * @return the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and {@code c}.
 	 */
 	protected static Turn getTurn(Point a, Point b, Point c) {
 		

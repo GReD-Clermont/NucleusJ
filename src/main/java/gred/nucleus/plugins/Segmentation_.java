@@ -1,6 +1,7 @@
 package gred.nucleus.plugins;
 
 import fr.igred.omero.Client;
+import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
@@ -150,7 +151,8 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 						images = project.getImages(client);
 						break;
 					case "Tag":
-						images = client.getImagesTagged(inputID);
+						TagAnnotationWrapper tag = client.getTag(inputID);
+						images = tag.getImages(client);
 						break;
 				}
 				String log;

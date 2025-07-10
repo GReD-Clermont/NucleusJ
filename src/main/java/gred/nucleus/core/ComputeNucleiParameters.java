@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -125,7 +125,7 @@ public class ComputeNucleiParameters {
 				LOGGER.error("An error occurred.", e);
 			}
 		}
-		Date             date       = new Date();
+		LocalDate        date       = LocalDate.now();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy-MM-dd-HH.mm.ss");
 		currentTime = dateFormat.format(date);
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(pluginParameters.getOutputFolder()
