@@ -16,11 +16,8 @@ public class Progress extends JFrame {
 	/**  */
 	private static final long serialVersionUID = -1413087289668250165L;
 	
-	public JProgressBar bar;
-	
-	
-	public Progress() {
-	}
+	/** The progress bar. */
+	private final JProgressBar progressBar = new JProgressBar();
 	
 	
 	public Progress(String title, int nb) {
@@ -28,12 +25,21 @@ public class Progress extends JFrame {
 		super.setTitle("*** " + title + " ***");
 		super.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		super.setLocationRelativeTo(null);
-		this.bar = new JProgressBar();
-		bar.setMaximum(nb);
-		bar.setMinimum(0);
-		bar.setStringPainted(true);
-		super.getContentPane().add(bar, BorderLayout.CENTER);
+		progressBar.setMaximum(nb);
+		progressBar.setMinimum(0);
+		progressBar.setStringPainted(true);
+		super.getContentPane().add(progressBar, BorderLayout.CENTER);
 		super.setVisible(true);
+	}
+	
+	
+	/**
+	 * Sets the value of the progress bar.
+	 *
+	 * @param value The value to set.
+	 */
+	public void setValue(int value) {
+		progressBar.setValue(value);
 	}
 	
 }

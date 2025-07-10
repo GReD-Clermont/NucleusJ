@@ -81,7 +81,7 @@ public class ChromocenterCalling {
 		
 		if (isGui) {
 			progress = new Progress("Images Analysis: ", directoryInput.getNumberFiles());
-			progress.bar.setValue(0);
+			progress.setValue(0);
 		}
 		for (short i = 0; i < directoryInput.getNumberFiles(); ++i) {
 			File       currentFile      = directoryInput.getFile(i);
@@ -114,7 +114,7 @@ public class ChromocenterCalling {
 				IJ.log(segCC.getPathFile() + " is missing");
 			}
 			if (isGui) {
-				progress.bar.setValue(1 + i);
+				progress.setValue(1 + i);
 			}
 			
 		}

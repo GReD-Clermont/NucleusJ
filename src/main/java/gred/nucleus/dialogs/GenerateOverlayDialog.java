@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class GenerateOverlayDialog extends JFrame implements ActionListener, ItemListener {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4963585921321275469L;
 	
 	private static final String INPUT_CHOOSER  = "inputChooser";
 	private static final String INPUT_CHOOSER2 = "inputChooser2";

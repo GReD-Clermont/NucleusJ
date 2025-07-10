@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class ComputeParametersDialog extends JFrame implements ItemListener {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7134074339815211476L;
 	
 	private static final JButton jButtonWorkDirectory = new JButton("Seg Data folder");
 	

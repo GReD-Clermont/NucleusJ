@@ -28,7 +28,7 @@ import java.awt.event.ItemListener;
  * @author Poulet Axel
  */
 public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implements ItemListener {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1605324416480852307L;
 	
 	private final JTextField jTextFieldWorkDirectory = new JTextField();
 	private final JTextField jTextFieldRawData       = new JTextField();

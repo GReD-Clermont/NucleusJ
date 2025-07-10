@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class AutocropDialog extends JFrame implements ActionListener, ItemListener {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1539112593885790535L;
 	
 	private static final String INPUT_CHOOSER  = "inputChooser";
 	private static final String OUTPUT_CHOOSER = "outputChooser";

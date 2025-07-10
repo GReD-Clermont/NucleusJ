@@ -40,7 +40,7 @@ import java.util.concurrent.ExecutionException;
  * @author pouletaxel
  */
 public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements ItemListener {
-	private static final long         serialVersionUID        = 1L;
+	private static final long         serialVersionUID        = 896147828956284745L;
 	private final        JTextField   jTextFieldWorkDirectory = new JTextField();
 	private final        JTextField   jTextFieldRawData       = new JTextField();
 	private final        JRadioButton jRadioButtonRhfV        = new JRadioButton("VolumeRHF");
