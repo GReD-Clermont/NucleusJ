@@ -188,7 +188,7 @@ public class Distance_Map implements PlugInFilter {
 	}
 	
 	
-	static class Step2Thread extends Thread {
+	private static class Step2Thread extends Thread {
 		int       thread;
 		int       nThreads;
 		int       w;
@@ -197,7 +197,7 @@ public class Distance_Map implements PlugInFilter {
 		float[][] s;
 		
 		
-		public Step2Thread(int thread, int nThreads, int w, int h, int d, float[][] s) {
+		Step2Thread(int thread, int nThreads, int w, int h, int d, float[][] s) {
 			this.thread = thread;
 			this.nThreads = nThreads;
 			this.w = w;
@@ -258,7 +258,7 @@ public class Distance_Map implements PlugInFilter {
 		
 	}//Step2Thread
 	
-	class Step1Thread extends Thread {
+	private class Step1Thread extends Thread {
 		int       thread;
 		int       nThreads;
 		int       w;
@@ -269,7 +269,7 @@ public class Distance_Map implements PlugInFilter {
 		byte[][]  data;
 		
 		
-		public Step1Thread(int thread, int nThreads, int w, int h, int d, int thresh, float[][] s, byte[][] data) {
+		Step1Thread(int thread, int nThreads, int w, int h, int d, int thresh, float[][] s, byte[][] data) {
 			this.thread = thread;
 			this.nThreads = nThreads;
 			this.w = w;
@@ -334,7 +334,7 @@ public class Distance_Map implements PlugInFilter {
 		
 	}//Step1Thread
 	
-	class Step3Thread extends Thread {
+	private class Step3Thread extends Thread {
 		int       thread;
 		int       nThreads;
 		int       w;
@@ -344,7 +344,7 @@ public class Distance_Map implements PlugInFilter {
 		byte[][]  data;
 		
 		
-		public Step3Thread(int thread, int nThreads, int w, int h, int d, float[][] s, byte[][] data) {
+		Step3Thread(int thread, int nThreads, int w, int h, int d, float[][] s, byte[][] data) {
 			this.thread = thread;
 			this.nThreads = nThreads;
 			this.w = w;

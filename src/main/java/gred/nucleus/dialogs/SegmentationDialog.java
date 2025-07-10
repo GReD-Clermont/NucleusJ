@@ -283,11 +283,11 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		startQuitPanel.setBorder(padding);
 		container.add(startQuitPanel, 5);
 		
-		ActionListener quitListener = new SegmentationDialog.QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new SegmentationDialog.StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
-		ActionListener configListener = new SegmentationDialog.ConfigListener(this);
+		ActionListener configListener = new ConfigListener(this);
 		jButtonConfig.addActionListener(configListener);
 		
 		super.setVisible(true);
@@ -468,12 +468,12 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	
 	/** Classes listener to interact with the several elements of the window */
 	
-	static class QuitListener implements ActionListener {
-		final SegmentationDialog segmentationDialog;
+	private static class QuitListener implements ActionListener {
+		private final SegmentationDialog segmentationDialog;
 		
 		
 		/** @param segmentationDialog  */
-		public QuitListener(SegmentationDialog segmentationDialog) {
+		QuitListener(SegmentationDialog segmentationDialog) {
 			this.segmentationDialog = segmentationDialog;
 		}
 		
@@ -484,12 +484,12 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		
 	}
 	
-	class StartListener implements ActionListener {
-		final SegmentationDialog segmentationDialog;
+	private class StartListener implements ActionListener {
+		private final SegmentationDialog segmentationDialog;
 		
 		
 		/** @param autocropDialog  */
-		public StartListener(SegmentationDialog autocropDialog) {
+		StartListener(SegmentationDialog autocropDialog) {
 			segmentationDialog = autocropDialog;
 		}
 		
@@ -499,23 +499,19 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 			segmentationConfigFileDialog.dispose();
 			try {
 				dialogListener.OnStart();
-			} catch (AccessException e) {
-				throw new RuntimeException(e);
-			} catch (ServiceException e) {
-				throw new RuntimeException(e);
-			} catch (ExecutionException e) {
+			} catch (AccessException | ServiceException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}
 		}
 		
 	}
 	
-	class ConfigListener implements ActionListener {
-		final SegmentationDialog segmentationDialog;
+	private class ConfigListener implements ActionListener {
+		private final SegmentationDialog segmentationDialog;
 		
 		
 		/** @param segmentationDialog  */
-		public ConfigListener(SegmentationDialog segmentationDialog) {
+		ConfigListener(SegmentationDialog segmentationDialog) {
 			this.segmentationDialog = segmentationDialog;
 		}
 		

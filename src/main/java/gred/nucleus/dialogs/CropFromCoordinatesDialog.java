@@ -310,7 +310,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		
 		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new CropFromCoordinatesDialog.StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
 		super.setVisible(true);
 		
@@ -458,12 +458,12 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	}
 	
 	
-	static class QuitListener implements ActionListener {
-		CropFromCoordinatesDialog autocropDialog;
+	private static class QuitListener implements ActionListener {
+		private final CropFromCoordinatesDialog autocropDialog;
 		
 		
 		/** @param autocropDialog  */
-		public QuitListener(CropFromCoordinatesDialog autocropDialog) {
+		QuitListener(CropFromCoordinatesDialog autocropDialog) {
 			this.autocropDialog = autocropDialog;
 		}
 		
@@ -475,12 +475,12 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	}
 	
 	/** Classes listener to interact with the several elements of the window */
-	class StartListener implements ActionListener {
-		CropFromCoordinatesDialog autocropDialog;
+	private class StartListener implements ActionListener {
+		private final CropFromCoordinatesDialog autocropDialog;
 		
 		
 		/** @param autocropDialog  */
-		public StartListener(CropFromCoordinatesDialog autocropDialog) {
+		StartListener(CropFromCoordinatesDialog autocropDialog) {
 			this.autocropDialog = autocropDialog;
 		}
 		

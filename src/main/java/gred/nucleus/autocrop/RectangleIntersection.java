@@ -31,19 +31,19 @@ public class RectangleIntersection {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	/** List of boxes Rectangle : xMin , yMin , width , height */
-	List<Rectangle>       listRectangle      = new ArrayList<>();
+	private final List<Rectangle> listRectangle;
 	/** Slice coordinate associated to the rectangles(boxes) */
-	List<String>          zSlices            = new ArrayList<>();
+	private final List<String>    zSlices;
 	/** List of rectangle intersected detected */
-	List<String>          rectangleIntersect = new ArrayList<>();
+	private final List<String>    rectangleIntersect = new ArrayList<>(0);
 	/** Number of intersections per rectangles */
-	Map<Integer, Integer> countIntersect     = new HashMap<>();
+	private final Map<Integer, Integer> countIntersect     = new HashMap<>(0);
 	/** Final list of rectangles after re rectangle computations */
-	Collection<String>    finalListRectangle = new ArrayList<>();
-	/** Boolean to check if new rectangles are computed */
-	boolean               newBoxesAdded      = false;
+	private final Collection<String>    finalListRectangle = new ArrayList<>(0);
 	/** Autocrop parameter */
-	AutocropParameters    autocropParameters;
+	private final AutocropParameters    autocropParameters;
+	/** Boolean to check if new rectangles are computed */
+	private       boolean               newBoxesAdded;
 	
 	
 	/**
@@ -55,6 +55,8 @@ public class RectangleIntersection {
 	 */
 	public RectangleIntersection(Map<Double, Box> boxes, AutocropParameters autocropParameters) {
 		this.autocropParameters = autocropParameters;
+		zSlices = new ArrayList<>(boxes.size());
+		listRectangle = new ArrayList<>(boxes.size());
 		for (Map.Entry<Double, Box> entry : new TreeMap<>(boxes).entrySet()) {
 			Box box       = entry.getValue();
 			int boxWidth  = box.getXMax() - box.getXMin();
@@ -108,7 +110,6 @@ public class RectangleIntersection {
 		
 		for (int i = 0; i < listRectangle.size(); i++) {
 			for (int y = 0; y < listRectangle.size(); y++) {
-				
 				if (i != y &&
 				    !rectangleIntersect.contains(i + "-" + y) &&
 				    !rectangleIntersect.contains(y + "-" + i)) {

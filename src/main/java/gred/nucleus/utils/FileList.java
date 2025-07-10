@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * Several method on the file
  */
 public class FileList {
-	boolean windows;
+	private final boolean windows;
 	
 	
 	/**

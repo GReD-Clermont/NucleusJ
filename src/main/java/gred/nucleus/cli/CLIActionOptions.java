@@ -88,12 +88,13 @@ public class CLIActionOptions {
 	                                      .desc("Path to output results\n")
 	                                      .numberOfArgs(1)
 	                                      .build();
+	
 	/** List of options */
-	Options           options = new Options();
+	protected Options           options = new Options();
 	/** Command line */
-	CommandLine       cmd;
+	protected CommandLine       cmd;
 	/** Command line parser */
-	CommandLineParser parser  = new DefaultParser();
+	protected CommandLineParser parser  = new DefaultParser();
 	
 	
 	/**

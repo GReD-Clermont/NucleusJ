@@ -26,7 +26,7 @@ public class ZProjectionTest implements PlugIn {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	static Client client = new Client();
+	private static final Client client = new Client();
 	
 	
 	public static void main(String[] args) throws Exception {

@@ -379,12 +379,12 @@ public class NucleusSegmentationAndAnalysisBatchDialog extends JFrame {
 	/**
 	 *
 	 */
-	static class QuitListener implements ActionListener {
-		NucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog;
+	private static class QuitListener implements ActionListener {
+		private final NucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog;
 		
 		
 		/** @param nucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog GUI */
-		public QuitListener(NucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog) {
+		QuitListener(NucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog) {
 			this.nucleusSegmentationAndAnalysisBatchDialog = nucleusSegmentationAndAnalysisBatchDialog;
 		}
 		
@@ -412,13 +412,13 @@ public class NucleusSegmentationAndAnalysisBatchDialog extends JFrame {
 	/**
 	 *
 	 */
-	class StartListener implements ActionListener {
+	private class StartListener implements ActionListener {
 		
-		NucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog;
+		private final NucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog;
 		
 		
 		/** @param nucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog GUI */
-		public StartListener(NucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog) {
+		StartListener(NucleusSegmentationAndAnalysisBatchDialog nucleusSegmentationAndAnalysisBatchDialog) {
 			this.nucleusSegmentationAndAnalysisBatchDialog = nucleusSegmentationAndAnalysisBatchDialog;
 		}
 		

@@ -32,10 +32,8 @@ import static gred.nucleus.core.RadialDistance.computeBorderToBorderDistances;
  * @author Tristan Dubos and Axel Poulet
  */
 public class NucleusChromocentersAnalysis {
-	/**
-	 *
-	 */
-	Client client;
+	/**  */
+	private Client client;
 	
 	
 	public NucleusChromocentersAnalysis() {

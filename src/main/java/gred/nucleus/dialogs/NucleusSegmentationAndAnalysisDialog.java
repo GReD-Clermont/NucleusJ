@@ -305,12 +305,12 @@ public class NucleusSegmentationAndAnalysisDialog extends JFrame {
 	/**
 	 *
 	 */
-	static class QuitListener implements ActionListener {
-		final NucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog;
+	private static class QuitListener implements ActionListener {
+		private final NucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog;
 		
 		
 		/** @param nucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog GUI */
-		public QuitListener(NucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog) {
+		QuitListener(NucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog) {
 			this.nucleusSegmentationAndAnalysisDialog = nucleusSegmentationAndAnalysisDialog;
 		}
 		
@@ -325,13 +325,12 @@ public class NucleusSegmentationAndAnalysisDialog extends JFrame {
 	}
 	
 	/** Classes listener to interact with the several elements of the window */
-	class StartListener implements ActionListener {
-		
-		final NucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog;
+	private class StartListener implements ActionListener {
+		private final NucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog;
 		
 		
 		/** @param nucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog GUI */
-		public StartListener(NucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog) {
+		StartListener(NucleusSegmentationAndAnalysisDialog nucleusSegmentationAndAnalysisDialog) {
 			this.nucleusSegmentationAndAnalysisDialog = nucleusSegmentationAndAnalysisDialog;
 		}
 		

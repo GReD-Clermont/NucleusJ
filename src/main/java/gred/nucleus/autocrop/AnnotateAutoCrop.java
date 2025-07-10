@@ -15,7 +15,6 @@ import ij.plugin.ZProjector;
 import ij.process.ImageConverter;
 import ij.process.ImageProcessor;
 import loci.formats.FormatException;
-import loci.plugins.BF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
+
+import static loci.plugins.BF.openImagePlus;
 
 
 /**
@@ -96,8 +97,7 @@ public class AnnotateAutoCrop {
 	                        AutocropParameters autocropParameters)
 	throws IOException, FormatException {
 		this.autocropParameters = autocropParameters;
-		this.zProjection =
-				BF.openImagePlus(imageFile.getAbsolutePath())[this.autocropParameters.getSlicesOTSUComputing()];
+		this.zProjection = openImagePlus(imageFile.getAbsolutePath())[this.autocropParameters.getSlicesOTSUComputing()];
 		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
 	}

@@ -19,11 +19,11 @@ public class SegmentationParameters extends PluginParameters {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	/** Convex Hull algorithm option */
-	boolean ConvexHullDetection = true;
+	private boolean convexHullDetection = true;
 	/** Minimal object volume to segment */
-	int     minVolumeNucleus    = 1;
+	private int     minVolumeNucleus    = 1;
 	/** Maximal object volume to segment */
-	int     maxVolumeNucleus    = 3000000;
+	private int     maxVolumeNucleus    = 3000000;
 	
 	
 	/**
@@ -44,7 +44,7 @@ public class SegmentationParameters extends PluginParameters {
 		super(inputFolder, outputFolder);
 		this.minVolumeNucleus = minVolume;
 		this.maxVolumeNucleus = maxVolume;
-		this.ConvexHullDetection = convexHull;
+		this.convexHullDetection = convexHull;
 	}
 	
 	
@@ -59,7 +59,7 @@ public class SegmentationParameters extends PluginParameters {
 		super(inputFolder, outputFolder, xCal, yCal, zCal);
 		this.minVolumeNucleus = minVolume;
 		this.maxVolumeNucleus = maxVolume;
-		this.ConvexHullDetection = convexHull;
+		this.convexHullDetection = convexHull;
 	}
 	
 	
@@ -83,7 +83,7 @@ public class SegmentationParameters extends PluginParameters {
 		}
 		for (String idProp : prop.stringPropertyNames()) {
 			if ("ConvexHullDetection".equals(idProp)) {
-				this.ConvexHullDetection = Boolean.parseBoolean(prop.getProperty("ConvexHullDetection"));
+				this.convexHullDetection = Boolean.parseBoolean(prop.getProperty("ConvexHullDetection"));
 			}
 			if ("maxVolumeNucleus".equals(idProp)) {
 				this.maxVolumeNucleus = Integer.parseInt(prop.getProperty("maxVolumeNucleus"));
@@ -101,7 +101,7 @@ public class SegmentationParameters extends PluginParameters {
 		this.headerInfo += "#maxVolumeNucleus:" + maxVolumeNucleus + "\n"
 		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n"
 		                   + "#ConvexHullDetection (" + NucleusSegmentation.CONVEX_HULL_ALGORITHM + "): "
-		                   + ConvexHullDetection + "\n";
+		                   + convexHullDetection + "\n";
 		return headerInfo;
 	}
 	
@@ -127,7 +127,7 @@ public class SegmentationParameters extends PluginParameters {
 	
 	
 	public boolean getConvexHullDetection() {
-		return ConvexHullDetection;
+		return convexHullDetection;
 	}
 	
 }

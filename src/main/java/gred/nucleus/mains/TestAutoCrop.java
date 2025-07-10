@@ -31,7 +31,7 @@ public class TestAutoCrop {
 	 *
 	 * @param imageSourceFile the input image file on disk
 	 */
-	static ArrayList<String> test;
+	private static ArrayList<String> test;
 	
 	
 	public static void runAutoCropFolder(String imageSourceFile, String output, String pathToConfig) {

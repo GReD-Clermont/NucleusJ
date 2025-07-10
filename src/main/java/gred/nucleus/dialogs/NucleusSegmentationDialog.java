@@ -255,11 +255,11 @@ public class NucleusSegmentationDialog extends JFrame {
 	/**
 	 *
 	 */
-	static class QuitListener implements ActionListener {
-		NucleusSegmentationDialog nucleusSegmentationDialog;
+	private static class QuitListener implements ActionListener {
+		private final NucleusSegmentationDialog nucleusSegmentationDialog;
 		
 		
-		public QuitListener(NucleusSegmentationDialog nucleusSegmentationDialog) {
+		QuitListener(NucleusSegmentationDialog nucleusSegmentationDialog) {
 			this.nucleusSegmentationDialog = nucleusSegmentationDialog;
 		}
 		
@@ -274,12 +274,12 @@ public class NucleusSegmentationDialog extends JFrame {
 	}
 	
 	/** Classes listener to interact with the several elements of the window */
-	class StartListener implements ActionListener {
-		NucleusSegmentationDialog nucleusSegmentationDialog;
+	private class StartListener implements ActionListener {
+		private final NucleusSegmentationDialog nucleusSegmentationDialog;
 		
 		
 		/** @param nucleusSegmentationDialog  */
-		public StartListener(NucleusSegmentationDialog nucleusSegmentationDialog) {
+		StartListener(NucleusSegmentationDialog nucleusSegmentationDialog) {
 			this.nucleusSegmentationDialog = nucleusSegmentationDialog;
 		}
 		

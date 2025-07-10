@@ -18,8 +18,8 @@ public class SliceToStack {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	String pathToSliceDir;
-	String pathToOutputDir;
+	private final String pathToSliceDir;
+	private final String pathToOutputDir;
 	
 	
 	/**

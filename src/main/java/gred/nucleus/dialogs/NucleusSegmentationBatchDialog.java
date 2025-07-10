@@ -320,12 +320,12 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 	/**
 	 *
 	 */
-	static class QuitListener implements ActionListener {
-		final NucleusSegmentationBatchDialog nucleusSegmentationBatchDialog;
+	private static class QuitListener implements ActionListener {
+		private final NucleusSegmentationBatchDialog nucleusSegmentationBatchDialog;
 		
 		
 		/** @param nucleusSegmentationBatchDialog nucleusSegmentationBatchDialog GUI */
-		public QuitListener(NucleusSegmentationBatchDialog nucleusSegmentationBatchDialog) {
+		QuitListener(NucleusSegmentationBatchDialog nucleusSegmentationBatchDialog) {
 			this.nucleusSegmentationBatchDialog = nucleusSegmentationBatchDialog;
 		}
 		
@@ -353,12 +353,12 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 	/**
 	 *
 	 */
-	class StartListener implements ActionListener {
-		final NucleusSegmentationBatchDialog nucleusSegmentationBatchDialog;
+	private class StartListener implements ActionListener {
+		private final NucleusSegmentationBatchDialog nucleusSegmentationBatchDialog;
 		
 		
 		/** @param nucleusSegmentationBatchDialog nucleusSegmentationBatchDialog GUI */
-		public StartListener(NucleusSegmentationBatchDialog nucleusSegmentationBatchDialog) {
+		StartListener(NucleusSegmentationBatchDialog nucleusSegmentationBatchDialog) {
 			this.nucleusSegmentationBatchDialog = nucleusSegmentationBatchDialog;
 		}
 		

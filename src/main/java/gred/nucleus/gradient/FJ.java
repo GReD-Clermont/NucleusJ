@@ -122,7 +122,6 @@ public final class FJ {
 	
 	
 	static void close(ImagePlus imp) {
-		
 		if (FJ_Options.close) {
 			log("Closing input image");
 			imp.close();
@@ -131,7 +130,6 @@ public final class FJ {
 	
 	
 	static int type(ImagePlus imp) {
-		
 		int     type     = SINGLE_IMAGE;
 		boolean i5dExist = false;
 		try {

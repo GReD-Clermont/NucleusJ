@@ -22,8 +22,9 @@ public class MyGradient {
 	private static final String  LOWER    = "";
 	private static final String  HIGHER   = "";
 	private final        boolean mask;
-	ImagePlus imagePlus;
-	ImagePlus imagePlusBinary;
+	
+	private final ImagePlus imagePlus;
+	private ImagePlus imagePlusBinary;
 	
 	
 	public MyGradient(ImagePlus imp, ImagePlus imagePlusBinary) {

@@ -29,7 +29,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	SegmentationDialog segmentationDialog;
+	private SegmentationDialog segmentationDialog;
 	
 	
 	/**

@@ -6,13 +6,14 @@ import java.io.File;
 
 
 public class FilesNames {
-	/** Path file input */
-	String  pathFile     = "";
+	
 	/** File name */
-	String  fileName     = "";
+	protected String  fileName     = "";
 	/** Complete pathFile */
-	String  fullPathFile = "";
-	boolean fileExists   = true;
+	protected String  fullPathFile = "";
+	/** Path file input */
+	private   String  pathFile     = "";
+	private   boolean fileExists   = true;
 	
 	
 	public FilesNames() {

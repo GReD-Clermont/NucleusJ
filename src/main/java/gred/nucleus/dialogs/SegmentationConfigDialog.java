@@ -244,12 +244,12 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	}
 	
 	
-	static class StartListener implements ActionListener {
-		SegmentationConfigDialog segmentationDialog;
+	private static class StartListener implements ActionListener {
+		private final SegmentationConfigDialog segmentationDialog;
 		
 		
 		/** @param segmentationDialog  */
-		public StartListener(SegmentationConfigDialog segmentationDialog) {
+		StartListener(SegmentationConfigDialog segmentationDialog) {
 			this.segmentationDialog = segmentationDialog;
 		}
 		

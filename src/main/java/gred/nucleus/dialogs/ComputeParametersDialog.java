@@ -232,7 +232,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jButtonRawData.addActionListener(ddListener);
 		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new ComputeParametersDialog.StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
 		
 		
@@ -534,12 +534,12 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	/**
 	 *
 	 */
-	static class QuitListener implements ActionListener {
-		final ComputeParametersDialog computeParametersDialog;
+	private static class QuitListener implements ActionListener {
+		private final ComputeParametersDialog computeParametersDialog;
 		
 		
 		/** @param computeParametersDialog Dialog parameters */
-		public QuitListener(ComputeParametersDialog computeParametersDialog) {
+		QuitListener(ComputeParametersDialog computeParametersDialog) {
 			this.computeParametersDialog = computeParametersDialog;
 		}
 		
@@ -553,12 +553,12 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		
 	}
 	
-	class StartListener implements ActionListener {
-		final ComputeParametersDialog computeParametersDialog;
+	private class StartListener implements ActionListener {
+		private final ComputeParametersDialog computeParametersDialog;
 		
 		
 		/** @param computeParametersDialog Dialog parameters */
-		public StartListener(ComputeParametersDialog computeParametersDialog) {
+		StartListener(ComputeParametersDialog computeParametersDialog) {
 			this.computeParametersDialog = computeParametersDialog;
 		}
 		

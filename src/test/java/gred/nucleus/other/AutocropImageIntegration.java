@@ -13,7 +13,7 @@ public class AutocropImageIntegration {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	static ArrayList<String> test;
+	private static ArrayList<String> test;
 	
 	
 	public static void runAutoCrop(String imageSourceFile, String output, String pathToConfig) {

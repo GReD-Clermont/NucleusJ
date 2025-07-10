@@ -20,7 +20,8 @@ import java.awt.event.WindowListener;
 public class FJ_Panel implements PlugIn, ActionListener, WindowListener {
 	
 	private static final Point pos = new Point(-1, -1);
-	Panel panel;
+	
+	private Panel  panel;
 	private Dialog dialog;
 	private Button derivatives;
 	private Button edges;

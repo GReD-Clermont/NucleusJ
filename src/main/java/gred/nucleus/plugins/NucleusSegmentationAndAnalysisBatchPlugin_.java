@@ -20,7 +20,7 @@ public class NucleusSegmentationAndAnalysisBatchPlugin_ implements PlugIn {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	NucleusSegmentationAndAnalysisBatchDialog nucleusPipelineBatchDialog =
+	private final NucleusSegmentationAndAnalysisBatchDialog nucleusPipelineBatchDialog =
 			new NucleusSegmentationAndAnalysisBatchDialog();
 	
 	

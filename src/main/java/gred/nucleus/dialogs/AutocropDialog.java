@@ -508,12 +508,12 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	
 	/** Classes listener to interact with the several elements of the window */
 	
-	class StartListener implements ActionListener {
-		final AutocropDialog autocropDialog;
+	private class StartListener implements ActionListener {
+		private final AutocropDialog autocropDialog;
 		
 		
 		/** @param autocropDialog  */
-		public StartListener(AutocropDialog autocropDialog) {
+		StartListener(AutocropDialog autocropDialog) {
 			this.autocropDialog = autocropDialog;
 		}
 		
@@ -530,12 +530,12 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 	}
 	
-	class QuitListener implements ActionListener {
+	private class QuitListener implements ActionListener {
 		final AutocropDialog autocropDialog;
 		
 		
 		/** @param autocropDialog  */
-		public QuitListener(AutocropDialog autocropDialog) {
+		QuitListener(AutocropDialog autocropDialog) {
 			this.autocropDialog = autocropDialog;
 		}
 		
@@ -547,12 +547,12 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 	}
 	
-	class ConfigListener implements ActionListener {
+	private class ConfigListener implements ActionListener {
 		final AutocropDialog autocropDialog;
 		
 		
 		/** @param autocropDialog  */
-		public ConfigListener(AutocropDialog autocropDialog) {
+		ConfigListener(AutocropDialog autocropDialog) {
 			this.autocropDialog = autocropDialog;
 		}
 		

@@ -16,7 +16,7 @@ import ij.plugin.PlugIn;
 @Deprecated
 public class NucleusAnalysis_ implements PlugIn {
 	/** image to process */
-	ImagePlus imagePlusInput;
+	private ImagePlus imagePlusInput;
 	
 	
 	/**

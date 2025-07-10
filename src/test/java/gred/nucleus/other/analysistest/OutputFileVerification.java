@@ -32,18 +32,17 @@ public class OutputFileVerification {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	/** Key of files expected in the result directory */
-	Map<String, String> myMapInitialFilesInputFolder = new HashMap<>();
-	/** Key of files produce by the analysis */
-	Map<String, String> myMapInitialFileOutputFolder = new HashMap<>();
-	/** list of files produce by the analysis */
-	Map<String, String> myMapFilesProduceByAnalysis  = new HashMap<>();
-	
-	
 	/** Path output analysis files */
-	String rawPathOutPut;
+	private final String rawPathOutPut;
 	/** Raw path expected files */
-	String rawPathExpectedResult;
+	private final String rawPathExpectedResult;
+	
+	/** Key of files expected in the result directory */
+	private Map<String, String> myMapInitialFilesInputFolder = new HashMap<>();
+	/** Key of files produce by the analysis */
+	private Map<String, String> myMapInitialFileOutputFolder = new HashMap<>();
+	/** list of files produce by the analysis */
+	private Map<String, String> myMapFilesProduceByAnalysis  = new HashMap<>();
 	
 	
 	/**
@@ -106,7 +105,6 @@ public class OutputFileVerification {
 	 * @param path Path of folder which contains files expected
 	 */
 	public void getFilesResultingOfAnalysis(String path) {
-		
 		File   root = new File(path);
 		File[] list = root.listFiles();
 		if (list != null) {
@@ -126,8 +124,7 @@ public class OutputFileVerification {
 	
 	/** Method to compare md5sum of files from output analysis with expected results */
 	public void compareAnalysisResult() {
-		for (Map.Entry<String, String> entry :
-				myMapInitialFilesInputFolder.entrySet()) {
+		for (Map.Entry<String, String> entry : myMapInitialFilesInputFolder.entrySet()) {
 			String fileName = entry.getKey();
 			String hashCode = entry.getValue();
 			if (hashCode.equals(myMapFilesProduceByAnalysis.get(fileName))) {
