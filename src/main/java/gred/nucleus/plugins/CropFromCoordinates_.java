@@ -60,7 +60,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	
 	
 	@Override
-	public void OnStart() throws AccessException, ServiceException, ExecutionException {
+	public void onStart() throws AccessException, ServiceException, ExecutionException {
 		if (cropFromCoordinatesDialog.isOmeroEnabled()) {
 			runOMERO();
 		} else {

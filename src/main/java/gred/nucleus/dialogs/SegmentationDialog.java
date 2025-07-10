@@ -498,7 +498,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 			segmentationDialog.dispose();
 			segmentationConfigFileDialog.dispose();
 			try {
-				dialogListener.OnStart();
+				dialogListener.onStart();
 			} catch (AccessException | ServiceException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}

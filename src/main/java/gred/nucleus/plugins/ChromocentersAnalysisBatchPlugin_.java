@@ -72,7 +72,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 	
 	
 	@Override
-	public void OnStart() throws AccessException, ServiceException, ExecutionException {
+	public void onStart() throws AccessException, ServiceException, ExecutionException {
 		if (chromocentersPipelineBatchDialog.isOmeroEnabled()) {
 			runOMERO();
 		} else {

@@ -60,7 +60,7 @@ public class NODeJ implements PlugIn, IDialogListener {
 	
 	
 	@Override
-	public void OnStart() {
+	public void onStart() {
 		if (gui.isOmeroEnabled()) {
 			runOmero();
 		} else {

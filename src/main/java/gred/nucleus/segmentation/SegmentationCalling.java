@@ -445,7 +445,10 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERO(Collection<ImageWrapper> images, Long output, Client client, Long inputID)
+	public String runSeveralImagesOMERO(Collection<? extends ImageWrapper> images,
+	                                    Long output,
+	                                    Client client,
+	                                    Long inputID)
 	throws AccessException, ServiceException, ExecutionException, InterruptedException {
 		ExecutorService   downloadExecutor      = Executors.newFixedThreadPool(DOWNLOADER_THREADS);
 		ExecutorService   processExecutor       = Executors.newFixedThreadPool(executorThreads);
@@ -752,7 +755,7 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERObyROIs(Iterable<ImageWrapper> images, Long output, Client client)
+	public String runSeveralImagesOMERObyROIs(Iterable<? extends ImageWrapper> images, Long output, Client client)
 	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
 		StringBuilder log = new StringBuilder();
 		

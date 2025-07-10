@@ -779,7 +779,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 				start = true;
 				chromocentersAnalysisPipelineBatchDialog.dispose();
 				try {
-					dialogListener.OnStart();
+					dialogListener.onStart();
 				} catch (AccessException e) {
 					throw new RuntimeException(e);
 				} catch (ServiceException e) {

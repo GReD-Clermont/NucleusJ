@@ -446,7 +446,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 			start = true;
 			dialog.dispose();
 			try {
-				dialogListener.OnStart();
+				dialogListener.onStart();
 			} catch (AccessException | ServiceException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}

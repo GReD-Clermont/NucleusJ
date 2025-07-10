@@ -569,7 +569,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		public void actionPerformed(ActionEvent actionEvent) {
 			if (useOMERO) {
 				try {
-					dialogListener.OnStart();
+					dialogListener.onStart();
 				} catch (AccessException | ServiceException | ExecutionException e) {
 					throw new RuntimeException(e);
 				}
@@ -584,7 +584,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 				} else {
 					start = true;
 					try {
-						dialogListener.OnStart();
+						dialogListener.onStart();
 					} catch (AccessException | ServiceException | ExecutionException e) {
 						throw new RuntimeException(e);
 					}

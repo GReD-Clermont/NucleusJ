@@ -197,7 +197,7 @@ public class ConvexHullDetection {
 	 * @return the points with the lowest y coordinate. In case more than 1 such point exists, the one with the lowest x
 	 * coordinate is returned.
 	 */
-	protected static Point getLowestPoint(List<Point> points) {
+	protected static Point getLowestPoint(List<? extends Point> points) {
 		
 		Point lowest = points.get(0);
 		

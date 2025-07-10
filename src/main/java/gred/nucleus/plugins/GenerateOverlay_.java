@@ -41,7 +41,7 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 	
 	
 	@Override
-	public void OnStart() throws AccessException, ServiceException, ExecutionException {
+	public void onStart() throws AccessException, ServiceException, ExecutionException {
 		if (generateOverlayDialog.isOmeroEnabled()) {
 			runOMERO();
 		} else {

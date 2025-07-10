@@ -62,6 +62,7 @@ public class CLIRunAction {
 				break;
 			case "segCC":
 				runSegCC();
+				break;
 			default:
 				throw new IllegalArgumentException("Invalid action.");
 		}

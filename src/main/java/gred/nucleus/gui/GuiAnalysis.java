@@ -698,7 +698,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	
 	
 	@Override
-	public void OnStart() {
+	public void onStart() {
 	}
 	
 	
@@ -809,7 +809,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 				}
 			}
 			try {
-				dialogListener.OnStart();
+				dialogListener.onStart();
 			} catch (AccessException | ServiceException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}

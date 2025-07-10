@@ -36,7 +36,7 @@ public class ComputeParametersPlugin_ implements PlugIn, IDialogListener {
 	
 	
 	@Override
-	public void OnStart() {
+	public void onStart() {
 		if (computeParametersDialog.isOmeroEnabled()) {
 			runOMERO();
 		} else {

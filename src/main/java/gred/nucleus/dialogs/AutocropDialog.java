@@ -522,7 +522,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 			autocropDialog.dispose();
 			autocropConfigFileDialog.dispose();
 			try {
-				dialogListener.OnStart();
+				dialogListener.onStart();
 			} catch (AccessException | ServiceException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}
