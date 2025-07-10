@@ -84,7 +84,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		super.setMinimumSize(new Dimension(500, 390));
 		
 		container = super.getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.Y_AXIS);
+		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -98,18 +98,18 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		omeroNoButton.addItemListener(this);
 		
 		JPanel radioOmeroPanel = new JPanel();
-		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.X_AXIS));
+		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.LINE_AXIS));
 		
-		JLabel jLabelOmero = new JLabel("Select from omero :");
+		JLabel jLabelOmero = new JLabel("Select from omero:");
 		radioOmeroPanel.add(jLabelOmero);
 		radioOmeroPanel.add(omeroYesButton);
 		radioOmeroPanel.add(omeroNoButton);
 		container.add(radioOmeroPanel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                      GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		                                                      GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 		                                                      new Insets(60, 30, 0, 0), 0, 0));
 		
 		// Local mode layout
-		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.Y_AXIS));
+		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        localPanel  = new JPanel();
 		GridBagLayout localLayout = new GridBagLayout();
@@ -164,7 +164,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		container.add(localModeLayout, 1);
 		
 		// Omero mode layout
-		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.Y_AXIS));
+		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        omeroPanel  = new JPanel();
 		GridBagLayout omeroLayout = new GridBagLayout();
@@ -175,7 +175,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		c.insets = new Insets(5, 0, 5, 20);
 		
 		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname :");
+		JLabel jLabelHostname = new JLabel("Hostname:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelHostname, c);
@@ -185,7 +185,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port :");
+		JLabel jLabelPort = new JLabel("Port:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPort, c);
@@ -195,7 +195,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username :");
+		JLabel jLabelUsername = new JLabel("Username:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelUsername, c);
@@ -205,7 +205,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password :");
+		JLabel jLabelPassword = new JLabel("Password:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPassword, c);
@@ -215,7 +215,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jPasswordField.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID :");
+		JLabel jLabelGroup = new JLabel("Group ID:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelGroup, c);
@@ -225,7 +225,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Z Projection :");
+		JLabel jLabelSource = new JLabel("Z Projection:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
@@ -236,7 +236,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 6;
-		JLabel jLabelToCrop = new JLabel("DIC  :");
+		JLabel jLabelToCrop = new JLabel("DIC:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelToCrop, c);
@@ -248,7 +248,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		
 		
 		c.gridy = 7;
-		JLabel jLabelOutputProject = new JLabel("Output Project :");
+		JLabel jLabelOutputProject = new JLabel("Output Project:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelOutputProject, c);

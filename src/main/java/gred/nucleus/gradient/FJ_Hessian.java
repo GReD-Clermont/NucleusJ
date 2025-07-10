@@ -49,9 +49,9 @@ public class FJ_Hessian implements PlugIn, WindowListener {
 		gd.addCheckbox(" Largest eigenvalue of Hessian tensor     ", largest);
 		gd.addCheckbox(" Middle eigenvalue of Hessian tensor     ", middle);
 		gd.addCheckbox(" Smallest eigenvalue of Hessian tensor     ", smallest);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(5, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(5, 0, 0, 0));
 		gd.addCheckbox(" Absolute eigenvalue comparison     ", absolute);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(5, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(5, 0, 0, 0));
 		gd.addStringField("                Smoothing scale:", scale);
 		
 		if (pos.x >= 0 && pos.y >= 0) {

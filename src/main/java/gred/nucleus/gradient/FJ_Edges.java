@@ -48,9 +48,9 @@ public class FJ_Edges implements PlugIn, ItemListener, WindowListener {
 		GenericDialog gd = new GenericDialog(FJ.name() + ": Edges");
 		gd.addCheckbox(" Compute gradient-magnitude image     ", compute);
 		gd.addStringField("                Smoothing scale:", scale);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(0, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(0, 0, 0, 0));
 		gd.addCheckbox(" Suppress non-maximum gradients     ", suppress);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(0, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(0, 0, 0, 0));
 		gd.addStringField("                Lower threshold value:", lower);
 		gd.addStringField("                Higher threshold value:", higher);
 		computeBox = (Checkbox) gd.getCheckboxes().get(0);

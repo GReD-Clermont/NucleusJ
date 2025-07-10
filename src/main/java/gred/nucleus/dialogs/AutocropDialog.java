@@ -110,7 +110,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		autocropConfigFileDialog.setVisible(false);
 		
 		container = super.getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.Y_AXIS);
+		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -123,8 +123,8 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		omeroNoButton.setSelected(true);
 		omeroNoButton.addItemListener(this);
 		JPanel radioOmeroPanel = new JPanel();
-		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.X_AXIS));
-		JLabel jLabelOmero = new JLabel("Select from omero :");
+		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.LINE_AXIS));
+		JLabel jLabelOmero = new JLabel("Select from omero:");
 		radioOmeroPanel.add(jLabelOmero);
 		radioOmeroPanel.add(omeroYesButton);
 		radioOmeroPanel.add(omeroNoButton);
@@ -132,7 +132,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		container.add(radioOmeroPanel, 0);
 		
 		// Local mode layout
-		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.Y_AXIS));
+		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        localPanel  = new JPanel();
 		GridBagLayout localLayout = new GridBagLayout();
@@ -154,7 +154,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		c.gridx = 2;
 		localPanel.add(sourceButton, c);
 		
-		JLabel jLabelOutput = new JLabel("Output directory :");
+		JLabel jLabelOutput = new JLabel("Output directory:");
 		c.gridx = 0;
 		c.gridy = 1;
 		localPanel.add(jLabelOutput, c);
@@ -174,7 +174,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		container.add(localModeLayout, 1);
 		
 		// Omero mode layout
-		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.Y_AXIS));
+		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        omeroPanel  = new JPanel();
 		GridBagLayout omeroLayout = new GridBagLayout();
@@ -185,7 +185,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		c.insets = new Insets(5, 0, 5, 20);
 		
 		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname :");
+		JLabel jLabelHostname = new JLabel("Hostname:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelHostname, c);
@@ -195,7 +195,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port :");
+		JLabel jLabelPort = new JLabel("Port:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPort, c);
@@ -205,7 +205,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username :");
+		JLabel jLabelUsername = new JLabel("Username:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelUsername, c);
@@ -215,7 +215,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password :");
+		JLabel jLabelPassword = new JLabel("Password:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPassword, c);
@@ -225,7 +225,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jPasswordField.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID :");
+		JLabel jLabelGroup = new JLabel("Group ID:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelGroup, c);
@@ -235,7 +235,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Source :");
+		JLabel jLabelSource = new JLabel("Source:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
@@ -246,7 +246,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 6;
-		JLabel jLabelOutputProject = new JLabel("Output project :");
+		JLabel jLabelOutputProject = new JLabel("Output project:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelOutputProject, c);
@@ -260,9 +260,9 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 		// Threshold preferences
 		JPanel thresholdPanel = new JPanel();
-		thresholdPanel.setLayout(new BoxLayout(thresholdPanel, BoxLayout.X_AXIS));
+		thresholdPanel.setLayout(new BoxLayout(thresholdPanel, BoxLayout.LINE_AXIS));
 		c.gridy = 7;
-		JLabel jLabelThresholdType = new JLabel("Threshold Method :");
+		JLabel jLabelThresholdType = new JLabel("Threshold Method:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		thresholdPanel.add(jLabelThresholdType, c);
@@ -273,7 +273,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 		// Config panel
 		JPanel configPanel = new JPanel();
-		configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.X_AXIS));
+		configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.LINE_AXIS));
 		JLabel jLabelConfig = new JLabel("Config file (optional):");
 		configPanel.add(jLabelConfig);
 		ButtonGroup buttonGroup = new ButtonGroup();
@@ -299,8 +299,8 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 		// Thread preferences
 		JPanel threadPanel = new JPanel();
-		threadPanel.setLayout(new BoxLayout(threadPanel, BoxLayout.X_AXIS));
-		JLabel jLabelThreads = new JLabel("Number of used threads : ");
+		threadPanel.setLayout(new BoxLayout(threadPanel, BoxLayout.LINE_AXIS));
+		JLabel jLabelThreads = new JLabel("Number of used threads:");
 		threadPanel.add(jLabelThreads);
 		int          maxThreads = Runtime.getRuntime().availableProcessors();
 		SpinnerModel model      = new SpinnerNumberModel(Math.min(maxThreads, 1), 1, maxThreads, 1);
@@ -311,7 +311,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 		// Start/Quit buttons
 		JPanel startQuitPanel = new JPanel();
-		startQuitPanel.setLayout(new BoxLayout(startQuitPanel, BoxLayout.X_AXIS));
+		startQuitPanel.setLayout(new BoxLayout(startQuitPanel, BoxLayout.LINE_AXIS));
 		startQuitPanel.add(jButtonStart);
 		startQuitPanel.add(jButtonQuit);
 		startQuitPanel.setBorder(padding);
@@ -482,7 +482,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 				jButtonConfig.setBorder(padding);
 				configMode = ConfigMode.INPUT;
 			} else if (source == rdoAddConfigFile) {
-				configFilePanel.setLayout(new BoxLayout(configFilePanel, BoxLayout.X_AXIS));
+				configFilePanel.setLayout(new BoxLayout(configFilePanel, BoxLayout.LINE_AXIS));
 				configFilePanel.add(jConfigFileChooser);
 				jConfigFileChooser.setMaximumSize(new Dimension(10000, 20));
 				confButton.addActionListener(this);

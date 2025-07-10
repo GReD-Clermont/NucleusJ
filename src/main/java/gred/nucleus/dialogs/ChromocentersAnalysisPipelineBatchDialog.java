@@ -92,7 +92,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		final String font     = "Albertus";
 		final String boldFont = "Albertus Extra Bold (W1)";
 		container = super.getContentPane();
-		JLabel      jLabelWorkDirectory       = new JLabel("Work directory and data directory choice : ");
+		JLabel      jLabelWorkDirectory       = new JLabel("Work directory and data directory choice:");
 		JButton     jButtonWorkDirectory      = new JButton("Output Directory");
 		JButton     jButtonStart              = new JButton("Start");
 		JButton     jButtonQuit               = new JButton("Quit");
@@ -123,20 +123,20 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		omeroNoButton.addItemListener(this);
 		
 		JPanel radioOmeroPanel = new JPanel();
-		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.X_AXIS));
-		JLabel jLabelOmero = new JLabel("Select from omero :");
+		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.LINE_AXIS));
+		JLabel jLabelOmero = new JLabel("Select from omero:");
 		radioOmeroPanel.add(jLabelOmero);
 		radioOmeroPanel.add(omeroYesButton);
 		radioOmeroPanel.add(omeroNoButton);
 		
 		container.add(radioOmeroPanel,
 		              new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.HORIZONTAL,
 		                                     new Insets(10, 10, 0, 10), 0, 0));
 		
 		// Local mode layout
-		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.Y_AXIS));
+		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
 		JPanel        localPanel  = new JPanel();
 		GridBagLayout localLayout = new GridBagLayout();
 		localLayout.columnWeights = new double[]{1, 5, 0.5};
@@ -144,7 +144,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		
 		localPanel.add(jLabelWorkDirectory,
 		               new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0,
-		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(10, 10, 0, 10), 0, 0));
 		
@@ -157,13 +157,13 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jTextPane.setEditable(false);
 		localPanel.add(jTextPane,
 		               new GridBagConstraints(0, 1, 3, 1, 1.0, 0.0,
-		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(10, 10, 0, 10), 0, 0));
 		
 		localPanel.add(jButtonRawData,
 		               new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(10, 10, 0, 5), 0, 0));
 		jButtonRawData.setPreferredSize(new Dimension(120, 21));
@@ -171,7 +171,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		
 		localPanel.add(jTextFieldRawData,
 		               new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0,
-		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(10, 5, 0, 10), 0, 0));
 		jTextFieldRawData.setPreferredSize(new Dimension(280, 21));
@@ -179,7 +179,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		
 		localPanel.add(jButtonWorkDirectory,
 		               new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
-		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(10, 10, 0, 5), 0, 0));
 		jButtonWorkDirectory.setPreferredSize(new Dimension(120, 21));
@@ -187,7 +187,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		
 		localPanel.add(jTextFieldWorkDirectory,
 		               new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0,
-		                                      GridBagConstraints.NORTHWEST,
+		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(10, 5, 0, 10), 0, 0));
 		jTextFieldWorkDirectory.setPreferredSize(new Dimension(280, 21));
@@ -198,7 +198,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.weightx = 2;
 		gc.weighty = 5;
-		gc.anchor = GridBagConstraints.NORTHWEST;
+		gc.anchor = GridBagConstraints.FIRST_LINE_START;
 		gc.fill = GridBagConstraints.HORIZONTAL;
 		JLabel calibrationLabel = new JLabel("Calibration:");
 		gc.gridx = 0;
@@ -219,7 +219,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jLabelAnalysis = new JLabel("Results file of interest:");
 		container.add(jLabelAnalysis,
 		              new GridBagConstraints(0, 3, 5, 1, 0.0, 0.0,
-		                                     GridBagConstraints.SOUTHWEST,
+		                                     GridBagConstraints.LAST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(10, 10, 0, 10), 0, 0));
 		
@@ -228,20 +228,20 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		//buttonGroupChoiceAnalysis.add(jRadioButtonNuc);
 		
 		JPanel analysisPanel = new JPanel();
-		analysisPanel.setLayout(new BoxLayout(analysisPanel, BoxLayout.X_AXIS));
+		analysisPanel.setLayout(new BoxLayout(analysisPanel, BoxLayout.LINE_AXIS));
 		analysisPanel.add(jRadioButtonNucCc);
 		analysisPanel.add(jRadioButtonCc);
 		analysisPanel.add(jRadioButtonNuc);
 		
 		container.add(analysisPanel,
 		              new GridBagConstraints(0, 4, 3, 1, 1.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(10, 10, 0, 10), 0, 0));
 		jLabelAnalysis2 = new JLabel("Type of Relative Heterochromatin Fraction:");
 		container.add(jLabelAnalysis2,
 		              new GridBagConstraints(0, 5, 3, 1, 1.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(10, 10, 0, 10), 0, 0));
 		buttonGroupChoiceRhf.add(jRadioButtonRhfV);
@@ -249,26 +249,26 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		buttonGroupChoiceRhf.add(jRadioButtonRhfIV);
 		
 		JPanel rhfPanel = new JPanel();
-		rhfPanel.setLayout(new BoxLayout(rhfPanel, BoxLayout.X_AXIS));
+		rhfPanel.setLayout(new BoxLayout(rhfPanel, BoxLayout.LINE_AXIS));
 		rhfPanel.add(jRadioButtonRhfV);
 		rhfPanel.add(jRadioButtonRhfI);
 		rhfPanel.add(jRadioButtonRhfIV);
 		
 		container.add(rhfPanel,
 		              new GridBagConstraints(0, 6, 5, 1, 1.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.HORIZONTAL,
 		                                     new Insets(10, 10, 0, 10), 0, 0));
 		
 		localModeLayout.add(localPanel);
 		container.add(localModeLayout,
 		              new GridBagConstraints(0, 1, 4, 1, 1.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.HORIZONTAL,
 		                                     new Insets(10, 10, 10, 10), 0, 0));
 		
 		// Omero mode layout
-		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.Y_AXIS));
+		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		JPanel        omeroPanel  = new JPanel();
@@ -280,7 +280,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		c.insets = new Insets(5, 0, 5, 20);
 		
 		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname :");
+		JLabel jLabelHostname = new JLabel("Hostname:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelHostname, c);
@@ -290,7 +290,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port :");
+		JLabel jLabelPort = new JLabel("Port:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPort, c);
@@ -300,7 +300,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username :");
+		JLabel jLabelUsername = new JLabel("Username:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelUsername, c);
@@ -310,7 +310,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password :");
+		JLabel jLabelPassword = new JLabel("Password:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPassword, c);
@@ -320,7 +320,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jPasswordField.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID :");
+		JLabel jLabelGroup = new JLabel("Group ID:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelGroup, c);
@@ -330,7 +330,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Image Source :");
+		JLabel jLabelSource = new JLabel("Image Source:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
@@ -341,7 +341,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 6;
-		JLabel jLabelToCrop = new JLabel("Nucleus segmentation :");
+		JLabel jLabelToCrop = new JLabel("Nucleus segmentation:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelToCrop, c);
@@ -352,7 +352,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jTextFieldNucSegID.setMaximumSize(new Dimension(20000, 20));
 		
 		c.gridy = 7;
-		JLabel JchannelToCrop = new JLabel("Chromocenter segmentation :");
+		JLabel JchannelToCrop = new JLabel("Chromocenter segmentation:");
 		c.gridx = 0;
 		omeroPanel.add(JchannelToCrop, c);
 		c.gridx = 1;
@@ -363,7 +363,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		
 		
 		c.gridy = 8;
-		JLabel jLabelOutputProject = new JLabel("Output Dataset :");
+		JLabel jLabelOutputProject = new JLabel("Output Dataset:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelOutputProject, c);
@@ -373,7 +373,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jTextFieldOutputProject.setMaximumSize(new Dimension(10000, 20));
 		container.add(calibration,
 		              new GridBagConstraints(0, 2, 3, 1, 1.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.HORIZONTAL,
 		                                     new Insets(10, 10, 0, 10), 0, 0));
 		
@@ -384,13 +384,13 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		
 		// Buttons at the bottom
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.TRAILING));
 		buttonPanel.add(jButtonStart);
 		buttonPanel.add(jButtonQuit);
 		
 		container.add(buttonPanel,
 		              new GridBagConstraints(0, 7, 4, 1, 1.0, 0.0,
-		                                     GridBagConstraints.SOUTH, GridBagConstraints.NONE,
+		                                     GridBagConstraints.PAGE_END, GridBagConstraints.NONE,
 		                                     new Insets(10, 10, 10, 10), 0, 0));
 		
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
@@ -569,7 +569,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 			localModeLayout.setVisible(false);
 			container.add(omeroModeLayout,
 			              new GridBagConstraints(0, 1, 4, 1, 1.0, 0.0,
-			                                     GridBagConstraints.NORTHWEST,
+			                                     GridBagConstraints.FIRST_LINE_START,
 			                                     GridBagConstraints.HORIZONTAL,
 			                                     new Insets(10, 10, 10, 10), 0, 0));
 			useOMERO = true;
@@ -581,7 +581,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 			localModeLayout.setVisible(true);
 			container.add(localModeLayout,
 			              new GridBagConstraints(0, 1, 4, 1, 1.0, 0.0,
-			                                     GridBagConstraints.NORTHWEST,
+			                                     GridBagConstraints.FIRST_LINE_START,
 			                                     GridBagConstraints.HORIZONTAL,
 			                                     new Insets(10, 10, 10, 10), 0, 0));
 			useOMERO = false;

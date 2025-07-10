@@ -45,7 +45,7 @@ public class FJ_Structure implements PlugIn, WindowListener {
 		gd.addCheckbox(" Largest eigenvalue of structure tensor    ", largest);
 		gd.addCheckbox(" Middle eigenvalue of structure tensor    ", middle);
 		gd.addCheckbox(" Smallest eigenvalue of structure tensor    ", smallest);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(5, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(5, 0, 0, 0));
 		gd.addStringField("                Smoothing scale:", smoothingScale);
 		gd.addStringField("                Integration scale:", integrationScale);
 		

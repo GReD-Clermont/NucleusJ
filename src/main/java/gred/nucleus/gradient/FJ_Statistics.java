@@ -90,7 +90,7 @@ public class FJ_Statistics implements PlugIn, ItemListener, WindowListener {
 		
 		GenericDialog gd = new GenericDialog(FJ.name() + ": Statistics");
 		gd.addCheckboxGroup(7, 2, labels, values);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(5, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(5, 0, 0, 0));
 		gd.addCheckbox(" Clear previous results", clear);
 		gd.addCheckbox(" Image name displaying", name);
 		gd.addCheckbox(" Channel numbering", channel);
@@ -104,7 +104,7 @@ public class FJ_Statistics implements PlugIn, ItemListener, WindowListener {
 		timeBox.addItemListener(this);
 		channelBox = (Checkbox) checkboxes.get(vecLen - 3);
 		channelBox.addItemListener(this);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(0, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(0, 0, 0, 0));
 		String[] decsList = new String[11];
 		for (int i = 0; i < 11; ++i) {
 			decsList[i] = String.valueOf(i);

@@ -68,7 +68,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		jLabelWorkDirectory = new JLabel();
 		container.add(jLabelWorkDirectory,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(0, 10, 0, 0), 0, 0));
 		jLabelWorkDirectory.setText("Work directory and Raw data choice : ");
@@ -81,13 +81,13 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		jTextPane.setEditable(false);
 		container.add(jTextPane,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(20, 20, 0, 0), 0, 0));
 		
 		container.add(jButtonRawData,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(100, 10, 0, 0), 0, 0));
 		jButtonRawData.setPreferredSize(new java.awt.Dimension(120, 21));
@@ -95,7 +95,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		
 		container.add(jTextFieldRawData,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(100, 160, 0, 0), 0, 0));
 		jTextFieldRawData.setPreferredSize(new java.awt.Dimension(280, 21));
@@ -103,7 +103,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		
 		container.add(jButtonWorkDirectory,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(140, 10, 0, 0), 0, 0));
 		jButtonWorkDirectory.setPreferredSize(new java.awt.Dimension(120, 21));
@@ -111,7 +111,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		
 		container.add(jTextFieldWorkDirectory,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(140, 160, 0, 0), 0, 0));
 		jTextFieldWorkDirectory.setPreferredSize(new java.awt.Dimension(280, 21));
@@ -120,7 +120,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		jLabelCalibration = new JLabel();
 		container.add(jLabelCalibration,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(20, 10, 0, 0), 0, 0));
 		
@@ -131,8 +131,8 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.weightx = 2;
 		gc.weighty = 5;
-		gc.anchor = GridBagConstraints.NORTHWEST;
-		gc.ipady = GridBagConstraints.NORTHWEST;
+		gc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gc.ipady = GridBagConstraints.FIRST_LINE_START;
 		JLabel calibrationLabel = new JLabel("Calibration:");
 		gc.gridx = 0;
 		gc.gridy = 0;
@@ -148,19 +148,19 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		
 		container.add(calibration,
 		              new GridBagConstraints(0, 2, 2, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(0, 0, 0, 0), 0, 0));
 		
 		container.add(jButtonStart,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(190, 140, 0, 0), 0, 0));
 		jButtonStart.setPreferredSize(new java.awt.Dimension(120, 21));
 		container.add(jButtonQuit,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(190, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));

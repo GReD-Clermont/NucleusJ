@@ -37,7 +37,7 @@ public class FJ_Options implements PlugIn, WindowListener {
 		gd.addCheckbox(" Save result images before closing" + space, save);
 		gd.addCheckbox(" Progress indication" + space, pgs);
 		gd.addCheckbox(" Log messaging" + space, log);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(0, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(0, 0, 0, 0));
 		
 		if (pos.x >= 0 && pos.y >= 0) {
 			gd.centerDialog(false);

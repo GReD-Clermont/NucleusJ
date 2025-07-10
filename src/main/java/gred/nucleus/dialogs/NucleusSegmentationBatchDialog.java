@@ -72,34 +72,34 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelWorkDirectory = new JLabel();
 		container.add(jLabelWorkDirectory,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(0, 10, 0, 0), 0, 0));
 		jLabelWorkDirectory.setText("Work directory and Raw data choice : ");
 		container.add(jButtonRawData,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(30, 10, 0, 0), 0, 0));
 		jButtonRawData.setPreferredSize(new java.awt.Dimension(120, 21));
 		jButtonRawData.setFont(new java.awt.Font("Albertus", Font.ITALIC, 10));
 		container.add(jTextFieldRawData,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(30, 160, 0, 0), 0, 0));
 		jTextFieldRawData.setPreferredSize(new java.awt.Dimension(280, 21));
 		jTextFieldRawData.setFont(new java.awt.Font("Albertus", Font.ITALIC, 10));
 		container.add(jButtonWorkDirectory,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(60, 10, 0, 0), 0, 0));
 		jButtonWorkDirectory.setPreferredSize(new java.awt.Dimension(120, 21));
 		jButtonWorkDirectory.setFont(new java.awt.Font("Albertus", Font.ITALIC, 10));
 		container.add(jTextFieldWorkDirectory,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(60, 160, 0, 0), 0, 0));
 		jTextFieldWorkDirectory.setPreferredSize(new java.awt.Dimension(280, 21));
@@ -107,7 +107,7 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelCalibration = new JLabel();
 		container.add(jLabelCalibration,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(20, 10, 0, 0), 0, 0));
 		jLabelCalibration.setText("Voxel Calibration:");
@@ -115,7 +115,7 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelXCalibration = new JLabel();
 		container.add(jLabelXCalibration,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(40, 20, 0, 0),
 		                                     0, 0));
@@ -123,7 +123,7 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelXCalibration.setFont(new java.awt.Font("Albertus Extra Bold (W1)", Font.ITALIC, 12));
 		container.add(jTextFieldXCalibration,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(40, 60, 0, 0), 0, 0));
 		jTextFieldXCalibration.setText("1");
@@ -131,14 +131,14 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelYCalibration = new JLabel();
 		container.add(jLabelYCalibration,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(65, 20, 0, 0), 0, 0));
 		jLabelYCalibration.setText("y :");
 		jLabelYCalibration.setFont(new java.awt.Font("Albertus Extra Bold (W1)", Font.ITALIC, 12));
 		container.add(jTextFieldYCalibration,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(65, 60, 0, 0), 0, 0));
 		jTextFieldYCalibration.setText("1");
@@ -146,14 +146,14 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelZCalibration = new JLabel();
 		container.add(jLabelZCalibration,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(90, 20, 0, 0), 0, 0));
 		jLabelZCalibration.setText("z :");
 		jLabelZCalibration.setFont(new java.awt.Font("Albertus Extra Bold (W1)", Font.ITALIC, 12));
 		container.add(jTextFieldZCalibration,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(90, 60, 0, 0), 0, 0));
 		jTextFieldZCalibration.setText("1");
@@ -161,14 +161,14 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelUnit = new JLabel();
 		container.add(jLabelUnit,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(115, 20, 0, 0), 0, 0));
 		jLabelUnit.setText("unit :");
 		jLabelUnit.setFont(new java.awt.Font("Albertus Extra Bold (W1)", Font.ITALIC, 12));
 		container.add(jTextFieldUnit,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(115, 60, 0, 0), 0, 0));
 		jTextFieldUnit.setText("pixel");
@@ -176,21 +176,21 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelSegmentation = new JLabel();
 		container.add(jLabelSegmentation,
 		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(20, 10, 0, 0), 0, 0));
 		jLabelSegmentation.setText("Choose the min and max volumes of the nucleus:");
 		jLabelVolumeMin = new JLabel();
 		container.add(jLabelVolumeMin,
 		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(40, 20, 0, 0), 0, 0));
 		jLabelVolumeMin.setText("Minimum volume of the segmented nucleus :");
 		jLabelVolumeMin.setFont(new java.awt.Font("Albertus Extra Bold (W1)", Font.ITALIC, 12));
 		container.add(jTextFieldMin,
 		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(40, 320, 0, 0), 0, 0));
 		jTextFieldMin.setText("15");
@@ -198,14 +198,14 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelVolumeMax = new JLabel();
 		container.add(jLabelVolumeMax,
 		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(70, 20, 0, 0), 0, 0));
 		jLabelVolumeMax.setText("Maximum volume of the segmented nucleus :");
 		jLabelVolumeMax.setFont(new java.awt.Font("Albertus Extra Bold (W1)", Font.ITALIC, 12));
 		container.add(jTextFieldMax,
 		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(70, 320, 0, 0), 0, 0));
 		jTextFieldMax.setText("2000");
@@ -219,24 +219,24 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		jLabelNbCpu.setText("How many CPU :");
 		container.add(jLabelNbCpu,
 		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(95, 10, 0, 0), 0, 0));
 		container.add(comboBoxCpu,
 		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(90, 200, 0, 0), 0, 0));
 		comboBoxCpu.addItemListener(new ItemState());
 		container.add(jButtonStart,
 		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(130, 140, 0, 0), 0, 0));
 		jButtonStart.setPreferredSize(new java.awt.Dimension(120, 21));
 		container.add(jButtonQuit,
 		              new GridBagConstraints(0, 3, 0, 0, 0.0, 0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(130, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));

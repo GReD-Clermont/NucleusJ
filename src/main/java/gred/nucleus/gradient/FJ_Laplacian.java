@@ -44,9 +44,9 @@ public class FJ_Laplacian implements PlugIn, WindowListener {
 		GenericDialog gd = new GenericDialog(FJ.name() + ": Laplacian");
 		gd.addCheckbox(" Compute Laplacian image    ", compute);
 		gd.addStringField("                Smoothing scale:", scale);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(1, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(1, 0, 0, 0));
 		gd.addCheckbox(" Detect zero-crossings    ", zeroCross);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(0, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(0, 0, 0, 0));
 		
 		if (pos.x >= 0 && pos.y >= 0) {
 			gd.centerDialog(false);

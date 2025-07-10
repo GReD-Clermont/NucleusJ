@@ -82,7 +82,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		container = super.getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.Y_AXIS);
+		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -97,21 +97,21 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		omeroNoButton.addItemListener(this);
 		
 		JPanel radioOmeroPanel = new JPanel();
-		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.X_AXIS));
+		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.LINE_AXIS));
 		
 		
-		JLabel jLabelOmero = new JLabel("Select from omero :");
+		JLabel jLabelOmero = new JLabel("Select from omero:");
 		radioOmeroPanel.add(jLabelOmero);
 		radioOmeroPanel.add(omeroYesButton);
 		radioOmeroPanel.add(omeroNoButton);
 		//radioOmeroPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		container.add(radioOmeroPanel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                      GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+		                                                      GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 		                                                      new Insets(60, 30, 0, 0), 0, 0));
 		
 		
 		// Local mode layout
-		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.Y_AXIS));
+		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        localPanel  = new JPanel();
 		GridBagLayout localLayout = new GridBagLayout();
@@ -145,7 +145,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		
 		
 		// Omero mode layout
-		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.Y_AXIS));
+		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        omeroPanel  = new JPanel();
 		GridBagLayout omeroLayout = new GridBagLayout();
@@ -156,7 +156,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		c.insets = new Insets(5, 0, 5, 20);
 		
 		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname :");
+		JLabel jLabelHostname = new JLabel("Hostname:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelHostname, c);
@@ -166,7 +166,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port :");
+		JLabel jLabelPort = new JLabel("Port:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPort, c);
@@ -176,7 +176,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username :");
+		JLabel jLabelUsername = new JLabel("Username:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelUsername, c);
@@ -186,7 +186,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password :");
+		JLabel jLabelPassword = new JLabel("Password:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPassword, c);
@@ -196,7 +196,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jPasswordField.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID :");
+		JLabel jLabelGroup = new JLabel("Group ID:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelGroup, c);
@@ -206,7 +206,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Image Source :");
+		JLabel jLabelSource = new JLabel("Image Source:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
@@ -217,7 +217,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 6;
-		JLabel jLabelToCrop = new JLabel("Image To Crop :");
+		JLabel jLabelToCrop = new JLabel("Image To Crop:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelToCrop, c);
@@ -228,7 +228,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jTextFieldToCropID.setMaximumSize(new Dimension(20000, 20));
 		
 		c.gridy = 7;
-		JLabel JchannelToCrop = new JLabel("Channel To Crop :");
+		JLabel JchannelToCrop = new JLabel("Channel To Crop:");
 		c.gridx = 0;
 		omeroPanel.add(JchannelToCrop, c);
 		c.gridx = 1;
@@ -236,7 +236,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		omeroPanel.add(jTextFieldChannelToCrop, c);
 		
 		c.gridy = 8;
-		JLabel jLabelOutputProject = new JLabel("Output Dataset :");
+		JLabel jLabelOutputProject = new JLabel("Output Dataset:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelOutputProject, c);

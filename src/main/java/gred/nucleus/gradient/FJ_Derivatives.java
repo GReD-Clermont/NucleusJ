@@ -47,7 +47,7 @@ public class FJ_Derivatives implements PlugIn, WindowListener {
 		gd.addChoice("x-order of differentiation:", orders, orders[xOrder]);
 		gd.addChoice("y-order of differentiation:", orders, orders[yOrder]);
 		gd.addChoice("z-order of differentiation:", orders, orders[zOrder]);
-		gd.addPanel(new Panel(), GridBagConstraints.EAST, new Insets(0, 0, 0, 0));
+		gd.addPanel(new Panel(), GridBagConstraints.LINE_END, new Insets(0, 0, 0, 0));
 		gd.addStringField("Smoothing scale:", scale);
 		
 		if (pos.x >= 0 && pos.y >= 0) {
