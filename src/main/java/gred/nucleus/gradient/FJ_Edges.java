@@ -23,12 +23,12 @@ import java.awt.event.WindowListener;
 
 public class FJ_Edges implements PlugIn, ItemListener, WindowListener {
 	
-	private static final Point    pos      = new Point(-1, -1);
-	private static       boolean  compute  = true;
+	private static final Point    pos     = new Point(-1, -1);
+	private static       boolean  compute = true;
 	private static       boolean  suppress;
-	private static       String   scale    = "1.0";
-	private static       String   lower    = "";
-	private static       String   higher   = "";
+	private static       String   scale   = "1.0";
+	private static       String   lower   = "";
+	private static       String   higher  = "";
 	private              Checkbox computeBox;
 	private              Checkbox suppressBox;
 	
@@ -168,7 +168,7 @@ class FJEdges {
 			int thresholdMode = (lowThreshold ? 10 : 0) + (highThreshold ? 1 : 0);
 			
 			Image img    = Image.wrap(imp);
-			Image       newImg = new FloatImage(img);
+			Image newImg = new FloatImage(img);
 			
 			double[] pls = {0, 1};
 			int      pl  = 0;

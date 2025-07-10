@@ -36,14 +36,17 @@ public class RectangleIntersection {
 	private final List<String>    zSlices;
 	/** List of rectangle intersected detected */
 	private final List<String>    rectangleIntersect = new ArrayList<>(0);
+	
 	/** Number of intersections per rectangles */
 	private final Map<Integer, Integer> countIntersect     = new HashMap<>(0);
 	/** Final list of rectangles after re rectangle computations */
 	private final Collection<String>    finalListRectangle = new ArrayList<>(0);
+	
 	/** Autocrop parameter */
-	private final AutocropParameters    autocropParameters;
+	private final AutocropParameters autocropParameters;
+	
 	/** Boolean to check if new rectangles are computed */
-	private       boolean               newBoxesAdded;
+	private boolean newBoxesAdded;
 	
 	
 	/**

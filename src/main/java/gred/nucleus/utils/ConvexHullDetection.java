@@ -141,15 +141,15 @@ public class ConvexHullDetection {
 	
 	
 	/**
-	 * Returns the convex hull of the points created from {@code xs} and <code>ys</code>. Note that the first and last
+	 * Returns the convex hull of the points created from {@code xs} and {@code ys}. Note that the first and last
 	 * point in the returned {@code List<java.awt.Point>} are the same point.
 	 *
 	 * @param xs the x coordinates.
 	 * @param ys the y coordinates.
 	 *
-	 * @return the convex hull of the points created from {@code xs} and <code>ys</code>.
+	 * @return the convex hull of the points created from {@code xs} and {@code ys}.
 	 *
-	 * @throws IllegalArgumentException if {@code xs} and <code>ys</code> don't have the same size, if all points are
+	 * @throws IllegalArgumentException if {@code xs} and {@code ys} don't have the same size, if all points are
 	 *                                  collinear or if there are less than 3 unique points present.
 	 */
 	public static List<Point> getConvexHull(int[] xs, int[] ys) throws IllegalArgumentException {
@@ -305,7 +305,7 @@ public class ConvexHullDetection {
 	
 	
 	/**
-	 * Returns the GrahamScan#Turn formed by traversing through the ordered points {@code a}, <code>b</code> and
+	 * Returns the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and
 	 * {@code c}. More specifically, the cross product <tt>C</tt> between the 3 points (vectors) is calculated:
 	 *
 	 * <tt>(b.x-a.x * c.y-a.y) - (b.y-a.y * c.x-a.x)</tt>
@@ -318,7 +318,7 @@ public class ConvexHullDetection {
 	 * @param b the second point.
 	 * @param c the end point.
 	 *
-	 * @return the GrahamScan#Turn formed by traversing through the ordered points {@code a}, <code>b</code> and
+	 * @return the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and
 	 * {@code c}.
 	 */
 	protected static Turn getTurn(Point a, Point b, Point c) {

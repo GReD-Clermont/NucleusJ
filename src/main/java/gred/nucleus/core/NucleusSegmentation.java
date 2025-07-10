@@ -374,65 +374,6 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * @param imagePlusInput
-	 *
-	 * @return
-	 *
-	 * @deprecated Method to apply the segmentation to find the maximum sphericity.
-	 */
-	@Deprecated
-	public ImagePlus applySegmentation(ImagePlus imagePlusInput) {
-		double sphericityMax = -1.0;
-		double sphericity;
-		double volume;
-		double xCalibration  = getXCalibration();
-		double yCalibration  = getYCalibration();
-		double zCalibration  = getZCalibration();
-		double imageVolume = xCalibration * imagePlusInput.getWidth() *
-		                     yCalibration * imagePlusInput.getHeight() *
-		                     zCalibration * imagePlusInput.getStackSize();
-		Calibration   calibration        = imagePlusInput.getCalibration();
-		Measure3D     measure            = new Measure3D(xCalibration, yCalibration, zCalibration);
-		Gradient      gradient           = new Gradient(imagePlusInput);
-		ImagePlus     imagePlusSegmented = new ImagePlus();
-		List<Integer> arrayListThreshold = computeMinMaxThreshold(imagePlusInput);
-		for (int t = arrayListThreshold.get(0); t <= arrayListThreshold.get(1); ++t) {
-			ImagePlus imagePlusSegmentedTemp = generateSegmentedImage(imagePlusInput, t);
-			imagePlusSegmentedTemp = BinaryImages.componentsLabeling(imagePlusSegmentedTemp, 26, 32);
-			deleteArtefact(imagePlusSegmentedTemp);
-			imagePlusSegmentedTemp.setCalibration(calibration);
-			volume = measure.computeVolumeObject(imagePlusSegmentedTemp, 255);
-			imagePlusSegmentedTemp.setCalibration(calibration);
-			boolean firstStack = isVoxelThresholded(imagePlusSegmentedTemp, 255, 0);
-			boolean lastStack  = isVoxelThresholded(imagePlusSegmentedTemp, 255, imagePlusInput.getStackSize() - 1);
-			
-			if (testRelativeObjectVolume(volume, imageVolume) &&
-			    volume >= vMin && volume <= vMax &&
-			    !firstStack && !lastStack) {
-				sphericity = measure.computeSphericity(volume,
-				                                       measure.computeComplexSurface(imagePlusSegmentedTemp,
-				                                                                     gradient));
-				if (sphericity > sphericityMax) {
-					bestThreshold = t;
-					sphericityMax = sphericity;
-					StackConverter stackConverter = new StackConverter(imagePlusSegmentedTemp);
-					stackConverter.convertToGray8();
-					imagePlusSegmented = imagePlusSegmentedTemp.duplicate();
-				}
-			}
-		}
-		
-		if (bestThreshold != -1) {
-			morphologicalCorrection(imagePlusSegmented);
-		}
-		
-		checkBorder(imagePlusSegmented);
-		
-		return imagePlusSegmented;
-	}
-	
-	
-	/**
 	 * Creation of the nucleus segmented image from a OTSU threshold.
 	 *
 	 * @param imagePlusInput raw image

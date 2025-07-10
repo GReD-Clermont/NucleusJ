@@ -360,10 +360,10 @@ public final class ChromocenterAnalysis {
 							LOGGER.info("chromocenterAnalysis is computing...");
 							LOGGER.info("nucleusChromocenterAnalysis is computing...");
 							computeParameters(nameFileChromocenterAndNucleus,
-							                                               rhfChoice,
-							                                               imagePlusInput,
-							                                               imagePlusSegmented,
-							                                               imagePlusChromocenter);
+							                  rhfChoice,
+							                  imagePlusInput,
+							                  imagePlusSegmented,
+							                  imagePlusChromocenter);
 						} else if ("cc".equals(isNucAndCcAnalysis)) {
 							computeParametersChromocenter(nameFileChromocenter,
 							                              imagePlusSegmented,

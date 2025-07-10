@@ -24,6 +24,7 @@ public class MyGradient {
 	private final        boolean mask;
 	
 	private final ImagePlus imagePlus;
+	
 	private ImagePlus imagePlusBinary;
 	
 	

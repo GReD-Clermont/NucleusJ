@@ -360,7 +360,7 @@ public abstract class ConnectedComponent {
 		// and we should keep only
 		// the components with a voxel satisfying removalPredicate 
 		for (int i = 0; i < compInfo.size(); ++i) {
-			if (existsVoxelSatisfyingPredicate.get(i) ? !keepPredicate : keepPredicate) {
+			if (Boolean.TRUE.equals(existsVoxelSatisfyingPredicate.get(i)) != keepPredicate) {
 				// remove the component
 				compInfo.get(i).setNumberOfPoints(0);
 			}
@@ -418,11 +418,6 @@ public abstract class ConnectedComponent {
 	}
 	
 	
-	/**
-	 * @return a human readable string representation of this instance
-	 *
-	 * @see Object#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

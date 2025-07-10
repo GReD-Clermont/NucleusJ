@@ -38,11 +38,11 @@ public class OutputFileVerification {
 	private final String rawPathExpectedResult;
 	
 	/** Key of files expected in the result directory */
-	private Map<String, String> myMapInitialFilesInputFolder = new HashMap<>();
+	private final Map<String, String> myMapInitialFilesInputFolder = new HashMap<>();
 	/** Key of files produce by the analysis */
-	private Map<String, String> myMapInitialFileOutputFolder = new HashMap<>();
+	private final Map<String, String> myMapInitialFileOutputFolder = new HashMap<>();
 	/** list of files produce by the analysis */
-	private Map<String, String> myMapFilesProduceByAnalysis  = new HashMap<>();
+	private final Map<String, String> myMapFilesProduceByAnalysis  = new HashMap<>();
 	
 	
 	/**

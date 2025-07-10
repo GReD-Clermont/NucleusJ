@@ -24,8 +24,8 @@ public class ComputeNucleiParametersML {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private String rawImagesInputDirectory;
-	private String segmentedImagesDirectory;
+	private final String rawImagesInputDirectory;
+	private final String segmentedImagesDirectory;
 	
 	
 	/**

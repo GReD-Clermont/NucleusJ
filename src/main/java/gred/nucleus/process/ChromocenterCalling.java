@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class ChromocenterCalling {
-	private ChromocenterParameters chromocenterParameters;
+	private final ChromocenterParameters chromocenterParameters;
 	
 	private String         prefix;
 	private boolean        is2DImg;

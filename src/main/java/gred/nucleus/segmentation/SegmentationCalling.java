@@ -180,52 +180,6 @@ public class SegmentationCalling {
 	
 	
 	/**
-	 * @return ImagePlus the segmented nucleus
-	 *
-	 * @deprecated Method to run an ImagePlus input the method will call method in NucleusSegmentation and
-	 * ConvexHullSegmentation to segment the input nucleus. if the input boolean is true the convex hull algorithm will
-	 * be use, if false the Otsu modified method will be used. If a segmentation results is find the method will then
-	 * computed the different parameters with the NucleusAnalysis class, results will be print in the console. If no
-	 * nucleus is detected a log message is print in teh console
-	 */
-	@Deprecated
-	public int runOneImage() throws IOException, FormatException {
-		
-		ImagePlus seg = imgInput;
-		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(seg,
-		                                                                  segmentationParameters.getMinVolumeNucleus(),
-		                                                                  segmentationParameters.getMaxVolumeNucleus(),
-		                                                                  segmentationParameters);
-		
-		Calibration cal = seg.getCalibration();
-		if (seg.getType() == ImagePlus.GRAY16) {
-			preProcessImage(seg);
-		}
-		
-		seg = nucleusSegmentation.applySegmentation(seg);
-		if (nucleusSegmentation.getBestThreshold() == -1) {
-			LOGGER.error("Segmentation error: \nNo object is detected between {} and {}",
-			             segmentationParameters.getMinVolumeNucleus(),
-			             segmentationParameters.getMaxVolumeNucleus());
-		} else {
-			LOGGER.info("OTSU modified threshold: {}\n", nucleusSegmentation.getBestThreshold());
-			if (segmentationParameters.getConvexHullDetection()) {
-				ConvexHullSegmentation nuc = new ConvexHullSegmentation();
-				seg = nuc.convexHullDetection(seg, segmentationParameters);
-			}
-			seg.setTitle(output);
-			if (!output.isEmpty()) {
-				saveFile(seg, output);
-			}
-			NucleusAnalysis nucleusAnalysis = new NucleusAnalysis(imgInput, seg, segmentationParameters);
-			// System.out.println(nucleusAnalysis.nucleusParameter3D());
-		}
-		this.imgSeg = seg;
-		return nucleusSegmentation.getBestThreshold();
-	}
-	
-	
-	/**
 	 * Getter of the image segmented
 	 *
 	 * @return See above.
