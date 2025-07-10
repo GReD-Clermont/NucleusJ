@@ -437,7 +437,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		
 		
 		/** @param dialog  */
-		public StartListener(GenerateOverlayDialog dialog) {
+		StartListener(GenerateOverlayDialog dialog) {
 			this.dialog = dialog;
 		}
 		

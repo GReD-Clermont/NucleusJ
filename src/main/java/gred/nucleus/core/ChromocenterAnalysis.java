@@ -117,10 +117,12 @@ public final class ChromocenterAnalysis {
 				                                                                       imagePlusChromocenter);
 				double[] tBarycenterToBorderDistanceTableCc = computeBarycenterToBorderDistances(imagePlusSegmented,
 				                                                                                 imagePlusChromocenter);
-				double[] tBarycenterToBorderDistanceTableNucleus = computeBarycenterToBorderDistances(imagePlusSegmented,
-				                                                                                      imagePlusSegmented);
+				double[] tBarycenterToBorderDistanceTableNucleus = computeBarycenterToBorderDistances(
+						imagePlusSegmented,
+						imagePlusSegmented);
 				if (!exist) {
-					bufferedWriterOutput.write("Titre\tVolume\tBorderToBorderDistance\tBarycenterToBorderDistance\tBarycenterToBorderDistanceNucleus\n");
+					bufferedWriterOutput.write(
+							"Titre\tVolume\tBorderToBorderDistance\tBarycenterToBorderDistance\tBarycenterToBorderDistanceNucleus\n");
 				}
 				for (int i = 0; i < tBorderToBorderDistanceTable.length; ++i) {
 					bufferedWriterOutput.write(imagePlusChromocenter.getTitle() + "_" +
@@ -146,7 +148,8 @@ public final class ChromocenterAnalysis {
 				    try {
 					    Files.delete(path);  // Delete each file/folder
 				    } catch (IOException e) {
-					    throw new RuntimeException("Failed to delete " + path, e);  // Handle any exceptions during deletion
+					    throw new RuntimeException("Failed to delete " + path,
+					                               e);  // Handle any exceptions during deletion
 				    }
 			    });
 		}
@@ -340,18 +343,19 @@ public final class ChromocenterAnalysis {
 					}
 					ImagePlus   imagePlusChromocenter = IJ.openImage(listImageChromocenter.get(i));
 					ImagePlus   imagePlusSegmented    = IJ.openImage(pathNucleusSegmented);
-					Calibration calibration           = new Calibration();
-					if (this.calibration) {
-						calibration.pixelWidth = xCalibration;
-						calibration.pixelHeight = yCalibration;
-						calibration.pixelDepth = zCalibration;
-						calibration.setUnit(unit);
+					
+					Calibration cal                   = new Calibration();
+					if (calibration) {
+						cal.pixelWidth = xCalibration;
+						cal.pixelHeight = yCalibration;
+						cal.pixelDepth = zCalibration;
+						cal.setUnit(unit);
 					} else {
-						calibration = imagePlusInput.getCalibration();
+						cal = imagePlusInput.getCalibration();
 					}
-					imagePlusChromocenter.setCalibration(calibration);
-					imagePlusSegmented.setCalibration(calibration);
-					imagePlusInput.setCalibration(calibration);
+					imagePlusChromocenter.setCalibration(cal);
+					imagePlusSegmented.setCalibration(cal);
+					imagePlusInput.setCalibration(cal);
 					try {
 						if ("nuc_cc".equals(isNucAndCcAnalysis)) {
 							computeParametersChromocenter(nameFileChromocenter,

@@ -216,8 +216,8 @@ public class ConvexHullDetection {
 	
 	/**
 	 * Returns a sorted set of points from the list {@code points}. The set of points are sorted in increasing order of
-	 * the angle they and the lowest point <tt>P</tt> make with the x-axis. If tow (or more) points form the same angle
-	 * towards <tt>P</tt>, the one closest to <tt>P</tt> comes first.
+	 * the angle they and the lowest point {@code P} make with the x-axis. If tow (or more) points form the same angle
+	 * towards {@code P}, the one closest to {@code P} comes first.
 	 *
 	 * @param points the list of points to sort.
 	 *
@@ -271,12 +271,12 @@ public class ConvexHullDetection {
 	
 	/**
 	 * Returns the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and
-	 * {@code c}. More specifically, the cross product <tt>C</tt> between the 3 points (vectors) is calculated:
+	 * {@code c}. More specifically, the cross product {@code C} between the 3 points (vectors) is calculated:
 	 *
-	 * <tt>(b.x-a.x * c.y-a.y) - (b.y-a.y * c.x-a.x)</tt>
+	 * {@code (b.x-a.x * c.y-a.y) - (b.y-a.y * c.x-a.x)}
 	 * <p>
-	 * and if <tt>C</tt> is less than 0, the turn is CLOCKWISE, if
-	 * <tt>C</tt> is more than 0, the turn is COUNTER_CLOCKWISE, else
+	 * and if {@code C} is less than 0, the turn is CLOCKWISE, if
+	 * {@code C} is more than 0, the turn is COUNTER_CLOCKWISE, else
 	 * the three points are COLLINEAR.
 	 *
 	 * @param a the starting point.

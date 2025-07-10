@@ -251,7 +251,7 @@ public class Distance_Map implements PlugInFilter {
 		
 	}//Step2Thread
 	
-	private class Step1Thread extends Thread {
+	private static class Step1Thread extends Thread {
 		int       thread;
 		int       nThreads;
 		int       w;
@@ -325,7 +325,7 @@ public class Distance_Map implements PlugInFilter {
 		
 	}//Step1Thread
 	
-	private class Step3Thread extends Thread {
+	private static class Step3Thread extends Thread {
 		int       thread;
 		int       nThreads;
 		int       w;
