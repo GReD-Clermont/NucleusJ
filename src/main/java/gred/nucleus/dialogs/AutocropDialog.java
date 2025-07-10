@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -110,7 +111,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		autocropConfigFileDialog.setVisible(false);
 		
 		container = super.getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
+		LayoutManager mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -317,11 +318,11 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		startQuitPanel.setBorder(padding);
 		container.add(startQuitPanel, 6);
 		
-		QuitListener quitListener = new QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		StartListener startListener = new StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
-		ConfigListener configListener = new ConfigListener(this);
+		ActionListener configListener = new ConfigListener(this);
 		jButtonConfig.addActionListener(configListener);
 		
 		super.setVisible(true);

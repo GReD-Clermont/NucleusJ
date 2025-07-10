@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class RectangleIntersection {
 	/** Number of intersections per rectangles */
 	Map<Integer, Integer> countIntersect     = new HashMap<>();
 	/** Final list of rectangles after re rectangle computations */
-	List<String>          finalListRectangle = new ArrayList<>();
+	Collection<String>    finalListRectangle = new ArrayList<>();
 	/** Boolean to check if new rectangles are computed */
 	boolean               newBoxesAdded      = false;
 	/** Autocrop parameter */

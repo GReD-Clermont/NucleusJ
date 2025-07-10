@@ -121,15 +121,15 @@ public class MyEdges {
 		logStatus("Computing Ix");
 		++pl;
 		progressor.range(pls[pl], pls[pl]);
-		Image Ix = differentiator.run(edgeImage.duplicate(), scale, 1, 0, 0);
+		Image ix = differentiator.run(edgeImage.duplicate(), scale, 1, 0, 0);
 		logStatus("Computing Iy");
 		++pl;
 		progressor.range(pls[pl], pls[pl]);
-		Image Iy = differentiator.run(edgeImage.duplicate(), scale, 0, 1, 0);
+		Image iy = differentiator.run(edgeImage.duplicate(), scale, 0, 1, 0);
 		logStatus("Computing Iz");
 		++pl;
 		progressor.range(pls[pl], pls[pl]);
-		Image Iz = differentiator.run(edgeImage, scale, 0, 0, 1);
+		Image iz = differentiator.run(edgeImage, scale, 0, 0, 1);
 		
 		// Compute gradient magnitude (Ix is reused to save memory in case
 		//non-maxima suppression is not applied):
@@ -137,10 +137,10 @@ public class MyEdges {
 		progressor.steps((long) dims.c * dims.t * dims.z * dims.y);
 		++pl;
 		progressor.range(pls[pl], pls[pl]);
-		edgeImage = nonmaxsup ? new FloatImage(dims) : Ix;
-		Ix.axes(Axes.X);
-		Iy.axes(Axes.X);
-		Iz.axes(Axes.X);
+		edgeImage = nonmaxsup ? new FloatImage(dims) : ix;
+		ix.axes(Axes.X);
+		iy.axes(Axes.X);
+		iz.axes(Axes.X);
 		edgeImage.axes(Axes.X);
 		double[]    aIx         = new double[dims.x];
 		double[]    aIy         = new double[dims.x];
@@ -152,9 +152,9 @@ public class MyEdges {
 			for (coordinates.t = 0; coordinates.t < dims.t; ++coordinates.t) {
 				for (coordinates.z = 0; coordinates.z < dims.z; ++coordinates.z) {
 					for (coordinates.y = 0; coordinates.y < dims.y; ++coordinates.y) {
-						Ix.get(coordinates, aIx);
-						Iy.get(coordinates, aIy);
-						Iz.get(coordinates, aIz);
+						ix.get(coordinates, aIx);
+						iy.get(coordinates, aIy);
+						iz.get(coordinates, aIz);
 						for (int x = 0; x < dims.x; ++x) {
 							if (tabMask != null) {
 								if (tabMask[x][coordinates.y][coordinates.z] > 0) {
@@ -179,10 +179,10 @@ public class MyEdges {
 			progressor.steps((long) dims.c * dims.t * dims.z);
 			++pl;
 			progressor.range(pls[pl], pls[pl]);
-			Ix.axes(Axes.X + Axes.Y);
-			Iy.axes(Axes.X + Axes.Y);
-			Iz.axes(Axes.X + Axes.Y);
-			Image supImage = Ix;
+			ix.axes(Axes.X + Axes.Y);
+			iy.axes(Axes.X + Axes.Y);
+			iz.axes(Axes.X + Axes.Y);
+			Image supImage = ix;
 			edgeImage.axes(Axes.X + Axes.Y);
 			double[][][] gm   = new double[3][dims.y + 2][dims.x + 2];
 			double[][]   aaIx = new double[dims.y][dims.x];
@@ -201,9 +201,9 @@ public class MyEdges {
 					// First slice:
 					
 					coordinates.z = 0;
-					Ix.get(coordinates, aaIx);
-					Iy.get(coordinates, aaIy);
-					Iz.get(coordinates, aaIz);
+					ix.get(coordinates, aaIx);
+					iy.get(coordinates, aaIy);
+					iz.get(coordinates, aaIz);
 					cgm.z = 0;
 					edgeImage.get(cgm, gm[1]);
 					cgm.z = 1;
@@ -215,9 +215,9 @@ public class MyEdges {
 					
 					// Intermediate slices:
 					for (coordinates.z = 1, cgm.z = 2; coordinates.z < dimsZm1; ++coordinates.z, ++cgm.z) {
-						Ix.get(coordinates, aaIx);
-						Iy.get(coordinates, aaIy);
-						Iz.get(coordinates, aaIz);
+						ix.get(coordinates, aaIx);
+						iy.get(coordinates, aaIy);
+						iz.get(coordinates, aaIz);
 						atmp = gm[0];
 						gm[0] = gm[1];
 						gm[1] = gm[2];
@@ -228,9 +228,9 @@ public class MyEdges {
 						progressor.step();
 					}
 					// Last slice:
-					Ix.get(coordinates, aaIx);
-					Iy.get(coordinates, aaIy);
-					Iz.get(coordinates, aaIz);
+					ix.get(coordinates, aaIx);
+					iy.get(coordinates, aaIy);
+					iz.get(coordinates, aaIz);
 					atmp = gm[0];
 					gm[0] = gm[1];
 					gm[1] = gm[2];

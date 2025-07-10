@@ -3,7 +3,7 @@ package gred.nucleus.cli;
 import org.apache.commons.cli.ParseException;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import static org.apache.commons.lang.Validate.isTrue;
 
@@ -49,7 +49,7 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 	 * @return boolean existing action
 	 */
 	private static boolean availableActionCMD(String action) {
-		List<String> actionAvailableInOMERO = new ArrayList<>();
+		Collection<String> actionAvailableInOMERO = new ArrayList<>(8);
 		actionAvailableInOMERO.add("autocrop");
 		actionAvailableInOMERO.add("segmentation");
 		actionAvailableInOMERO.add("computeParameters");

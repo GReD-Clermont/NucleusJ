@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -256,7 +257,7 @@ public class AutoCropCalling {
 	}
 	
 	
-	public void runSeveralImageOMERO(List<ImageWrapper> images, Long[] outputsDatImages, Client client)
+	public void runSeveralImageOMERO(Collection<ImageWrapper> images, Long[] outputsDatImages, Client client)
 	throws AccessException, ServiceException, ExecutionException, InterruptedException {
 		ExecutorService downloadExecutor = Executors.newFixedThreadPool(DOWNLOADER_THREADS);
 		ExecutorService processExecutor  = Executors.newFixedThreadPool(executorThreads);

@@ -33,6 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -477,7 +478,7 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERO(List<ImageWrapper> images, Long output, Client client, Long inputID)
+	public String runSeveralImagesOMERO(Collection<ImageWrapper> images, Long output, Client client, Long inputID)
 	throws AccessException, ServiceException, ExecutionException, InterruptedException {
 		ExecutorService   downloadExecutor      = Executors.newFixedThreadPool(downloaderThreads);
 		ExecutorService   processExecutor       = Executors.newFixedThreadPool(executorThreads);
@@ -507,8 +508,8 @@ public class SegmentationCalling {
 			convexHullDataset = -1;
 		}
 		
-		CountDownLatch latch        = new CountDownLatch(images.size());
-		CountDownLatch upload_latch = new CountDownLatch(1);
+		CountDownLatch latch       = new CountDownLatch(images.size());
+		CountDownLatch uploadLatch = new CountDownLatch(1);
 		class ImageProcessorOMERO implements Runnable {
 			
 			private final ImageWrapper img;
@@ -570,7 +571,7 @@ public class SegmentationCalling {
 					ImagePlus imp    = img.toImagePlus(client, null, null, cBound, null, null); // Download image
 					
 					processExecutor.submit(new ImageProcessorOMERO(img, imp)); // Pass img to executor
-					upload_latch.countDown();
+					uploadLatch.countDown();
 					LOGGER.info("Resource returned ({}).", img.getName());
 				} catch (AccessException | ExecutionException | ServiceException e) {
 					LOGGER.error("Error downloading image: {}", img.getName(), e);
@@ -580,7 +581,7 @@ public class SegmentationCalling {
 		}
 		
 		for (ImageWrapper img : images) {
-			upload_latch.await(3, TimeUnit.SECONDS);
+			uploadLatch.await(3, TimeUnit.SECONDS);
 			downloadExecutor.submit(new ImageDownloaderOMERO(img));
 		}
 		
@@ -782,7 +783,7 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERObyROIs(List<ImageWrapper> images, Long output, Client client)
+	public String runSeveralImagesOMERObyROIs(Iterable<ImageWrapper> images, Long output, Client client)
 	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
 		StringBuilder log = new StringBuilder();
 		

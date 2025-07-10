@@ -264,7 +264,7 @@ public class ConvexHullDetection {
 		
 		Point lowest = getLowestPoint(points);
 		
-		TreeSet<Point> set = new TreeSet<>(new Comparator<Point>() {
+		Set<Point> set = new TreeSet<>(new Comparator<Point>() {
 			@Override
 			public int compare(Point a, Point b) {
 				

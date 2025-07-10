@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -84,7 +85,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		segmentationConfigFileDialog.setVisible(false);
 		
 		container = super.getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
+		LayoutManager mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -282,11 +283,11 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		startQuitPanel.setBorder(padding);
 		container.add(startQuitPanel, 5);
 		
-		SegmentationDialog.QuitListener quitListener = new SegmentationDialog.QuitListener(this);
+		ActionListener quitListener = new SegmentationDialog.QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		SegmentationDialog.StartListener startListener = new SegmentationDialog.StartListener(this);
+		ActionListener startListener = new SegmentationDialog.StartListener(this);
 		jButtonStart.addActionListener(startListener);
-		SegmentationDialog.ConfigListener configListener = new SegmentationDialog.ConfigListener(this);
+		ActionListener configListener = new SegmentationDialog.ConfigListener(this);
 		jButtonConfig.addActionListener(configListener);
 		
 		super.setVisible(true);

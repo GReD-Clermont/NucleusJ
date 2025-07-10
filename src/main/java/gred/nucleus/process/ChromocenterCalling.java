@@ -92,23 +92,23 @@ public class ChromocenterCalling {
 			FilesNames segCC = new FilesNames(chromocenterParameters.segInputFolder +
 			                                  File.separator + currentFile.getName());
 			this.prefix = outPutFilesNames.prefixNameFile();
-			ImagePlus[] _raw = BF.openImagePlus(currentFile.getAbsolutePath());
+			ImagePlus[] raw = BF.openImagePlus(currentFile.getAbsolutePath());
 			//is2D => change
-			imageType(_raw[0]);
+			imageType(raw[0]);
 			String outputFileName   = segCcDir + File.separator + currentFile.getName();
 			String gradientFileName = diffDir + File.separator + currentFile.getName();
 			
 			if (segCC.fileExists()) {
 				ImagePlus[] segNuc = BF.openImagePlus(chromocenterParameters.segInputFolder +
 				                                      File.separator + currentFile.getName());
-				ChromocenterSegmentation chromocenterSegmentation = new ChromocenterSegmentation(_raw,
+				ChromocenterSegmentation chromocenterSegmentation = new ChromocenterSegmentation(raw,
 				                                                                                 segNuc,
 				                                                                                 outputFileName,
 				                                                                                 chromocenterParameters);
 				chromocenterSegmentation.runCC3D(gradientFileName);
 				NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 				nucleusChromocenterAnalysis.compute3DParameters(rhfChoice,
-				                                                _raw[0],
+				                                                raw[0],
 				                                                segNuc[0],
 				                                                IJ.openImage(outputFileName),
 				                                                chromocenterParameters);
@@ -244,7 +244,7 @@ public class ChromocenterCalling {
 		
 		NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 		
-		File[] Parameters3DTab = nucleusChromocenterAnalysis.compute3DParameters(rhfChoice, rawImage[0], segImage[0],
+		File[] parameters3DTab = nucleusChromocenterAnalysis.compute3DParameters(rhfChoice, rawImage[0], segImage[0],
 		                                                                         IJ.openImage(outputFileName),
 		                                                                         chromocenterParameters);
 		
@@ -258,20 +258,20 @@ public class ChromocenterCalling {
 		/*Import images and tabs to OMERO */
 		outDataset.importImages(client, outputFileName);
 		outDataset.importImages(client, gradientFileName);
-		outDataset.addFile(client, Parameters3DTab[0]);
-		outDataset.addFile(client, Parameters3DTab[1]);
-		project.addFile(client, Parameters3DTab[2]);
-		project.addFile(client, Parameters3DTab[3]);
+		outDataset.addFile(client, parameters3DTab[0]);
+		outDataset.addFile(client, parameters3DTab[1]);
+		project.addFile(client, parameters3DTab[2]);
+		project.addFile(client, parameters3DTab[3]);
 		
 		File segImgDelete  = new File(outputFileName);
 		File gradImgDelete = new File(gradientFileName);
 		try {
 			Files.deleteIfExists(segImgDelete.toPath());
 			Files.deleteIfExists(gradImgDelete.toPath());
-			Files.deleteIfExists(Parameters3DTab[0].toPath());
-			Files.deleteIfExists(Parameters3DTab[1].toPath());
-			Files.deleteIfExists(Parameters3DTab[2].toPath());
-			Files.deleteIfExists(Parameters3DTab[3].toPath());
+			Files.deleteIfExists(parameters3DTab[0].toPath());
+			Files.deleteIfExists(parameters3DTab[1].toPath());
+			Files.deleteIfExists(parameters3DTab[2].toPath());
+			Files.deleteIfExists(parameters3DTab[3].toPath());
 		} catch (IOException e) {
 			//LOGGER.error("Could not delete file: {}", outputFileName);
 		}

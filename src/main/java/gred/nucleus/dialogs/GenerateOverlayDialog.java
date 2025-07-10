@@ -25,6 +25,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -84,7 +85,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		super.setMinimumSize(new Dimension(500, 390));
 		
 		container = super.getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
+		LayoutManager mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);

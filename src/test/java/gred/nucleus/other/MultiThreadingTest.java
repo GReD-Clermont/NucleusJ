@@ -19,7 +19,6 @@ import java.io.FileWriter;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Scanner;
-import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -177,7 +176,7 @@ public class MultiThreadingTest {
 		tasksExecutor.shutdownNow();
 		
 		LOGGER.info("Result (sorted by id):");
-		SortedSet<Integer> keys = new TreeSet<>(result.keySet());
+		Iterable<Integer> keys = new TreeSet<>(result.keySet());
 		for (int key : keys) {
 			String value = result.get(key);
 			System.out.println(value);

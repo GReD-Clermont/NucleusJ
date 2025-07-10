@@ -22,6 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -65,11 +66,9 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	
 	
 	public CropFromCoordinatesDialog() {
-		
 		String host     = Prefs.get("omero.host", "omero.gred-clermont.fr");
 		long   port     = Prefs.getInt("omero.port", 4);
 		String username = Prefs.get("omero.user", "");
-		
 		
 		JButton jButtonStart = new JButton("Start");
 		jButtonStart.setBackground(new Color(0x2dce98));
@@ -82,11 +81,10 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		container = super.getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
+		LayoutManager mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-		
 		
 		// Use Omero ?
 		ButtonGroup bGroupOmeroMode = new ButtonGroup();
@@ -99,7 +97,6 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		JPanel radioOmeroPanel = new JPanel();
 		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.LINE_AXIS));
 		
-		
 		JLabel jLabelOmero = new JLabel("Select from omero:");
 		radioOmeroPanel.add(jLabelOmero);
 		radioOmeroPanel.add(omeroYesButton);
@@ -108,7 +105,6 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		container.add(radioOmeroPanel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                                      GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
 		                                                      new Insets(60, 30, 0, 0), 0, 0));
-		
 		
 		// Local mode layout
 		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
@@ -142,7 +138,6 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		localPanel.setBorder(padding);
 		localModeLayout.add(localPanel);
 		container.add(localModeLayout, 1);
-		
 		
 		// Omero mode layout
 		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
@@ -228,9 +223,9 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jTextFieldToCropID.setMaximumSize(new Dimension(20000, 20));
 		
 		c.gridy = 7;
-		JLabel JchannelToCrop = new JLabel("Channel To Crop:");
+		JLabel channelToCrop = new JLabel("Channel To Crop:");
 		c.gridx = 0;
-		omeroPanel.add(JchannelToCrop, c);
+		omeroPanel.add(channelToCrop, c);
 		c.gridx = 1;
 		jTextFieldToCropID.setMaximumSize(new Dimension(20, 20));
 		omeroPanel.add(jTextFieldChannelToCrop, c);

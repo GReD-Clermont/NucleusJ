@@ -201,9 +201,9 @@ public class NucleusSegmentationDialog extends JFrame {
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
 		super.setVisible(true);
 		
-		QuitListener quitListener = new QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		StartListener startListener = new StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
 	}
 	
@@ -247,7 +247,7 @@ public class NucleusSegmentationDialog extends JFrame {
 	
 	
 	public void action() {
-		StartListener startListener = new StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
 	}
 	

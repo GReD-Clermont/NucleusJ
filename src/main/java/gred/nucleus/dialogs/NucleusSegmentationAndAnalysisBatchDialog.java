@@ -284,13 +284,13 @@ public class NucleusSegmentationAndAnalysisBatchDialog extends JFrame {
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
 		super.setVisible(true);
 		
-		WorkDirectoryListener wdListener = new WorkDirectoryListener();
+		ActionListener wdListener = new WorkDirectoryListener();
 		jButtonWorkDirectory.addActionListener(wdListener);
-		RawDataDirectoryListener ddListener = new RawDataDirectoryListener();
+		ActionListener ddListener = new RawDataDirectoryListener();
 		jButtonRawData.addActionListener(ddListener);
-		QuitListener quitListener = new QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		StartListener startListener = new StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
 	}
 	

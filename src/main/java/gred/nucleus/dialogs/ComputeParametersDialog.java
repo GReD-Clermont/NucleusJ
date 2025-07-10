@@ -226,14 +226,13 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                     new Insets(20, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
 		super.setVisible(true);
-		ComputeParametersDialog.WorkDirectoryListener wdListener = new ComputeParametersDialog.WorkDirectoryListener();
+		ActionListener wdListener = new ComputeParametersDialog.WorkDirectoryListener();
 		jButtonWorkDirectory.addActionListener(wdListener);
-		ComputeParametersDialog.RawDataDirectoryListener ddListener =
-				new ComputeParametersDialog.RawDataDirectoryListener();
+		ActionListener ddListener = new ComputeParametersDialog.RawDataDirectoryListener();
 		jButtonRawData.addActionListener(ddListener);
-		ComputeParametersDialog.QuitListener quitListener = new QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		ComputeParametersDialog.StartListener startListener = new ComputeParametersDialog.StartListener(this);
+		ActionListener startListener = new ComputeParametersDialog.StartListener(this);
 		jButtonStart.addActionListener(startListener);
 		
 		

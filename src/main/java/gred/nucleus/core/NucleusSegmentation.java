@@ -24,6 +24,7 @@ import ij.plugin.ChannelSplitter;
 import ij.plugin.Filters3D;
 import ij.plugin.GaussianBlur3D;
 import ij.plugin.filter.LutApplier;
+import ij.plugin.filter.PlugInFilter;
 import ij.process.StackConverter;
 import ij.process.StackStatistics;
 import inra.ijpb.binary.BinaryImages;
@@ -355,7 +356,7 @@ public class NucleusSegmentation {
 		}
 		imgRawTransformed.setDisplayRange(0, max);
 		/* Prepare LutApplier */
-		LutApplier lutApplier = new LutApplier();
+		PlugInFilter lutApplier = new LutApplier();
 		lutApplier.setup("", imgRawTransformed);
 		/* Set stack mode with Macro class, but thread has to be renamed */
 		String threadName = Thread.currentThread().getName();

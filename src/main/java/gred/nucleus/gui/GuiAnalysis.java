@@ -28,6 +28,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -123,7 +124,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		JPanel parameters = new JPanel();
 		parameters.setLayout(gridBagLayout);
 		container = super.getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
+		LayoutManager mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		
 		container.setLayout(mainBoxLayout);
 		

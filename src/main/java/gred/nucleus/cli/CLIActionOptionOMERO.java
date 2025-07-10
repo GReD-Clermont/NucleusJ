@@ -5,6 +5,7 @@ import org.apache.commons.cli.ParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.apache.commons.lang.Validate.isTrue;
@@ -130,7 +131,7 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	 * @return boolean existing action
 	 */
 	private static boolean availableActionOMERO(String action) {
-		List<String> actionAvailableInOMERO = new ArrayList<>();
+		Collection<String> actionAvailableInOMERO = new ArrayList<>(7);
 		actionAvailableInOMERO.add("autocrop");
 		actionAvailableInOMERO.add("segmentation");
 		actionAvailableInOMERO.add("generateOverlay");

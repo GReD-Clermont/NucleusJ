@@ -145,7 +145,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		
 		super.setVisible(false);
 		
-		SegmentationConfigDialog.StartListener startListener = new StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		buttonOK.addActionListener(startListener);
 	}
 	

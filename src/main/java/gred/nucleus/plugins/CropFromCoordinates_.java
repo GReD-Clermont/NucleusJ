@@ -114,7 +114,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 			System.out.println("Number of channels detected : " + canaux.size());
 			for (ROIWrapper roi : rois) {
 				// Get the roi names
-				String ROIName = roi.getName();
+				String roiName = roi.getName();
 				for (GenericShapeWrapper<?> shape : roi.getShapes()) {
 					shape.setC(c);
 				}
@@ -134,7 +134,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 				FilesNames outPutFilesNames = new FilesNames(imageToCropName);
 				String     prefix           = outPutFilesNames.prefixNameFile();
 				// Rename the temporary file same as toCrop Image name
-				File toCropNewName = new File(prefix + "_" + ROIName + "_C" + c);
+				File toCropNewName = new File(prefix + "_" + roiName + "_C" + c);
 				resultFile.renameTo(toCropNewName);
 				String toCropFile = toCropNewName.toString();
 				// Import Cropped Image to the Dataset
@@ -152,7 +152,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		List<ROIWrapper> rois = image.getROIs(client);
 		for (ROIWrapper roi : rois) {
 			// Get the roi names
-			String ROIName = roi.getName();
+			String roiName = roi.getName();
 			// Get the name of the Image To Crop
 			String imageToCropName = imageToCrop.getName();
 			// Get the image to crop
@@ -169,7 +169,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 			FilesNames outPutFilesNames = new FilesNames(imageToCropName);
 			String     prefix           = outPutFilesNames.prefixNameFile();
 			// Rename the temporary file same as toCrop Image name
-			File toCropNewName = new File(prefix + "_" + ROIName);
+			File toCropNewName = new File(prefix + "_" + roiName);
 			resultFile.renameTo(toCropNewName);
 			String toCropFile = toCropNewName.toString();
 			// Import Cropped Image to the Dataset
@@ -198,13 +198,13 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		
 		// Handle the source according to the type given
 		String         sourceDataType = cropFromCoordinatesDialog.getDataType();
-		String         ToCropdataType = cropFromCoordinatesDialog.getDataTypeToCrop();
+		String         toCropdataType = cropFromCoordinatesDialog.getDataTypeToCrop();
 		Long           inputID        = Long.valueOf(cropFromCoordinatesDialog.getSourceID());
 		Long           inputToCropID  = Long.valueOf(cropFromCoordinatesDialog.getToCropID());
 		DatasetWrapper outputds       = client.getDataset(Long.parseLong(output));
 		
 		try {
-			if ("Image".equals(sourceDataType) && "Image".equals(ToCropdataType)) {
+			if ("Image".equals(sourceDataType) && "Image".equals(toCropdataType)) {
 				ImageWrapper image       = client.getImage(inputID);
 				ImageWrapper imageToCrop = client.getImage(inputToCropID);
 				
@@ -218,7 +218,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 			} else {
 				List<ImageWrapper> sourceImages = new ArrayList<>(0);
 				
-				if ("Dataset".equals(sourceDataType) && "Dataset".equals(ToCropdataType)) {
+				if ("Dataset".equals(sourceDataType) && "Dataset".equals(toCropdataType)) {
 					DatasetWrapper sourceDataset = client.getDataset(inputID);
 					toCropDataset = client.getDataset(inputToCropID);
 					sourceImages = sourceDataset.getImages(client);

@@ -352,9 +352,9 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jTextFieldNucSegID.setMaximumSize(new Dimension(20000, 20));
 		
 		c.gridy = 7;
-		JLabel JchannelToCrop = new JLabel("Chromocenter segmentation:");
+		JLabel channelToCrop = new JLabel("Chromocenter segmentation:");
 		c.gridx = 0;
-		omeroPanel.add(JchannelToCrop, c);
+		omeroPanel.add(channelToCrop, c);
 		c.gridx = 1;
 		omeroPanel.add(jComboBoxDataTypeCC, c);
 		c.gridx = 2;
