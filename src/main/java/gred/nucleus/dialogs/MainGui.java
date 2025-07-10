@@ -31,14 +31,6 @@ public class MainGui extends JFrame {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private final JButton autocropButton            = new JButton("Autocrop");
-	private final JButton segmentationButton        = new JButton("Segmentation");
-	private final JButton overlayButton             = new JButton("Overlay");
-	private final JButton nodeJButton               = new JButton("NODeJ");
-	private final JButton cropFromCoordinatesButton = new JButton("Crop From Coordinates");
-	private final JButton computeParametersButton   = new JButton("Compute Parameters Nuc");
-	private final JButton computeCcParametersButton = new JButton("Compute Parameters Spots");
-	
 	
 	public MainGui() {
 		super.setTitle("NucleusJ 3");
@@ -63,42 +55,49 @@ public class MainGui extends JFrame {
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(0, 0, 0, 0), 0, 0));
 		
+		JButton autocropButton = new JButton("Autocrop");
 		localPanel.add(autocropButton,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(40, 0, 0, 0), 120, 0));
 		
+		JButton segmentationButton = new JButton("Segmentation");
 		localPanel.add(segmentationButton,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(80, 0, 0, 0), 85, 0));
 		
+		JButton cropFromCoordinatesButton = new JButton("Crop From Coordinates");
 		localPanel.add(cropFromCoordinatesButton,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(120, 0, 0, 0), 20, 0));
 		
+		JButton overlayButton = new JButton("Overlay");
 		localPanel.add(overlayButton,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(160, 0, 0, 0), 130, 0));
 		
+		JButton computeParametersButton = new JButton("Compute Parameters Nuc");
 		localPanel.add(computeParametersButton,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(200, 0, 0, 0), 35, 0));
 		
+		JButton nodeJButton = new JButton("NODeJ");
 		localPanel.add(nodeJButton,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(240, 0, 0, 0), 140, 0));
 		
+		JButton computeCcParametersButton = new JButton("Compute Parameters Spots");
 		localPanel.add(computeCcParametersButton,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,

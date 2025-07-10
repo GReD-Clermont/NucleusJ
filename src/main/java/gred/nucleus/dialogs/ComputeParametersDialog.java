@@ -65,14 +65,9 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	private final JTextField     jTextFieldUsername = new JTextField();
 	private final JPasswordField jPasswordField     = new JPasswordField();
 	private final JTextField     jTextFieldGroup    = new JTextField();
-	private final String[]       dataTypes          = {"Dataset"};
-	
-	private final JComboBox<String> jComboBoxDataType  = new JComboBox<>(dataTypes);
-	private final JComboBox<String> jComboBoxDataType2 = new JComboBox<>(dataTypes);
 	
 	private final JTextField jTextFieldRawID         = new JTextField();
 	private final JTextField jTextFieldSegmentedID   = new JTextField();
-	private final JTextField jTextFieldOutputProject = new JTextField();
 	
 	private final Container container;
 	
@@ -318,6 +313,10 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
 		c.gridx = 1;
+		
+		String[] dataTypes = {"Dataset"};
+		
+		JComboBox<String> jComboBoxDataType = new JComboBox<>(dataTypes);
 		omeroPanel.add(jComboBoxDataType, c);
 		c.gridx = 2;
 		omeroPanel.add(jTextFieldRawID, c);
@@ -330,6 +329,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSegmentedDataset, c);
 		c.gridx = 1;
+		JComboBox<String> jComboBoxDataType2 = new JComboBox<>(dataTypes);
 		omeroPanel.add(jComboBoxDataType2, c);
 		c.gridx = 2;
 		omeroPanel.add(jTextFieldSegmentedID, c);

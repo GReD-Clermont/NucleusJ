@@ -35,10 +35,8 @@ public class ChromocenterCalling {
 	private File[]         tab;
 	private ProjectWrapper project;
 	private DatasetWrapper outDataset;
-	private DatasetWrapper outDatasetGradient;
 	private String         segImg;
 	private String         gradImg;
-	private String         dataset_name;
 	
 	
 	/**
@@ -142,7 +140,7 @@ public class ChromocenterCalling {
 			if ("Image".equals(param[0]) && "Image".equals(param1[0])) {
 				runOneImageOMERO(imageID, maskID, outputDirectory, client);
 			} else if ("Dataset".equals(param[0]) && "Dataset".equals(param1[0])) {
-				dataset_name = client.getDataset(imageID).getName();
+				String             dataset_name = client.getDataset(imageID).getName();
 				List<ImageWrapper> images;
 				List<ImageWrapper> masks;
 				/* get raw images and masks datasets*/
@@ -152,7 +150,7 @@ public class ChromocenterCalling {
 				images = imageDataset.getImages(client);
 				/* Create Dataset named NodeJOMERO */
 				outDataset = new DatasetWrapper("NODeJ_" + dataset_name, "");
-				outDatasetGradient = new DatasetWrapper("NODeJ_" + dataset_name + "_Gradient", "");
+				DatasetWrapper outDatasetGradient = new DatasetWrapper("NODeJ_" + dataset_name + "_Gradient", "");
 				project = client.getProject(Long.parseLong(outputDirectory));
 				/* Add Dataset To the Project */
 				Long datasetId = project.addDataset(client, outDataset).getId();
@@ -354,8 +352,6 @@ public class ChromocenterCalling {
 			ImagePlus[] segNuc = BF.openImagePlus(chromocenterParameters.segInputFolder +
 			                                      File.separator +
 			                                      currentFile.getName());
-			// ChromocenterAnalysis chromocenterAnalysis = new ChromocenterAnalysis(_raw[0],segNuc[0], IJ.openImage(outputFileName));
-			// chromocenterAnalysis.computeParametersChromocenter();
 			
 			NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 			nucleusChromocenterAnalysis.compute3DParameters(rhfChoice,
@@ -368,12 +364,12 @@ public class ChromocenterCalling {
 	
 	
 	/**
-	 * @param ramImage
+	 * @param img
 	 */
-	public void imageType(ImagePlus ramImage) {
-		ramImage.getDimensions();
-		if (ramImage.getStackSize() == 1) {
-			this.is2DImg = true;
+	public void imageType(ImagePlus img) {
+		img.getDimensions();
+		if (img.getStackSize() == 1) {
+			is2DImg = true;
 		}
 	}
 	

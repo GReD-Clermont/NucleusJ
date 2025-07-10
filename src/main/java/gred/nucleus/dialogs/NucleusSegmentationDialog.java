@@ -25,23 +25,12 @@ public class NucleusSegmentationDialog extends JFrame {
 	
 	private static final long                serialVersionUID       = 1L;
 	private final        JButton             jButtonStart           = new JButton("Start");
-	private final        JButton             jButtonQuit            = new JButton("Quit");
-	private final        Container           container;
 	private final        JFormattedTextField jTextFieldXCalibration = new JFormattedTextField(Number.class);
 	private final        JFormattedTextField jTextFieldYCalibration = new JFormattedTextField(Number.class);
 	private final        JFormattedTextField jTextFieldZCalibration = new JFormattedTextField(Number.class);
 	private final        JFormattedTextField jTextFieldMax          = new JFormattedTextField(Number.class);
 	private final        JFormattedTextField jTextFieldMin          = new JFormattedTextField(Number.class);
 	private final        JTextField          jTextFieldUnit         = new JTextField();
-	private final        JLabel              jLabelXCalibration;
-	private final        JLabel              jLabelYCalibration;
-	private final        JLabel              jLabelZCalibration;
-	private final        JLabel              jLabelUnit;
-	private final        JLabel              jLabelSegmentation;
-	private final        JLabel              jLabelVolumeMin;
-	private final        JLabel              jLabelVolumeMax;
-	private final        JLabel              jLabelCalibration;
-	private              JLabel              jLabelUnitText;
 	private              boolean             start;
 	
 	
@@ -49,7 +38,7 @@ public class NucleusSegmentationDialog extends JFrame {
 	public NucleusSegmentationDialog(Calibration cal) {
 		super.setTitle("Nucleus segmentation");
 		super.setSize(500, 350);
-		container = super.getContentPane();
+		Container     container     = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.rowHeights = new int[]{17, 100, 124, 7};
@@ -57,7 +46,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		gridBagLayout.columnWidths = new int[]{236, 109, 72, 20};
 		container.setLayout(gridBagLayout);
 		
-		jLabelCalibration = new JLabel();
+		JLabel jLabelCalibration = new JLabel();
 		container.add(jLabelCalibration,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -66,7 +55,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		jLabelCalibration.setText("Voxel Calibration:");
 		
 		container.setLayout(gridBagLayout);
-		jLabelXCalibration = new JLabel();
+		JLabel jLabelXCalibration = new JLabel();
 		container.add(jLabelXCalibration,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -82,7 +71,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		jTextFieldXCalibration.setText(String.valueOf(cal.pixelWidth));
 		jTextFieldXCalibration.setPreferredSize(new java.awt.Dimension(60, 21));
 		
-		jLabelYCalibration = new JLabel();
+		JLabel jLabelYCalibration = new JLabel();
 		container.add(jLabelYCalibration,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -98,7 +87,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		jTextFieldYCalibration.setText(String.valueOf(cal.pixelHeight));
 		jTextFieldYCalibration.setPreferredSize(new java.awt.Dimension(60, 21));
 		
-		jLabelZCalibration = new JLabel();
+		JLabel jLabelZCalibration = new JLabel();
 		container.add(jLabelZCalibration,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -114,7 +103,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		jTextFieldZCalibration.setText(String.valueOf(cal.pixelDepth));
 		jTextFieldZCalibration.setPreferredSize(new java.awt.Dimension(60, 21));
 		
-		jLabelUnit = new JLabel();
+		JLabel jLabelUnit = new JLabel();
 		container.add(jLabelUnit,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -130,7 +119,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		jTextFieldUnit.setText(cal.getUnit());
 		jTextFieldUnit.setPreferredSize(new java.awt.Dimension(60, 21));
 		
-		jLabelSegmentation = new JLabel();
+		JLabel jLabelSegmentation = new JLabel();
 		container.add(jLabelSegmentation,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -138,7 +127,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		                                     new Insets(20, 10, 0, 0), 0, 0));
 		jLabelSegmentation.setText("Choose the min and max volumes of the nucleus:");
 		
-		jLabelVolumeMin = new JLabel();
+		JLabel jLabelVolumeMin = new JLabel();
 		container.add(jLabelVolumeMin,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -154,7 +143,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		jTextFieldMin.setText("1");
 		jTextFieldMin.setPreferredSize(new java.awt.Dimension(60, 21));
 		
-		jLabelUnitText = new JLabel();
+		JLabel jLabelUnitText = new JLabel();
 		container.add(jLabelUnitText,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -163,7 +152,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		jLabelUnitText.setText("unit^3");
 		jLabelUnitText.setFont(new java.awt.Font("Albertus Extra Bold (W1)", Font.ITALIC, 12));
 		
-		jLabelVolumeMax = new JLabel();
+		JLabel jLabelVolumeMax = new JLabel();
 		container.add(jLabelVolumeMax,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -193,6 +182,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(160, 140, 0, 0), 0, 0));
 		jButtonStart.setPreferredSize(new java.awt.Dimension(120, 21));
+		JButton jButtonQuit = new JButton("Quit");
 		container.add(jButtonQuit,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,

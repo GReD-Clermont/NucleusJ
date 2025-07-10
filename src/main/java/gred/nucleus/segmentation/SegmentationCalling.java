@@ -53,10 +53,7 @@ public class SegmentationCalling {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	/** Number of threads used to download images */
-	private final int downloaderThreads = 1;
-	
-	/** Prefix of the output files */
-	private String prefix = "";
+	private static final int DOWNLOADER_THREADS = 1;
 	
 	/** ImagePlus raw image */
 	private ImagePlus imgInput = new ImagePlus();
@@ -163,6 +160,34 @@ public class SegmentationCalling {
 		Directory dirOutput = new Directory(output);
 		dirOutput.checkAndCreateDir();
 		this.output = dirOutput.getDirPath();
+	}
+	
+	
+	public static String getResultsColumnNames() {
+		return "Image," +
+		       "Dataset," +
+		       "ImageName," +
+		       "Volume," +
+		       "Flatness," +
+		       "Elongation," +
+		       "Esr," +
+		       "SurfaceArea," +
+		       "Sphericity," +
+		       "MeanIntensityNucleus," +
+		       "MeanIntensityBackground," +
+		       "StandardDeviation," +
+		       "MinIntensity," +
+		       "MaxIntensity," +
+		       "MedianIntensityImage," +
+		       "MedianIntensityNucleus," +
+		       "MedianIntensityBackground," +
+		       "ImageSize," +
+		       "Moment 1," +
+		       "Moment 2," +
+		       "Moment 3," +
+		       "AspectRatio," +
+		       "Circularity," +
+		       "OTSUThreshold," + "\n";
 	}
 	
 	
@@ -306,7 +331,8 @@ public class SegmentationCalling {
 		File       currentFile      = new File(filePath);
 		String     fileImg          = currentFile.toString();
 		FilesNames outPutFilesNames = new FilesNames(fileImg);
-		this.prefix = outPutFilesNames.prefixNameFile();
+		
+		String prefix = outPutFilesNames.prefixNameFile();
 		LOGGER.info("Current image in process: {}", currentFile);
 		
 		String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
@@ -421,7 +447,7 @@ public class SegmentationCalling {
 	
 	public String runSeveralImagesOMERO(Collection<ImageWrapper> images, Long output, Client client, Long inputID)
 	throws AccessException, ServiceException, ExecutionException, InterruptedException {
-		ExecutorService   downloadExecutor      = Executors.newFixedThreadPool(downloaderThreads);
+		ExecutorService   downloadExecutor      = Executors.newFixedThreadPool(DOWNLOADER_THREADS);
 		ExecutorService   processExecutor       = Executors.newFixedThreadPool(executorThreads);
 		Map<Long, String> otsuResultLines       = new ConcurrentHashMap<>();
 		Map<Long, String> convexHullResultLines = new ConcurrentHashMap<>();
@@ -467,7 +493,8 @@ public class SegmentationCalling {
 			public void run() {
 				try {
 					String fileImg = img.getName();
-					String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(
+							Calendar.getInstance().getTime());
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, timeStampStart);
 					NucleusSegmentation nucleusSegmentation =
 							new NucleusSegmentation(img, imp, segmentationParameters, client);
@@ -482,7 +509,8 @@ public class SegmentationCalling {
 					convexHullResultLines.put(img.getId(),
 					                          nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
 					
-					timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(
+							Calendar.getInstance().getTime());
 					LOGGER.info("End: {} at {}", fileImg, timeStampStart);
 					
 					latch.countDown();
@@ -733,34 +761,6 @@ public class SegmentationCalling {
 		}
 		
 		return log.toString();
-	}
-	
-	
-	public static String getResultsColumnNames() {
-		return "Image," +
-		       "Dataset," +
-		       "ImageName," +
-		       "Volume," +
-		       "Flatness," +
-		       "Elongation," +
-		       "Esr," +
-		       "SurfaceArea," +
-		       "Sphericity," +
-		       "MeanIntensityNucleus," +
-		       "MeanIntensityBackground," +
-		       "StandardDeviation," +
-		       "MinIntensity," +
-		       "MaxIntensity," +
-		       "MedianIntensityImage," +
-		       "MedianIntensityNucleus," +
-		       "MedianIntensityBackground," +
-		       "ImageSize," +
-		       "Moment 1," +
-		       "Moment 2," +
-		       "Moment 3," +
-		       "AspectRatio," +
-		       "Circularity," +
-		       "OTSUThreshold," + "\n";
 	}
 	
 }

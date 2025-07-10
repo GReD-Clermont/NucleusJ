@@ -46,8 +46,6 @@ public class AutoCropCalling {
 	/** Column names */
 	private static final String HEADERS = "FileName\tNumberOfCrop\tOTSUThreshold\tDefaultOTSUThreshold\n";
 	
-	/** image prefix name */
-	private String             prefix                = "";
 	/** Get general information of cropping analysis */
 	private String             outputCropGeneralInfo = "#HEADER\n";
 	/** Parameters for crop analysis */
@@ -185,7 +183,8 @@ public class AutoCropCalling {
 		LOGGER.info("Current file: {}", currentFile.getAbsolutePath());
 		String     fileImg          = currentFile.toString();
 		FilesNames outPutFilesNames = new FilesNames(fileImg);
-		this.prefix = outPutFilesNames.prefixNameFile();
+		/* image prefix name */
+		String prefix = outPutFilesNames.prefixNameFile();
 		try {
 			AutoCrop autoCrop = new AutoCrop(currentFile, prefix, autocropParameters);
 			autoCrop.thresholdKernels(typeThresholding);

@@ -67,12 +67,6 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	private final JTextField jTextFieldOutputProject  = new JTextField();
 	
 	/**  */
-	private final JButton    jbOutputDir = new JButton("Output directory");
-	/**  */
-	private final JButton    jbInputDir  = new JButton("Raw Nuclei");
-	/**  */
-	private final JButton    jbInputSeg  = new JButton("Seg. Nuclei");
-	/**  */
 	private final JCheckBox  jCbIsGauss  = new JCheckBox("Apply Gaussian filter on raw images ?");
 	/**  */
 	private final JCheckBox  jCbIs2D     = new JCheckBox("Is it 2D images ?");
@@ -82,8 +76,6 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	private final JTextField jtfWorkDir  = new JTextField();
 	private final JTextField jtfRawData  = new JTextField();
 	private final JTextField jtfRawSeg   = new JTextField();
-	private final JButton    jbStart     = new JButton("Start");
-	private final JButton    jbQuit      = new JButton("Quit");
 	
 	private final JFormattedTextField jtfGX     = new JFormattedTextField(Number.class);
 	private final JFormattedTextField jtfGY     = new JFormattedTextField(Number.class);
@@ -163,6 +155,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(10, 10, 0, 0), 0, 0));
 		
+		JButton jbInputDir = new JButton("Raw Nuclei");
 		jbInputDir.setPreferredSize(new java.awt.Dimension(150, 21));
 		jbInputDir.setFont(new java.awt.Font("arial", 2, 10));
 		mainPanel.add(jbInputDir,
@@ -179,6 +172,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(35, 190, 0, 0), 0, 0));
 		
+		JButton jbInputSeg = new JButton("Seg. Nuclei");
 		jbInputSeg.setPreferredSize(new java.awt.Dimension(150, 21));
 		jbInputSeg.setFont(new java.awt.Font("arial", 2, 10));
 		mainPanel.add(jbInputSeg,
@@ -195,6 +189,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(65, 190, 0, 0), 0, 0));
 		
+		JButton jbOutputDir = new JButton("Output directory");
 		jbOutputDir.setPreferredSize(new java.awt.Dimension(150, 21));
 		jbOutputDir.setFont(new java.awt.Font("arial", 2, 10));
 		mainPanel.add(jbOutputDir,
@@ -381,7 +376,9 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		
 		//////////////////////////////////////
 		
+		JButton jbStart = new JButton("Start");
 		jbStart.setPreferredSize(new java.awt.Dimension(120, 21));
+		JButton jbQuit = new JButton("Quit");
 		jbQuit.setPreferredSize(new java.awt.Dimension(120, 21));
 		
 		parameters.add(jbStart, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
