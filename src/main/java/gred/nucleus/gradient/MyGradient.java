@@ -1,10 +1,15 @@
 package gred.nucleus.gradient;
 
 import ij.ImagePlus;
+import ij.Prefs;
 import imagescience.image.Aspects;
 import imagescience.image.FloatImage;
 import imagescience.image.Image;
 import imagescience.utility.Progressor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 
 /**
@@ -15,6 +20,12 @@ import imagescience.utility.Progressor;
  * @author poulet axel
  */
 public class MyGradient {
+	/** Logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	private static final boolean ISOTROPIC = Prefs.get("fj.isotropic", false);
+	private static final boolean PGS       = Prefs.get("fj.pgs", true);
+	private static final boolean LOG       = Prefs.get("fj.log", false);
 	
 	private static final boolean COMPUTE  = true;
 	private static final boolean SUPPRESS = false;
@@ -41,13 +52,15 @@ public class MyGradient {
 	}
 	
 	
-	@SuppressWarnings("unused")
+	/**
+	 * Run the gradient computation.
+	 *
+	 * @return a new ImagePlus with the gradient image
+	 */
 	public ImagePlus run() {
 		ImagePlus newImagePlus = new ImagePlus();
 		try {
 			double  scaleVal;
-			double  lowVal        = 0;
-			double  highVal       = 0;
 			boolean lowThreshold  = true;
 			boolean highThreshold = true;
 			try {
@@ -59,7 +72,6 @@ public class MyGradient {
 				if (LOWER.isEmpty()) {
 					lowThreshold = false;
 				} else {
-					lowVal = Double.parseDouble(LOWER);
 				}
 			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid lower threshold value");
@@ -68,7 +80,6 @@ public class MyGradient {
 				if (HIGHER.isEmpty()) {
 					highThreshold = false;
 				} else {
-					highVal = Double.parseDouble(HIGHER);
 				}
 			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid higher threshold value");
@@ -82,10 +93,10 @@ public class MyGradient {
 				pls = new double[]{0, 0.9, 1};
 			}
 			Progressor progressor = new Progressor();
-			progressor.display(FJ_Options.pgs);
+			progressor.display(PGS);
 			if (COMPUTE || SUPPRESS) {
 				Aspects aspects = newImage.aspects();
-				if (!FJ_Options.isotropic) {
+				if (!ISOTROPIC) {
 					newImage.aspects(new Aspects());
 				}
 				MyEdges myEdges = new MyEdges();
@@ -95,8 +106,8 @@ public class MyGradient {
 				++pl;
 				progressor.range(pls[pl], pls[pl]);
 				myEdges.progressor.parent(progressor);
-				myEdges.messenger.log(FJ_Options.log);
-				myEdges.messenger.status(FJ_Options.pgs);
+				myEdges.messenger.log(LOG);
+				myEdges.messenger.status(PGS);
 				newImage = myEdges.run(newImage, scaleVal, SUPPRESS);
 				newImage.aspects(aspects);
 			}
@@ -107,11 +118,10 @@ public class MyGradient {
 			double   max    = minMax[1];
 			newImagePlus.setDisplayRange(min, max);
 		} catch (OutOfMemoryError e) {
-			FJ.error("Not enough memory for this operation");
+			LOGGER.error("Not enough memory for this operation", e);
 		} catch (IllegalArgumentException | IllegalStateException e) {
-			FJ.error(e.getMessage());
+			LOGGER.error("Error in gradient computation: {}", e.getMessage(), e);
 		}
-		//catch (Exception e) {	FJ.error("An unidentified error occurred while running the plugin");	}
 		return newImagePlus;
 	}
 	

@@ -64,7 +64,6 @@ public final class Thresholding {
 			imageConverter.convertToGray8();
 		}
 		return imagePlusInput;
-		
 	}
 	
 }

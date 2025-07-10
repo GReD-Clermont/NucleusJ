@@ -25,6 +25,7 @@ public class ComputeParametersPlugin_ implements PlugIn, IDialogListener {
 	private ComputeParametersDialog computeParametersDialog;
 	
 	
+	/* This method is used by plugins.config */
 	@Override
 	public void run(String arg) {
 		if (IJ.versionLessThan("1.32c")) {

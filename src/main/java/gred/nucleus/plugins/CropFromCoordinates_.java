@@ -49,6 +49,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	}
 	
 	
+	/* This method is used by plugins.config */
 	@Override
 	public void run(String s) {
 		if (IJ.versionLessThan("1.32c")) {

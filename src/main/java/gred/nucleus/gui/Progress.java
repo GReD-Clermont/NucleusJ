@@ -36,12 +36,4 @@ public class Progress extends JFrame {
 		super.setVisible(true);
 	}
 	
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		new Progress("NODeJ process", 22);
-	}
-	
 }

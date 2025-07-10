@@ -61,6 +61,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 	
 	
 	/** Run the the analyse, call the graphical windows */
+	/* This method is used by plugins.config */
 	@Override
 	public void run(String arg) {
 		if (IJ.versionLessThan("1.32c")) {

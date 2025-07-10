@@ -37,6 +37,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 	 *
 	 * @param arg use by imageJ
 	 */
+	/* This method is used by plugins.config */
 	@Override
 	public void run(String arg) {
 		if (IJ.versionLessThan("1.32c")) {
