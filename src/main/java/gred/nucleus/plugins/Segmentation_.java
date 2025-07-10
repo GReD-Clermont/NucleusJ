@@ -68,7 +68,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 			               username,
 			               password,
 			               Long.valueOf(group));
-		} catch (Exception exp) {
+		} catch (ServiceException | NumberFormatException exp) {
 			IJ.error("Invalid connection values");
 			return null;
 		}
@@ -98,7 +98,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 			case INPUT:
 				SegmentationConfigDialog scd = segmentationDialog.getSegmentationConfigFileDialog();
 				if (scd.isCalibrationSelected()) {
-					LOGGER.info("w/ calibration");
+					LOGGER.info("with calibration");
 					segmentationParameters = new SegmentationParameters(".", ".",
 					                                                    Integer.parseInt(scd.getXCalibration()),
 					                                                    Integer.parseInt(scd.getYCalibration()),
@@ -108,7 +108,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 					                                                    scd.getConvexHullDetection()
 					);
 				} else {
-					LOGGER.info("w/out calibration");
+					LOGGER.info("without calibration");
 					segmentationParameters = new SegmentationParameters(".", ".",
 					                                                    Integer.parseInt(scd.getMinVolume()),
 					                                                    Integer.parseInt(scd.getMaxVolume()),
@@ -199,7 +199,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 					case INPUT:
 						SegmentationConfigDialog scd = segmentationDialog.getSegmentationConfigFileDialog();
 						if (scd.isCalibrationSelected()) {
-							LOGGER.info("w/ calibration\tx: {}\ty: {}\tz: {}",
+							LOGGER.info("with calibration\tx: {}\ty: {}\tz: {}",
 							            scd.getXCalibration(), scd.getYCalibration(), scd.getZCalibration());
 							
 							segmentationParameters = new SegmentationParameters(input, output,

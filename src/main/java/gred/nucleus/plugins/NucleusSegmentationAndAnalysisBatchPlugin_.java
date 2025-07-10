@@ -3,9 +3,11 @@ package gred.nucleus.plugins;
 import gred.nucleus.dialogs.NucleusSegmentationAndAnalysisBatchDialog;
 import gred.nucleus.segmentation.SegmentationCalling;
 import ij.plugin.PlugIn;
+import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 
@@ -29,10 +31,11 @@ public class NucleusSegmentationAndAnalysisBatchPlugin_ implements PlugIn {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				LOGGER.error("An error occurred.", e);
+				Thread.currentThread().interrupt();
 			}
 		}
 		if (nucleusPipelineBatchDialog.isStart()) {
-			LOGGER.info("Beginning of the segmentation of nuclei, the data are in " +
+			LOGGER.info("Beginning of the segmentation of nuclei, the data are in {}",
 			            nucleusPipelineBatchDialog.getRawDataDirectory());
 			SegmentationCalling otsuModified =
 					new SegmentationCalling(nucleusPipelineBatchDialog.getRawDataDirectory(),
@@ -41,11 +44,10 @@ public class NucleusSegmentationAndAnalysisBatchPlugin_ implements PlugIn {
 					                        (short) nucleusPipelineBatchDialog.getMaxVolume());
 			try {
 				String log = otsuModified.runSeveralImages2();
-			} catch (Exception e) {
+			} catch (IOException | FormatException e) {
 				LOGGER.error("An error occurred.", e);
 			}
-			
-			LOGGER.info("End of the segmentation the nuclei, the results are in " +
+			LOGGER.info("End of the segmentation the nuclei, the results are in {}",
 			            nucleusPipelineBatchDialog.getWorkDirectory());
 		}
 	}

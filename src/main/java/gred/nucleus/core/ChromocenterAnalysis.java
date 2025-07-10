@@ -202,16 +202,15 @@ public final class ChromocenterAnalysis {
 						mainFolder = processAndAnalyze(client, sourceImageId, segImageId, ccImageId);
 					}
 					LOGGER.info("Chromocenter Analysis has ended successfully");
-				} catch (Exception e) {
+				} catch (AccessException | ServiceException | IOException | ExecutionException e) {
 					LOGGER.info("Chromocenter Analysis has failed");
 					LOGGER.error("An error occurred.", e);
 				}
 			}
 			// If none of the conditions match
 			else {
-				LOGGER.error("Unsupported data types: sourceDatatype = " + sourceDatatype
-				             + ", segDatatype = " + segDatatype
-				             + ", ccDatatype = " + ccDatatype);
+				LOGGER.error("Unsupported data types: sourceDatatype = {}, segDatatype = {}, ccDatatype = {}",
+				             sourceDatatype, segDatatype, ccDatatype);
 				IJ.error("Unsupported data types: Please ensure that all data types are either 'Image' or 'Dataset'.");
 				return;  // Stop further execution
 			}
@@ -230,12 +229,11 @@ public final class ChromocenterAnalysis {
 			deleteFolder(mainFolder);
 			LOGGER.info("Segmentation process has ended successfully");
 			//IJ.showMessage("Segmentation process ended successfully on " + chromocentersPipelineBatchDialog.getDataType() + "\\" + inputID);
-		} catch (ServiceException se) {
-			IJ.error("Unable to access OMERO service.");
-		} catch (AccessException ae) {
-			IJ.error("Cannot access " + sourceDatatype + " with ID = " + inputID + ".");
-		} catch (Exception e) {
+		} catch (ServiceException | AccessException | IOException | IllegalStateException | ExecutionException e) {
 			LOGGER.error("An error occurred.", e);
+		} catch (InterruptedException e) {
+			LOGGER.error("Process was interrupted.", e);
+			Thread.currentThread().interrupt();  // Restore the interrupted status
 		}
 	}
 	

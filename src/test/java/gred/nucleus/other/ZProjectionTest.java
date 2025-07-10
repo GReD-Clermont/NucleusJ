@@ -106,7 +106,7 @@ public class ZProjectionTest implements PlugIn {
 			               "alrongier1",
 			               password,
 			               53L);
-		} catch (Exception exp) {
+		} catch (ServiceException exp) {
 			LOGGER.error("OMERO connection error: {}", exp.getMessage(), exp);
 			System.exit(1);
 		}

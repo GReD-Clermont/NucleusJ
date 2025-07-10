@@ -45,7 +45,7 @@ public class OutputTextFile extends FilesNames {
                 writer.close();
             }*/
 		} catch (IOException e) {
-			LOGGER.error(fullPathFile + " creation failed", e);
+			LOGGER.error("{} creation failed", fullPathFile, e);
 		}
 		LOGGER.info("{} created", fullPathFile);
 	}

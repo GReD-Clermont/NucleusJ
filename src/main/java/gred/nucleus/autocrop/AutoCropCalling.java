@@ -204,8 +204,8 @@ public class AutoCropCalling {
 			                                                 autocropParameters);
 			annotate.run();
 			this.outputCropGeneralInfo += autoCrop.getImageCropInfo();
-		} catch (Exception e) {
-			LOGGER.error("Cannot run autocrop on: " + currentFile.getName(), e);
+		} catch (IOException | FormatException e) {
+			LOGGER.error("Cannot run autocrop on: {}", currentFile.getName(), e);
 			IJ.error("Cannot run autocrop on " + currentFile.getName());
 		}
 	}

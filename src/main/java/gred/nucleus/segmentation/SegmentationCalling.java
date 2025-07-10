@@ -336,7 +336,8 @@ public class SegmentationCalling {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			LOGGER.error("Error waiting for image processing to finish", e);
+			Thread.currentThread().interrupt();
 		}
 		processExecutor.shutdownNow();
 		
@@ -524,8 +525,7 @@ public class SegmentationCalling {
 			public void run() {
 				try {
 					String fileImg = img.getName();
-					String timeStampStart =
-							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, timeStampStart);
 					NucleusSegmentation nucleusSegmentation =
 							new NucleusSegmentation(img, imp, segmentationParameters, client);
@@ -540,13 +540,12 @@ public class SegmentationCalling {
 					convexHullResultLines.put(img.getId(),
 					                          nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
 					
-					timeStampStart =
-							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 					LOGGER.info("End: {} at {}", fileImg, timeStampStart);
 					
 					latch.countDown();
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
+					LOGGER.error("Error processing image: {}", img.getName(), e);
 				}
 			}
 			
@@ -752,7 +751,7 @@ public class SegmentationCalling {
 		try {
 			path = new File(path).getCanonicalPath();
 		} catch (IOException e) {
-			LOGGER.error("Could not get canonical path for:" + path, e);
+			LOGGER.error("Could not get canonical path for:{}", path, e);
 		}
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(path);
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU, false);
@@ -762,7 +761,7 @@ public class SegmentationCalling {
 		try {
 			Files.deleteIfExists(file.toPath());
 		} catch (IOException e) {
-			LOGGER.error("File not deleted: " + path, e);
+			LOGGER.error("File not deleted: {}", path, e);
 		}
 		
 		if (segmentationParameters.getConvexHullDetection()) {

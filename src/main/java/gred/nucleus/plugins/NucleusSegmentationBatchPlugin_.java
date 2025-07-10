@@ -36,6 +36,7 @@ public class NucleusSegmentationBatchPlugin_ implements PlugIn {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
 				LOGGER.error("An error occurred.", e);
+				Thread.currentThread().interrupt();
 			}
 		}
 		if (nucleusSegmentationBatchDialog.isStart()) {

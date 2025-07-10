@@ -780,7 +780,7 @@ public class NucleusSegmentation {
 			
 			try {
 				tags = client.getTags("BadCrop");
-			} catch (Exception e) {
+			} catch (OMEROServerError | ServiceException e) {
 				LOGGER.error("Could not get list of \"BadCrop\" tags", e);
 				return;
 			}
@@ -788,7 +788,7 @@ public class NucleusSegmentation {
 			if (tags.isEmpty()) {
 				try {
 					tagBadCrop = new TagAnnotationWrapper(client, "BadCrop", "");
-				} catch (Exception e) {
+				} catch (AccessException | ServiceException | ExecutionException e) {
 					LOGGER.error("Could not create new \"BadCrop\" tag", e);
 					return;
 				}
@@ -803,8 +803,8 @@ public class NucleusSegmentation {
 			
 			LOGGER.info("Adding Bad Crop tag");
 			try {
-				image.addTag(client, tagBadCrop);
-			} catch (Exception e) {
+				image.link(client, tagBadCrop);
+			} catch (AccessException | ServiceException | ExecutionException e) {
 				LOGGER.error("Tag already added", e);
 			}
 		}
@@ -819,7 +819,7 @@ public class NucleusSegmentation {
 		}
 		try {
 			roi.saveROI(client);
-		} catch (Exception e) {
+		} catch (OMEROServerError | ServiceException e) {
 			LOGGER.error("Could not save bad crop ROI id: {}", roi.getId());
 		}
 	}

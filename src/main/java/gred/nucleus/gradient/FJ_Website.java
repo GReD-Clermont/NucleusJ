@@ -3,6 +3,8 @@ package gred.nucleus.gradient;
 import ij.plugin.BrowserLauncher;
 import ij.plugin.PlugIn;
 
+import java.io.IOException;
+
 
 public class FJ_Website implements PlugIn {
 	
@@ -10,7 +12,7 @@ public class FJ_Website implements PlugIn {
 		
 		try {
 			BrowserLauncher.openURL("http://www.imagescience.org/meijering/software/featurej/");
-		} catch (Exception e) {
+		} catch (IOException e) {
 			FJ.error("Could not open default internet browser");
 		}
 	}

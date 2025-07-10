@@ -56,7 +56,7 @@ public class ComputeParametersPlugin_ implements PlugIn, IDialogListener {
 			               username,
 			               password,
 			               Long.valueOf(group));
-		} catch (Exception exp) {
+		} catch (ServiceException | NumberFormatException exp) {
 			IJ.error("Invalid connection values");
 			return null;
 		}

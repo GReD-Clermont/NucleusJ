@@ -203,8 +203,8 @@ public class CLIRunActionOMERO {
 			} else {
 				client.connect(hostname, port, sessionID);
 			}
-		} catch (Exception exp) {
-			LOGGER.error("OMERO connection error: " + exp.getMessage(), exp);
+		} catch (ServiceException exp) {
+			LOGGER.error("OMERO connection error: {}", exp.getMessage(), exp);
 			exit(1);
 		}
 	}
@@ -272,10 +272,10 @@ public class CLIRunActionOMERO {
 		String ccDirectory    = cmd.getOptionValue("input3");
 		
 		try {
-			LOGGER.info("-Input Folder : {} -Segmentation Folder : {} -Chromocenters folder : {}", inputDirectory,
-			            segDirectory, ccDirectory);
+			LOGGER.info("-Input Folder : {} -Segmentation Folder : {} -Chromocenters folder : {}",
+			            inputDirectory, segDirectory, ccDirectory);
 			ccAnalysis.runComputeParametersCC(inputDirectory, segDirectory, ccDirectory, client);
-		} catch (Exception e) {
+		} catch (AccessException | ServiceException | ExecutionException e) {
 			LOGGER.error("An error occurred while computing chromocenter parameters.", e);
 		}
 		LOGGER.info("End !!! Results available:");

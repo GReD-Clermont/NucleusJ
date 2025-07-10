@@ -73,7 +73,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 					cropFromCoordinates(file);
 					
 					LOGGER.info("Crop from coordinate process has ended successfully");
-				} catch (Exception e) {
+				} catch (IOException | FormatException e) {
 					LOGGER.info("Crop from coordinate process has failed");
 					LOGGER.error("An error occurred.", e);
 				}
@@ -94,7 +94,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 			               username,
 			               password,
 			               Long.valueOf(group));
-		} catch (Exception exp) {
+		} catch (ServiceException | NumberFormatException exp) {
 			IJ.error("Invalid connection values");
 			return null;
 		}
@@ -210,9 +210,8 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 				
 				try {
 					LOGGER.info("Begin Autocrop from coordinate process ");
-					cropImageFromOMERO2(client, image, imageToCrop, outputds, channel); // Run cropFromCoordinates
-					LOGGER.info("Autocrop from coordinate process has ended successfully");
-				} catch (Exception e) {
+					cropImageFromOMERO2(client, image, imageToCrop, outputds, channel); // Ru
+				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
 					LOGGER.info("Autocrop from coordinate process has failed");
 					LOGGER.error("An error occurred.", e);
 				}
@@ -238,7 +237,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 						}
 					}
 					LOGGER.info("Autocrop from coordinate process has ended successfully");
-				} catch (Exception e) {
+				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
 					LOGGER.info("Autocrop from coordinate process has failed");
 					LOGGER.error("An error occurred.", e);
 				}
@@ -247,7 +246,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 			IJ.error("Unable to access to OMERO service");
 		} catch (AccessException ae) {
 			IJ.error("Cannot access " + sourceDataType + "with ID = " + inputID + ".");
-		} catch (Exception e) {
+		} catch (OMEROServerError | ExecutionException e) {
 			LOGGER.error("An error occurred.", e);
 		}
 	}

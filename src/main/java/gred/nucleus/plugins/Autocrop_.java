@@ -70,7 +70,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 			               username,
 			               password,
 			               Long.valueOf(group));
-		} catch (Exception exp) {
+		} catch (ServiceException | NumberFormatException exp) {
 			IJ.error("Invalid connection values");
 			return null;
 		}
@@ -103,7 +103,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 			case INPUT:
 				AutocropConfigDialog acd = autocropDialog.getAutocropConfigFileDialog();
 				if (acd.isCalibrationSelected()) {
-					LOGGER.info("w/ calibration");
+					LOGGER.info("with calibration");
 					autocropParameters = new AutocropParameters(".",
 					                                            ".",
 					                                            parseInt(acd.getXCalibration()),
@@ -122,7 +122,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 					                                            acd.isRegroupBoxesSelected()
 					);
 				} else {
-					LOGGER.info("w/out calibration");
+					LOGGER.info("without calibration");
 					autocropParameters = new AutocropParameters(".",
 					                                            ".",
 					                                            parseInt(acd.getXCropBoxSize()),
@@ -230,7 +230,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 					case INPUT:
 						AutocropConfigDialog acd = autocropDialog.getAutocropConfigFileDialog();
 						if (acd.isCalibrationSelected()) {
-							LOGGER.info("w/ calibration");
+							LOGGER.info("with calibration");
 							autocropParameters = new AutocropParameters(input,
 							                                            output,
 							                                            parseInt(acd.getXCalibration()),
@@ -248,7 +248,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 							                                            parseInt(acd.getBoxesPercentSurfaceToFilter()),
 							                                            acd.isRegroupBoxesSelected());
 						} else {
-							LOGGER.info("w/out calibration");
+							LOGGER.info("without calibration");
 							autocropParameters = new AutocropParameters(input,
 							                                            output,
 							                                            parseInt(acd.getXCropBoxSize()),

@@ -206,7 +206,8 @@ public class MultiThreadingTest {
 				tasksExecutor.submit(new MyTask(duration, id)); // Pass img to executor
 				LOGGER.info("Resource returned ({}).", id);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				LOGGER.error("An error occurred during download execution.", e);
+				Thread.currentThread().interrupt();
 			}
 		}
 		

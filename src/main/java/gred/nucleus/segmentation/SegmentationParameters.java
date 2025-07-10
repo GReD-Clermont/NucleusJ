@@ -75,10 +75,10 @@ public class SegmentationParameters extends PluginParameters {
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
 			prop.load(is);
 		} catch (FileNotFoundException ex) {
-			LOGGER.error(pathToConfigFile + ": can't find the config file !", ex);
+			LOGGER.error("{}: can't find the config file !", pathToConfigFile, ex);
 			System.exit(-1);
 		} catch (IOException ex) {
-			LOGGER.error(pathToConfigFile + ": can't load the config file !", ex);
+			LOGGER.error("{}: can't load the config file !", pathToConfigFile, ex);
 			System.exit(-1);
 		}
 		for (String idProp : prop.stringPropertyNames()) {

@@ -11,6 +11,7 @@ import gred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
 import ij.io.FileSaver;
 import ij.measure.Calibration;
+import loci.formats.FormatException;
 import loci.plugins.BF;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -120,7 +121,7 @@ public class ComputeNucleiParameters {
 				                                    pluginParameters.getYCalibration(raw),
 				                                    pluginParameters.getZCalibration(raw));
 				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append("\n");
-			} catch (Exception e) {
+			} catch (IOException | FormatException e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		}

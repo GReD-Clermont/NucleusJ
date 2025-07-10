@@ -144,7 +144,7 @@ class FJEdges {
 			boolean highThreshold = true;
 			try {
 				scaleVal = Double.parseDouble(scale);
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid smoothing scale value");
 			}
 			try {
@@ -153,7 +153,7 @@ class FJEdges {
 				} else {
 					lowVal = Double.parseDouble(lower);
 				}
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid lower threshold value");
 			}
 			try {
@@ -162,7 +162,7 @@ class FJEdges {
 				} else {
 					highVal = Double.parseDouble(higher);
 				}
-			} catch (Exception e) {
+			} catch (NumberFormatException e) {
 				throw new IllegalArgumentException("Invalid higher threshold value");
 			}
 			int thresholdMode = (lowThreshold ? 10 : 0) + (highThreshold ? 1 : 0);
@@ -221,13 +221,10 @@ class FJEdges {
 			
 		} catch (OutOfMemoryError e) {
 			FJ.error("Not enough memory for this operation");
-			
 		} catch (IllegalArgumentException | IllegalStateException e) {
 			FJ.error(e.getMessage());
-			
 		} catch (Exception e) {
 			FJ.error("An unidentified error occurred while running the plugin");
-			
 		}
 	}
 	

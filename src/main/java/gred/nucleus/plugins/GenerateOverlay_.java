@@ -61,7 +61,7 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 				generateOverlay1.run(); // Run Overlay process
 				
 				LOGGER.info("Overlay  process has ended successfully");
-			} catch (Exception e) {
+			} catch (IOException e) {
 				LOGGER.info("Overlay process has failed");
 				LOGGER.error("An error occurred.", e);
 			}
