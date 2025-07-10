@@ -242,8 +242,7 @@ public class ConvexHullImageMaker {
 		ConnectedComponents connectedComponents = new ConnectedComponents();
 		connectedComponents.setImageTable(image);
 		listLabel = connectedComponents.getListLabel(255); // One label per connected components
-		image =
-				connectedComponents.getImageTable(); // Return the image where all connected components have a different label (value)
+		image = connectedComponents.getImageTable(); // Return the image where all connected components have a different label (value)
 		return image;
 	}
 	

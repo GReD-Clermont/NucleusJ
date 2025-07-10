@@ -938,7 +938,6 @@ public class Measure3D {
 	public String nucleusParameter3D() {
 		String results;
 		histogramSegmentedNucleus();
-		// double volume = computeVolumeObject2(255);
 		
 		double   volume         = computeVolumeObjectML();
 		double   surfaceArea    = computeSurfaceObject(255);

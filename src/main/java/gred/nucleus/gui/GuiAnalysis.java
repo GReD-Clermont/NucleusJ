@@ -499,11 +499,11 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		jCbIs2D.addActionListener(analysis);
 		jCbIsFilter.addActionListener(analysis);
 		
-		ActionListener wdListener = new Listener(this, jtfWorkDir, false);
+		ActionListener wdListener = new Listener(jtfWorkDir, false);
 		jbOutputDir.addActionListener(wdListener);
-		ActionListener rawListener = new Listener(this, jtfRawData, false);
+		ActionListener rawListener = new Listener(jtfRawData, false);
 		jbInputDir.addActionListener(rawListener);
-		ActionListener segListener = new Listener(this, jtfRawSeg, false);
+		ActionListener segListener = new Listener(jtfRawSeg, false);
 		jbInputSeg.addActionListener(segListener);
 		
 		ActionListener quitListener = new QuitListener(this);
@@ -826,20 +826,16 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	 */
 	private class Listener implements ActionListener {
 		/**  */
-		private final GuiAnalysis gui;
-		/**  */
 		private final JTextField  jtf;
 		/**  */
 		private final boolean     file;
 		
 		
 		/**
-		 * @param gui
 		 * @param jtf
 		 * @param file
 		 */
-		Listener(GuiAnalysis gui, JTextField jtf, boolean file) {
-			this.gui = gui;
+		Listener(JTextField jtf, boolean file) {
 			this.jtf = jtf;
 			this.file = file;
 		}
@@ -855,7 +851,6 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 			}
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String run = jFileChooser.getSelectedFile().getName();
 				String text = jFileChooser.getSelectedFile().getAbsolutePath();
 				jtf.setText(text);
 			}

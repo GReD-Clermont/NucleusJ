@@ -56,41 +56,35 @@ may be forthcoming.
 
 */
 public class Distance_Map implements PlugInFilter {
-	public  byte[][]  data;
-	public  int       w;
-	public  int       h;
-	public  int       d;
-	public  int       thresh = 126;
-	public  boolean   inverse;
-	private ImagePlus imp;
+	private static final int THRESHOLD = 126;
+	
+	private ImagePlus image;
 	
 	
 	public int setup(String arg, ImagePlus imp) {
-		this.imp = imp;
+		this.image = imp;
 		return DOES_8G;
 	}
 	
 	
 	public void run(ImageProcessor ip) {
-		apply(imp);
+		apply(image);
 	}
 	
 	
-	@SuppressWarnings("static-access")
 	public void apply(ImagePlus imagePlus) {
-		
 		StackConverter stackConverter = new StackConverter(imagePlus);
-		if (imagePlus.getType() != imagePlus.GRAY8) {
+		if (imagePlus.getType() != ImagePlus.GRAY8) {
 			stackConverter.convertToGray8();
 		}
-		ImageStack stack = imagePlus.getStack();
-		w = stack.getWidth();
-		h = stack.getHeight();
-		d = imagePlus.getStackSize();
-		int nThreads = Runtime.getRuntime().availableProcessors();
+		ImageStack stack    = imagePlus.getStack();
+		int        w        = stack.getWidth();
+		int        h        = stack.getHeight();
+		int        d        = imagePlus.getStackSize();
+		int        nThreads = Runtime.getRuntime().availableProcessors();
 		
 		//Create references to input data
-		data = new byte[d][];
+		byte[][] data = new byte[d][];
 		for (int k = 0; k < d; k++) {
 			data[k] = (byte[]) stack.getPixels(k + 1);
 		}
@@ -107,7 +101,7 @@ public class Distance_Map implements PlugInFilter {
 		IJ.showStatus("EDT transformation 1/3");
 		Step1Thread[] s1t = new Step1Thread[nThreads];
 		for (int thread = 0; thread < nThreads; thread++) {
-			s1t[thread] = new Step1Thread(thread, nThreads, w, h, d, thresh, s, data);
+			s1t[thread] = new Step1Thread(thread, nThreads, w, h, d, THRESHOLD, s, data);
 			s1t[thread].start();
 		}
 		try {
@@ -156,7 +150,7 @@ public class Distance_Map implements PlugInFilter {
 		for (int k = 0; k < d; k++) {
 			sk = s[k];
 			for (int ind = 0; ind < wh; ind++) {
-				if ((data[k][ind] & 255) < thresh ^ inverse) {
+				if ((data[k][ind] & 255) < THRESHOLD) {
 					sk[ind] = 0;
 				} else {
 					dist = (float) Math.sqrt(sk[ind]);
@@ -171,7 +165,6 @@ public class Distance_Map implements PlugInFilter {
 		ImagePlus impOut = new ImagePlus(title + "EDT", sStack);
 		impOut.getProcessor().setMinAndMax(0, distMax);
 		imagePlus.setStack(sStack);
-		//imagePlus.show();
 	}
 	
 	
@@ -294,16 +287,15 @@ public class Distance_Map implements PlugInFilter {
 			}
 			int       noResult   = 3 * (n + 1) * (n + 1);
 			boolean[] background = new boolean[n];
-			boolean nonempty;
-			int test;
-			int min;
+			int       test;
+			int       min;
 			for (int k = thread; k < d; k += nThreads) {
 				IJ.showProgress(k / (1.0 * d));
 				sk = s[k];
 				dk = data[k];
 				for (int j = 0; j < h; j++) {
 					for (int i = 0; i < w; i++) {
-						background[i] = (dk[i + w * j] & 255) < thresh ^ inverse;
+						background[i] = (dk[i + w * j] & 255) < thresh;
 					}
 					for (int i = 0; i < w; i++) {
 						min = noResult;
@@ -356,12 +348,11 @@ public class Distance_Map implements PlugInFilter {
 		
 		@Override
 		public void run() {
-			int zStart;
-			int zStop;
-			int zBegin;
-			int zEnd;
-			float[] sk;
-			int n = w;
+			int     zStart;
+			int     zStop;
+			int     zBegin;
+			int     zEnd;
+			int     n = w;
 			if (h > n) {
 				n = h;
 			}
@@ -403,7 +394,7 @@ public class Distance_Map implements PlugInFilter {
 						
 						for (int k = 0; k < d; k++) {
 							//Limit to the non-background to save time,
-							if ((data[k][i + w * j] & 255) >= thresh ^ inverse) {
+							if ((data[k][i + w * j] & 255) >= THRESHOLD) {
 								min = noResult;
 								zBegin = zStart;
 								zEnd = zStop;

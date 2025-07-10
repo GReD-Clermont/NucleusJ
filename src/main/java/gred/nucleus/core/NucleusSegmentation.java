@@ -128,10 +128,10 @@ public class NucleusSegmentation {
 		imgRaw.setTitle(imageFile.getName());
 		this.imgRawTransformed = imgRaw.duplicate();
 		imgRawTransformed.setTitle(imageFile.getName());
-		Directory dirOutputOTSU = new Directory(this.segmentationParameters.getOutputFolder() + "OTSU");
+		Directory dirOutputOTSU = new Directory(segmentationParameters.getOutputFolder() + "OTSU");
 		dirOutputOTSU.checkAndCreateDir();
-		if (this.segmentationParameters.getConvexHullDetection()) {
-			Directory dirOutputConvexHull = new Directory(this.segmentationParameters.getOutputFolder() +
+		if (segmentationParameters.getConvexHullDetection()) {
+			Directory dirOutputConvexHull = new Directory(segmentationParameters.getOutputFolder() +
 			                                              CONVEX_HULL_ALGORITHM);
 			dirOutputConvexHull.checkAndCreateDir();
 		}

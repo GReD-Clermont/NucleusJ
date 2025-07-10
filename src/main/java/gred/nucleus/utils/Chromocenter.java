@@ -46,11 +46,6 @@ public class Chromocenter extends ObjectCharacteristics {
 	}
 	
 	
-	private void setCCValue(double a) {
-		this.ccValue = a;
-	}
-	
-	
 	public void addChromocenter(double circularity, int nbPixel, double aspectRatio,
 	                            double perimeter, double area, double solidity, double round,
 	                            double ccVal) {

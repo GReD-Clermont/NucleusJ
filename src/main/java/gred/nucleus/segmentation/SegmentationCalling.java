@@ -8,19 +8,11 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import fr.igred.omero.roi.ROIWrapper;
-import gred.nucleus.core.ConvexHullSegmentation;
 import gred.nucleus.core.NucleusSegmentation;
 import gred.nucleus.files.Directory;
 import gred.nucleus.files.FilesNames;
 import gred.nucleus.files.OutputTextFile;
-import gred.nucleus.nucleuscaracterisations.NucleusAnalysis;
 import ij.ImagePlus;
-import ij.io.FileSaver;
-import ij.measure.Calibration;
-import ij.plugin.ContrastEnhancer;
-import ij.plugin.GaussianBlur3D;
-import ij.process.StackConverter;
-import ij.process.StackStatistics;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,9 +67,6 @@ public class SegmentationCalling {
 	/** String of the path for the output files */
 	private String output;
 	
-	/** Input directory */
-	private String inputDir = "";
-	
 	/** SegmentationParameters object containing the parameters for the segmentation */
 	private SegmentationParameters segmentationParameters;
 	
@@ -122,8 +111,7 @@ public class SegmentationCalling {
 	}
 	
 	
-	public SegmentationCalling(String inputDir, String outputDir) {
-		this.inputDir = inputDir;
+	public SegmentationCalling(String outputDir) {
 		this.output = outputDir;
 		this.outputCropGeneralInfoOTSU = segmentationParameters.getAnalysisParameters();
 		this.outputCropGeneralInfoConvexHull = segmentationParameters.getAnalysisParameters();
@@ -171,7 +159,6 @@ public class SegmentationCalling {
 	public SegmentationCalling(String inputDir, String outputDir, short vMin, int vMax) {
 		segmentationParameters.setMinVolumeNucleus(vMin);
 		segmentationParameters.setMaxVolumeNucleus(vMax);
-		this.inputDir = inputDir;
 		this.output = outputDir;
 		Directory dirOutput = new Directory(output);
 		dirOutput.checkAndCreateDir();
@@ -279,7 +266,7 @@ public class SegmentationCalling {
 					
 					latch.countDown();
 				} catch (IOException | FormatException e) {
-					e.printStackTrace();
+					LOGGER.error("Error processing image: {}", file.getName(), e);
 				}
 			}
 			
@@ -749,41 +736,7 @@ public class SegmentationCalling {
 	}
 	
 	
-	/**
-	 * Method which save the image in the directory.
-	 *
-	 * @param imagePlusInput Image to be save
-	 * @param pathFile       path of directory
-	 */
-	private void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiffStack(pathFile);
-	}
-	
-	
-	/**
-	 * 16bits image preprocessing normalised the histogram distribution apply a gaussian filter to smooth the signal
-	 * convert the image in 8bits
-	 *
-	 * @param img 16bits ImagePlus
-	 */
-	//TODO A ENLEVER APRES RESTRUCTURATION ATTENTION INTEGRATION DANS LES FENETRES GRAPHIQUES PAS ENCORE UPDATE DC CA CRASH!!!!!
-	private void preProcessImage(ImagePlus img) {
-		ContrastEnhancer enh = new ContrastEnhancer();
-		enh.setNormalize(true);
-		enh.setUseStackHistogram(true);
-		enh.setProcessStack(true);
-		enh.stretchHistogram(img, 0.05);
-		StackStatistics statistics = new StackStatistics(img);
-		img.setDisplayRange(statistics.min, statistics.max);
-		
-		GaussianBlur3D.blur(img, 0.5, 0.5, 1);
-		StackConverter stackConverter = new StackConverter(img);
-		stackConverter.convertToGray8();
-	}
-	
-	
-	public String getResultsColumnNames() {
+	public static String getResultsColumnNames() {
 		return "Image," +
 		       "Dataset," +
 		       "ImageName," +

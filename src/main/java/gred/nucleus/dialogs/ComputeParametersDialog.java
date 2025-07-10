@@ -608,7 +608,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String run = jFileChooser.getSelectedFile().getName();
 				String workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldWorkDirectory.setText(workDirectory);
 			}
@@ -631,7 +630,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String run = jFileChooser.getSelectedFile().getName();
 				String rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldRawData.setText(rawDataDirectory);
 			}

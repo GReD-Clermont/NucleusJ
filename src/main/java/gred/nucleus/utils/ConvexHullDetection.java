@@ -56,7 +56,7 @@ public class ConvexHullDetection {
 	 *
 	 * @return voxels of the convex hull
 	 */
-	public static List<VoxelRecord> runGrahamScan(String axesName, List<VoxelRecord> lVoxelBoundary) {
+	public static List<VoxelRecord> runGrahamScan(String axesName, List<? extends VoxelRecord> lVoxelBoundary) {
 		List<Point> points      = new ArrayList<>();
 		double      constantAxe = 0;
 		
@@ -112,35 +112,6 @@ public class ConvexHullDetection {
 	
 	
 	/**
-	 * Returns true iff all points in {@code points} are collinear.
-	 *
-	 * @param points the list of points.
-	 *
-	 * @return true iff all points in {@code points} are collinear.
-	 */
-	protected static boolean areAllCollinear(List<Point> points) {
-		
-		if (points.size() < 2) {
-			return true;
-		}
-		
-		Point a = points.get(0);
-		Point b = points.get(1);
-		
-		for (int i = 2; i < points.size(); i++) {
-			
-			Point c = points.get(i);
-			
-			if (getTurn(a, b, c) != Turn.COLLINEAR) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	
-	/**
 	 * Returns the convex hull of the points created from {@code xs} and {@code ys}. Note that the first and last
 	 * point in the returned {@code List<java.awt.Point>} are the same point.
 	 *
@@ -152,8 +123,7 @@ public class ConvexHullDetection {
 	 * @throws IllegalArgumentException if {@code xs} and {@code ys} don't have the same size, if all points are
 	 *                                  collinear or if there are less than 3 unique points present.
 	 */
-	public static List<Point> getConvexHull(int[] xs, int[] ys) throws IllegalArgumentException {
-		
+	public static List<Point> getConvexHull(int[] xs, int[] ys) {
 		if (xs.length != ys.length) {
 			throw new IllegalArgumentException("xs and ys don't have the same size");
 		}
@@ -178,17 +148,12 @@ public class ConvexHullDetection {
 	 *
 	 * @throws IllegalArgumentException if all points are collinear or if there are less than 3 unique points present.
 	 */
-	public static List<Point> getConvexHull(List<Point> points) throws IllegalArgumentException {
-		
+	public static List<Point> getConvexHull(List<Point> points) {
 		List<Point> sorted = new ArrayList<>(getSortedPointSet(points));
 		
 		if (sorted.size() < 3) {
 			throw new IllegalArgumentException("can only create a convex hull of 3 or more unique points");
 		}
-		
-		//	if(areAllCollinear(sorted)) {
-		//		throw new IllegalArgumentException("cannot create a convex hull from collinear points");
-		//	}
 		
 		Stack<Point> stack = new Stack<>();
 		stack.push(sorted.get(0));
