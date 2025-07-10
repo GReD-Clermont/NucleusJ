@@ -25,29 +25,20 @@ public class OutputTextFile extends FilesNames {
 	 * <p> TODO(@DesTristus) ADD ERROR IN LOG FILE
 	 */
 	public void saveTextFile(String text, boolean keepExistingFile) {
-		try {
-			if (keepExistingFile) {
-				int i = 0;
-				while (fileExists()) {
-					setFullPathFile(prefixNameFile() + "-" + i + "." + FilenameUtils.getExtension(fileName));
-					checkFileExists();
-					i++;
-				}
+		if (keepExistingFile) {
+			int i = 0;
+			while (fileExists()) {
+				setFullPathFile(prefixNameFile() + "-" + i + "." + FilenameUtils.getExtension(fileName));
+				checkFileExists();
+				i++;
 			}
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.fullPathFile))) {
-				writer.write(text);
-			}
-
-            /*if (!fileExist()) {
-                BufferedWriter writer;
-                writer = new BufferedWriter(new FileWriter(new File(this.fullPathFile)));
-                writer.write(text);
-                writer.close();
-            }*/
-		} catch (IOException e) {
-			LOGGER.error(this.fullPathFile + " creation failed", e);
 		}
-		LOGGER.info("{} created", this.fullPathFile);
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(fullPathFile))) {
+			writer.write(text);
+		} catch (IOException e) {
+			LOGGER.error("{} creation failed", fullPathFile, e);
+		}
+		LOGGER.info("{} created", fullPathFile);
 	}
 	
 }

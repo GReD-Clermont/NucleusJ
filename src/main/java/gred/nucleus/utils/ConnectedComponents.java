@@ -227,7 +227,7 @@ public class ConnectedComponents {
 	 */
 	public List<Double> getListLabel(double labelIni) {
 		computeLabel(labelIni);
-		return listLabel;
+		return new ArrayList<>(listLabel);
 	}
 	
 	
@@ -240,25 +240,6 @@ public class ConnectedComponents {
 	/** @param image  */
 	public void setImageTable(double[][] image) {
 		this.image = image;
-	}
-	
-	
-	/**
-	 * @param initialLabel
-	 * @param voxelRecord
-	 *
-	 * @return
-	 */
-	double[][] computeLabelOfOneObject(int initialLabel, VoxelRecord voxelRecord) {
-		int currentLabel = 2;
-		/*IJ.log("" + getClass().getName() + " L-" + new Exception().getStackTrace()[0].getLineNumber() + " \n" +
-		       "start " + initialLabel + "\n" +
-		       "j " + voxelRecord.j + "\n" +
-		       "i " + voxelRecord.i + " \n "
-		       + currentLabel + "\n" +
-		       " euu " + image[(int) voxelRecord.i][(int) voxelRecord.j] + " end");*/
-		breadthFirstSearch(initialLabel, voxelRecord, currentLabel);
-		return image;
 	}
 	
 	

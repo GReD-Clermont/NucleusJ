@@ -17,10 +17,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class SegmentationTestChecker {
-	public static final String PATH_TO_INFO   = "OTSU/result_Segmentation_Analyse_OTSU.csv";
-	public static final String PATH_TO_TARGET = "target/";
-	public static final String PATH_TO_RESULT = "OTSU/";
+public final class SegmentationTestChecker {
+	public static final String PATH_TO_INFO   = "OTSU" + File.separator + "result_Segmentation_Analyse_OTSU.csv";
+	public static final String PATH_TO_TARGET = "target" + File.separator;
+	public static final String PATH_TO_RESULT = "OTSU" + File.separator;
 	
 	public static final int PERCENT_MASK_OVERLAPPED = 5;
 	
@@ -31,12 +31,12 @@ public class SegmentationTestChecker {
 	
 	
 	public SegmentationTestChecker(String targetPath) {
-		File targetFile = new File(SegmentationTest.PATH_TO_INPUT +
+		File targetFile = new File(SegmentationTest.PATH_TO_SEGMENTATION +
 		                           PATH_TO_TARGET +
 		                           targetPath + File.separator +
 		                           PATH_TO_INFO
 		);
-		String resultPath = SegmentationTest.PATH_TO_INPUT +
+		String resultPath = SegmentationTest.PATH_TO_SEGMENTATION +
 		                    PATH_TO_TARGET +
 		                    targetPath + File.separator +
 		                    PATH_TO_RESULT + targetPath;
@@ -46,19 +46,19 @@ public class SegmentationTestChecker {
 	}
 	
 	
-	public File getInfoFile(File file) {
+	public static File getInfoFile(File file) {
 		return new File(SegmentationTest.PATH_TO_OUTPUT +
 		                file.getName() + File.separator +
 		                PATH_TO_INFO);
 	}
 	
 	
-	public SegmentationResult extractGeneralInfo(SegmentationResult result, File file) {
-		List<String> list = new ArrayList<>();
+	public static SegmentationResult extractGeneralInfo(SegmentationResult result, File file) {
+		List<String> list = new ArrayList<>(0);
 		try {
 			list = Files.readAllLines(file.toPath(), Charset.defaultCharset());
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			LOGGER.error("Error reading file: {}", file.getAbsolutePath(), ex);
 		}
 		
 		//String[] resultLine = list.get(list.size() - 1).split("\t");
@@ -68,12 +68,7 @@ public class SegmentationTestChecker {
 	}
 	
 	
-	public void checkGeneralValues(SegmentationResult foundResult) {
-		// No values to verify currently
-	}
-	
-	
-	public String getResultPath(File file) {
+	public static String getResultPath(File file) {
 		return SegmentationTest.PATH_TO_OUTPUT +
 		       file.getName() + File.separator +
 		       PATH_TO_RESULT +
@@ -81,16 +76,22 @@ public class SegmentationTestChecker {
 	}
 	
 	
-	public SegmentationResult extractResult(SegmentationResult result, String path) {
+	public static SegmentationResult extractResult(SegmentationResult result, String path) {
 		result.setImage(new ImagePlus(path));
 		return result;
 	}
 	
 	
+	public void checkGeneralValues(SegmentationResult foundResult) {
+		// No values to verify currently
+	}
+	
+	
 	public void checkResult(SegmentationResult result) {
-		ImagePlus imgDiff = ImageCalculator.run(target.getImage(),
-		                                        result.getImage(),
-		                                        "difference create stack");
+		ImagePlus imgDiff = new ImageCalculator().run("difference create stack",
+		                                              target.getImage(),
+		                                              result.getImage());
+		
 		StackStatistics statsTarget      = new StackStatistics(target.getImage());
 		long[]          histogramTarget  = statsTarget.getHistogram();
 		long            targetMaskPixels = histogramTarget[histogramTarget.length - 1];

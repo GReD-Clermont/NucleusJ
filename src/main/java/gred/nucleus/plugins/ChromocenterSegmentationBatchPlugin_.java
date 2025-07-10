@@ -26,8 +26,8 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
+	/* This method is used by plugins.config */
 	public void run(String arg) {
-		
 		ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog =
 				new ChromocenterSegmentationPipelineBatchDialog();
 		while (chromocenterSegmentationPipelineBatchDialog.isShowing()) {
@@ -49,7 +49,7 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 				String workDirectory =
 						chromocenterSegmentationPipelineBatchDialog.getWorkDirectory();
 				for (int i = 0; i < listImageSegmentedDataNucleus.size(); ++i) {
-					LOGGER.info("image {}/{}", (i + 1), listImageSegmentedDataNucleus.size());
+					LOGGER.info("image {}/{}", i + 1, listImageSegmentedDataNucleus.size());
 					String pathImageSegmentedNucleus = listImageSegmentedDataNucleus.get(i);
 					String pathNucleusRaw =
 							pathImageSegmentedNucleus.replace("SegmentedDataNucleus", "RawDataNucleus");
@@ -90,8 +90,7 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 				LOGGER.info("End of the chromocenter segmentation , the results are in {}",
 				            chromocenterSegmentationPipelineBatchDialog.getWorkDirectory());
 			} else {
-				IJ.showMessage(
-						"There are no the two subdirectories (See the directory name) or subDirectories are empty");
+				IJ.showMessage("There are no the two subdirectories (See the directory name) or subDirectories are empty");
 			}
 		}
 	}

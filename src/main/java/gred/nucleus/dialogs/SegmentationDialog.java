@@ -1,21 +1,45 @@
 package gred.nucleus.dialogs;
 
-import javax.swing.*;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 
 public class SegmentationDialog extends JFrame implements ActionListener, ItemListener {
-	private static final long                          serialVersionUID        = 1L;
+	private static final long                          serialVersionUID        = -8291261260165229794L;
 	private static final String                        INPUT_CHOOSER           = "inputChooser";
 	private static final String                        OUTPUT_CHOOSER          = "outputChooser";
 	private static final String                        CONFIG_CHOOSER          = "configChooser";
-	final                IDialogListener               dialogListener;
+	private final        IDialogListener               dialogListener;
 	private final        Container                     container;
 	private final        JFileChooser                  fc                      = new JFileChooser();
 	private final        JRadioButton                  omeroYesButton          = new JRadioButton("Yes");
@@ -42,7 +66,8 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	private final        JTextField                    jTextFieldSourceID      = new JTextField();
 	private final        JTextField                    jTextFieldOutputProject = new JTextField();
 	private final        JButton                       confButton              = new JButton("...");
-	private              boolean                       useOMERO                = false;
+	private final        JSpinner                      jSpinnerThreads;
+	private              boolean                       useOMERO;
 	private              SegmentationDialog.ConfigMode configMode;
 	
 	
@@ -52,15 +77,15 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		
 		JButton jButtonStart = new JButton("Start");
 		JButton jButtonQuit  = new JButton("Quit");
-		this.setTitle("Segmentation NucleusJ2");
-		this.setMinimumSize(new Dimension(400, 500));
-		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		
+		super.setTitle("Segmentation - NucleusJ3");
+		super.setMinimumSize(new Dimension(400, 500));
+		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		super.setLocationRelativeTo(null);
 		segmentationConfigFileDialog = new SegmentationConfigDialog(this);
 		segmentationConfigFileDialog.setVisible(false);
 		
-		container = getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
+		container = super.getContentPane();
+		LayoutManager mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -73,8 +98,8 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		omeroNoButton.setSelected(true);
 		omeroNoButton.addItemListener(this);
 		JPanel radioOmeroPanel = new JPanel();
-		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.X_AXIS));
-		JLabel jLabelOmero = new JLabel("Select from omero :");
+		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.LINE_AXIS));
+		JLabel jLabelOmero = new JLabel("Select from omero:");
 		radioOmeroPanel.add(jLabelOmero);
 		radioOmeroPanel.add(omeroYesButton);
 		radioOmeroPanel.add(omeroNoButton);
@@ -83,7 +108,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		
 		
 		// Local mode layout
-		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.Y_AXIS));
+		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        localPanel  = new JPanel();
 		GridBagLayout localLayout = new GridBagLayout();
@@ -105,7 +130,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		c.gridx = 2;
 		localPanel.add(sourceButton, c);
 		
-		JLabel jLabelOutput = new JLabel("Output directory :");
+		JLabel jLabelOutput = new JLabel("Output directory:");
 		c.gridx = 0;
 		c.gridy = 1;
 		localPanel.add(jLabelOutput, c);
@@ -126,7 +151,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		
 		
 		// Omero mode layout
-		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.Y_AXIS));
+		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
 		
 		JPanel        omeroPanel  = new JPanel();
 		GridBagLayout omeroLayout = new GridBagLayout();
@@ -137,7 +162,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		c.insets = new Insets(5, 0, 5, 20);
 		
 		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname :");
+		JLabel jLabelHostname = new JLabel("Hostname:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelHostname, c);
@@ -147,7 +172,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port :");
+		JLabel jLabelPort = new JLabel("Port:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPort, c);
@@ -157,7 +182,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username :");
+		JLabel jLabelUsername = new JLabel("Username:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelUsername, c);
@@ -167,7 +192,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password :");
+		JLabel jLabelPassword = new JLabel("Password:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelPassword, c);
@@ -177,7 +202,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		jPasswordField.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID :");
+		JLabel jLabelGroup = new JLabel("Group ID:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelGroup, c);
@@ -187,7 +212,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Source :");
+		JLabel jLabelSource = new JLabel("Source:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
@@ -199,7 +224,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		
 		
 		c.gridy = 6;
-		JLabel jLabelOutputProject = new JLabel("Output project :");
+		JLabel jLabelOutputProject = new JLabel("Output project:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelOutputProject, c);
@@ -214,7 +239,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		
 		// Config panel
 		JPanel configPanel = new JPanel();
-		configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.X_AXIS));
+		configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.LINE_AXIS));
 		JLabel jLabelConfig = new JLabel("Config file (optional):");
 		configPanel.add(jLabelConfig);
 		ButtonGroup buttonGroup = new ButtonGroup();
@@ -238,35 +263,46 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		defConf.setBorder(padding);
 		configMode = SegmentationDialog.ConfigMode.DEFAULT;
 		
+		// Thread preferences
+		JPanel threadPanel = new JPanel();
+		threadPanel.setLayout(new BoxLayout(threadPanel, BoxLayout.LINE_AXIS));
+		JLabel jLabelThreads = new JLabel("Number of used threads:");
+		threadPanel.add(jLabelThreads);
+		int          maxThreads = Runtime.getRuntime().availableProcessors();
+		SpinnerModel model      = new SpinnerNumberModel(Math.min(maxThreads, 1), 1, maxThreads, 1);
+		jSpinnerThreads = new JSpinner(model);
+		threadPanel.add(jSpinnerThreads);
+		threadPanel.setBorder(BorderFactory.createEmptyBorder(10, 100, 10, 100));
+		container.add(threadPanel, 4);
 		
 		// Start/Quit buttons
 		JPanel startQuitPanel = new JPanel();
-		startQuitPanel.setLayout(new BoxLayout(startQuitPanel, BoxLayout.X_AXIS));
+		startQuitPanel.setLayout(new BoxLayout(startQuitPanel, BoxLayout.LINE_AXIS));
 		startQuitPanel.add(jButtonStart);
 		startQuitPanel.add(jButtonQuit);
 		startQuitPanel.setBorder(padding);
-		container.add(startQuitPanel, 4);
+		container.add(startQuitPanel, 5);
 		
-		SegmentationDialog.QuitListener quitListener = new SegmentationDialog.QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		SegmentationDialog.StartListener startListener = new SegmentationDialog.StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
-		SegmentationDialog.ConfigListener configListener = new SegmentationDialog.ConfigListener(this);
+		ActionListener configListener = new ConfigListener(this);
 		jButtonConfig.addActionListener(configListener);
 		
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
-		jTextFieldHostname.setText("omero.gred-clermont.fr");
+		jTextFieldHostname.setText("omero.igred.fr");
 		jTextFieldPort.setText("4064");
 		
 		jTextFieldUsername.setText("");
 		jPasswordField.setText("");
 		jTextFieldGroup.setText("553");
 		
-		jComboBoxDataType.setSelectedIndex(3);
-		jTextFieldSourceID.setText("334953");
-		jTextFieldOutputProject.setText("9851");
+		jComboBoxDataType.setSelectedIndex(1);
+		jTextFieldSourceID.setText("");
+		jTextFieldOutputProject.setText("");
 	}
 	
 	
@@ -340,6 +376,11 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	}
 	
 	
+	public int getThreads() {
+		return (int) jSpinnerThreads.getValue();
+	}
+	
+	
 	public void actionPerformed(ActionEvent e) {
 		switch (((JButton) e.getSource()).getName()) {
 			case INPUT_CHOOSER:
@@ -388,7 +429,9 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 			useOMERO = true;
 		} else {
 			container.remove(3);
-			if (segmentationConfigFileDialog.isVisible()) segmentationConfigFileDialog.setVisible(false);
+			if (segmentationConfigFileDialog.isVisible()) {
+				segmentationConfigFileDialog.setVisible(false);
+			}
 			
 			Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 			if (source == rdoDefault) {
@@ -400,7 +443,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 				jButtonConfig.setBorder(padding);
 				configMode = SegmentationDialog.ConfigMode.INPUT;
 			} else if (source == rdoAddConfigFile) {
-				configFilePanel.setLayout(new BoxLayout(configFilePanel, BoxLayout.X_AXIS));
+				configFilePanel.setLayout(new BoxLayout(configFilePanel, BoxLayout.LINE_AXIS));
 				configFilePanel.add(jConfigFileChooser);
 				jConfigFileChooser.setMaximumSize(new Dimension(10000, 20));
 				confButton.addActionListener(this);
@@ -425,12 +468,12 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	
 	/** Classes listener to interact with the several elements of the window */
 	
-	static class QuitListener implements ActionListener {
-		final SegmentationDialog segmentationDialog;
+	private static class QuitListener implements ActionListener {
+		private final SegmentationDialog segmentationDialog;
 		
 		
 		/** @param segmentationDialog  */
-		public QuitListener(SegmentationDialog segmentationDialog) {
+		QuitListener(SegmentationDialog segmentationDialog) {
 			this.segmentationDialog = segmentationDialog;
 		}
 		
@@ -441,12 +484,12 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		
 	}
 	
-	class StartListener implements ActionListener {
-		final SegmentationDialog segmentationDialog;
+	private class StartListener implements ActionListener {
+		private final SegmentationDialog segmentationDialog;
 		
 		
 		/** @param autocropDialog  */
-		public StartListener(SegmentationDialog autocropDialog) {
+		StartListener(SegmentationDialog autocropDialog) {
 			segmentationDialog = autocropDialog;
 		}
 		
@@ -454,17 +497,21 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		public void actionPerformed(ActionEvent actionEvent) {
 			segmentationDialog.dispose();
 			segmentationConfigFileDialog.dispose();
-			dialogListener.OnStart();
+			try {
+				dialogListener.onStart();
+			} catch (AccessException | ServiceException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 		
 	}
 	
-	class ConfigListener implements ActionListener {
-		final SegmentationDialog segmentationDialog;
+	private class ConfigListener implements ActionListener {
+		private final SegmentationDialog segmentationDialog;
 		
 		
 		/** @param segmentationDialog  */
-		public ConfigListener(SegmentationDialog segmentationDialog) {
+		ConfigListener(SegmentationDialog segmentationDialog) {
 			this.segmentationDialog = segmentationDialog;
 		}
 		

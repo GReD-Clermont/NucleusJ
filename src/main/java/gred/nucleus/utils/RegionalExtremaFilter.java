@@ -84,12 +84,9 @@ public class RegionalExtremaFilter implements PlugInFilter {
 							for (kk = kCurrent - 1; kk <= kCurrent + 1; ++kk) {
 								for (ii = iCurrent - 1; ii <= iCurrent + 1; ++ii) {
 									for (jj = jCurrent - 1; jj <= jCurrent + 1; ++jj) {
-										if (kk >= 0 &&
-										    kk < depth &&
-										    ii >= 0 &&
-										    ii < width &&
-										    jj >= 0 &&
-										    jj < height &&
+										if (kk >= 0 && kk < depth &&
+										    ii >= 0 && ii < width &&
+										    jj >= 0 && jj < height &&
 										    tabMask[ii][jj][kk] > 0) {
 											if (imageStackOutput.getVoxel(ii, jj, kk) == currentValue) {
 												imageStackOutput.setVoxel(ii, jj, kk, 0);
@@ -183,9 +180,10 @@ public class RegionalExtremaFilter implements PlugInFilter {
 	 */
 	public void setMask(ImagePlus imagePlusEntree) {
 		ImageStack imagePlusLabel = imagePlusEntree.getStack();
-		final int  size1          = imagePlusLabel.getWidth();
-		final int  size2          = imagePlusLabel.getHeight();
-		final int  size3          = imagePlusLabel.getSize();
+		
+		int size1 = imagePlusLabel.getWidth();
+		int size2 = imagePlusLabel.getHeight();
+		int size3 = imagePlusLabel.getSize();
 		tabMask = new double[size1][size2][size3];
 		for (int i = 0; i < size1; ++i) {
 			for (int j = 0; j < size2; ++j) {

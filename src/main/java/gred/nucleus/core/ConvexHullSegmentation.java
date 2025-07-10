@@ -4,6 +4,8 @@ import gred.nucleus.segmentation.SegmentationParameters;
 import gred.nucleus.utils.ConvexHullImageMaker;
 import ij.ImagePlus;
 import ij.ImageStack;
+import inra.ijpb.morphology.Morphology;
+import inra.ijpb.morphology.Strel3D;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,8 +13,11 @@ import java.lang.invoke.MethodHandles;
 
 
 /**
- * Segmentation using a convex hull algorithm analysis on 3D segmented image imputed for the different axis combined : - XY - XZ -
- *
+ * Segmentation using a convex hull algorithm analysis on 3D segmented image imputed for the different axis combined :
+ * <ul><li>XY</li>
+ * <li>XZ</li>
+ * <li></li>
+ * </ul>
  *
  * @author Tristan Dubos and Axel Poulet
  */
@@ -41,7 +46,11 @@ public class ConvexHullSegmentation {
 		ImagePlus imagePlusYZ = nuc.runConvexHullDetection(imagePlusInput);
 		LOGGER.trace("YZ done");
 		
-		return imageMakingUnion(imagePlusInput, imagePlusXY, imagePlusXZ, imagePlusYZ);
+		ImagePlus result  = imageMakingUnion(imagePlusInput, imagePlusXY, imagePlusXZ, imagePlusYZ);
+		Strel3D   strel3D = Strel3D.Shape.CUBE.fromDiameter(5);
+		result.setStack(Morphology.opening(result.getStack(), strel3D));
+		
+		return result;
 	}
 	
 	
@@ -54,13 +63,13 @@ public class ConvexHullSegmentation {
 	 *
 	 * @return ImagePlus image results of the convex hull algorithm
 	 *
-	 * @see ConvexHullSegmentation#convexHullDetection(ImagePlus, SegmentationParameters) 
+	 * @see ConvexHullSegmentation#convexHullDetection(ImagePlus, SegmentationParameters)
 	 */
 	private ImagePlus imageMakingUnion(ImagePlus imagePlusInput,
 	                                   ImagePlus imagePlusXY,
 	                                   ImagePlus imagePlusXZ,
 	                                   ImagePlus imagePlusYZ) {
-		ImagePlus  imagePlusOutput  = imagePlusInput.duplicate();
+		ImagePlus imagePlusOutput = imagePlusInput.duplicate();
 		imagePlusOutput.setTitle(imagePlusInput.getTitle());
 		
 		ImageStack imageStackXY     = imagePlusXY.getStack();
@@ -68,14 +77,14 @@ public class ConvexHullSegmentation {
 		ImageStack imageStackYZ     = imagePlusYZ.getStack();
 		ImageStack imageStackOutput = imagePlusOutput.getStack();
 		
-		for (int k = 0; k < imagePlusXY.getNSlices(); ++k) {
-			for (int i = 0; i < imagePlusXY.getWidth(); ++i) {
-				for (int j = 0; j < imagePlusXY.getHeight(); ++j) {
-					if (imageStackXY.getVoxel(i, j, k) != 0 ||
-					    imageStackYZ.getVoxel(j, k, i) != 0 ||
-					    imageStackXZ.getVoxel(i, k, j) != 0) {
-						if (imageStackOutput.getVoxel(i, j, k) == 0) {
-							imageStackOutput.setVoxel(i, j, k, 255);
+		for (int d = 0; d < imagePlusXY.getNSlices(); ++d) {
+			for (int w = 0; w < imagePlusXY.getWidth(); ++w) {
+				for (int h = 0; h < imagePlusXY.getHeight(); ++h) {
+					if (imageStackXY.getVoxel(w, h, d) != 0 ||
+					    imageStackYZ.getVoxel(h, d, w) != 0 ||
+					    imageStackXZ.getVoxel(w, d, h) != 0) {
+						if (imageStackOutput.getVoxel(w, h, d) == 0) {
+							imageStackOutput.setVoxel(w, h, d, 255);
 						}
 					}
 				}

@@ -6,13 +6,14 @@ import java.io.File;
 
 
 public class FilesNames {
-	/** Path file input */
-	String  pathFile     = "";
+	
 	/** File name */
-	String  fileName     = "";
+	protected String  fileName     = "";
 	/** Complete pathFile */
-	String  fullPathFile = "";
-	boolean fileExists   = true;
+	protected String  fullPathFile = "";
+	/** Path file input */
+	private   String  pathFile     = "";
+	private   boolean fileExists   = true;
 	
 	
 	public FilesNames() {
@@ -30,14 +31,16 @@ public class FilesNames {
 	
 	
 	public String prefixNameFile() {
-		return FilenameUtils.removeExtension(this.fileName);
+		return FilenameUtils.removeExtension(fileName);
 	}
 	
 	
 	/** Method to check if file exists */
 	public void checkFileExists() {
-		File file = new File(this.fullPathFile);
-		if (!file.exists()) this.fileExists = false;
+		File file = new File(fullPathFile);
+		if (!file.exists()) {
+			this.fileExists = false;
+		}
 	}
 	
 	
@@ -49,7 +52,7 @@ public class FilesNames {
 	
 	/** @return path to file */
 	public String getPathFile() {
-		return this.pathFile;
+		return pathFile;
 	}
 	
 	

@@ -2,7 +2,11 @@ package gred.nucleus.imageprocessing;
 
 import ij.ImagePlus;
 import ij.plugin.ContrastEnhancer;
-import ij.process.*;
+import ij.process.AutoThresholder;
+import ij.process.ImageConverter;
+import ij.process.ImageStatistics;
+import ij.process.StackConverter;
+import ij.process.StackStatistics;
 
 
 public final class Thresholding {
@@ -25,6 +29,14 @@ public final class Thresholding {
 		ImageStatistics imageStatistics = new StackStatistics(imagePlusInput);
 		int[]           tHistogram      = imageStatistics.histogram;
 		return autoThresholder.getThreshold(AutoThresholder.Method.Otsu, tHistogram);
+	}
+	
+	
+	public static int computeThreshold(ImagePlus imagePlusInput, String typeThresholding) {
+		AutoThresholder autoThresholder = new AutoThresholder();
+		ImageStatistics imageStatistics = new StackStatistics(imagePlusInput);
+		int[]           tHistogram      = imageStatistics.histogram;
+		return autoThresholder.getThreshold(AutoThresholder.Method.valueOf(typeThresholding), tHistogram);
 	}
 	
 	
@@ -52,7 +64,6 @@ public final class Thresholding {
 			imageConverter.convertToGray8();
 		}
 		return imagePlusInput;
-		
 	}
 	
 }

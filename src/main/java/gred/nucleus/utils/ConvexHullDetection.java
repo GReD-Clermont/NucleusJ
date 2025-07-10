@@ -2,10 +2,16 @@ package gred.nucleus.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.awt.*;
+
+import java.awt.Point;
 import java.lang.invoke.MethodHandles;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Deque;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /*
  * Copyright (c) 2010, Bart Kiers
@@ -35,7 +41,7 @@ import java.util.List;
 
 /**
  * Class which run a 2D convex hull algorithm to a set of voxels
- *
+ * <p>
  * Currently uses an implementation of the Graham Scan
  */
 public class ConvexHullDetection {
@@ -45,162 +51,132 @@ public class ConvexHullDetection {
 	
 	/**
 	 * Run graham scan given a list of voxel after converting voxels to points
-	 * @param axesName current combined axe used
+	 *
+	 * @param axesName       current combined axe used
 	 * @param lVoxelBoundary voxels of the boundaries
+	 *
 	 * @return voxels of the convex hull
 	 */
-	public static List<VoxelRecord> runGrahamScan(String axesName, List<VoxelRecord> lVoxelBoundary){
-		List<Point> points      = new ArrayList<>();
+	public static List<VoxelRecord> runGrahamScan(String axesName, List<? extends VoxelRecord> lVoxelBoundary) {
+		List<Point> points      = new ArrayList<>(lVoxelBoundary.size());
 		double      constantAxe = 0;
 		
 		switch (axesName) {
 			case "xy":
 				constantAxe = lVoxelBoundary.get(0).k;
-				for (VoxelRecord v: lVoxelBoundary) {
-					points.add(new Point((int)v.i, (int)v.j));
+				for (VoxelRecord v : lVoxelBoundary) {
+					points.add(new Point((int) v.i, (int) v.j));
 				}
 				break;
 			case "xz":
 				constantAxe = lVoxelBoundary.get(0).j;
-				for (VoxelRecord v: lVoxelBoundary) {
-					points.add(new Point((int)v.i, (int)v.k));
+				for (VoxelRecord v : lVoxelBoundary) {
+					points.add(new Point((int) v.i, (int) v.k));
 				}
 				break;
 			case "yz":
 				constantAxe = lVoxelBoundary.get(0).i;
-				for (VoxelRecord v: lVoxelBoundary) {
-					points.add(new Point((int)v.j, (int)v.k));
+				for (VoxelRecord v : lVoxelBoundary) {
+					points.add(new Point((int) v.j, (int) v.k));
 				}
 				break;
+			default:
+				// This should never happen
+				LOGGER.error("Invalid axes name: {}", axesName);
+				throw new IllegalArgumentException("Invalid axes name: " + axesName);
 		}
 		
 		List<Point> pointsConvexHull = getConvexHull(points);
-		List<VoxelRecord> convexHull = new ArrayList<>();
+		
+		List<VoxelRecord> convexHull = new ArrayList<>(pointsConvexHull.size());
 		switch (axesName) {
 			case "xy":
-				for (Point p: pointsConvexHull) {
+				for (Point p : pointsConvexHull) {
 					VoxelRecord voxel = new VoxelRecord();
 					voxel.setLocation(p.x, p.y, constantAxe);
 					convexHull.add(voxel);
 				}
 				break;
 			case "xz":
-				for (Point p: pointsConvexHull) {
+				for (Point p : pointsConvexHull) {
 					VoxelRecord voxel = new VoxelRecord();
 					voxel.setLocation(p.x, constantAxe, p.y);
 					convexHull.add(voxel);
 				}
 				break;
 			case "yz":
-				for (Point p: pointsConvexHull) {
+				for (Point p : pointsConvexHull) {
 					VoxelRecord voxel = new VoxelRecord();
 					voxel.setLocation(constantAxe, p.x, p.y);
 					convexHull.add(voxel);
 				}
 				break;
+			default:
+				// This should never happen
+				LOGGER.error("Invalid axes name: {}", axesName);
+				throw new IllegalArgumentException("Invalid axes name: " + axesName);
 		}
 		convexHull.remove(0); // Remove the duplicate voxel (begin/end)
 		return convexHull;
 	}
 	
-	/**
-	 * An enum denoting a directional-turn between 3 points (vectors).
-	 */
-	protected enum Turn { CLOCKWISE, COUNTER_CLOCKWISE, COLLINEAR }
 	
 	/**
-	 * Returns true iff all points in <code>points</code> are collinear.
-	 *
-	 * @param points the list of points.
-	 * @return       true iff all points in <code>points</code> are collinear.
-	 */
-	protected static boolean areAllCollinear(List<Point> points) {
-		
-		if(points.size() < 2) {
-			return true;
-		}
-		
-		final Point a = points.get(0);
-		final Point b = points.get(1);
-		
-		for(int i = 2; i < points.size(); i++) {
-			
-			Point c = points.get(i);
-			
-			if(getTurn(a, b, c) != Turn.COLLINEAR) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * Returns the convex hull of the points created from <code>xs</code>
-	 * and <code>ys</code>. Note that the first and last point in the returned
-	 * <code>List&lt;java.awt.Point&gt;</code> are the same point.
+	 * Returns the convex hull of the points created from {@code xs} and {@code ys}. Note that the first and last point
+	 * in the returned {@code List<java.awt.Point>} are the same point.
 	 *
 	 * @param xs the x coordinates.
 	 * @param ys the y coordinates.
-	 * @return   the convex hull of the points created from <code>xs</code>
-	 *           and <code>ys</code>.
-	 * @throws IllegalArgumentException if <code>xs</code> and <code>ys</code>
-	 *                                  don't have the same size, if all points
-	 *                                  are collinear or if there are less than
-	 *                                  3 unique points present.
+	 *
+	 * @return the convex hull of the points created from {@code xs} and {@code ys}.
+	 *
+	 * @throws IllegalArgumentException if {@code xs} and {@code ys} don't have the same size, if all points are
+	 *                                  collinear or if there are less than 3 unique points present.
 	 */
-	public static List<Point> getConvexHull(int[] xs, int[] ys) throws IllegalArgumentException {
-		
-		if(xs.length != ys.length) {
+	public static List<Point> getConvexHull(int[] xs, int[] ys) {
+		if (xs.length != ys.length) {
 			throw new IllegalArgumentException("xs and ys don't have the same size");
 		}
 		
-		List<Point> points = new ArrayList<>();
+		List<Point> points = new ArrayList<>(xs.length);
 		
-		for(int i = 0; i < xs.length; i++) {
+		for (int i = 0; i < xs.length; i++) {
 			points.add(new Point(xs[i], ys[i]));
 		}
 		
 		return getConvexHull(points);
 	}
 	
+	
 	/**
-	 * Returns the convex hull of the points created from the list
-	 * <code>points</code>. Note that the first and last point in the
-	 * returned <code>List&lt;java.awt.Point&gt;</code> are the same
-	 * point.
+	 * Returns the convex hull of the points created from the list {@code points}. Note that the first and last point in
+	 * the returned {@code List<java.awt.Point>} are the same point.
 	 *
 	 * @param points the list of points.
-	 * @return       the convex hull of the points created from the list
-	 *               <code>points</code>.
-	 * @throws IllegalArgumentException if all points are collinear or if there
-	 *                                  are less than 3 unique points present.
+	 *
+	 * @return the convex hull of the points created from the list {@code points}.
+	 *
+	 * @throws IllegalArgumentException if all points are collinear or if there are less than 3 unique points present.
 	 */
-	public static List<Point> getConvexHull(List<Point> points) throws IllegalArgumentException {
-		
+	public static List<Point> getConvexHull(List<Point> points) {
 		List<Point> sorted = new ArrayList<>(getSortedPointSet(points));
 		
-		if(sorted.size() < 3) {
+		if (sorted.size() < 3) {
 			throw new IllegalArgumentException("can only create a convex hull of 3 or more unique points");
 		}
 		
-		//	if(areAllCollinear(sorted)) {
-		//		throw new IllegalArgumentException("cannot create a convex hull from collinear points");
-		//	}
-		
-		Stack<Point> stack = new Stack<>();
+		Deque<Point> stack = new ArrayDeque<>(sorted.size());
 		stack.push(sorted.get(0));
 		stack.push(sorted.get(1));
 		
 		for (int i = 2; i < sorted.size(); i++) {
-			
-			Point head = sorted.get(i);
+			Point head   = sorted.get(i);
 			Point middle = stack.pop();
-			Point tail = stack.peek();
+			Point tail   = stack.peek();
 			
 			Turn turn = getTurn(tail, middle, head);
 			
-			switch(turn) {
+			switch (turn) {
 				case COUNTER_CLOCKWISE:
 					stack.push(middle);
 					stack.push(head);
@@ -220,24 +196,25 @@ public class ConvexHullDetection {
 		return new ArrayList<>(stack);
 	}
 	
+	
 	/**
-	 * Returns the points with the lowest y coordinate. In case more than 1 such
-	 * point exists, the one with the lowest x coordinate is returned.
+	 * Returns the points with the lowest y coordinate. In case more than 1 such point exists, the one with the lowest x
+	 * coordinate is returned.
 	 *
 	 * @param points the list of points to return the lowest point from.
-	 * @return       the points with the lowest y coordinate. In case more than
-	 *               1 such point exists, the one with the lowest x coordinate
-	 *               is returned.
+	 *
+	 * @return the points with the lowest y coordinate. In case more than 1 such point exists, the one with the lowest x
+	 * coordinate is returned.
 	 */
-	protected static Point getLowestPoint(List<Point> points) {
+	protected static Point getLowestPoint(List<? extends Point> points) {
 		
 		Point lowest = points.get(0);
 		
-		for(int i = 1; i < points.size(); i++) {
+		for (int i = 1; i < points.size(); i++) {
 			
 			Point temp = points.get(i);
 			
-			if(temp.y < lowest.y || (temp.y == lowest.y && temp.x < lowest.x)) {
+			if (temp.y < lowest.y || temp.y == lowest.y && temp.x < lowest.x) {
 				lowest = temp;
 			}
 		}
@@ -245,52 +222,50 @@ public class ConvexHullDetection {
 		return lowest;
 	}
 	
+	
 	/**
-	 * Returns a sorted set of points from the list <code>points</code>. The
-	 * set of points are sorted in increasing order of the angle they and the
-	 * lowest point <tt>P</tt> make with the x-axis. If tow (or more) points
-	 * form the same angle towards <tt>P</tt>, the one closest to <tt>P</tt>
-	 * comes first.
+	 * Returns a sorted set of points from the list {@code points}. The set of points are sorted in increasing order of
+	 * the angle they and the lowest point {@code P} make with the x-axis. If tow (or more) points form the same angle
+	 * towards {@code P}, the one closest to {@code P} comes first.
 	 *
 	 * @param points the list of points to sort.
-	 * @return       a sorted set of points from the list <code>points</code>.
+	 *
+	 * @return a sorted set of points from the list {@code points}.
+	 *
 	 * @see ConvexHullDetection#getLowestPoint(java.util.List)
 	 */
 	protected static Set<Point> getSortedPointSet(List<Point> points) {
 		
-		final Point lowest = getLowestPoint(points);
+		Point lowest = getLowestPoint(points);
 		
-		TreeSet<Point> set = new TreeSet<>(new Comparator<Point>() {
+		Set<Point> set = new TreeSet<>(new Comparator<Point>() {
 			@Override
 			public int compare(Point a, Point b) {
 				
-				if(a == b || a.equals(b)) {
+				if (a == b || a.equals(b)) {
 					return 0;
 				}
 				
 				// use longs to guard against int-underflow
-				double thetaA = Math.atan2((long)a.y - lowest.y, (long)a.x - lowest.x);
-				double thetaB = Math.atan2((long)b.y - lowest.y, (long)b.x - lowest.x);
+				double thetaA = Math.atan2((long) a.y - lowest.y, (long) a.x - lowest.x);
+				double thetaB = Math.atan2((long) b.y - lowest.y, (long) b.x - lowest.x);
 				
-				if(thetaA < thetaB) {
+				if (thetaA < thetaB) {
 					return -1;
-				}
-				else if(thetaA > thetaB) {
+				} else if (thetaA > thetaB) {
 					return 1;
-				}
-				else {
+				} else {
 					// collinear with the 'lowest' point, let the point closest to it come first
 					
 					// use longs to guard against int-over/underflow
-					double distanceA = Math.sqrt((((long)lowest.x - a.x) * ((long)lowest.x - a.x)) +
-					                             (((long)lowest.y - a.y) * ((long)lowest.y - a.y)));
-					double distanceB = Math.sqrt((((long)lowest.x - b.x) * ((long)lowest.x - b.x)) +
-					                             (((long)lowest.y - b.y) * ((long)lowest.y - b.y)));
+					double distanceA = Math.sqrt(((long) lowest.x - a.x) * ((long) lowest.x - a.x) +
+					                             ((long) lowest.y - a.y) * ((long) lowest.y - a.y));
+					double distanceB = Math.sqrt(((long) lowest.x - b.x) * ((long) lowest.x - b.x) +
+					                             ((long) lowest.y - b.y) * ((long) lowest.y - b.y));
 					
-					if(distanceA < distanceB) {
+					if (distanceA < distanceB) {
 						return -1;
-					}
-					else {
+					} else {
 						return 1;
 					}
 				}
@@ -302,39 +277,41 @@ public class ConvexHullDetection {
 		return set;
 	}
 	
+	
 	/**
-	 * Returns the GrahamScan#Turn formed by traversing through the
-	 * ordered points <code>a</code>, <code>b</code> and <code>c</code>.
-	 * More specifically, the cross product <tt>C</tt> between the
-	 * 3 points (vectors) is calculated:
-	 *
-	 * <tt>(b.x-a.x * c.y-a.y) - (b.y-a.y * c.x-a.x)</tt>
-	 *
-	 * and if <tt>C</tt> is less than 0, the turn is CLOCKWISE, if
-	 * <tt>C</tt> is more than 0, the turn is COUNTER_CLOCKWISE, else
-	 * the three points are COLLINEAR.
+	 * Returns the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and {@code c}.
+	 * More specifically, the cross product {@code C} between the 3 points (vectors) is calculated:
+	 * <p>
+	 * {@code (b.x-a.x * c.y-a.y) - (b.y-a.y * c.x-a.x)}
+	 * <p>
+	 * and if {@code C} is less than 0, the turn is CLOCKWISE, if {@code C} is more than 0, the turn is
+	 * COUNTER_CLOCKWISE, else the three points are COLLINEAR.
 	 *
 	 * @param a the starting point.
 	 * @param b the second point.
 	 * @param c the end point.
-	 * @return the GrahamScan#Turn formed by traversing through the
-	 *         ordered points <code>a</code>, <code>b</code> and
-	 *         <code>c</code>.
+	 *
+	 * @return the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and {@code c}.
 	 */
 	protected static Turn getTurn(Point a, Point b, Point c) {
 		
 		// use longs to guard against int-over/underflow
-		long crossProduct = (((long)b.x - a.x) * ((long)c.y - a.y)) -
-		                    (((long)b.y - a.y) * ((long)c.x - a.x));
+		long crossProduct = ((long) b.x - a.x) * ((long) c.y - a.y) -
+		                    ((long) b.y - a.y) * ((long) c.x - a.x);
 		
-		if(crossProduct > 0) {
+		if (crossProduct > 0) {
 			return Turn.COUNTER_CLOCKWISE;
-		}
-		else if(crossProduct < 0) {
+		} else if (crossProduct < 0) {
 			return Turn.CLOCKWISE;
-		}
-		else {
+		} else {
 			return Turn.COLLINEAR;
 		}
 	}
+	
+	
+	/**
+	 * An enum denoting a directional-turn between 3 points (vectors).
+	 */
+	protected enum Turn {CLOCKWISE, COUNTER_CLOCKWISE, COLLINEAR}
+	
 }

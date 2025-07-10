@@ -1,11 +1,37 @@
 package gred.nucleus.dialogs;
 
-import javax.swing.*;
-import java.awt.*;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.border.Border;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -14,7 +40,7 @@ import java.awt.event.ItemListener;
  * @author pouletaxel
  */
 public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements ItemListener {
-	private static final long         serialVersionUID        = 1L;
+	private static final long         serialVersionUID        = 896147828956284745L;
 	private final        JTextField   jTextFieldWorkDirectory = new JTextField();
 	private final        JTextField   jTextFieldRawData       = new JTextField();
 	private final        JRadioButton jRadioButtonRhfV        = new JRadioButton("VolumeRHF");
@@ -33,302 +59,426 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	private final        JTextPane    readZCalibration        = new JTextPane();
 	private final        JCheckBox    addCalibrationBox       = new JCheckBox();
 	private final        JPanel       calibration;
-	private              boolean      start                   = false;
+	
+	private final IDialogListener dialogListener;
+	
+	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
+	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
+	private final JPanel         omeroModeLayout    = new JPanel();
+	private final JPanel         localModeLayout    = new JPanel();
+	private final JTextField     jTextFieldHostname = new JTextField();
+	private final JTextField     jTextFieldPort     = new JTextField();
+	private final JTextField     jTextFieldUsername = new JTextField();
+	private final JPasswordField jPasswordField     = new JPasswordField();
+	private final JTextField     jTextFieldGroup    = new JTextField();
+	
+	private final String[] dataTypes = {"Image", "Dataset"};
+	
+	private final JComboBox<String> jComboBoxDataType       = new JComboBox<>(dataTypes);
+	private final JComboBox<String> jComboBoxDataTypeNuc    = new JComboBox<>(dataTypes);
+	private final JComboBox<String> jComboBoxDataTypeCC     = new JComboBox<>(dataTypes);
+	private final JTextField        jTextFieldSourceID      = new JTextField();
+	private final JTextField        jTextFieldNucSegID      = new JTextField();
+	private final JTextField        jTextFieldOutputProject = new JTextField();
+	private final JTextField        jTextFieldCCsegID       = new JTextField();
+	private final Container         container;
+	
+	private boolean start;
+	private boolean useOMERO;
 	
 	
 	/** Architecture of the graphical windows */
-	public ChromocentersAnalysisPipelineBatchDialog() {
-		final String      font                      = "Albertus";
-		final String      boldFont                  = "Albertus Extra Bold (W1)";
-		final Container   container                 = getContentPane();
-		final JLabel      jLabelWorkDirectory       = new JLabel();
-		final JButton     jButtonWorkDirectory      = new JButton("Output Directory");
-		final JButton     jButtonStart              = new JButton("Start");
-		final JButton     jButtonQuit               = new JButton("Quit");
-		final JButton     jButtonRawData            = new JButton("Raw Data");
-		final ButtonGroup buttonGroupChoiceAnalysis = new ButtonGroup();
-		final ButtonGroup buttonGroupChoiceRhf      = new ButtonGroup();
-		JLabel            jLabelAnalysis;
-		this.setTitle("Chromocenters Analysis Pipeline (Batch)");
-		this.setSize(500, 600);
-		this.setLocationRelativeTo(null);
+	public ChromocentersAnalysisPipelineBatchDialog(IDialogListener dialogListener) {
+		final String font     = "Albertus";
+		final String boldFont = "Albertus Extra Bold (W1)";
+		container = super.getContentPane();
+		JLabel      jLabelWorkDirectory       = new JLabel("Work directory and data directory choice:");
+		JButton     jButtonWorkDirectory      = new JButton("Output Directory");
+		JButton     jButtonStart              = new JButton("Start");
+		JButton     jButtonQuit               = new JButton("Quit");
+		JButton     jButtonRawData            = new JButton("Raw Data");
+		ButtonGroup buttonGroupChoiceAnalysis = new ButtonGroup();
+		ButtonGroup buttonGroupChoiceRhf      = new ButtonGroup();
+		JLabel      jLabelAnalysis;
+		JLabel      jLabelAnalysis2;
+		super.setTitle("Chromocenters Analysis Pipeline (Batch)");
+		super.setSize(500, 700);
+		super.setLocationRelativeTo(null);
+		this.dialogListener = dialogListener;
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.rowHeights = new int[]{17, 200, 124, 7};
 		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.columnWidths = new int[]{236, 120, 72, 20};
 		container.setLayout(gridBagLayout);
-		container.add(jLabelWorkDirectory,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(0, 10, 0, 0),
-		                                     0,
-		                                     0));
-		jLabelWorkDirectory.setText("Work directory and data directory choice : ");
+		
+		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+		
+		// Use Omero ?
+		ButtonGroup bGroupOmeroMode = new ButtonGroup();
+		bGroupOmeroMode.add(omeroYesButton);
+		omeroYesButton.addItemListener(this);
+		bGroupOmeroMode.add(omeroNoButton);
+		omeroNoButton.setSelected(true);
+		omeroNoButton.addItemListener(this);
+		
+		JPanel radioOmeroPanel = new JPanel();
+		radioOmeroPanel.setLayout(new BoxLayout(radioOmeroPanel, BoxLayout.LINE_AXIS));
+		JLabel jLabelOmero = new JLabel("Select from omero:");
+		radioOmeroPanel.add(jLabelOmero);
+		radioOmeroPanel.add(omeroYesButton);
+		radioOmeroPanel.add(omeroNoButton);
+		
+		container.add(radioOmeroPanel,
+		              new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0,
+		                                     GridBagConstraints.FIRST_LINE_START,
+		                                     GridBagConstraints.HORIZONTAL,
+		                                     new Insets(10, 10, 0, 10), 0, 0));
+		
+		// Local mode layout
+		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
+		JPanel        localPanel  = new JPanel();
+		GridBagLayout localLayout = new GridBagLayout();
+		localLayout.columnWeights = new double[]{1, 5, 0.5};
+		localPanel.setLayout(localLayout);
+		
+		localPanel.add(jLabelWorkDirectory,
+		               new GridBagConstraints(0, 0, 3, 1, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(10, 10, 0, 10), 0, 0));
+		
 		JTextPane jTextPane = new JTextPane();
-		jTextPane.setText(
-				"The Raw Data directory must contain 3 subdirectories:\n1. for raw nuclei images, named RawDataNucleus. \n2. for segmented nuclei images, named SegmentedDataNucleus.\n3. for segmented images of chromocenters, named SegmentedDataCc.\nPlease keep the same file name during the image processing.");
+		jTextPane.setText("The Raw Data directory must contain 3 subdirectories:\n" +
+		                  "1. for raw nuclei images, named RawDataNucleus. \n" +
+		                  "2. for segmented nuclei images, named SegmentedDataNucleus.\n" +
+		                  "3. for segmented images of chromocenters, named SegmentedDataCc.\n" +
+		                  "Please keep the same file name during the image processing.");
 		jTextPane.setEditable(false);
-		container.add(jTextPane,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(20, 20, 0, 0),
-		                                     0,
-		                                     0));
-		container.add(jButtonRawData,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(110, 10, 0, 0),
-		                                     0,
-		                                     0));
-		jButtonRawData.setPreferredSize(new java.awt.Dimension(120, 21));
-		jButtonRawData.setFont(new java.awt.Font(font, Font.ITALIC, 10));
-		container.add(jTextFieldRawData,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(110, 160, 0, 0),
-		                                     0,
-		                                     0));
-		jTextFieldRawData.setPreferredSize(new java.awt.Dimension(280, 21));
-		jTextFieldRawData.setFont(new java.awt.Font(font, Font.ITALIC, 10));
-		container.add(jButtonWorkDirectory,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(150, 10, 0, 0),
-		                                     0,
-		                                     0));
-		jButtonWorkDirectory.setPreferredSize(new java.awt.Dimension(120, 21));
-		jButtonWorkDirectory.setFont(new java.awt.Font(font, Font.ITALIC, 10));
-		container.add(jTextFieldWorkDirectory,
-		              new GridBagConstraints(0,
-		                                     1,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(150, 160, 0, 0),
-		                                     0,
-		                                     0));
-		jTextFieldWorkDirectory.setPreferredSize(new java.awt.Dimension(280, 21));
-		jTextFieldWorkDirectory.setFont(new java.awt.Font(font, Font.ITALIC, 10));
+		localPanel.add(jTextPane,
+		               new GridBagConstraints(0, 1, 3, 1, 1.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(10, 10, 0, 10), 0, 0));
+		
+		localPanel.add(jButtonRawData,
+		               new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(10, 10, 0, 5), 0, 0));
+		jButtonRawData.setPreferredSize(new Dimension(120, 21));
+		jButtonRawData.setFont(new Font(font, Font.ITALIC, 10));
+		
+		localPanel.add(jTextFieldRawData,
+		               new GridBagConstraints(1, 2, 2, 1, 1.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(10, 5, 0, 10), 0, 0));
+		jTextFieldRawData.setPreferredSize(new Dimension(280, 21));
+		jTextFieldRawData.setFont(new Font(font, Font.ITALIC, 10));
+		
+		localPanel.add(jButtonWorkDirectory,
+		               new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.NONE,
+		                                      new Insets(10, 10, 0, 5), 0, 0));
+		jButtonWorkDirectory.setPreferredSize(new Dimension(120, 21));
+		jButtonWorkDirectory.setFont(new Font(font, Font.ITALIC, 10));
+		
+		localPanel.add(jTextFieldWorkDirectory,
+		               new GridBagConstraints(1, 3, 2, 1, 1.0, 0.0,
+		                                      GridBagConstraints.FIRST_LINE_START,
+		                                      GridBagConstraints.HORIZONTAL,
+		                                      new Insets(10, 5, 0, 10), 0, 0));
+		jTextFieldWorkDirectory.setPreferredSize(new Dimension(280, 21));
+		jTextFieldWorkDirectory.setFont(new Font(font, Font.ITALIC, 10));
+		
 		calibration = new JPanel();
 		calibration.setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.weightx = 2;
 		gc.weighty = 5;
-		gc.anchor = GridBagConstraints.NORTHWEST;
-		gc.ipady = GridBagConstraints.NORTHWEST;
+		gc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gc.fill = GridBagConstraints.HORIZONTAL;
 		JLabel calibrationLabel = new JLabel("Calibration:");
 		gc.gridx = 0;
 		gc.gridy = 0;
-		calibrationLabel.setAlignmentX(0);
-		calibration.add(calibrationLabel);
+		calibration.add(calibrationLabel, gc);
 		gc.gridx = 1;
 		gc.gridy = 0;
 		addCalibrationBox.setSelected(false);
 		addCalibrationBox.addItemListener(this);
 		calibration.add(addCalibrationBox, gc);
-		container.add(calibration,
-		              new GridBagConstraints(0,
-		                                     2,
-		                                     2,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(0, 0, 0, 0),
-		                                     0,
-		                                     0));
-		jLabelAnalysis = new JLabel();
+/*
+		localPanel.add(calibration,
+				new GridBagConstraints(0, 4, 3, 1, 1.0, 0.0,
+						GridBagConstraints.NORTHWEST,
+						GridBagConstraints.HORIZONTAL,
+						new Insets(10, 10, 0, 10), 0, 0));
+*/
+		jLabelAnalysis = new JLabel("Results file of interest:");
 		container.add(jLabelAnalysis,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
+		              new GridBagConstraints(0, 3, 5, 1, 0.0, 0.0,
+		                                     GridBagConstraints.LAST_LINE_START,
 		                                     GridBagConstraints.NONE,
-		                                     new Insets(30, 10, 0, 0),
-		                                     0,
-		                                     0));
-		jLabelAnalysis.setText("Type of Relative Heterochromatin Fraction:");
+		                                     new Insets(10, 10, 0, 10), 0, 0));
+		
+		//buttonGroupChoiceAnalysis.add(jRadioButtonNucCc);
+		//buttonGroupChoiceAnalysis.add(jRadioButtonCc);
+		//buttonGroupChoiceAnalysis.add(jRadioButtonNuc);
+		
+		JPanel analysisPanel = new JPanel();
+		analysisPanel.setLayout(new BoxLayout(analysisPanel, BoxLayout.LINE_AXIS));
+		analysisPanel.add(jRadioButtonNucCc);
+		analysisPanel.add(jRadioButtonCc);
+		analysisPanel.add(jRadioButtonNuc);
+		
+		container.add(analysisPanel,
+		              new GridBagConstraints(0, 4, 3, 1, 1.0, 0.0,
+		                                     GridBagConstraints.FIRST_LINE_START,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(10, 10, 0, 10), 0, 0));
+		jLabelAnalysis2 = new JLabel("Type of Relative Heterochromatin Fraction:");
+		container.add(jLabelAnalysis2,
+		              new GridBagConstraints(0, 5, 3, 1, 1.0, 0.0,
+		                                     GridBagConstraints.FIRST_LINE_START,
+		                                     GridBagConstraints.NONE,
+		                                     new Insets(10, 10, 0, 10), 0, 0));
 		buttonGroupChoiceRhf.add(jRadioButtonRhfV);
 		buttonGroupChoiceRhf.add(jRadioButtonRhfI);
 		buttonGroupChoiceRhf.add(jRadioButtonRhfIV);
-		jRadioButtonRhfV.setFont(new java.awt.Font(boldFont, Font.ITALIC, 12));
-		jRadioButtonRhfI.setFont(new java.awt.Font(boldFont, Font.ITALIC, 12));
-		jRadioButtonRhfIV.setFont(new java.awt.Font(boldFont, Font.ITALIC, 12));
-		container.add(jRadioButtonRhfV,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(60, 370, 0, 0),
-		                                     0,
-		                                     0));
-		container.add(jRadioButtonRhfI,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(60, 250, 0, 0),
-		                                     0,
-		                                     0));
-		container.add(jRadioButtonRhfIV,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(60, 20, 0, 0),
-		                                     0,
-		                                     0));
-		jRadioButtonRhfIV.setSelected(true);
-		jLabelAnalysis = new JLabel();
-		container.add(jLabelAnalysis,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(95, 10, 0, 0),
-		                                     0,
-		                                     0));
-		jLabelAnalysis.setText("Results file of interest: ");
-		buttonGroupChoiceAnalysis.add(jRadioButtonNucCc);
-		buttonGroupChoiceAnalysis.add(jRadioButtonCc);
-		buttonGroupChoiceAnalysis.add(jRadioButtonNuc);
-		jRadioButtonNuc.setFont(new java.awt.Font(boldFont, Font.ITALIC, 12));
-		jRadioButtonCc.setFont(new java.awt.Font(boldFont, Font.ITALIC, 12));
-		jRadioButtonNucCc.setFont(new java.awt.Font(boldFont, Font.ITALIC, 12));
-		container.add(jRadioButtonNuc,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(120, 370, 0, 0),
-		                                     0,
-		                                     0));
-		container.add(jRadioButtonCc,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(120, 250, 0, 0),
-		                                     0,
-		                                     0));
-		container.add(jRadioButtonNucCc,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(120, 20, 0, 0),
-		                                     0,
-		                                     0));
-		jRadioButtonNucCc.setSelected(true);
-		container.add(jButtonStart,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(190, 140, 0, 0),
-		                                     0,
-		                                     0));
-		jButtonStart.setPreferredSize(new java.awt.Dimension(120, 21));
-		container.add(jButtonQuit,
-		              new GridBagConstraints(0,
-		                                     3,
-		                                     0,
-		                                     0,
-		                                     0.0,
-		                                     0.0,
-		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
-		                                     new Insets(190, 10, 0, 0),
-		                                     0,
-		                                     0));
+		
+		JPanel rhfPanel = new JPanel();
+		rhfPanel.setLayout(new BoxLayout(rhfPanel, BoxLayout.LINE_AXIS));
+		rhfPanel.add(jRadioButtonRhfV);
+		rhfPanel.add(jRadioButtonRhfI);
+		rhfPanel.add(jRadioButtonRhfIV);
+		
+		container.add(rhfPanel,
+		              new GridBagConstraints(0, 6, 5, 1, 1.0, 0.0,
+		                                     GridBagConstraints.FIRST_LINE_START,
+		                                     GridBagConstraints.HORIZONTAL,
+		                                     new Insets(10, 10, 0, 10), 0, 0));
+		
+		localModeLayout.add(localPanel);
+		container.add(localModeLayout,
+		              new GridBagConstraints(0, 1, 4, 1, 1.0, 0.0,
+		                                     GridBagConstraints.FIRST_LINE_START,
+		                                     GridBagConstraints.HORIZONTAL,
+		                                     new Insets(10, 10, 10, 10), 0, 0));
+		
+		// Omero mode layout
+		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		JPanel        omeroPanel  = new JPanel();
+		GridBagLayout omeroLayout = new GridBagLayout();
+		omeroLayout.columnWeights = new double[]{0.1, 0.1, 2};
+		omeroPanel.setLayout(omeroLayout);
+		c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(5, 0, 5, 20);
+		
+		c.gridy = 0;
+		JLabel jLabelHostname = new JLabel("Hostname:");
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelHostname, c);
+		c.gridx = 1;
+		c.gridwidth = 2;
+		omeroPanel.add(jTextFieldHostname, c);
+		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
+		
+		c.gridy = 1;
+		JLabel jLabelPort = new JLabel("Port:");
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelPort, c);
+		c.gridx = 1;
+		c.gridwidth = 2;
+		omeroPanel.add(jTextFieldPort, c);
+		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
+		
+		c.gridy = 2;
+		JLabel jLabelUsername = new JLabel("Username:");
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelUsername, c);
+		c.gridx = 1;
+		c.gridwidth = 2;
+		omeroPanel.add(jTextFieldUsername, c);
+		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
+		
+		c.gridy = 3;
+		JLabel jLabelPassword = new JLabel("Password:");
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelPassword, c);
+		c.gridx = 1;
+		c.gridwidth = 2;
+		omeroPanel.add(jPasswordField, c);
+		jPasswordField.setMaximumSize(new Dimension(10000, 20));
+		
+		c.gridy = 4;
+		JLabel jLabelGroup = new JLabel("Group ID:");
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelGroup, c);
+		c.gridx = 1;
+		c.gridwidth = 2;
+		omeroPanel.add(jTextFieldGroup, c);
+		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
+		
+		c.gridy = 5;
+		JLabel jLabelSource = new JLabel("Image Source:");
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelSource, c);
+		c.gridx = 1;
+		omeroPanel.add(jComboBoxDataType, c);
+		c.gridx = 2;
+		omeroPanel.add(jTextFieldSourceID, c);
+		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
+		
+		c.gridy = 6;
+		JLabel jLabelToCrop = new JLabel("Nucleus segmentation:");
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelToCrop, c);
+		c.gridx = 1;
+		omeroPanel.add(jComboBoxDataTypeNuc, c);
+		c.gridx = 2;
+		omeroPanel.add(jTextFieldNucSegID, c);
+		jTextFieldNucSegID.setMaximumSize(new Dimension(20000, 20));
+		
+		c.gridy = 7;
+		JLabel channelToCrop = new JLabel("Chromocenter segmentation:");
+		c.gridx = 0;
+		omeroPanel.add(channelToCrop, c);
+		c.gridx = 1;
+		omeroPanel.add(jComboBoxDataTypeCC, c);
+		c.gridx = 2;
+		omeroPanel.add(jTextFieldCCsegID, c);
+		jTextFieldCCsegID.setMaximumSize(new Dimension(20, 20));
+		
+		
+		c.gridy = 8;
+		JLabel jLabelOutputProject = new JLabel("Output Dataset:");
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelOutputProject, c);
+		c.gridx = 1;
+		c.gridwidth = 2;
+		omeroPanel.add(jTextFieldOutputProject, c);
+		jTextFieldOutputProject.setMaximumSize(new Dimension(10000, 20));
+		container.add(calibration,
+		              new GridBagConstraints(0, 2, 3, 1, 1.0, 0.0,
+		                                     GridBagConstraints.FIRST_LINE_START,
+		                                     GridBagConstraints.HORIZONTAL,
+		                                     new Insets(10, 10, 0, 10), 0, 0));
+		
+		omeroPanel.setBorder(padding);
+		omeroModeLayout.add(omeroPanel);
+		//container.add(omeroModeLayout, 1);
+		
+		
+		// Buttons at the bottom
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.TRAILING));
+		buttonPanel.add(jButtonStart);
+		buttonPanel.add(jButtonQuit);
+		
+		container.add(buttonPanel,
+		              new GridBagConstraints(0, 7, 4, 1, 1.0, 0.0,
+		                                     GridBagConstraints.PAGE_END, GridBagConstraints.NONE,
+		                                     new Insets(10, 10, 10, 10), 0, 0));
+		
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
-		WorkDirectoryListener wdListener = new WorkDirectoryListener();
+		jButtonStart.setPreferredSize(new java.awt.Dimension(120, 21));
+		ActionListener wdListener = new WorkDirectoryListener();
 		jButtonWorkDirectory.addActionListener(wdListener);
-		RawDataDirectoryListener ddListener = new RawDataDirectoryListener();
+		ActionListener ddListener = new RawDataDirectoryListener();
 		jButtonRawData.addActionListener(ddListener);
-		QuitListener quitListener = new QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		StartListener startListener = new StartListener(this);
+		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
-		this.setVisible(true);
+		super.setVisible(true);
+		
+		// DEFAULT VALUES FOR TESTING :
+		jTextFieldHostname.setText("omero.igred.fr");
+		jTextFieldPort.setText(String.valueOf(4064));
+		
+		jTextFieldUsername.setText("");
+		jTextFieldGroup.setText("553");
+		jPasswordField.setText("");
+		jComboBoxDataType.setSelectedIndex(1);
+		jComboBoxDataTypeCC.setSelectedIndex(1);
+		jComboBoxDataTypeNuc.setSelectedIndex(1);
+		jTextFieldSourceID.setText("");
+		jTextFieldNucSegID.setText("");
+		jTextFieldCCsegID.setText("");
+		jTextFieldOutputProject.setText("");
 	}
 	
 	
-	/** @param args arguments */
-	public static void main(String[] args) {
-		ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog =
-				new ChromocentersAnalysisPipelineBatchDialog();
-		chromocentersAnalysisPipelineBatchDialog.setLocationRelativeTo(null);
+	public String getHostname() {
+		return jTextFieldHostname.getText();
+	}
+	
+	
+	public String getPort() {
+		return jTextFieldPort.getText();
+	}
+	
+	
+	public String getUsername() {
+		return jTextFieldUsername.getText();
+	}
+	
+	
+	public String getPassword() {
+		return String.valueOf(jPasswordField.getPassword());
+	}
+	
+	
+	public String getGroup() {
+		return jTextFieldGroup.getText();
+	}
+	
+	
+	public String getOutputProject() {
+		return jTextFieldOutputProject.getText();
+	}
+	
+	
+	public String getSourceID() {
+		return jTextFieldSourceID.getText();
+	}
+	
+	
+	public String getSegID() {
+		return jTextFieldNucSegID.getText();
+	}
+	
+	
+	public String getCcID() {
+		return jTextFieldCCsegID.getText();
+	}
+	
+	
+	public String getDataType() {
+		return (String) jComboBoxDataType.getSelectedItem();
+	}
+	
+	
+	public String getDataTypeSeg() {
+		return (String) jComboBoxDataTypeNuc.getSelectedItem();
+	}
+	
+	
+	public String getDataTypeCC() {
+		return (String) jComboBoxDataTypeCC.getSelectedItem();
 	}
 	
 	
@@ -380,6 +530,11 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	}
 	
 	
+	public boolean isOmeroEnabled() {
+		return useOMERO;
+	}
+	
+	
 	public boolean isNucAnalysis() {
 		return jRadioButtonNuc.isSelected();
 	}
@@ -405,10 +560,34 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	}
 	
 	
+	@Override
 	public void itemStateChanged(ItemEvent e) {
+		// Check if the Omero "Yes" button is selected
+		if (e.getSource() == omeroYesButton && e.getStateChange() == ItemEvent.SELECTED) {
+			// Show Omero layout and hide local mode layout
+			omeroModeLayout.setVisible(true);
+			localModeLayout.setVisible(false);
+			container.add(omeroModeLayout,
+			              new GridBagConstraints(0, 1, 4, 1, 1.0, 0.0,
+			                                     GridBagConstraints.FIRST_LINE_START,
+			                                     GridBagConstraints.HORIZONTAL,
+			                                     new Insets(10, 10, 10, 10), 0, 0));
+			useOMERO = true;
+		}
+		// Check if the Omero "No" button is selected
+		else if (e.getSource() == omeroNoButton && e.getStateChange() == ItemEvent.SELECTED) {
+			// Show local mode layout and hide Omero layout
+			omeroModeLayout.setVisible(false);
+			localModeLayout.setVisible(true);
+			container.add(localModeLayout,
+			              new GridBagConstraints(0, 1, 4, 1, 1.0, 0.0,
+			                                     GridBagConstraints.FIRST_LINE_START,
+			                                     GridBagConstraints.HORIZONTAL,
+			                                     new Insets(10, 10, 10, 10), 0, 0));
+			useOMERO = false;
+		}
 		if (e.getSource() == addCalibrationBox) {
 			if (addCalibrationBox.isSelected()) {
-				
 				GridBagConstraints gc = new GridBagConstraints();
 				gc.insets = new Insets(0, 0, 5, 0);
 				
@@ -461,7 +640,81 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 				readZCalibration.setVisible(true);
 				
 				//pack();
+			} else {
+				jLabelXCalibration.setVisible(false);
+				jLabelYCalibration.setVisible(false);
+				jLabelZCalibration.setVisible(false);
+				jLabelUnit.setVisible(false);
 				
+				readXCalibration.setVisible(false);
+				readYCalibration.setVisible(false);
+				readZCalibration.setVisible(false);
+				readUnit.setVisible(false);
+			}
+			validate();
+			repaint();
+		}
+		// Refresh the container to reflect the changes
+		container.revalidate();
+		container.repaint();
+	}
+	
+	
+	public void itemStateChanged2(ItemEvent e) {
+		if (e.getSource() == addCalibrationBox) {
+			if (addCalibrationBox.isSelected()) {
+				GridBagConstraints gc = new GridBagConstraints();
+				gc.insets = new Insets(0, 0, 5, 0);
+				
+				jLabelUnit.setText("Unit :");
+				gc.gridx = 0;
+				gc.gridy = 1;
+				calibration.add(jLabelUnit, gc);
+				readUnit.setPreferredSize(new Dimension(100, 20));
+				readUnit.setText("µm");
+				gc.gridx = 1;
+				gc.gridy = 1;
+				calibration.add(readUnit, gc);
+				jLabelUnit.setVisible(true);
+				readUnit.setVisible(true);
+				
+				jLabelXCalibration.setText("X :");
+				gc.gridx = 0;
+				gc.gridy = 2;
+				calibration.add(jLabelXCalibration, gc);
+				readXCalibration.setPreferredSize(new Dimension(100, 20));
+				readXCalibration.setText("1");
+				gc.gridx = 1;
+				gc.gridy = 2;
+				calibration.add(readXCalibration, gc);
+				jLabelXCalibration.setVisible(true);
+				readXCalibration.setVisible(true);
+				
+				jLabelYCalibration.setText("Y :");
+				gc.gridx = 0;
+				gc.gridy = 3;
+				calibration.add(jLabelYCalibration, gc);
+				readYCalibration.setPreferredSize(new Dimension(100, 20));
+				readYCalibration.setText("1");
+				gc.gridx = 1;
+				gc.gridy = 3;
+				calibration.add(readYCalibration, gc);
+				jLabelYCalibration.setVisible(true);
+				readYCalibration.setVisible(true);
+				
+				jLabelZCalibration.setText("Z :");
+				gc.gridx = 0;
+				gc.gridy = 4;
+				calibration.add(jLabelZCalibration, gc);
+				readZCalibration.setPreferredSize(new Dimension(100, 20));
+				readZCalibration.setText("1");
+				gc.gridx = 1;
+				gc.gridy = 4;
+				calibration.add(readZCalibration, gc);
+				jLabelZCalibration.setVisible(true);
+				readZCalibration.setVisible(true);
+				
+				//pack();
 			} else {
 				jLabelXCalibration.setVisible(false);
 				jLabelYCalibration.setVisible(false);
@@ -482,12 +735,12 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	/**
 	 *
 	 */
-	static class QuitListener implements ActionListener {
-		final ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog;
+	private static class QuitListener implements ActionListener {
+		private final ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog;
 		
 		
 		/** @param chromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog GUI */
-		public QuitListener(ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog) {
+		QuitListener(ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog) {
 			this.chromocentersAnalysisPipelineBatchDialog = chromocentersAnalysisPipelineBatchDialog;
 		}
 		
@@ -502,13 +755,13 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	}
 	
 	/** Classes listener to interact with the several elements of the window */
-	class StartListener implements ActionListener {
+	private class StartListener implements ActionListener {
 		
 		final ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog;
 		
 		
 		/** @param chromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog GUI */
-		public StartListener(ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog) {
+		StartListener(ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog) {
 			this.chromocentersAnalysisPipelineBatchDialog = chromocentersAnalysisPipelineBatchDialog;
 		}
 		
@@ -517,17 +770,19 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		 *
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
-				JOptionPane.showMessageDialog
-						(
-								null,
-								"You did not choose a work directory or the raw data",
-								"Error",
-								JOptionPane.ERROR_MESSAGE
-						);
+			if (!useOMERO && (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty())) {
+				JOptionPane.showMessageDialog(null,
+				                              "You did not choose a work directory or the raw data",
+				                              "Error",
+				                              JOptionPane.ERROR_MESSAGE);
 			} else {
 				start = true;
 				chromocentersAnalysisPipelineBatchDialog.dispose();
+				try {
+					dialogListener.onStart();
+				} catch (AccessException | ExecutionException | ServiceException e) {
+					throw new RuntimeException(e);
+				}
 			}
 		}
 		
@@ -546,8 +801,6 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused")
-				String run = jFileChooser.getSelectedFile().getName();
 				String workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldWorkDirectory.setText(workDirectory);
 			}
@@ -570,8 +823,6 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused")
-				String run = jFileChooser.getSelectedFile().getName();
 				String rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldRawData.setText(rawDataDirectory);
 			}

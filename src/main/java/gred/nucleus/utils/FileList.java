@@ -1,7 +1,11 @@
 package gred.nucleus.utils;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 
@@ -11,7 +15,9 @@ import java.util.regex.Pattern;
  * Several method on the file
  */
 public class FileList {
-	boolean windows;
+	private final boolean windows;
+	
+	private static final Pattern SEP = Pattern.compile(Pattern.quote(File.separator));
 	
 	
 	/**
@@ -51,7 +57,7 @@ public class FileList {
 				File[] tTempAfterElement  = stockFileAfter(i, tFileDirectory);
 				File[] tTempFile          = repertoryFileList(tFileDirectory[i].toString());
 				if (tTempFile.length != 0) {
-					tFileDirectory = this.resize(tTempBeforeElement, tTempAfterElement, tTempFile, i);
+					tFileDirectory = resize(tTempBeforeElement, tTempAfterElement, tTempFile, i);
 				}
 			}
 		}
@@ -100,7 +106,9 @@ public class FileList {
 	 */
 	public File[] stockFileBefore(int indexMax, File[] tFile) {
 		File[] tTempBeforeElement = new File[indexMax];
-		if (indexMax >= 0) System.arraycopy(tFile, 0, tTempBeforeElement, 0, indexMax);
+		if (indexMax >= 0) {
+			System.arraycopy(tFile, 0, tTempBeforeElement, 0, indexMax);
+		}
 		return tTempBeforeElement;
 	}
 	
@@ -114,7 +122,7 @@ public class FileList {
 	public File[] stockFileAfter(int indexMax, File[] tFile) {
 		File[] tTempAfterElement = new File[tFile.length - indexMax];
 		int    j                 = 0;
-		for (int k = (indexMax + 1); k < tFile.length; ++k) {
+		for (int k = indexMax + 1; k < tFile.length; ++k) {
 			tTempAfterElement[j] = tFile[k];
 			++j;
 		}
@@ -154,7 +162,7 @@ public class FileList {
 		}
 		String file = null;
 		for (File value : tFile) {
-			if (value.toString().matches((regex))) {
+			if (value.toString().matches(regex)) {
 				file = value.toString();
 				break;
 			}
@@ -177,7 +185,7 @@ public class FileList {
 		}
 		boolean testFile = false;
 		for (File file : tFile) {
-			if (file.toString().matches((regex))) {
+			if (file.toString().matches(regex)) {
 				testFile = true;
 				break;
 			}
@@ -192,13 +200,13 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public String[] getDirectoryFiles(String directory, File[] tFile) {
-		String[]             tRef         = directory.split(Pattern.quote(File.separator));
+	public String[] getDirectoryFiles(CharSequence directory, File[] tFile) {
+		String[]             tRef         = SEP.split(directory);
 		String[]             tTemp        = new String[0];
-		List<String>         arrayList    = new ArrayList<>();
-		Map<String, Integer> directoryMap = new HashMap<>();
+		List<String>         arrayList    = new ArrayList<>(tFile.length);
+		Map<String, Integer> directoryMap = new HashMap<>(tFile.length);
 		for (File file : tFile) {
-			String[] temp = file.toString().split(Pattern.quote(File.separator));
+			String[] temp = SEP.split(file.toString());
 			if (temp.length > tRef.length + 1 && !directoryMap.containsKey(temp[tRef.length])) {
 				directoryMap.put(temp[tRef.length], 1);
 				arrayList.add(temp[tRef.length]);

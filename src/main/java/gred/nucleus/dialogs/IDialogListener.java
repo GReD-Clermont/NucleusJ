@@ -1,6 +1,13 @@
 package gred.nucleus.dialogs;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+
+import java.util.concurrent.ExecutionException;
+
+
+@FunctionalInterface
 public interface IDialogListener {
-	void OnStart();
+	void onStart() throws AccessException, ServiceException, ExecutionException;
 	
 }
