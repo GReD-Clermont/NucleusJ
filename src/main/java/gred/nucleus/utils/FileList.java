@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 public class FileList {
 	private final boolean windows;
 	
+	private static final Pattern SEP = Pattern.compile(Pattern.quote(File.separator));
+	
 	
 	/**
 	 *
@@ -198,13 +200,13 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public String[] getDirectoryFiles(String directory, File[] tFile) {
-		String[]             tRef         = directory.split(Pattern.quote(File.separator));
+	public String[] getDirectoryFiles(CharSequence directory, File[] tFile) {
+		String[]             tRef         = SEP.split(directory);
 		String[]             tTemp        = new String[0];
-		List<String>         arrayList    = new ArrayList<>();
-		Map<String, Integer> directoryMap = new HashMap<>();
+		List<String>         arrayList    = new ArrayList<>(tFile.length);
+		Map<String, Integer> directoryMap = new HashMap<>(tFile.length);
 		for (File file : tFile) {
-			String[] temp = file.toString().split(Pattern.quote(File.separator));
+			String[] temp = SEP.split(file.toString());
 			if (temp.length > tRef.length + 1 && !directoryMap.containsKey(temp[tRef.length])) {
 				directoryMap.put(temp[tRef.length], 1);
 				arrayList.add(temp[tRef.length]);

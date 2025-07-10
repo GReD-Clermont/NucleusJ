@@ -43,6 +43,9 @@ public class AnnotateAutoCrop {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
+	private static final Pattern TAB = Pattern.compile("\\t");
+	private static final Pattern SEP = Pattern.compile(Pattern.quote(File.separator));
+	
 	/** List of the coordinate boxes of cropped nucleus */
 	private final List<String>       boxCoordinates;
 	/** the path of the directory where image with boxes is saved */
@@ -129,8 +132,8 @@ public class AnnotateAutoCrop {
 		converter.convertToRGB();
 		
 		for (String boxCoordinate : boxCoordinates) {
-			String[] splitLine = boxCoordinate.split("\\t");
-			String[] fileName  = splitLine[0].split(Pattern.quote(File.separator));
+			String[] splitLine = TAB.split(boxCoordinate);
+			String[] fileName  = SEP.split(splitLine[0]);
 			String[] name      = fileName[fileName.length - 1].split("_");
 			LOGGER.trace("Bad crop number {} saved to file: {}",
 			             Integer.parseInt(name[name.length - 2]),
@@ -156,8 +159,8 @@ public class AnnotateAutoCrop {
 		converter.convertToRGB();
 		
 		for (String boxCoordinate : boxCoordinates) {
-			String[] splitLine = boxCoordinate.split("\\t");
-			String[] fileName  = splitLine[0].split(Pattern.quote(File.separator));
+			String[] splitLine = TAB.split(boxCoordinate);
+			String[] fileName  = SEP.split(splitLine[0]);
 			String[] name      = fileName[fileName.length - 1].split("_");
 			LOGGER.info(boxCoordinate);
 			LOGGER.trace("Box number {} saved to file: {}",
@@ -228,8 +231,8 @@ public class AnnotateAutoCrop {
 	 * @param coordinateList List of coordinate of the current box of nucleus crop
 	 * @param boxNumber      Number of the crop in the list (used in the output of nucleus crop)
 	 */
-	private void addBoxCropToZProjection(String coordinateList, int boxNumber, Color color) {
-		String[] currentBox = coordinateList.split("\t");
+	private void addBoxCropToZProjection(CharSequence coordinateList, int boxNumber, Color color) {
+		String[] currentBox = TAB.split(coordinateList);
 		/* widthBox calculation */
 		int widthBox = Math.abs(Integer.parseInt(currentBox[2])) - Math.abs(Integer.parseInt(currentBox[1]));
 		/* heightBox calculation */

@@ -33,6 +33,12 @@ public class CropFromCoordinates {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
+	private static final Pattern SEP = Pattern.compile(Pattern.quote(File.separator));
+	private static final Pattern TAB = Pattern.compile("\\t");
+	
+	private static final Pattern HEADERS = Pattern.compile("^#.*");
+	private static final Pattern COLNAME = Pattern.compile("^FileName.*");
+	
 	private final String pathToCoordinates;
 	private final String pathToRaw;
 	private final String pathToOutput;
@@ -48,7 +54,7 @@ public class CropFromCoordinates {
 	 * @param pathToOutput        path where cropped nuclei will be saved
 	 */
 	public CropFromCoordinates(String pathToCoordinates, String pathToRawAndChannel, String pathToOutput) {
-		String[] splitRawInfo  = pathToRawAndChannel.split(Pattern.quote(File.separator));
+		String[] splitRawInfo  = SEP.split(pathToRawAndChannel);
 		String   channelNumber = splitRawInfo[splitRawInfo.length - 1];
 		this.channelToCrop = Integer.parseInt(channelNumber);
 		this.pathToRaw = pathToRawAndChannel.replace(File.separator + channelNumber, "");
@@ -111,7 +117,7 @@ public class CropFromCoordinates {
 	
 	public void runFromOMERO(String rawDatasetIDAndChannel, String outputProjectID, Client client)
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, FormatException {
-		String[] splitRawInfo  = rawDatasetIDAndChannel.split(File.separator);
+		String[] splitRawInfo  = SEP.split(rawDatasetIDAndChannel);
 		String   channelNumber = splitRawInfo[splitRawInfo.length - 1];
 		this.channelToCrop = Integer.parseInt(channelNumber);
 		String rawDatasetID = rawDatasetIDAndChannel.replace(File.separator + channelNumber, "");
@@ -148,30 +154,25 @@ public class CropFromCoordinates {
 	
 	
 	public Map<Double, Box> readCoordinatesTXT(File boxesFile) {
-		
 		Map<Double, Box> boxLists = new HashMap<>();
-		double           count    = 0;
+		
 		try (Scanner scanner = new Scanner(boxesFile)) {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				
-				if (!line.matches("^#.*") && !line.matches("^FileName.*")) {
-					String[] splitLine = line.split("\\t");
+				if (!HEADERS.matcher(line).matches() && !COLNAME.matcher(line).matches()) {
+					String[] splitLine = TAB.split(line);
 					
 					short xMax = (short) (Integer.parseInt(splitLine[3]) + Integer.parseInt(splitLine[6]));
 					short yMax = (short) (Integer.parseInt(splitLine[4]) + Integer.parseInt(splitLine[7]));
 					short zMax = (short) (Integer.parseInt(splitLine[5]) + Integer.parseInt(splitLine[8]));
 					
-					Box box = new Box(Short.parseShort(splitLine[3]),
-					                  xMax,
-					                  Short.parseShort(splitLine[4]),
-					                  yMax,
-					                  Short.parseShort(splitLine[5]),
-					                  zMax);
+					Box box = new Box(Short.parseShort(splitLine[3]), xMax,
+					                  Short.parseShort(splitLine[4]), yMax,
+					                  Short.parseShort(splitLine[5]), zMax);
 					
 					boxLists.put(Double.valueOf(splitLine[2]), box);
 				}
-				count++;
 			}
 		} catch (FileNotFoundException e) {
 			LOGGER.error("An error occurred.", e);

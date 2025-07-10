@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,6 +22,8 @@ public class AutocropTestChecker {
 	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	private static final Pattern TAB = Pattern.compile("\\t");
 	
 	public final String PATH_TO_COORDINATES;
 	
@@ -83,7 +86,7 @@ public class AutocropTestChecker {
 		} catch (IOException ex) {
 			LOGGER.error("Could not read file: {}", file, ex);
 		}
-		String[] resultLine = resultList.get(resultList.size() - 1).split("\t");
+		String[] resultLine = TAB.split(resultList.get(resultList.size() - 1));
 		result.setCropNb(Integer.parseInt(resultLine[1]));
 		
 		return result;
@@ -98,12 +101,12 @@ public class AutocropTestChecker {
 			LOGGER.error("Could not read file: {}", file, ex);
 		}
 		
-		fileList.removeIf(line -> line.startsWith("#"));
+		fileList.removeIf(line -> !line.isEmpty() && line.charAt(0) == '#');
 		fileList.removeIf(line -> line.startsWith("FileName"));
 		
-		List<CropResult> coordinates = new ArrayList<>();
+		List<CropResult> coordinates = new ArrayList<>(fileList.size());
 		for (String line : fileList) {
-			String[] resultLine = line.split("\t");
+			String[] resultLine = TAB.split(line);
 			coordinates.add(new CropResult(Integer.parseInt(resultLine[2]),
 			                               Integer.parseInt(resultLine[1]),
 			                               Integer.parseInt(resultLine[3]),
@@ -111,9 +114,7 @@ public class AutocropTestChecker {
 			                               Integer.parseInt(resultLine[5]),
 			                               Integer.parseInt(resultLine[6]),
 			                               Integer.parseInt(resultLine[7]),
-			                               Integer.parseInt(resultLine[8])
-			
-			));
+			                               Integer.parseInt(resultLine[8])));
 		}
 		result.setCoordinates(coordinates);
 		return result;

@@ -18,10 +18,17 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.compile;
+
 
 public class GenerateProjectionFromCoordinates {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	private static final Pattern TAB = compile("\\t");
+	private static final Pattern SEP = compile(Pattern.quote(File.separator));
+	
+	private static final Pattern COORDS_LINE = compile("^[^\\t]+(\\t\\d+){8}$");
 	
 	private final String pathToCoordinates;
 	
@@ -66,27 +73,27 @@ public class GenerateProjectionFromCoordinates {
 	 * @return list of boxes file to draw in red
 	 */
 	public static Map<String, String> readCoordinatesTXT(File boxFile) {
-		
 		Map<String, String> boxLists = new HashMap<>();
 		try (Scanner scanner = new Scanner(boxFile)) {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				
-				if (Pattern.matches("^((.*(\\\\|/))+)[^\\t]*(\\t\\d*)+\\d+$", line)) {
-					String[] splitLine = line.split("\\t");
-					String[] fileName  = splitLine[0].split(Pattern.quote(File.separator));
+				if (COORDS_LINE.matcher(line).matches()) {
+					String[] splitLine = TAB.split(line);
+					String[] fileName  = SEP.split(splitLine[0]);
+					String   name      = fileName[fileName.length - 1];
 					int      xMax      = Integer.parseInt(splitLine[3]) + Integer.parseInt(splitLine[6]);
 					int      yMax      = Integer.parseInt(splitLine[4]) + Integer.parseInt(splitLine[7]);
 					int      zMax      = Integer.parseInt(splitLine[5]) + Integer.parseInt(splitLine[8]);
-					boxLists.put(fileName[fileName.length - 1], splitLine[0] + "\t"
-					                                            + splitLine[3] + "\t"
-					                                            + xMax + "\t"
-					                                            + splitLine[4] + "\t"
-					                                            + yMax + "\t"
-					                                            + splitLine[5] + "\t"
-					                                            + zMax);
+					boxLists.put(name, splitLine[0] + "\t"
+					                   + splitLine[3] + "\t"
+					                   + xMax + "\t"
+					                   + splitLine[4] + "\t"
+					                   + yMax + "\t"
+					                   + splitLine[5] + "\t"
+					                   + zMax);
 					LOGGER.debug("Box {} value {}\t{}\t{}\t{}\t{}\t{}\t{}",
-					             fileName[fileName.length - 1],
+					             name,
 					             splitLine[0],
 					             splitLine[3],
 					             xMax,
@@ -123,7 +130,7 @@ public class GenerateProjectionFromCoordinates {
 		for (short i = 0; i < coordinates.getNumberFiles(); ++i) {
 			File                coordinateFile        = coordinates.getFile(i);
 			Map<String, String> listOfBoxes           = readCoordinatesTXT(coordinateFile);
-			List<String>        boxListsNucleiNotPass = new ArrayList<>();
+			List<String>        boxListsNucleiNotPass = new ArrayList<>(listOfBoxes.size());
 			Map<String, String> sortedMap             = new TreeMap<>(listOfBoxes);
 			for (Map.Entry<String, String> entry : sortedMap.entrySet()) {
 				if (!convexHullSegImages.checkIfFileExists(entry.getKey())) {
@@ -167,7 +174,7 @@ public class GenerateProjectionFromCoordinates {
 		for (short i = 0; i < coordinates.getNumberFiles(); ++i) {
 			File                coordinateFile        = coordinates.getFile(i);
 			Map<String, String> listOfBoxes           = readCoordinatesTXT(coordinateFile);
-			List<String>        boxListsNucleiNotPass = new ArrayList<>();
+			List<String>        boxListsNucleiNotPass = new ArrayList<>(listOfBoxes.size());
 			for (Map.Entry<String, String> entry : listOfBoxes.entrySet()) {
 				boxListsNucleiNotPass.add(entry.getValue());
 			}
