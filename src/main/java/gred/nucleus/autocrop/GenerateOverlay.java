@@ -119,9 +119,9 @@ public class GenerateOverlay {
 		Directory output = new Directory(pathToOutput);
 		output.checkAndCreateDir();
 		
-		Map<File, File> allDicToProj = this.gatherFilePairs();
+		Map<File, File> allDicToProj = gatherFilePairs();
 		
-		LUT fire = this.getNucleiLUT();
+		LUT fire = getNucleiLUT();
 		
 		// Process all pairs
 		for (Map.Entry<File, File> e : allDicToProj.entrySet()) {
@@ -171,7 +171,7 @@ public class GenerateOverlay {
 			saveFile(dic.toImagePlus(client), pathToDic + File.separator + dic.getName());
 		}
 		
-		this.run();
+		run();
 		
 		DatasetWrapper       outputDataset;
 		List<DatasetWrapper> datasets = outputProject.getDatasets("Overlay");

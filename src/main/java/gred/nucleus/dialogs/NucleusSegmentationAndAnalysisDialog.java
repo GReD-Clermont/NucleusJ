@@ -55,10 +55,10 @@ public class NucleusSegmentationAndAnalysisDialog extends JFrame {
 		JLabel       jLabelCalibration;
 		JLabel       jLabelUnitText;
 		ButtonGroup  buttonGroupChoiceAnalysis = new ButtonGroup();
-		this.setTitle("Nucleus segmentation & analysis");
-		this.setSize(500, 350);
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		container = getContentPane();
+		super.setTitle("Nucleus segmentation & analysis");
+		super.setSize(500, 350);
+		super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		container = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.rowHeights = new int[]{17, 100, 124, 7};
@@ -240,7 +240,7 @@ public class NucleusSegmentationAndAnalysisDialog extends JFrame {
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(160, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		QuitListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);

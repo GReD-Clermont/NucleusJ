@@ -102,12 +102,12 @@ public class SegmentationParameters extends PluginParameters {
 		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n"
 		                   + "#ConvexHullDetection (" + NucleusSegmentation.CONVEX_HULL_ALGORITHM + "): "
 		                   + ConvexHullDetection + "\n";
-		return this.headerInfo;
+		return headerInfo;
 	}
 	
 	
 	public int getMinVolumeNucleus() {
-		return this.minVolumeNucleus;
+		return minVolumeNucleus;
 	}
 	
 	
@@ -117,7 +117,7 @@ public class SegmentationParameters extends PluginParameters {
 	
 	
 	public int getMaxVolumeNucleus() {
-		return this.maxVolumeNucleus;
+		return maxVolumeNucleus;
 	}
 	
 	
@@ -127,7 +127,7 @@ public class SegmentationParameters extends PluginParameters {
 	
 	
 	public boolean getConvexHullDetection() {
-		return this.ConvexHullDetection;
+		return ConvexHullDetection;
 	}
 	
 }

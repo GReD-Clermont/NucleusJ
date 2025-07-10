@@ -52,9 +52,9 @@ public class SliceToStack {
 	public void run() {
 		Map<String, Integer> test = new HashMap<>();
 		
-		Directory directoryOutput = new Directory(this.pathToOutputDir);
-		Directory directoryInput  = new Directory(this.pathToSliceDir);
-		directoryInput.listImageFiles(this.pathToSliceDir);
+		Directory directoryOutput = new Directory(pathToOutputDir);
+		Directory directoryInput  = new Directory(pathToSliceDir);
+		directoryInput.listImageFiles(pathToSliceDir);
 		// Iterate over images from directory
 		for (short i = 0; i < directoryInput.getNumberFiles(); ++i) {
 			String tm = directoryInput.getFile(i).getName();

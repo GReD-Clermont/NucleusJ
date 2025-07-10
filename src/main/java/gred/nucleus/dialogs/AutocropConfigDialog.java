@@ -44,10 +44,10 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	
 	
 	public AutocropConfigDialog(AutocropDialog caller) {
-		this.setTitle("Autocrop - NucleusJ3");
-		this.setSize(600, 350);
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		Container     container     = getContentPane();
+		super.setTitle("Autocrop - NucleusJ3");
+		super.setSize(600, 350);
+		super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		Container     container     = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{1.0};
 		gridBagLayout.rowHeights = new int[]{300};
@@ -56,7 +56,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		
 		container.setLayout(gridBagLayout);
 		JButton buttonOK = new JButton("Done");
-		getRootPane().setDefaultButton(buttonOK);
+		super.getRootPane().setDefaultButton(buttonOK);
 		
         /*/\*\
         -------------------------- Crop Box ------------------------------------
@@ -247,7 +247,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(0, 0, 0, 0), 0, 0));
 		
-		this.setVisible(false);
+		super.setVisible(false);
 		
 		ActionListener startListener = new StartListener(this);
 		buttonOK.addActionListener(startListener);

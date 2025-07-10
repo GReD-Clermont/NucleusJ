@@ -78,7 +78,7 @@ public class ComputeNucleiParametersML {
 	 */
 	public void run() throws IOException, FormatException {
 		PluginParameters pluginParameters =
-				new PluginParameters(this.rawImagesInputDirectory, this.segmentedImagesDirectory);
+				new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
 		Directory directoryInput = new Directory(pluginParameters.getOutputFolder());
 		directoryInput.listImageFiles(pluginParameters.getOutputFolder());
 		directoryInput.checkIfEmpty();

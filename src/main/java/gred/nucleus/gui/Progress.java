@@ -29,10 +29,10 @@ public class Progress extends JFrame {
 		super.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		super.setLocationRelativeTo(null);
 		this.bar = new JProgressBar();
-		this.bar.setMaximum(nb);
-		this.bar.setMinimum(0);
-		this.bar.setStringPainted(true);
-		super.getContentPane().add(this.bar, BorderLayout.CENTER);
+		bar.setMaximum(nb);
+		bar.setMinimum(0);
+		bar.setStringPainted(true);
+		super.getContentPane().add(bar, BorderLayout.CENTER);
 		super.setVisible(true);
 	}
 	

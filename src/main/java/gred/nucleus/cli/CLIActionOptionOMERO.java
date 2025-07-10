@@ -86,37 +86,37 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 			username.setRequired(true);
 			group.setRequired(true);
 		}
-		this.options.addOption(this.action);
-		this.options.addOption(outputFolder);
-		this.options.addOption(this.port);
-		this.options.addOption(this.hostname);
-		this.options.addOption(this.username);
-		this.options.addOption(this.password);
-		this.options.addOption(this.group);
-		this.options.addOption(this.obj);
-		this.options.addOption(this.rhf);
+		options.addOption(action);
+		options.addOption(outputFolder);
+		options.addOption(port);
+		options.addOption(hostname);
+		options.addOption(username);
+		options.addOption(password);
+		options.addOption(group);
+		options.addOption(obj);
+		options.addOption(rhf);
 		String inputDescription = "OMERO  inputs 2 information separated with slash separator :  " +
 		                          "Type input: dataset, project, image, tag " +
 		                          "Input id number" + "\n" +
 		                          "Example : " + "\n" +
 		                          "          dataset/1622";
-		this.options.addOption(this.inputFolder);
-		this.inputFolder.setDescription(inputDescription);
-		this.options.addOption(this.inputFolder2);
+		options.addOption(inputFolder);
+		inputFolder.setDescription(inputDescription);
+		options.addOption(inputFolder2);
 		
-		this.options.addOption(this.omeroConfigFile);
+		options.addOption(omeroConfigFile);
 		try {
-			this.cmd = this.parser.parse(this.options, argument);
-			isTrue(availableActionOMERO(this.cmd.getOptionValue("action")));
+			this.cmd = parser.parse(options, argument);
+			isTrue(availableActionOMERO(cmd.getOptionValue("action")));
 		} catch (ParseException exp) {
 			System.console().writer().println(exp.getMessage() + "\n");
-			System.console().writer().println(getHelperInfo());
+			System.console().writer().println(super.getHelperInfo());
 			System.exit(1);
 		} catch (Exception exp) {
 			System.console().writer().println("Action option \"" +
-			                                  this.cmd.getOptionValue("action") +
+			                                  cmd.getOptionValue("action") +
 			                                  "\" not available" + "\n");
-			System.console().writer().println(getHelperInfo());
+			System.console().writer().println(super.getHelperInfo());
 			System.exit(1);
 		}
 	}

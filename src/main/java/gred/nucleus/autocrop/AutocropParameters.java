@@ -270,12 +270,10 @@ public class AutocropParameters extends PluginParameters {
 	                          String pathToConfigFile) {
 		super(inputFolder, outputFolder, pathToConfigFile);
 		addProperties(pathToConfigFile);
-		
 	}
 	
 	
 	public void addProperties(String pathToConfigFile) {
-		
 		Properties prop = new Properties();
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
 			prop.load(is);
@@ -346,7 +344,7 @@ public class AutocropParameters extends PluginParameters {
 		                   + "#boxesRegrouping: " + boxesRegrouping + "\n"
 		                   + "#boxesPercentSurfaceToFilter: " + boxesPercentSurfaceToFilter + "\n";
 		
-		return this.headerInfo;
+		return headerInfo;
 	}
 	
 	
@@ -356,7 +354,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return x box size in pixel
 	 */
 	public int getXCropBoxSize() {
-		return this.xCropBoxSize;
+		return xCropBoxSize;
 	}
 	
 	
@@ -366,7 +364,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return y box size in pixel
 	 */
 	public int getYCropBoxSize() {
-		return this.yCropBoxSize;
+		return yCropBoxSize;
 	}
 	
 	
@@ -376,7 +374,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return z box size in pixel
 	 */
 	public int getZCropBoxSize() {
-		return this.zCropBoxSize;
+		return zCropBoxSize;
 	}
 	
 	
@@ -386,7 +384,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return font size
 	 */
 	public int getNumberFontSize() {
-		return this.numberFontSize;
+		return numberFontSize;
 	}
 	
 	
@@ -396,7 +394,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return OTSU threshold used
 	 */
 	public int getThresholdOTSUComputing() {
-		return this.thresholdOTSUComputing;
+		return thresholdOTSUComputing;
 	}
 	
 	
@@ -406,7 +404,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return channel number
 	 */
 	public int getChannelToComputeThreshold() {
-		return this.channelToComputeThreshold;
+		return channelToComputeThreshold;
 	}
 	
 	
@@ -416,7 +414,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return minimum volume
 	 */
 	public int getMinVolumeNucleus() {
-		return this.minVolumeNucleus;
+		return minVolumeNucleus;
 	}
 	
 	
@@ -426,7 +424,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return maximum volume
 	 */
 	public int getMaxVolumeNucleus() {
-		return this.maxVolumeNucleus;
+		return maxVolumeNucleus;
 	}
 	
 	
@@ -436,7 +434,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return start slice
 	 */
 	public int getSlicesOTSUComputing() {
-		return this.slicesOTSUComputing;
+		return slicesOTSUComputing;
 	}
 	
 	
@@ -446,7 +444,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return status
 	 */
 	public boolean getBoxesRegrouping() {
-		return this.boxesRegrouping;
+		return boxesRegrouping;
 	}
 	
 	
@@ -456,7 +454,7 @@ public class AutocropParameters extends PluginParameters {
 	 * @return percentage surface
 	 */
 	public int getBoxesPercentSurfaceToFilter() {
-		return this.boxesPercentSurfaceToFilter;
+		return boxesPercentSurfaceToFilter;
 	}
 	
 }

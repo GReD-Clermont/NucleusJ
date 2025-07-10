@@ -124,11 +124,11 @@ public class AnnotateAutoCrop {
 	 */
 	public void runAddBadCrop() {
 		ContrastEnhancer enh = new ContrastEnhancer();
-		enh.stretchHistogram(this.zProjection, 0.35);
-		ImageConverter converter = new ImageConverter(this.zProjection);
+		enh.stretchHistogram(zProjection, 0.35);
+		ImageConverter converter = new ImageConverter(zProjection);
 		converter.convertToRGB();
 		
-		for (String boxCoordinate : this.boxCoordinates) {
+		for (String boxCoordinate : boxCoordinates) {
 			String[] splitLine = boxCoordinate.split("\\t");
 			String[] fileName  = splitLine[0].split(Pattern.quote(File.separator));
 			String[] name      = fileName[fileName.length - 1].split("_");
@@ -137,9 +137,9 @@ public class AnnotateAutoCrop {
 			             splitLine[0]);
 			addBoxCropToZProjection(boxCoordinate, Integer.parseInt(name[name.length - 2]), Color.RED);
 		}
-		String outFileZBox = this.outputDirPath + "_BAD_CROP_LESS.tif";
+		String outFileZBox = outputDirPath + "_BAD_CROP_LESS.tif";
 		LOGGER.debug("badCrop outFileZBox: {}", outFileZBox);
-		saveFile(this.zProjection, outFileZBox);
+		saveFile(zProjection, outFileZBox);
 	}
 	
 	
@@ -149,13 +149,13 @@ public class AnnotateAutoCrop {
 	 */
 	public void run() {
 		LOGGER.info("Z projection annotation.");
-		ZProjector zProjectionTmp = new ZProjector(this.zProjection);
+		ZProjector zProjectionTmp = new ZProjector(zProjection);
 		this.zProjection = projectionMax(zProjectionTmp);
 		adjustContrast(0.3);
-		ImageConverter converter = new ImageConverter(this.zProjection);
+		ImageConverter converter = new ImageConverter(zProjection);
 		converter.convertToRGB();
 		
-		for (String boxCoordinate : this.boxCoordinates) {
+		for (String boxCoordinate : boxCoordinates) {
 			String[] splitLine = boxCoordinate.split("\\t");
 			String[] fileName  = splitLine[0].split(Pattern.quote(File.separator));
 			String[] name      = fileName[fileName.length - 1].split("_");
@@ -165,11 +165,11 @@ public class AnnotateAutoCrop {
 			             splitLine[0]);
 			addBoxCropToZProjection(boxCoordinate, Integer.parseInt(name[name.length - 1]), Color.BLACK);
 		}
-		String outFileZBox = this.outputDirPath + File.separator +
+		String outFileZBox = outputDirPath + File.separator +
 		                     "zprojection" + File.separator +
 		                     outputFilesPrefix + "_Zprojection.tif";
 		LOGGER.info("outFileZBox: {}", outFileZBox);
-		saveFile(this.zProjection, outFileZBox);
+		saveFile(zProjection, outFileZBox);
 	}
 	
 	
@@ -195,7 +195,7 @@ public class AnnotateAutoCrop {
 		} else {
 			datasetID = datasets.get(0).getId();
 		}
-		String outFileZBox = this.outputDirPath + File.separator +
+		String outFileZBox = outputDirPath + File.separator +
 		                     "zprojection" + File.separator +
 		                     outputFilesPrefix + "_Zprojection.tif";
 		client.getDataset(datasetID).importImages(client, outFileZBox);
@@ -235,7 +235,7 @@ public class AnnotateAutoCrop {
 		/* heightBox calculation */
 		int heightBox = Math.abs(Integer.parseInt(currentBox[4])) - Math.abs(Integer.parseInt(currentBox[3]));
 		
-		ImageProcessor ip = this.zProjection.getProcessor();
+		ImageProcessor ip = zProjection.getProcessor();
 		/* Line color size parameter */
 		ip.setColor(color);
 		ip.setLineWidth(4);
@@ -264,9 +264,9 @@ public class AnnotateAutoCrop {
 	 */
 	private void adjustContrast(double contrast) {
 		ContrastEnhancer enh = new ContrastEnhancer();
-		enh.stretchHistogram(this.zProjection, contrast);
-		this.zProjection.getProcessor().invertLut();
-		this.zProjection.updateAndDraw();
+		enh.stretchHistogram(zProjection, contrast);
+		zProjection.getProcessor().invertLut();
+		zProjection.updateAndDraw();
 	}
 	
 }

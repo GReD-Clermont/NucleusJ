@@ -59,10 +59,10 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		JLabel             jLabelWorkDirectory;
 		JLabel             jLabelCalibration;
 		JLabel             jLabelNbCpu;
-		this.setTitle("Nucleus segmentation (batch)");
-		this.setSize(500, 450);
-		this.setLocationRelativeTo(null);
-		container = getContentPane();
+		super.setTitle("Nucleus segmentation (batch)");
+		super.setSize(500, 450);
+		super.setLocationRelativeTo(null);
+		container = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.rowHeights = new int[]{17, 71, 124, 7};
@@ -240,7 +240,7 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(130, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
-		this.setVisible(true);
+		super.setVisible(true);
 		WorkDirectoryListener wdListener = new WorkDirectoryListener();
 		jButtonWorkDirectory.addActionListener(wdListener);
 		RAwDataDirectoryListener ddListener = new RAwDataDirectoryListener();

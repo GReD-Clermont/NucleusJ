@@ -63,17 +63,17 @@ public class ChromocenterCalling {
 	 */
 	public void runSeveralImages2() throws IOException, FormatException {
 		DebugTools.enableLogging("OFF");
-		Directory directoryInput = new Directory(this.chromocenterParameters.getInputFolder());
-		directoryInput.listImageFiles(this.chromocenterParameters.getInputFolder());
+		Directory directoryInput = new Directory(chromocenterParameters.getInputFolder());
+		directoryInput.listImageFiles(chromocenterParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
 		String rhfChoice = "Volume";
-		String diffDir   = this.chromocenterParameters.outputFolder + "gradientImage";
+		String diffDir   = chromocenterParameters.outputFolder + "gradientImage";
 		File   file      = new File(diffDir);
 		if (!file.exists()) {
 			file.mkdir();
 		}
 		
-		String segCcDir = this.chromocenterParameters.outputFolder + "SegCC";
+		String segCcDir = chromocenterParameters.outputFolder + "SegCC";
 		file = new File(segCcDir);
 		if (!file.exists()) {
 			file.mkdir();
@@ -81,7 +81,7 @@ public class ChromocenterCalling {
 		// TODO A REFAIRE C EST MOCHE !!!!
 		System.out.println("size: " + directoryInput.getNumberFiles());
 		
-		if (this.isGui) {
+		if (isGui) {
 			progress = new Progress("Images Analysis: ", directoryInput.getNumberFiles());
 			progress.bar.setValue(0);
 		}
@@ -89,7 +89,7 @@ public class ChromocenterCalling {
 			File       currentFile      = directoryInput.getFile(i);
 			String     fileImg          = currentFile.toString();
 			FilesNames outPutFilesNames = new FilesNames(fileImg);
-			FilesNames segCC = new FilesNames(this.chromocenterParameters.segInputFolder +
+			FilesNames segCC = new FilesNames(chromocenterParameters.segInputFolder +
 			                                  File.separator + currentFile.getName());
 			this.prefix = outPutFilesNames.prefixNameFile();
 			ImagePlus[] _raw = BF.openImagePlus(currentFile.getAbsolutePath());
@@ -99,7 +99,7 @@ public class ChromocenterCalling {
 			String gradientFileName = diffDir + File.separator + currentFile.getName();
 			
 			if (segCC.fileExists()) {
-				ImagePlus[] segNuc = BF.openImagePlus(this.chromocenterParameters.segInputFolder +
+				ImagePlus[] segNuc = BF.openImagePlus(chromocenterParameters.segInputFolder +
 				                                      File.separator + currentFile.getName());
 				ChromocenterSegmentation chromocenterSegmentation = new ChromocenterSegmentation(_raw,
 				                                                                                 segNuc,
@@ -111,16 +111,16 @@ public class ChromocenterCalling {
 				                                                _raw[0],
 				                                                segNuc[0],
 				                                                IJ.openImage(outputFileName),
-				                                                this.chromocenterParameters);
+				                                                chromocenterParameters);
 			} else {
 				IJ.log(segCC.getPathFile() + " is missing");
 			}
-			if (this.isGui) {
+			if (isGui) {
 				progress.bar.setValue(1 + i);
 			}
 			
 		}
-		if (this.isGui) {
+		if (isGui) {
 			progress.dispose();
 		}
 	}
@@ -221,8 +221,8 @@ public class ChromocenterCalling {
 		ImagePlus[] rawImage = {image.toImagePlus(client)};
 		ImagePlus[] segImage = {mask.toImagePlus(client)};
 		
-		String diffDir  = this.chromocenterParameters.outputFolder + "gradientImage";
-		String segCcDir = this.chromocenterParameters.outputFolder + "SegCC";
+		String diffDir  = chromocenterParameters.outputFolder + "gradientImage";
+		String segCcDir = chromocenterParameters.outputFolder + "SegCC";
 		
 		FilesNames outPutFilesNames = new FilesNames(imageName);
 		this.prefix = outPutFilesNames.prefixNameFile();
@@ -246,13 +246,13 @@ public class ChromocenterCalling {
 		
 		File[] Parameters3DTab = nucleusChromocenterAnalysis.compute3DParameters(rhfChoice, rawImage[0], segImage[0],
 		                                                                         IJ.openImage(outputFileName),
-		                                                                         this.chromocenterParameters);
+		                                                                         chromocenterParameters);
 		
 		/* Import Segmented image to OMERO */
 		project = client.getProject(Long.parseLong(outputDirectory));
 		
 		/* Creating a Dataset in the Project */
-		outDataset = new DatasetWrapper("NODeJ_" + this.prefix, "");
+		outDataset = new DatasetWrapper("NODeJ_" + prefix, "");
 		Long datasetId = project.addDataset(client, outDataset).getId();
 		outDataset = client.getDataset(datasetId);
 		/*Import images and tabs to OMERO */
@@ -288,8 +288,8 @@ public class ChromocenterCalling {
 		ImagePlus[] rawImage = {image.toImagePlus(client)};
 		ImagePlus[] segImage = {mask.toImagePlus(client)};
 		
-		String diffDir  = this.chromocenterParameters.outputFolder + "gradientImage";
-		String segCcDir = this.chromocenterParameters.outputFolder + "SegCC";
+		String diffDir  = chromocenterParameters.outputFolder + "gradientImage";
+		String segCcDir = chromocenterParameters.outputFolder + "SegCC";
 		
 		FilesNames outPutFilesNames = new FilesNames(imageName);
 		
@@ -333,13 +333,13 @@ public class ChromocenterCalling {
 	 */
 	public void just3D() throws IOException, FormatException {
 		DebugTools.enableLogging("OFF");
-		Directory directoryInput = new Directory(this.chromocenterParameters.getInputFolder());
-		directoryInput.listImageFiles(this.chromocenterParameters.getInputFolder());
+		Directory directoryInput = new Directory(chromocenterParameters.getInputFolder());
+		directoryInput.listImageFiles(chromocenterParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
 		String rhfChoice            = "Volume";
-		String nameFileChromocenter = this.chromocenterParameters.outputFolder + "CcParameters.tab";
+		String nameFileChromocenter = chromocenterParameters.outputFolder + "CcParameters.tab";
 		
-		String segCcDir = this.chromocenterParameters.outputFolder;
+		String segCcDir = chromocenterParameters.outputFolder;
 		
 		// TODO A REFAIRE C EST MOCHE !!!!
 		System.out.println("size: " + directoryInput.getNumberFiles());
@@ -351,7 +351,7 @@ public class ChromocenterCalling {
 			ImagePlus[] raw = BF.openImagePlus(currentFile.getAbsolutePath());
 			imageType(raw[0]);
 			String outputFileName = segCcDir + File.separator + currentFile.getName();
-			ImagePlus[] segNuc = BF.openImagePlus(this.chromocenterParameters.segInputFolder +
+			ImagePlus[] segNuc = BF.openImagePlus(chromocenterParameters.segInputFolder +
 			                                      File.separator +
 			                                      currentFile.getName());
 			// ChromocenterAnalysis chromocenterAnalysis = new ChromocenterAnalysis(_raw[0],segNuc[0], IJ.openImage(outputFileName));

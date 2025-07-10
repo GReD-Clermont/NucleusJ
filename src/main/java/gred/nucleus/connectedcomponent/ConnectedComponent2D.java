@@ -87,17 +87,17 @@ public class ConnectedComponent2D extends ConnectedComponent {
 				componentInfo.setOnTheeBorder();
 			}
 			
-			if (iV + 1 < this.inputImage.getWidth()) {
+			if (iV + 1 < inputImage.getWidth()) {
 				iMax = (short) (iV + 1);
 			} else {
-				iMax = (short) (this.inputImage.getWidth() - 1);
+				iMax = (short) (inputImage.getWidth() - 1);
 				componentInfo.setOnTheeBorder();
 			}
 			
-			if (jV + 1 < this.inputImage.getHeight()) {
+			if (jV + 1 < inputImage.getHeight()) {
 				jMax = (short) (jV + 1);
 			} else {
-				jMax = (short) (this.inputImage.getHeight() - 1);
+				jMax = (short) (inputImage.getHeight() - 1);
 				componentInfo.setOnTheeBorder();
 			}
 			
@@ -106,7 +106,7 @@ public class ConnectedComponent2D extends ConnectedComponent {
 			for (short ii = iMin; ii <= iMax; ii++) {
 				for (short jj = jMin; jj <= jMax; jj++) {
 					// If the neighbor (different from VoxelRecordShort) is a 1 and not labeled
-					if (getLabel(ii, jj, 0) == 0 && imgProc.get(ii, jj) == this.foregroundColor) {
+					if (getLabel(ii, jj, 0) == 0 && imgProc.get(ii, jj) == foregroundColor) {
 						// Set the voxel's label
 						setLabel(ii, jj, 0, currentLabel);
 						// Increment component's cardinality
@@ -125,11 +125,11 @@ public class ConnectedComponent2D extends ConnectedComponent {
 	public void doLabelConnectedComponent() {
 		short          currentLabel = 0;
 		ImageProcessor imgProc      = inputImage.getProcessor();
-		for (short i = 0; i < this.inputImage.getWidth(); i++) {
-			for (short j = 0; j < this.inputImage.getHeight(); j++) {
-				if (imgProc.getPixel(i, j) == this.foregroundColor && getLabel(i, j, 0) == 0) {
+		for (short i = 0; i < inputImage.getWidth(); i++) {
+			for (short j = 0; j < inputImage.getHeight(); j++) {
+				if (imgProc.getPixel(i, j) == foregroundColor && getLabel(i, j, 0) == 0) {
 					currentLabel++;
-					this.labels[i][j][0] = currentLabel;
+					labels[i][j][0] = currentLabel;
 					ComponentInfo componentInfo = new ComponentInfo(currentLabel, 1, new Voxel(i, j, (short) 0), false);
 					try {
 						breadthFirstSearch(new Voxel(i, j, (short) 0), currentLabel, componentInfo);
@@ -137,7 +137,7 @@ public class ConnectedComponent2D extends ConnectedComponent {
 						LOGGER.error("An error occurred.", e);
 						System.exit(0);
 					}
-					this.compInfo.add(componentInfo);
+					compInfo.add(componentInfo);
 				}
 			}
 		}

@@ -65,7 +65,7 @@ public class ComponentInfo {
 	 * @return the label of the component
 	 */
 	public int getLabel() {
-		return this.label;
+		return label;
 	}
 	
 	
@@ -85,7 +85,7 @@ public class ComponentInfo {
 	 * @return the cardinality of the component
 	 */
 	public int getNumberOfPoints() {
-		return this.numberOfPoints;
+		return numberOfPoints;
 	}
 	
 	
@@ -111,7 +111,7 @@ public class ComponentInfo {
 	 * @return returns the component's flag indicating whether the component is on the border.
 	 */
 	public boolean isOnTheBorder() {
-		return this.componentOnTheBorder;
+		return componentOnTheBorder;
 	}
 	
 	
@@ -121,7 +121,7 @@ public class ComponentInfo {
 	 * @return the voxel representative of the component (one voxel in the component)
 	 */
 	public Voxel getRepresentant() {
-		return this.voxelRepresentant;
+		return voxelRepresentant;
 	}
 	
 	
@@ -133,7 +133,7 @@ public class ComponentInfo {
 	
 	@Override
 	public String toString() {
-		return "Component label : " + this.label + ", Number of points : " + this.numberOfPoints;
+		return "Component label : " + label + ", Number of points : " + numberOfPoints;
 	}
 	
 } // end of class ComponentInfo

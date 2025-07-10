@@ -27,7 +27,7 @@ public class Chromocenter extends ObjectCharacteristics {
 	
 	
 	public double getTotalIntensity() {
-		return this.totalIntensity;
+		return totalIntensity;
 	}
 	
 	
@@ -42,7 +42,7 @@ public class Chromocenter extends ObjectCharacteristics {
 	
 	
 	public double getCCValue() {
-		return this.ccValue;
+		return ccValue;
 	}
 	
 	
@@ -54,13 +54,13 @@ public class Chromocenter extends ObjectCharacteristics {
 	public void addChromocenter(double circularity, int nbPixel, double aspectRatio,
 	                            double perimeter, double area, double solidity, double round,
 	                            double ccVal) {
-		this.setCircularity(this.getCircularity() + circularity);
-		this.setNbPixel(this.getNbPixel() + nbPixel);
-		this.setAspectRatio(this.getAspectRatio() + aspectRatio);
-		this.setPerimeter(this.getPerimeter() + perimeter);
-		this.setArea(this.getArea() + area);
-		this.setSolidity(this.getSolidity() + solidity);
-		this.setRound(this.getRound() + round);
+		setCircularity(getCircularity() + circularity);
+		setNbPixel(getNbPixel() + nbPixel);
+		setAspectRatio(getAspectRatio() + aspectRatio);
+		setPerimeter(getPerimeter() + perimeter);
+		setArea(getArea() + area);
+		setSolidity(getSolidity() + solidity);
+		setRound(getRound() + round);
 		this.ccValue += ccVal;
 	}
 	
@@ -70,22 +70,22 @@ public class Chromocenter extends ObjectCharacteristics {
 	 */
 	public void avgChromocenters(int nbCc) {
 		if (nbCc > 0) {
-			this.setCircularity(this.getCircularity() / nbCc);
-			this.setNbPixel(this.getNbPixel() / nbCc);
-			this.setAspectRatio(this.getAspectRatio() / nbCc);
-			this.setPerimeter(this.getPerimeter() / nbCc);
-			this.setArea(this.getArea() / nbCc);
-			this.setSolidity(this.getSolidity() / nbCc);
-			this.setRound(this.getRound() / nbCc);
+			setCircularity(getCircularity() / nbCc);
+			setNbPixel(getNbPixel() / nbCc);
+			setAspectRatio(getAspectRatio() / nbCc);
+			setPerimeter(getPerimeter() / nbCc);
+			setArea(getArea() / nbCc);
+			setSolidity(getSolidity() / nbCc);
+			setRound(getRound() / nbCc);
 			this.ccValue /= nbCc;
 		} else {
-			this.setCircularity(0);
-			this.setNbPixel(0);
-			this.setAspectRatio(0);
-			this.setPerimeter(0);
-			this.setArea(0);
-			this.setSolidity(0);
-			this.setRound(0);
+			setCircularity(0);
+			setNbPixel(0);
+			setAspectRatio(0);
+			setPerimeter(0);
+			setArea(0);
+			setSolidity(0);
+			setRound(0);
 			this.ccValue = 0;
 		}
 	}

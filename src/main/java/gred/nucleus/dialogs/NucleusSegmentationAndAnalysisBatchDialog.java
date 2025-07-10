@@ -49,7 +49,7 @@ public class NucleusSegmentationAndAnalysisBatchDialog extends JFrame {
 	
 	/** Architecture of the graphical windows */
 	public NucleusSegmentationAndAnalysisBatchDialog() {
-		Container          container                 = getContentPane();
+		Container          container                 = super.getContentPane();
 		JButton            jButtonWorkDirectory      = new JButton("Output Directory");
 		JButton            jButtonStart              = new JButton("Start");
 		JButton            jButtonQuit               = new JButton("Quit");
@@ -68,9 +68,9 @@ public class NucleusSegmentationAndAnalysisBatchDialog extends JFrame {
 		JLabel             jLabelCalibration         = new JLabel();
 		JLabel             jLabelNbCpu               = new JLabel();
 		
-		this.setTitle("Nucleus segmentation & analysis (batch)");
-		this.setSize(500, 500);
-		this.setLocationRelativeTo(null);
+		super.setTitle("Nucleus segmentation & analysis (batch)");
+		super.setSize(500, 500);
+		super.setLocationRelativeTo(null);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.rowHeights = new int[]{17, 71, 124, 7};
@@ -282,7 +282,7 @@ public class NucleusSegmentationAndAnalysisBatchDialog extends JFrame {
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(210, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		WorkDirectoryListener wdListener = new WorkDirectoryListener();
 		jButtonWorkDirectory.addActionListener(wdListener);

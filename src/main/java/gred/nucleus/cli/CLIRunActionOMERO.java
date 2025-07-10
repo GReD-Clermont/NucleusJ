@@ -186,8 +186,8 @@ public class CLIRunActionOMERO {
 	
 	
 	public void getOMEROPassword() {
-		if (this.cmd.hasOption("password")) {
-			this.password = this.cmd.getOptionValue("password").toCharArray();
+		if (cmd.hasOption("password")) {
+			this.password = cmd.getOptionValue("password").toCharArray();
 		} else {
 			System.console().writer().println("Enter password: ");
 			Console con = System.console();
@@ -213,7 +213,7 @@ public class CLIRunActionOMERO {
 	public void run()
 	throws AccessException, ServiceException, OMEROServerError, IOException,
 	       ExecutionException, InterruptedException, FormatException {
-		switch (this.cmd.getOptionValue("action")) {
+		switch (cmd.getOptionValue("action")) {
 			case "autocrop":
 				runAutoCropOMERO();
 				break;
@@ -238,43 +238,43 @@ public class CLIRunActionOMERO {
 			default:
 				throw new IllegalArgumentException("Invalid action");
 		}
-		this.client.disconnect();
+		client.disconnect();
 	}
 	
 	
 	private void runComputeCC() {
 		ChromocenterAnalysis ccAnalysis = new ChromocenterAnalysis();
-		if (this.cmd.hasOption("rhf")) {
+		if (cmd.hasOption("rhf")) {
 			ccAnalysis.isRHFVolumeAndIntensity = cmd.getOptionValue("rhf");
 		}
-		if (this.cmd.hasOption("obj")) {
+		if (cmd.hasOption("obj")) {
 			ccAnalysis.isNucAndCcAnalysis = cmd.getOptionValue("obj");
 		}
 		
-		if (this.cmd.hasOption("calibration")) {
+		if (cmd.hasOption("calibration")) {
 			ccAnalysis.calibration = true;
 		}
-		if (this.cmd.hasOption("cX")) {
+		if (cmd.hasOption("cX")) {
 			ccAnalysis.xCalibration = Double.parseDouble(cmd.getOptionValue("cX"));
 		}
-		if (this.cmd.hasOption("cY")) {
+		if (cmd.hasOption("cY")) {
 			ccAnalysis.yCalibration = Double.parseDouble(cmd.getOptionValue("cY"));
 		}
-		if (this.cmd.hasOption("cZ")) {
+		if (cmd.hasOption("cZ")) {
 			ccAnalysis.zCalibration = Double.parseDouble(cmd.getOptionValue("cZ"));
 		}
-		if (this.cmd.hasOption("unit")) {
+		if (cmd.hasOption("unit")) {
 			ccAnalysis.unit = cmd.getOptionValue("unit");
 		}
 		
-		String inputDirectory = this.cmd.getOptionValue("input");
-		String segDirectory   = this.cmd.getOptionValue("input2");
-		String ccDirectory    = this.cmd.getOptionValue("input3");
+		String inputDirectory = cmd.getOptionValue("input");
+		String segDirectory   = cmd.getOptionValue("input2");
+		String ccDirectory    = cmd.getOptionValue("input3");
 		
 		try {
 			LOGGER.info("-Input Folder : {} -Segmentation Folder : {} -Chromocenters folder : {}", inputDirectory,
 			            segDirectory, ccDirectory);
-			ccAnalysis.runComputeParametersCC(inputDirectory, segDirectory, ccDirectory, this.client);
+			ccAnalysis.runComputeParametersCC(inputDirectory, segDirectory, ccDirectory, client);
 		} catch (Exception e) {
 			LOGGER.error("An error occurred while computing chromocenter parameters.", e);
 		}
@@ -284,50 +284,50 @@ public class CLIRunActionOMERO {
 	
 	private void runSegCC() {
 		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(".", ".", ".");
-		if (this.cmd.hasOption("isG")) {
+		if (cmd.hasOption("isG")) {
 			chromocenterParameters.gaussianOnRaw = true;
 		}
-		if (this.cmd.hasOption("isF")) {
+		if (cmd.hasOption("isF")) {
 			chromocenterParameters.sizeFilterConnectedComponent = true;
 		}
-		if (this.cmd.hasOption("noC")) {
+		if (cmd.hasOption("noC")) {
 			chromocenterParameters.noChange = true;
 		}
-		if (this.cmd.hasOption("gX")) {
+		if (cmd.hasOption("gX")) {
 			chromocenterParameters.gaussianBlurXsigma = Double.parseDouble(cmd.getOptionValue("gX"));
 		}
 		
-		if (this.cmd.hasOption("gY")) {
+		if (cmd.hasOption("gY")) {
 			chromocenterParameters.gaussianBlurYsigma = Double.parseDouble(cmd.getOptionValue("gY"));
 		}
 		
-		if (this.cmd.hasOption("gZ")) {
+		if (cmd.hasOption("gZ")) {
 			chromocenterParameters.gaussianBlurZsigma = Double.parseDouble(cmd.getOptionValue("gZ"));
 		}
 		
-		if (this.cmd.hasOption("min")) {
+		if (cmd.hasOption("min")) {
 			chromocenterParameters.minSizeConnectedComponent = Double.parseDouble(cmd.getOptionValue("min"));
 		}
-		if (this.cmd.hasOption("max")) {
+		if (cmd.hasOption("max")) {
 			chromocenterParameters.maxSizeConnectedComponent = Double.parseDouble(cmd.getOptionValue("max"));
 		}
-		if (this.cmd.hasOption("f")) {
+		if (cmd.hasOption("f")) {
 			chromocenterParameters.factor = Double.parseDouble(cmd.getOptionValue("f"));
 		}
-		if (this.cmd.hasOption("n")) {
+		if (cmd.hasOption("n")) {
 			chromocenterParameters.neighbours = Integer.parseInt(cmd.getOptionValue("n"));
 		}
 		
 		ChromocenterCalling ccCalling = new ChromocenterCalling(chromocenterParameters);
 		
-		String inputDirectory  = this.cmd.getOptionValue("input");
-		String segDirectory    = this.cmd.getOptionValue("input2");
-		String outputDirectory = this.cmd.getOptionValue("output");
+		String inputDirectory  = cmd.getOptionValue("input");
+		String segDirectory    = cmd.getOptionValue("input2");
+		String outputDirectory = cmd.getOptionValue("output");
 		
 		try {
 			LOGGER.info("-Input Folder : {} -Segmentation Folder : {} -Output : {}",
 			            inputDirectory, segDirectory, outputDirectory);
-			ccCalling.SegmentationOMERO(inputDirectory, segDirectory, outputDirectory, this.client);
+			ccCalling.SegmentationOMERO(inputDirectory, segDirectory, outputDirectory, client);
 		} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
 			LOGGER.error("An error occurred during chromocenter segmentation.", e);
 		} catch (InterruptedException e) {
@@ -343,24 +343,24 @@ public class CLIRunActionOMERO {
 	private void runAutoCropOMERO()
 	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
 		AutocropParameters autocropParameters = new AutocropParameters(".", ".");
-		if (this.cmd.hasOption("config")) {
-			autocropParameters.addGeneralProperties(this.cmd.getOptionValue("config"));
-			autocropParameters.addProperties(this.cmd.getOptionValue("config"));
+		if (cmd.hasOption("config")) {
+			autocropParameters.addGeneralProperties(cmd.getOptionValue("config"));
+			autocropParameters.addProperties(cmd.getOptionValue("config"));
 		}
 		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
-		if (this.cmd.hasOption("thresholding")) {
-			autoCrop.setTypeThresholding(this.cmd.getOptionValue("thresholding"));
+		if (cmd.hasOption("thresholding")) {
+			autoCrop.setTypeThresholding(cmd.getOptionValue("thresholding"));
 		}
 		
 		// add setter here !!!!
-		if (this.cmd.hasOption("threads")) {
-			autoCrop.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
-			LOGGER.info("Threads set to: {}", this.cmd.getOptionValue("threads"));
+		if (cmd.hasOption("threads")) {
+			autoCrop.setExecutorThreads(Integer.parseInt(cmd.getOptionValue("threads")));
+			LOGGER.info("Threads set to: {}", cmd.getOptionValue("threads"));
 		}
 		try {
-			autoCropOMERO(this.cmd.getOptionValue("input"),
-			              this.cmd.getOptionValue("output"),
-			              this.client,
+			autoCropOMERO(cmd.getOptionValue("input"),
+			              cmd.getOptionValue("output"),
+			              client,
 			              autoCrop);
 		} catch (IllegalArgumentException exp) {
 			LOGGER.error(exp.getMessage(), exp);
@@ -372,17 +372,17 @@ public class CLIRunActionOMERO {
 	public void runSegmentationOMERO()
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError {
 		SegmentationParameters segmentationParameters = new SegmentationParameters(".", ".");
-		if (this.cmd.hasOption("config")) {
-			segmentationParameters.addGeneralProperties(this.cmd.getOptionValue("config"));
-			segmentationParameters.addProperties(this.cmd.getOptionValue("config"));
+		if (cmd.hasOption("config")) {
+			segmentationParameters.addGeneralProperties(cmd.getOptionValue("config"));
+			segmentationParameters.addProperties(cmd.getOptionValue("config"));
 		}
 		SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
-		if (this.cmd.hasOption("threads")) {
-			otsuModified.setExecutorThreads(Integer.parseInt(this.cmd.getOptionValue("threads")));
+		if (cmd.hasOption("threads")) {
+			otsuModified.setExecutorThreads(Integer.parseInt(cmd.getOptionValue("threads")));
 		}
-		segmentationOMERO(this.cmd.getOptionValue("input"),
-		                  this.cmd.getOptionValue("output"),
-		                  this.client,
+		segmentationOMERO(cmd.getOptionValue("input"),
+		                  cmd.getOptionValue("output"),
+		                  client,
 		                  otsuModified);
 	}
 	
@@ -472,30 +472,30 @@ public class CLIRunActionOMERO {
 	private void runGenerateOV()
 	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException {
 		GenerateOverlay ov = new GenerateOverlay();
-		ov.runFromOMERO(this.cmd.getOptionValue("input"),
-		                this.cmd.getOptionValue("input2"),
-		                this.cmd.getOptionValue("output"),
-		                this.client);
+		ov.runFromOMERO(cmd.getOptionValue("input"),
+		                cmd.getOptionValue("input2"),
+		                cmd.getOptionValue("output"),
+		                client);
 	}
 	
 	
 	private void runCropFromCoordinate()
 	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, FormatException {
-		CropFromCoordinates cropFromCoordinates = new CropFromCoordinates(this.cmd.getOptionValue("input"));
-		cropFromCoordinates.runFromOMERO(this.cmd.getOptionValue("input2"),
-		                                 this.cmd.getOptionValue("output"),
-		                                 this.client);
+		CropFromCoordinates cropFromCoordinates = new CropFromCoordinates(cmd.getOptionValue("input"));
+		cropFromCoordinates.runFromOMERO(cmd.getOptionValue("input2"),
+		                                 cmd.getOptionValue("output"),
+		                                 client);
 	}
 	
 	
 	private void runComputeNucleiParameters()
 	throws AccessException, ServiceException, IOException, ExecutionException, InterruptedException {
 		ComputeNucleiParameters generateParameters = new ComputeNucleiParameters();
-		if (this.cmd.hasOption("config")) {
-			generateParameters.addConfigParameters(this.cmd.getOptionValue("config"));
+		if (cmd.hasOption("config")) {
+			generateParameters.addConfigParameters(cmd.getOptionValue("config"));
 		}
-		generateParameters.runFromOMERO(this.cmd.getOptionValue("input"),
-		                                this.cmd.getOptionValue("input2"),
+		generateParameters.runFromOMERO(cmd.getOptionValue("input"),
+		                                cmd.getOptionValue("input2"),
 		                                client);
 	}
 	

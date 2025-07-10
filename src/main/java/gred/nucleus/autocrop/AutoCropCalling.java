@@ -97,8 +97,8 @@ public class AutoCropCalling {
 		
 		ConcurrentHashMap<String, String> outputCropGeneralLines = new ConcurrentHashMap<>();
 		
-		Directory directoryInput = new Directory(this.autocropParameters.getInputFolder());
-		directoryInput.listImageFiles(this.autocropParameters.getInputFolder());
+		Directory directoryInput = new Directory(autocropParameters.getInputFolder());
+		directoryInput.listImageFiles(autocropParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
 		directoryInput.checkAndActualiseNDFiles();
 		
@@ -186,7 +186,7 @@ public class AutoCropCalling {
 		FilesNames outPutFilesNames = new FilesNames(fileImg);
 		this.prefix = outPutFilesNames.prefixNameFile();
 		try {
-			AutoCrop autoCrop = new AutoCrop(currentFile, this.prefix, this.autocropParameters);
+			AutoCrop autoCrop = new AutoCrop(currentFile, prefix, autocropParameters);
 			autoCrop.thresholdKernels(typeThresholding);
 			autoCrop.computeConnectedComponent();
 			autoCrop.componentBorderFilter();
@@ -199,9 +199,9 @@ public class AutoCropCalling {
 			autoCrop.writeAnalyseInfo();
 			AnnotateAutoCrop annotate = new AnnotateAutoCrop(autoCrop.getFileCoordinates(),
 			                                                 currentFile,
-			                                                 this.autocropParameters.getOutputFolder() + File.separator,
-			                                                 this.prefix,
-			                                                 this.autocropParameters);
+			                                                 autocropParameters.getOutputFolder() + File.separator,
+			                                                 prefix,
+			                                                 autocropParameters);
 			annotate.run();
 			this.outputCropGeneralInfo += autoCrop.getImageCropInfo();
 		} catch (Exception e) {
@@ -212,10 +212,10 @@ public class AutoCropCalling {
 	
 	
 	public void saveGeneralInfo() {
-		LOGGER.info("{}result_Autocrop_Analyse", this.autocropParameters.getInputFolder());
+		LOGGER.info("{}result_Autocrop_Analyse", autocropParameters.getInputFolder());
 		OutputTextFile resultFileOutput =
-				new OutputTextFile(this.autocropParameters.getOutputFolder() + "result_Autocrop_Analyse.csv");
-		resultFileOutput.saveTextFile(this.outputCropGeneralInfo, true);
+				new OutputTextFile(autocropParameters.getOutputFolder() + "result_Autocrop_Analyse.csv");
+		resultFileOutput.saveTextFile(outputCropGeneralInfo, true);
 	}
 	
 	
@@ -237,9 +237,9 @@ public class AutoCropCalling {
 		autoCrop.writeAnalyseInfoOMERO(outputsDatImages[autocropParameters.getChannelToComputeThreshold()], client);
 		AnnotateAutoCrop annotate = new AnnotateAutoCrop(autoCrop.getFileCoordinates(),
 		                                                 autoCrop.getRawImage(),
-		                                                 this.autocropParameters.getOutputFolder() + File.separator,
+		                                                 autocropParameters.getOutputFolder() + File.separator,
 		                                                 prefix,
-		                                                 this.autocropParameters);
+		                                                 autocropParameters);
 		annotate.run();
 		long outputProject = -1;
 		// TODO Find a better way to get output project (maybe just pass it as a parameter)
@@ -366,10 +366,10 @@ public class AutoCropCalling {
 	
 	public void saveGeneralInfoOmero(Client client, Long[] outputsDatImages)
 	throws InterruptedException {
-		String         resultPath       = this.autocropParameters.getOutputFolder() + "result_Autocrop_Analyse.csv";
+		String         resultPath       = autocropParameters.getOutputFolder() + "result_Autocrop_Analyse.csv";
 		File           resultFile       = new File(resultPath);
 		OutputTextFile resultFileOutput = new OutputTextFile(resultPath);
-		resultFileOutput.saveTextFile(this.outputCropGeneralInfo, false);
+		resultFileOutput.saveTextFile(outputCropGeneralInfo, false);
 		
 		try {
 			client.getDataset(outputsDatImages[autocropParameters.getChannelToComputeThreshold()])

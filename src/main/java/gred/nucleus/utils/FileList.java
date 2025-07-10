@@ -55,7 +55,7 @@ public class FileList {
 				File[] tTempAfterElement  = stockFileAfter(i, tFileDirectory);
 				File[] tTempFile          = repertoryFileList(tFileDirectory[i].toString());
 				if (tTempFile.length != 0) {
-					tFileDirectory = this.resize(tTempBeforeElement, tTempAfterElement, tTempFile, i);
+					tFileDirectory = resize(tTempBeforeElement, tTempAfterElement, tTempFile, i);
 				}
 			}
 		}

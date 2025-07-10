@@ -91,7 +91,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	public ChromocentersAnalysisPipelineBatchDialog(IDialogListener dialogListener) {
 		final String font     = "Albertus";
 		final String boldFont = "Albertus Extra Bold (W1)";
-		container = getContentPane();
+		container = super.getContentPane();
 		JLabel      jLabelWorkDirectory       = new JLabel("Work directory and data directory choice : ");
 		JButton     jButtonWorkDirectory      = new JButton("Output Directory");
 		JButton     jButtonStart              = new JButton("Start");
@@ -101,9 +101,9 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		ButtonGroup buttonGroupChoiceRhf      = new ButtonGroup();
 		JLabel      jLabelAnalysis;
 		JLabel      jLabelAnalysis2;
-		this.setTitle("Chromocenters Analysis Pipeline (Batch)");
-		this.setSize(500, 700);
-		this.setLocationRelativeTo(null);
+		super.setTitle("Chromocenters Analysis Pipeline (Batch)");
+		super.setSize(500, 700);
+		super.setLocationRelativeTo(null);
 		this.dialogListener = dialogListener;
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
@@ -403,7 +403,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		jButtonQuit.addActionListener(quitListener);
 		ActionListener startListener = new StartListener(this);
 		jButtonStart.addActionListener(startListener);
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
 		jTextFieldHostname.setText("omero.igred.fr");

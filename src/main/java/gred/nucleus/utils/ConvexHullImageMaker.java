@@ -37,7 +37,7 @@ public class ConvexHullImageMaker {
 	 * @see gred.nucleus.core.ConvexHullSegmentation
 	 */
 	public ImagePlus runConvexHullDetection(ImagePlus imagePlusBinary) {
-		LOGGER.debug("Computing convex hull algorithm for axes {}.", this.axesName);
+		LOGGER.debug("Computing convex hull algorithm for axes {}.", axesName);
 		ImagePlus imagePlusCorrected = new ImagePlus();
 		ImagePlus imagePlusBlack     = new ImagePlus();
 		int       depth;

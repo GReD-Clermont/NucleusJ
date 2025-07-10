@@ -82,7 +82,8 @@ public class PluginParameters {
 	}
 	
 	
-	public PluginParameters(String inputFolder, String outputFolder, double xCal, double yCal, double zCal, boolean gaussian) {
+	public PluginParameters(String inputFolder, String outputFolder, double xCal, double yCal, double zCal,
+	                        boolean gaussian) {
 		checkInputPaths(inputFolder, outputFolder);
 		Directory dirOutput = new Directory(outputFolder);
 		dirOutput.checkAndCreateDir();
@@ -164,7 +165,7 @@ public class PluginParameters {
 	 * @return input path folder
 	 */
 	public String getInputFolder() {
-		return this.inputFolder;
+		return inputFolder;
 	}
 	
 	
@@ -174,7 +175,7 @@ public class PluginParameters {
 	 * @return output path folder
 	 */
 	public String getOutputFolder() {
-		return this.outputFolder;
+		return outputFolder;
 	}
 	
 	
@@ -187,10 +188,10 @@ public class PluginParameters {
 	public String getAnalysisParameters() {
 		this.headerInfo = "#Header \n"
 		                  + "#Start time analysis: " + getLocalTime() + "\n"
-		                  + "#Input folder: " + this.inputFolder + "\n"
-		                  + "#Output folder: " + this.outputFolder + "\n"
+		                  + "#Input folder: " + inputFolder + "\n"
+		                  + "#Output folder: " + outputFolder + "\n"
 		                  + "#Calibration:" + getInfoCalibration() + "\n";
-		return this.headerInfo;
+		return headerInfo;
 		
 	}
 	
@@ -198,18 +199,18 @@ public class PluginParameters {
 	public String getAnalysisParametersNodeJ() {
 		this.headerInfo = "#Header \n"
 		                  + "#Start time analysis: " + getLocalTime() + "\n"
-		                  + "#Input folder: " + this.inputFolder + "\n"
-		                  + "#Output folder: " + this.outputFolder + "\n"
+		                  + "#Input folder: " + inputFolder + "\n"
+		                  + "#Output folder: " + outputFolder + "\n"
 		                  + "#Gaussian Blur:" + getInfoGaussianBlur() + "\n";
-		return this.headerInfo;
+		return headerInfo;
 		
 	}
 	
 	
 	public String getInfoGaussianBlur() {
 		String parametersInfo;
-		if (this.gaussianIsOn) {
-			parametersInfo = "x:" + this.xCal + "-y:" + this.yCal + "-z:" + this.zCal;
+		if (gaussianIsOn) {
+			parametersInfo = "x:" + xCal + "-y:" + yCal + "-z:" + zCal;
 		} else {
 			parametersInfo = "False";
 		}
@@ -225,8 +226,8 @@ public class PluginParameters {
 	 */
 	public String getInfoCalibration() {
 		String parametersInfo;
-		if (this.manualParameter) {
-			parametersInfo = "x:" + this.xCal + "-y:" + this.yCal + "-z:" + this.zCal;
+		if (manualParameter) {
+			parametersInfo = "x:" + xCal + "-y:" + yCal + "-z:" + zCal;
 		} else {
 			parametersInfo = "x:default-y:default-z:default";
 		}
@@ -246,13 +247,13 @@ public class PluginParameters {
 	
 	
 	public double getVoxelVolume() {
-		return this.xCal * this.yCal * this.zCal;
+		return xCal * yCal * zCal;
 		
 	}
 	
 	
 	public double getXCal() {
-		return this.xCal;
+		return xCal;
 	}
 	
 	
@@ -263,7 +264,7 @@ public class PluginParameters {
 	
 	
 	public double getYCal() {
-		return this.yCal;
+		return yCal;
 	}
 	
 	
@@ -274,7 +275,7 @@ public class PluginParameters {
 	
 	
 	public double getZCal() {
-		return this.zCal;
+		return zCal;
 	}
 	
 	
@@ -285,14 +286,14 @@ public class PluginParameters {
 	
 	
 	public boolean getManualParameter() {
-		return this.manualParameter;
+		return manualParameter;
 	}
 	
 	
 	public double getXCalibration(ImagePlus raw) {
 		double xCalibration;
-		if (this.manualParameter) {
-			xCalibration = this.xCal;
+		if (manualParameter) {
+			xCalibration = xCal;
 		} else {
 			xCalibration = raw.getCalibration().pixelWidth;
 		}
@@ -302,8 +303,8 @@ public class PluginParameters {
 	
 	public double getYCalibration(ImagePlus raw) {
 		double yCalibration;
-		if (this.manualParameter) {
-			yCalibration = this.yCal;
+		if (manualParameter) {
+			yCalibration = yCal;
 		} else {
 			yCalibration = raw.getCalibration().pixelHeight;
 		}
@@ -313,8 +314,8 @@ public class PluginParameters {
 	
 	public double getZCalibration(ImagePlus raw) {
 		double zCalibration;
-		if (this.manualParameter) {
-			zCalibration = this.zCal;
+		if (manualParameter) {
+			zCalibration = zCal;
 		} else {
 			zCalibration = raw.getCalibration().pixelDepth;
 		}

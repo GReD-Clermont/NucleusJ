@@ -93,7 +93,7 @@ public class CropFromCoordinates {
 		Directory output = new Directory(pathToOutput);
 		output.checkAndCreateDir();
 		
-		Map<File, File> allCoordinateToRaw = this.gatherFilePairs();
+		Map<File, File> allCoordinateToRaw = gatherFilePairs();
 		
 		for (Map.Entry<File, File> e : allCoordinateToRaw.entrySet()) {
 			File coordinateFile = e.getKey();
@@ -125,7 +125,7 @@ public class CropFromCoordinates {
 			saveFile(raw.toImagePlus(client), pathToRaw + File.separator + raw.getName());
 		}
 		
-		this.run();
+		run();
 		
 		DatasetWrapper outputDataset;
 		List<DatasetWrapper> datasets =

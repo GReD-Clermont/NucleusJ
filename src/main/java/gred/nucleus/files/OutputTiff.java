@@ -25,27 +25,27 @@ public class OutputTiff extends FilesNames {
 	 * <p> TODO ADD ERROR IN LOG FILE
 	 */
 	public void saveImage(ImagePlus imageToSave) {
-		LOGGER.debug("Saving image: {}", this.fullPathFile);
+		LOGGER.debug("Saving image: {}", fullPathFile);
 		try {
 			if (fileExists()) {
-				File old = new File(this.fullPathFile);
+				File old = new File(fullPathFile);
 				if (old.delete()) {
-					LOGGER.debug("Deleted old {}", this.fullPathFile);
+					LOGGER.debug("Deleted old {}", fullPathFile);
 				}
 				if (imageToSave.getNSlices() > 1) {
 					FileSaver fileSaver = new FileSaver(imageToSave);
-					fileSaver.saveAsTiffStack(this.fullPathFile);
+					fileSaver.saveAsTiffStack(fullPathFile);
 				} else {
 					FileSaver fileSaver = new FileSaver(imageToSave);
-					fileSaver.saveAsTiff(this.fullPathFile);
+					fileSaver.saveAsTiff(fullPathFile);
 				}
 			} else {
 				if (imageToSave.getNSlices() > 1) {
 					FileSaver fileSaver = new FileSaver(imageToSave);
-					fileSaver.saveAsTiffStack(this.fullPathFile);
+					fileSaver.saveAsTiffStack(fullPathFile);
 				} else {
 					FileSaver fileSaver = new FileSaver(imageToSave);
-					fileSaver.saveAsTiff(this.fullPathFile);
+					fileSaver.saveAsTiff(fullPathFile);
 				}
 			}
 		} catch (Exception e) {

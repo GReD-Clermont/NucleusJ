@@ -52,8 +52,8 @@ public class ComponentRemovalLinearComplement implements ComponentRemovalPredica
 	@Override
 	public boolean keepVoxelComponent(Voxel voxel, ComponentInfo componentInfo) {
 		double zValue =
-				this.xCoefficient * voxel.getX() + this.yCoefficient * voxel.getY() + this.constantCoefficient;
-		return voxel.getZ() < zValue || voxel.getZ() >= zValue + this.thickness;
+				xCoefficient * voxel.getX() + yCoefficient * voxel.getY() + constantCoefficient;
+		return voxel.getZ() < zValue || voxel.getZ() >= zValue + thickness;
 	}
 	
 }

@@ -110,14 +110,14 @@ public class GenerateProjectionFromCoordinates {
 	 * @throws FormatException
 	 */
 	public void generateProjectionFiltered() throws IOException, FormatException {
-		Directory convexHullSegImages = new Directory(this.pathToConvexHullSeg);
-		convexHullSegImages.listImageFiles(this.pathToConvexHullSeg);
+		Directory convexHullSegImages = new Directory(pathToConvexHullSeg);
+		convexHullSegImages.listImageFiles(pathToConvexHullSeg);
 		convexHullSegImages.checkIfEmpty();
-		Directory zProjection = new Directory(this.pathToZProjection);
-		zProjection.listImageFiles(this.pathToZProjection);
+		Directory zProjection = new Directory(pathToZProjection);
+		zProjection.listImageFiles(pathToZProjection);
 		zProjection.checkIfEmpty();
-		Directory coordinates = new Directory(this.pathToCoordinates);
-		coordinates.listAllFiles(this.pathToCoordinates);
+		Directory coordinates = new Directory(pathToCoordinates);
+		coordinates.listAllFiles(pathToCoordinates);
 		coordinates.checkIfEmpty();
 		for (short i = 0; i < coordinates.getNumberFiles(); ++i) {
 			File                coordinateFile        = coordinates.getFile(i);
@@ -156,11 +156,11 @@ public class GenerateProjectionFromCoordinates {
 	
 	
 	public void generateProjection() throws IOException, FormatException {
-		Directory rawImage = new Directory(this.pathToRaw);
-		rawImage.listImageFiles(this.pathToRaw);
+		Directory rawImage = new Directory(pathToRaw);
+		rawImage.listImageFiles(pathToRaw);
 		rawImage.checkIfEmpty();
-		Directory coordinates = new Directory(this.pathToCoordinates);
-		coordinates.listAllFiles(this.pathToCoordinates);
+		Directory coordinates = new Directory(pathToCoordinates);
+		coordinates.listAllFiles(pathToCoordinates);
 		coordinates.checkIfEmpty();
 		
 		for (short i = 0; i < coordinates.getNumberFiles(); ++i) {

@@ -84,7 +84,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	public ComputeParametersDialog(IDialogListener dialogListener) {
 		this.dialogListener = dialogListener;
 		final String font = "Albertus";
-		container = getContentPane();
+		container = super.getContentPane();
 		JLabel  jLabelWorkDirectory = new JLabel();
 		JLabel  jLabelCalibration   = new JLabel();
 		JButton jButtonStart        = new JButton("Start");
@@ -94,9 +94,9 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
 		JButton jButtonRawData = new JButton("Raw Data folder");
-		this.setTitle("Compute morphological parameters");
-		this.setSize(500, 500);
-		this.setLocationRelativeTo(null);
+		super.setTitle("Compute morphological parameters");
+		super.setSize(500, 500);
+		super.setLocationRelativeTo(null);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowHeights = new int[]{17, 200, 124, 7, 10};
 		gridBagLayout.columnWidths = new int[]{236, 120, 72, 20};
@@ -225,7 +225,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(20, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
-		this.setVisible(true);
+		super.setVisible(true);
 		ComputeParametersDialog.WorkDirectoryListener wdListener = new ComputeParametersDialog.WorkDirectoryListener();
 		jButtonWorkDirectory.addActionListener(wdListener);
 		ComputeParametersDialog.RawDataDirectoryListener ddListener =
@@ -341,7 +341,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		omeroModeLayout.add(omeroPanel);
 		
 		
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
 		jTextFieldHostname.setText("omero.igred.fr");

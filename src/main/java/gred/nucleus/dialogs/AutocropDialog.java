@@ -102,15 +102,15 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 		JButton jButtonStart = new JButton("Start");
 		JButton jButtonQuit  = new JButton("Quit");
-		this.setTitle("Autocrop - NucleusJ3");
-		this.setMinimumSize(new Dimension(400, 500));
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		this.setLocationRelativeTo(null);
+		super.setTitle("Autocrop - NucleusJ3");
+		super.setMinimumSize(new Dimension(400, 500));
+		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		super.setLocationRelativeTo(null);
 		autocropConfigFileDialog = new AutocropConfigDialog(this);
 		autocropConfigFileDialog.setVisible(false);
 		
-		container = getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
+		container = super.getContentPane();
+		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.Y_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -324,7 +324,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		ConfigListener configListener = new ConfigListener(this);
 		jButtonConfig.addActionListener(configListener);
 		
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
 		jTextFieldHostname.setText("omero.gred-clermont.fr");

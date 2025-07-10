@@ -98,27 +98,27 @@ public class ComputeNucleiParameters {
 	 * used to get results parameter in the same folder.
 	 */
 	public void run() {
-		Directory directoryRawInput = new Directory(this.pluginParameters.getInputFolder());
-		directoryRawInput.listImageFiles(this.pluginParameters.getInputFolder());
+		Directory directoryRawInput = new Directory(pluginParameters.getInputFolder());
+		directoryRawInput.listImageFiles(pluginParameters.getInputFolder());
 		directoryRawInput.checkIfEmpty();
-		Directory directorySegmentedInput = new Directory(this.pluginParameters.getOutputFolder());
-		directorySegmentedInput.listImageFiles(this.pluginParameters.getOutputFolder());
+		Directory directorySegmentedInput = new Directory(pluginParameters.getOutputFolder());
+		directorySegmentedInput.listImageFiles(pluginParameters.getOutputFolder());
 		directorySegmentedInput.checkIfEmpty();
 		List<File>    segmentedImages           = directorySegmentedInput.getFileList();
 		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder();
 		
-		outputCropGeneralInfoOTSU.append(this.pluginParameters.getAnalysisParameters()).append(getColNameResult());
+		outputCropGeneralInfoOTSU.append(pluginParameters.getAnalysisParameters()).append(getColNameResult());
 		
 		for (File f : segmentedImages) {
-			ImagePlus raw = new ImagePlus(this.pluginParameters.getInputFolder() + File.separator + f.getName());
+			ImagePlus raw = new ImagePlus(pluginParameters.getInputFolder() + File.separator + f.getName());
 			try {
 				ImagePlus[] segmented = BF.openImagePlus(f.getAbsolutePath());
 				
 				Measure3D measure3D = new Measure3D(segmented,
 				                                    raw,
-				                                    this.pluginParameters.getXCalibration(raw),
-				                                    this.pluginParameters.getYCalibration(raw),
-				                                    this.pluginParameters.getZCalibration(raw));
+				                                    pluginParameters.getXCalibration(raw),
+				                                    pluginParameters.getYCalibration(raw),
+				                                    pluginParameters.getZCalibration(raw));
 				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append("\n");
 			} catch (Exception e) {
 				LOGGER.error("An error occurred.", e);
@@ -127,7 +127,7 @@ public class ComputeNucleiParameters {
 		Date             date       = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy-MM-dd-HH.mm.ss");
 		currentTime = dateFormat.format(date);
-		OutputTextFile resultFileOutputOTSU = new OutputTextFile(this.pluginParameters.getOutputFolder()
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile(pluginParameters.getOutputFolder()
 		                                                         + directoryRawInput.getSeparator()
 		                                                         + segDatasetName + currentTime + "_.csv");
 		
@@ -150,10 +150,10 @@ public class ComputeNucleiParameters {
 			         pluginParameters.getOutputFolder() + File.separator + segmented.getName());
 		}
 		
-		this.run();
+		run();
 		
 		segmentedDataset.addFile(client,
-		                         new File(this.pluginParameters.getOutputFolder() + File.separator +
+		                         new File(pluginParameters.getOutputFolder() + File.separator +
 		                                  segDatasetName + currentTime + "_.csv"));
 		
 		FileUtils.deleteDirectory(new File(pluginParameters.getInputFolder()));
@@ -162,7 +162,7 @@ public class ComputeNucleiParameters {
 	
 	
 	public void addConfigParameters(String pathToConfig) {
-		this.pluginParameters.addGeneralProperties(pathToConfig);
+		pluginParameters.addGeneralProperties(pathToConfig);
 		
 	}
 	

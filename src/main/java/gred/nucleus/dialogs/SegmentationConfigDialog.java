@@ -42,10 +42,10 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	
 	public SegmentationConfigDialog(SegmentationDialog caller) {
 		this.caller = caller;
-		this.setTitle("Segmentation - NucleusJ3");
-		this.setSize(300, 340);
-		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		container = getContentPane();
+		super.setTitle("Segmentation - NucleusJ3");
+		super.setSize(300, 340);
+		super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		container = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{1.0};
 		gridBagLayout.rowHeights = new int[]{300};
@@ -53,7 +53,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		gridBagLayout.columnWidths = new int[]{180, 500};
 		
 		container.setLayout(gridBagLayout);
-		getRootPane().setDefaultButton(buttonOK);
+		super.getRootPane().setDefaultButton(buttonOK);
 
 
         /*/\*\
@@ -143,7 +143,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		                                                 0,
 		                                                 0));
 		
-		this.setVisible(false);
+		super.setVisible(false);
 		
 		SegmentationConfigDialog.StartListener startListener = new StartListener(this);
 		buttonOK.addActionListener(startListener);

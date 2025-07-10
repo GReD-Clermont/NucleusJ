@@ -124,8 +124,8 @@ public class SegmentationCalling {
 	public SegmentationCalling(String inputDir, String outputDir) {
 		this.inputDir = inputDir;
 		this.output = outputDir;
-		this.outputCropGeneralInfoOTSU = this.segmentationParameters.getAnalysisParameters();
-		this.outputCropGeneralInfoConvexHull = this.segmentationParameters.getAnalysisParameters();
+		this.outputCropGeneralInfoOTSU = segmentationParameters.getAnalysisParameters();
+		this.outputCropGeneralInfoConvexHull = segmentationParameters.getAnalysisParameters();
 	}
 	
 	
@@ -138,10 +138,10 @@ public class SegmentationCalling {
 	 * @param outputImg String of of the path to save the img of the segmented nucleus.
 	 */
 	public SegmentationCalling(ImagePlus img, short vMin, int vMax, String outputImg) {
-		this.segmentationParameters.setMinVolumeNucleus(vMin);
-		this.segmentationParameters.setMaxVolumeNucleus(vMax);
+		segmentationParameters.setMinVolumeNucleus(vMin);
+		segmentationParameters.setMaxVolumeNucleus(vMax);
 		this.imgInput = img;
-		this.output = outputImg + File.separator + "Segmented" + this.imgInput.getTitle();
+		this.output = outputImg + File.separator + "Segmented" + imgInput.getTitle();
 	}
 	
 	
@@ -153,8 +153,8 @@ public class SegmentationCalling {
 	 * @param vMax volume max of the detected object
 	 */
 	public SegmentationCalling(ImagePlus img, short vMin, int vMax) {
-		this.segmentationParameters.setMinVolumeNucleus(vMin);
-		this.segmentationParameters.setMaxVolumeNucleus(vMax);
+		segmentationParameters.setMinVolumeNucleus(vMin);
+		segmentationParameters.setMaxVolumeNucleus(vMax);
 		this.imgInput = img;
 	}
 	
@@ -168,11 +168,11 @@ public class SegmentationCalling {
 	 * @param vMax      volume max of the detected object
 	 */
 	public SegmentationCalling(String inputDir, String outputDir, short vMin, int vMax) {
-		this.segmentationParameters.setMinVolumeNucleus(vMin);
-		this.segmentationParameters.setMaxVolumeNucleus(vMax);
+		segmentationParameters.setMinVolumeNucleus(vMin);
+		segmentationParameters.setMaxVolumeNucleus(vMax);
 		this.inputDir = inputDir;
 		this.output = outputDir;
-		Directory dirOutput = new Directory(this.output);
+		Directory dirOutput = new Directory(output);
 		dirOutput.checkAndCreateDir();
 		this.output = dirOutput.getDirPath();
 	}
@@ -198,22 +198,22 @@ public class SegmentationCalling {
 		
 		Calibration cal = seg.getCalibration();
 		if (seg.getType() == ImagePlus.GRAY16) {
-			this.preProcessImage(seg);
+			preProcessImage(seg);
 		}
 		
 		seg = nucleusSegmentation.applySegmentation(seg);
 		if (nucleusSegmentation.getBestThreshold() == -1) {
 			LOGGER.error("Segmentation error: \nNo object is detected between {} and {}",
-			             this.segmentationParameters.getMinVolumeNucleus(),
-			             this.segmentationParameters.getMaxVolumeNucleus());
+			             segmentationParameters.getMinVolumeNucleus(),
+			             segmentationParameters.getMaxVolumeNucleus());
 		} else {
 			LOGGER.info("OTSU modified threshold: {}\n", nucleusSegmentation.getBestThreshold());
-			if (this.segmentationParameters.getConvexHullDetection()) {
+			if (segmentationParameters.getConvexHullDetection()) {
 				ConvexHullSegmentation nuc = new ConvexHullSegmentation();
-				seg = nuc.convexHullDetection(seg, this.segmentationParameters);
+				seg = nuc.convexHullDetection(seg, segmentationParameters);
 			}
 			seg.setTitle(output);
-			if (!this.output.isEmpty()) {
+			if (!output.isEmpty()) {
 				saveFile(seg, output);
 			}
 			NucleusAnalysis nucleusAnalysis = new NucleusAnalysis(imgInput, seg, segmentationParameters);
@@ -265,13 +265,13 @@ public class SegmentationCalling {
 		Map<String, String> otsuResultLines       = new ConcurrentHashMap<>();
 		Map<String, String> convexHullResultLines = new ConcurrentHashMap<>();
 		
-		Directory directoryInput = new Directory(this.segmentationParameters.getInputFolder());
-		directoryInput.listImageFiles(this.segmentationParameters.getInputFolder());
+		Directory directoryInput = new Directory(segmentationParameters.getInputFolder());
+		directoryInput.listImageFiles(segmentationParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
 		
 		// Create output directories
-		Path otsuDirectory = Paths.get(this.segmentationParameters.getOutputFolder() + File.separator + "OTSU");
-		Path convexHullDirectory = Paths.get(this.segmentationParameters.getOutputFolder() + File.separator +
+		Path otsuDirectory = Paths.get(segmentationParameters.getOutputFolder() + File.separator + "OTSU");
+		Path convexHullDirectory = Paths.get(segmentationParameters.getOutputFolder() + File.separator +
 		                                     NucleusSegmentation.CONVEX_HULL_ALGORITHM);
 		File otsuDir = new File(otsuDirectory.toString());
 		if (!otsuDir.exists()) {
@@ -369,10 +369,10 @@ public class SegmentationCalling {
 		String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 		LOGGER.info("Start: {}", timeStampStart);
 		NucleusSegmentation nucleusSegmentation =
-				new NucleusSegmentation(currentFile, this.prefix, this.segmentationParameters);
+				new NucleusSegmentation(currentFile, prefix, segmentationParameters);
 		nucleusSegmentation.preProcessImage();
 		nucleusSegmentation.findOTSUMaximisingSphericity();
-		nucleusSegmentation.checkBadCrop(this.segmentationParameters.inputFolder);
+		nucleusSegmentation.checkBadCrop(segmentationParameters.inputFolder);
 		nucleusSegmentation.saveOTSUSegmented();
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
@@ -390,40 +390,40 @@ public class SegmentationCalling {
 		Date             date       = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
 		LOGGER.info("Saving crop general info.");
-		OutputTextFile resultFileOutputOTSU = new OutputTextFile(this.segmentationParameters.getOutputFolder()
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile(segmentationParameters.getOutputFolder()
 		                                                         + "OTSU"
 		                                                         + File.separator
 		                                                         + dateFormat.format(date)
 		                                                         + "-result_Segmentation_Analyse_OTSU.csv");
-		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, true);
-		if (this.segmentationParameters.getConvexHullDetection()) {
-			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(this.segmentationParameters.getOutputFolder()
+		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU, true);
+		if (segmentationParameters.getConvexHullDetection()) {
+			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(segmentationParameters.getOutputFolder()
 			                                                               + NucleusSegmentation.CONVEX_HULL_ALGORITHM
 			                                                               + File.separator
 			                                                               + dateFormat.format(date)
 			                                                               + "-result_Segmentation_Analyse_" +
 			                                                               NucleusSegmentation.CONVEX_HULL_ALGORITHM +
 			                                                               ".csv");
-			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, true);
+			resultFileOutputConvexHull.saveTextFile(outputCropGeneralInfoConvexHull, true);
 		}
 	}
 	
 	
 	public void saveTestCropGeneralInfo() {
 		LOGGER.info("Saving crop general info.");
-		OutputTextFile resultFileOutputOTSU = new OutputTextFile(this.segmentationParameters.getOutputFolder()
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile(segmentationParameters.getOutputFolder()
 		                                                         + "OTSU"
 		                                                         + File.separator
 		                                                         + "result_Segmentation_Analyse_OTSU.csv");
-		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, true);
-		if (this.segmentationParameters.getConvexHullDetection()) {
-			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(this.segmentationParameters.getOutputFolder()
+		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU, true);
+		if (segmentationParameters.getConvexHullDetection()) {
+			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(segmentationParameters.getOutputFolder()
 			                                                               + NucleusSegmentation.CONVEX_HULL_ALGORITHM
 			                                                               + File.separator
 			                                                               + "result_Segmentation_Analyse_" +
 			                                                               NucleusSegmentation.CONVEX_HULL_ALGORITHM +
 			                                                               ".csv");
-			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, true);
+			resultFileOutputConvexHull.saveTextFile(outputCropGeneralInfoConvexHull, true);
 		}
 	}
 	
@@ -457,7 +457,7 @@ public class SegmentationCalling {
 		
 		String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 		LOGGER.info("Start: {}", timeStampStart);
-		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(image, this.segmentationParameters, client);
+		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(image, segmentationParameters, client);
 		nucleusSegmentation.preProcessImage();
 		nucleusSegmentation.findOTSUMaximisingSphericity();
 		nucleusSegmentation.checkBadCrop(image, client);
@@ -655,12 +655,12 @@ public class SegmentationCalling {
 			LOGGER.error("Could not get canonical path for: {}", path, e);
 		}
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(path);
-		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, false);
+		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU, false);
 		/* Create results file for OMERO.Parade */
 		OutputTextFile resultFileOutputParade       = new OutputTextFile(pathParade);
 		OutputTextFile resultFileOutputParadeGraham = new OutputTextFile(pathParadeGraham);
-		resultFileOutputParade.saveTextFile(this.outputInfoParade, false);
-		resultFileOutputParadeGraham.saveTextFile(this.outputInfoParadeGraham, false);
+		resultFileOutputParade.saveTextFile(outputInfoParade, false);
+		resultFileOutputParadeGraham.saveTextFile(outputInfoParadeGraham, false);
 		
 		File file             = new File(path);
 		File fileParade       = new File(pathParade);
@@ -681,7 +681,7 @@ public class SegmentationCalling {
 			LOGGER.error("File not deleted: {}", path, e);
 		}
 		
-		if (this.segmentationParameters.getConvexHullDetection()) {
+		if (segmentationParameters.getConvexHullDetection()) {
 			LOGGER.info("Saving Convex Hull algorithm results.");
 			try {
 				pathGraham = new File(pathGraham).getCanonicalPath();
@@ -691,7 +691,7 @@ public class SegmentationCalling {
 			}
 			dataset = client.getProject(output).getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM).get(0);
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(pathGraham);
-			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, false);
+			resultFileOutputConvexHull.saveTextFile(outputCropGeneralInfoConvexHull, false);
 			
 			file = new File(pathGraham);
 			dataset.addFile(client, file);
@@ -727,7 +727,7 @@ public class SegmentationCalling {
 			NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(image,
 			                                                                  roi,
 			                                                                  i,
-			                                                                  this.segmentationParameters,
+			                                                                  segmentationParameters,
 			                                                                  client);
 			nucleusSegmentation.preProcessImage();
 			nucleusSegmentation.findOTSUMaximisingSphericity();
@@ -755,7 +755,7 @@ public class SegmentationCalling {
 			LOGGER.error("Could not get canonical path for:" + path, e);
 		}
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(path);
-		resultFileOutputOTSU.saveTextFile(this.outputCropGeneralInfoOTSU, false);
+		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU, false);
 		
 		File file = new File(path);
 		dataset.addFile(client, file);
@@ -765,10 +765,10 @@ public class SegmentationCalling {
 			LOGGER.error("File not deleted: " + path, e);
 		}
 		
-		if (this.segmentationParameters.getConvexHullDetection()) {
+		if (segmentationParameters.getConvexHullDetection()) {
 			dataset = client.getProject(output).getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM).get(0);
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(path);
-			resultFileOutputConvexHull.saveTextFile(this.outputCropGeneralInfoConvexHull, false);
+			resultFileOutputConvexHull.saveTextFile(outputCropGeneralInfoConvexHull, false);
 			
 			file = new File(path);
 			dataset.addFile(client, file);

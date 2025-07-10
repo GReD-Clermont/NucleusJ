@@ -102,16 +102,16 @@ public class CLIActionOptions {
 	 * @param argument List of command line argument
 	 */
 	public CLIActionOptions(String[] argument) {
-		this.options.addOption(this.inputFolder);
-		this.options.addOption(this.inputFolder2);
-		this.options.addOption(this.inputFolder3);
-		this.options.addOption(this.configFile);
-		this.options.addOption(this.action);
-		this.options.addOption(this.threads);
-		this.options.addOption(this.omero);
-		this.options.addOption(this.thresholding);
+		options.addOption(inputFolder);
+		options.addOption(inputFolder2);
+		options.addOption(inputFolder3);
+		options.addOption(configFile);
+		options.addOption(action);
+		options.addOption(threads);
+		options.addOption(omero);
+		options.addOption(thresholding);
 		try {
-			this.cmd = this.parser.parse(this.options, argument, true);
+			this.cmd = parser.parse(options, argument, true);
 		} catch (ParseException exp) {
 			System.console().writer().println(exp.getMessage() + "\n");
 			System.console().writer().println(getHelperInfo());
@@ -133,12 +133,12 @@ public class CLIActionOptions {
 	
 	/** @return list of options */
 	public Options getOptions() {
-		return this.options;
+		return options;
 	}
 	
 	
 	public CommandLine getCmd() {
-		return this.cmd;
+		return cmd;
 	}
 	
 }

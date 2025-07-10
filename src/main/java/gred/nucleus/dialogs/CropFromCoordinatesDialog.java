@@ -77,12 +77,12 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		JButton jButtonQuit = new JButton("Quit");
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
-		this.setTitle("Crop From Coordinate - NucleusJ3");
-		this.setMinimumSize(new Dimension(500, 410));
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		super.setTitle("Crop From Coordinate - NucleusJ3");
+		super.setMinimumSize(new Dimension(500, 410));
+		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
-		container = getContentPane();
-		BoxLayout mainBoxLayout = new BoxLayout(getContentPane(), BoxLayout.Y_AXIS);
+		container = super.getContentPane();
+		BoxLayout mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.Y_AXIS);
 		container.setLayout(mainBoxLayout);
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -313,13 +313,11 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		startQuitPanel.setBorder(padding2);
 		container.add(startQuitPanel, 2);
 		
-		
-		CropFromCoordinatesDialog.QuitListener quitListener = new QuitListener(this);
+		ActionListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);
-		CropFromCoordinatesDialog.StartListener startListener = new CropFromCoordinatesDialog.StartListener(this);
+		ActionListener startListener = new CropFromCoordinatesDialog.StartListener(this);
 		jButtonStart.addActionListener(startListener);
-		this.setVisible(true);
-		
+		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
 		jTextFieldHostname.setText(host);

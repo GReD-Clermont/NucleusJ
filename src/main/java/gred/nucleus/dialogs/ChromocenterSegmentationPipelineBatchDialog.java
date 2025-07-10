@@ -54,10 +54,10 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		JButton   jButtonStart         = new JButton("Start");
 		JButton   jButtonQuit          = new JButton("Quit");
 		JButton   jButtonRawData       = new JButton("Raw Data");
-		this.setTitle("Chromocenters segmentation pipeline (Batch)");
-		this.setSize(500, 500);
-		this.setLocationRelativeTo(null);
-		container = getContentPane();
+		super.setTitle("Chromocenters segmentation pipeline (Batch)");
+		super.setSize(500, 500);
+		super.setLocationRelativeTo(null);
+		container = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		// 	gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0};
 		gridBagLayout.rowHeights = new int[]{17, 200, 124, 7, 10};
@@ -164,7 +164,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(190, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		ActionListener wdListener = new WorkDirectoryListener();
 		jButtonWorkDirectory.addActionListener(wdListener);

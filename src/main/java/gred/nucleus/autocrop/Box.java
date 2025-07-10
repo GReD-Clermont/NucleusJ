@@ -49,7 +49,7 @@ public class Box {
 	 * @return the xMin
 	 */
 	public short getXMin() {
-		return this.xMin;
+		return xMin;
 	}
 	
 	
@@ -65,7 +65,7 @@ public class Box {
 	 * @return the xMax
 	 */
 	public short getXMax() {
-		return this.xMax;
+		return xMax;
 	}
 	
 	
@@ -81,7 +81,7 @@ public class Box {
 	 * @return the yMin
 	 */
 	public short getYMin() {
-		return this.yMin;
+		return yMin;
 	}
 	
 	
@@ -97,7 +97,7 @@ public class Box {
 	 * @return the yMax
 	 */
 	public short getYMax() {
-		return this.yMax;
+		return yMax;
 	}
 	
 	
@@ -113,7 +113,7 @@ public class Box {
 	 * @return the zMin
 	 */
 	public short getZMin() {
-		return this.zMin;
+		return zMin;
 	}
 	
 	
@@ -129,7 +129,7 @@ public class Box {
 	 * @return the zMax
 	 */
 	public short getZMax() {
-		return this.zMax;
+		return zMax;
 	}
 	
 	

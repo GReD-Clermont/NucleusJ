@@ -47,9 +47,9 @@ public class NucleusSegmentationDialog extends JFrame {
 	
 	/** Architecture of the graphical windows */
 	public NucleusSegmentationDialog(Calibration cal) {
-		this.setTitle("Nucleus segmentation");
-		this.setSize(500, 350);
-		container = getContentPane();
+		super.setTitle("Nucleus segmentation");
+		super.setSize(500, 350);
+		container = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.rowHeights = new int[]{17, 100, 124, 7};
@@ -199,7 +199,7 @@ public class NucleusSegmentationDialog extends JFrame {
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(160, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
-		this.setVisible(true);
+		super.setVisible(true);
 		
 		QuitListener quitListener = new QuitListener(this);
 		jButtonQuit.addActionListener(quitListener);

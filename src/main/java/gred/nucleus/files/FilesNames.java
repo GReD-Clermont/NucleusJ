@@ -30,13 +30,13 @@ public class FilesNames {
 	
 	
 	public String prefixNameFile() {
-		return FilenameUtils.removeExtension(this.fileName);
+		return FilenameUtils.removeExtension(fileName);
 	}
 	
 	
 	/** Method to check if file exists */
 	public void checkFileExists() {
-		File file = new File(this.fullPathFile);
+		File file = new File(fullPathFile);
 		if (!file.exists()) {
 			this.fileExists = false;
 		}
@@ -51,7 +51,7 @@ public class FilesNames {
 	
 	/** @return path to file */
 	public String getPathFile() {
-		return this.pathFile;
+		return pathFile;
 	}
 	
 	
