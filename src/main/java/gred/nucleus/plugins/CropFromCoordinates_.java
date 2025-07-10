@@ -49,6 +49,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	}
 	
 	
+	/* This method is used by plugins.config */
 	@Override
 	public void run(String s) {
 		if (IJ.versionLessThan("1.32c")) {
@@ -59,7 +60,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	
 	
 	@Override
-	public void OnStart() throws AccessException, ServiceException, ExecutionException {
+	public void onStart() throws AccessException, ServiceException, ExecutionException {
 		if (cropFromCoordinatesDialog.isOmeroEnabled()) {
 			runOMERO();
 		} else {

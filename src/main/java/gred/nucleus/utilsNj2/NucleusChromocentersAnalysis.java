@@ -6,19 +6,14 @@ import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.ImageWrapper;
 import gred.nucleus.plugins.ChromocenterParameters;
-import gred.nucleus.utils.Chromocenter;
 import gred.nucleus.utils.Histogram;
-import gred.nucleus.utils.Parameters2D;
 import ij.ImagePlus;
 import ij.measure.Calibration;
-import ij.process.ImageProcessor;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static gred.nucleus.core.RadialDistance.computeBarycenterToBorderDistances;
@@ -32,12 +27,7 @@ import static gred.nucleus.core.RadialDistance.computeBorderToBorderDistances;
  * @author Tristan Dubos and Axel Poulet
  */
 public class NucleusChromocentersAnalysis {
-	/**  */
-	private Client client;
 	
-	
-	public NucleusChromocentersAnalysis() {
-	}
 	
 	//TODO INTEGRATION CLASS NEW MEASURE 3D
 	
@@ -139,7 +129,6 @@ public class NucleusChromocentersAnalysis {
 	                                       String datasetName,
 	                                       Client client)
 	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
-		this.client = client;
 		long imageId = imageInput.getId();  // Get the image ID
 		
 		// Image to ImagePlus conversion
@@ -262,7 +251,7 @@ public class NucleusChromocentersAnalysis {
 	 *
 	 * @return Mean of the table
 	 */
-	public double computeMeanOfTable(double[] tInput) {
+	public static double computeMeanOfTable(double[] tInput) {
 		double mean = 0;
 		for (double v : tInput) {
 			mean += v;
@@ -272,72 +261,7 @@ public class NucleusChromocentersAnalysis {
 	}
 	
 	
-	/**
-	 * @param img
-	 *
-	 * @return
-	 */
-	private List<Float> getLabels(ImagePlus img) {
-		List<Float>    label = new ArrayList<>();
-		ImageProcessor ip    = img.getProcessor();
-		
-		for (int i = 0; i < img.getWidth(); ++i) {
-			for (int j = 0; j < img.getHeight(); ++j) {
-				float value = ip.getPixelValue(i, j);
-				if (value > 0) {
-					if (!label.contains(value)) {
-						label.add(value);
-					}
-				}
-			}
-		}
-		
-		
-		return label;
-	}
-	
-	
-	/**
-	 * @param imgCc
-	 * @param raw
-	 * @param labels
-	 *
-	 * @return
-	 */
-	private Chromocenter getCcParam(ImagePlus imgCc,
-	                                ImagePlus raw,
-	                                ArrayList<Float> labels,
-	                                String name,
-	                                double avgNuc) {
-		Chromocenter cc = new Chromocenter(0, 0, 0, 0, 0, 0, 0, "plopi");
-		for (int j = 0; j < labels.size(); ++j) {
-			//System.out.println(labels.get(j));
-			Parameters2D param = new Parameters2D(imgCc, raw, labels.get(j));
-			param.computePrameters();
-			
-			Chromocenter tmp = new Chromocenter(param.getCirculairty(),
-			                                    param.getNbPixelObject(),
-			                                    param.getAspectRatio(),
-			                                    param.getPerim(),
-			                                    param.getArea(),
-			                                    param.getSolidity(),
-			                                    param.getRound(),
-			                                    name + "_" + j);
-			
-			tmp.setCCValue(param.getAvgIntensity(), avgNuc);
-			cc.addChromocenter(param.getCirculairty(), param.getNbPixelObject(),
-			                   param.getAspectRatio(), param.getPerim(),
-			                   param.getArea(), param.getSolidity(),
-			                   param.getRound(), tmp.getCCValue());
-			
-		}
-		cc.avgChromocenters(labels.size() + 1);
-		return cc;
-		
-	}
-	
-	
-	public String getResultsColumnNames() {
+	public static String getResultsColumnNames() {
 		return "ImageName," +
 		       "Volume," +
 		       "Flatnes," +

@@ -56,7 +56,7 @@ public class ConvexHullDetection {
 	 *
 	 * @return voxels of the convex hull
 	 */
-	public static List<VoxelRecord> runGrahamScan(String axesName, List<VoxelRecord> lVoxelBoundary) {
+	public static List<VoxelRecord> runGrahamScan(String axesName, List<? extends VoxelRecord> lVoxelBoundary) {
 		List<Point> points      = new ArrayList<>();
 		double      constantAxe = 0;
 		
@@ -112,48 +112,18 @@ public class ConvexHullDetection {
 	
 	
 	/**
-	 * Returns true iff all points in {@code points} are collinear.
-	 *
-	 * @param points the list of points.
-	 *
-	 * @return true iff all points in {@code points} are collinear.
-	 */
-	protected static boolean areAllCollinear(List<Point> points) {
-		
-		if (points.size() < 2) {
-			return true;
-		}
-		
-		Point a = points.get(0);
-		Point b = points.get(1);
-		
-		for (int i = 2; i < points.size(); i++) {
-			
-			Point c = points.get(i);
-			
-			if (getTurn(a, b, c) != Turn.COLLINEAR) {
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	
-	/**
-	 * Returns the convex hull of the points created from {@code xs} and <code>ys</code>. Note that the first and last
+	 * Returns the convex hull of the points created from {@code xs} and {@code ys}. Note that the first and last
 	 * point in the returned {@code List<java.awt.Point>} are the same point.
 	 *
 	 * @param xs the x coordinates.
 	 * @param ys the y coordinates.
 	 *
-	 * @return the convex hull of the points created from {@code xs} and <code>ys</code>.
+	 * @return the convex hull of the points created from {@code xs} and {@code ys}.
 	 *
-	 * @throws IllegalArgumentException if {@code xs} and <code>ys</code> don't have the same size, if all points are
+	 * @throws IllegalArgumentException if {@code xs} and {@code ys} don't have the same size, if all points are
 	 *                                  collinear or if there are less than 3 unique points present.
 	 */
-	public static List<Point> getConvexHull(int[] xs, int[] ys) throws IllegalArgumentException {
-		
+	public static List<Point> getConvexHull(int[] xs, int[] ys) {
 		if (xs.length != ys.length) {
 			throw new IllegalArgumentException("xs and ys don't have the same size");
 		}
@@ -178,17 +148,12 @@ public class ConvexHullDetection {
 	 *
 	 * @throws IllegalArgumentException if all points are collinear or if there are less than 3 unique points present.
 	 */
-	public static List<Point> getConvexHull(List<Point> points) throws IllegalArgumentException {
-		
+	public static List<Point> getConvexHull(List<Point> points) {
 		List<Point> sorted = new ArrayList<>(getSortedPointSet(points));
 		
 		if (sorted.size() < 3) {
 			throw new IllegalArgumentException("can only create a convex hull of 3 or more unique points");
 		}
-		
-		//	if(areAllCollinear(sorted)) {
-		//		throw new IllegalArgumentException("cannot create a convex hull from collinear points");
-		//	}
 		
 		Stack<Point> stack = new Stack<>();
 		stack.push(sorted.get(0));
@@ -232,7 +197,7 @@ public class ConvexHullDetection {
 	 * @return the points with the lowest y coordinate. In case more than 1 such point exists, the one with the lowest x
 	 * coordinate is returned.
 	 */
-	protected static Point getLowestPoint(List<Point> points) {
+	protected static Point getLowestPoint(List<? extends Point> points) {
 		
 		Point lowest = points.get(0);
 		
@@ -251,8 +216,8 @@ public class ConvexHullDetection {
 	
 	/**
 	 * Returns a sorted set of points from the list {@code points}. The set of points are sorted in increasing order of
-	 * the angle they and the lowest point <tt>P</tt> make with the x-axis. If tow (or more) points form the same angle
-	 * towards <tt>P</tt>, the one closest to <tt>P</tt> comes first.
+	 * the angle they and the lowest point {@code P} make with the x-axis. If tow (or more) points form the same angle
+	 * towards {@code P}, the one closest to {@code P} comes first.
 	 *
 	 * @param points the list of points to sort.
 	 *
@@ -305,20 +270,20 @@ public class ConvexHullDetection {
 	
 	
 	/**
-	 * Returns the GrahamScan#Turn formed by traversing through the ordered points {@code a}, <code>b</code> and
-	 * {@code c}. More specifically, the cross product <tt>C</tt> between the 3 points (vectors) is calculated:
+	 * Returns the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and
+	 * {@code c}. More specifically, the cross product {@code C} between the 3 points (vectors) is calculated:
 	 *
-	 * <tt>(b.x-a.x * c.y-a.y) - (b.y-a.y * c.x-a.x)</tt>
+	 * {@code (b.x-a.x * c.y-a.y) - (b.y-a.y * c.x-a.x)}
 	 * <p>
-	 * and if <tt>C</tt> is less than 0, the turn is CLOCKWISE, if
-	 * <tt>C</tt> is more than 0, the turn is COUNTER_CLOCKWISE, else
+	 * and if {@code C} is less than 0, the turn is CLOCKWISE, if
+	 * {@code C} is more than 0, the turn is COUNTER_CLOCKWISE, else
 	 * the three points are COLLINEAR.
 	 *
 	 * @param a the starting point.
 	 * @param b the second point.
 	 * @param c the end point.
 	 *
-	 * @return the GrahamScan#Turn formed by traversing through the ordered points {@code a}, <code>b</code> and
+	 * @return the GrahamScan#Turn formed by traversing through the ordered points {@code a}, {@code b} and
 	 * {@code c}.
 	 */
 	protected static Turn getTurn(Point a, Point b, Point c) {

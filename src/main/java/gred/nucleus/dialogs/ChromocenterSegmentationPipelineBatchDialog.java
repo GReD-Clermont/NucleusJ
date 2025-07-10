@@ -28,7 +28,7 @@ import java.awt.event.ItemListener;
  * @author Poulet Axel
  */
 public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implements ItemListener {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1605324416480852307L;
 	
 	private final JTextField jTextFieldWorkDirectory = new JTextField();
 	private final JTextField jTextFieldRawData       = new JTextField();
@@ -365,8 +365,6 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused")
-				String run = jFileChooser.getSelectedFile().getName();
 				String workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldWorkDirectory.setText(workDirectory);
 			}
@@ -389,8 +387,6 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused")
-				String run = jFileChooser.getSelectedFile().getName();
 				String rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldRawData.setText(rawDataDirectory);
 			}

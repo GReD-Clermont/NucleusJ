@@ -47,11 +47,9 @@ public class Main {
 			CLIRunAction cli = new CLIRunAction(command.getCmd());
 			cli.run();
 		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					MainGui gui = new MainGui();
-					gui.setVisible(true);
-				}
+			SwingUtilities.invokeLater(() -> {
+				MainGui gui = new MainGui();
+				gui.setVisible(true);
 			});
 		}
 		//ThreadUtil.threadPoolExecutor.shutdown();

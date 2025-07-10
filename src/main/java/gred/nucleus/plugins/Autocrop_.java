@@ -34,10 +34,11 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 	
 	
 	/**
-	 * Run method for imageJ plugin for the autocrop
+	 * Run method for imageJ plugin for the autocrop.
 	 *
 	 * @param arg use by imageJ
 	 */
+	/* This method is used by plugins.config */
 	@Override
 	public void run(String arg) {
 		if (IJ.versionLessThan("1.32c")) {
@@ -48,7 +49,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 	
 	
 	@Override
-	public void OnStart() {
+	public void onStart() {
 		if (autocropDialog.isOmeroEnabled()) {
 			runOmeroAutocrop();
 		} else {

@@ -103,7 +103,8 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		radioOmeroPanel.add(omeroNoButton);
 		//radioOmeroPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		container.add(radioOmeroPanel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                      GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+		                                                      GridBagConstraints.FIRST_LINE_START,
+		                                                      GridBagConstraints.NONE,
 		                                                      new Insets(60, 30, 0, 0), 0, 0));
 		
 		// Local mode layout

@@ -26,8 +26,8 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
+	/* This method is used by plugins.config */
 	public void run(String arg) {
-		
 		ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog =
 				new ChromocenterSegmentationPipelineBatchDialog();
 		while (chromocenterSegmentationPipelineBatchDialog.isShowing()) {

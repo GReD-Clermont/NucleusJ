@@ -152,9 +152,7 @@ public class ConvexHullImageMaker {
 	 *
 	 * @return ImagePlus result
 	 */
-	public ImagePlus imageMaker(List<VoxelRecord> lVoxelBoundary,
-	                            int width,
-	                            int height) {
+	public ImagePlus imageMaker(List<? extends VoxelRecord> lVoxelBoundary, int width, int height) {
 		LOGGER.trace("Making image.");
 		
 		List<VoxelRecord> convexHull = ConvexHullDetection.runGrahamScan(axesName, lVoxelBoundary); // For testing
@@ -171,7 +169,7 @@ public class ConvexHullImageMaker {
 	 *
 	 * @return ImagePlus result
 	 */
-	public ImagePlus makePolygon(List<VoxelRecord> convexHull, int width, int height) {
+	public ImagePlus makePolygon(List<? extends VoxelRecord> convexHull, int width, int height) {
 		ImagePlus     ip            = new ImagePlus();
 		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
 		int[]         tableWidth    = new int[convexHull.size() + 1];
@@ -242,8 +240,7 @@ public class ConvexHullImageMaker {
 		ConnectedComponents connectedComponents = new ConnectedComponents();
 		connectedComponents.setImageTable(image);
 		listLabel = connectedComponents.getListLabel(255); // One label per connected components
-		image =
-				connectedComponents.getImageTable(); // Return the image where all connected components have a different label (value)
+		image = connectedComponents.getImageTable(); // Return the image where all connected components have a different label (value)
 		return image;
 	}
 	

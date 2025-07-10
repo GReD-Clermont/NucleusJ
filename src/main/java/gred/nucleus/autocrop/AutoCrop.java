@@ -79,7 +79,8 @@ public class AutoCrop {
 	private final String             imageFilePath;
 	
 	/** File to process (Image input) */
-	private File             currentFile;
+	private final File currentFile;
+	
 	/** Raw image */
 	private ImagePlus        rawImg;
 	/** Segmented image */

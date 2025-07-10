@@ -23,29 +23,25 @@ import java.awt.event.ItemListener;
 
 
 public class SegmentationConfigDialog extends JFrame implements ItemListener {
-	private final JTextField         minVolume             = new JTextField();
-	private final JTextField         maxVolume             = new JTextField();
-	private final JCheckBox          convexHullDetection   = new JCheckBox();
-	private final JTextField         xCalibration          = new JTextField();
-	private final JTextField         yCalibration          = new JTextField();
-	private final JTextField         zCalibration          = new JTextField();
-	private final JCheckBox          addCalibrationBox     = new JCheckBox();
-	private final JButton            buttonOK              = new JButton("Done");
-	private final JPanel             volumePane;
-	private final Container          container;
-	private final SegmentationDialog caller;
-	private       Boolean            isConvexHullDetection = true;
-	private       JPanel             xCalibrationPanel;
-	private       JPanel             yCalibrationPanel;
-	private       JPanel             zCalibrationPanel;
+	private final JTextField minVolume           = new JTextField();
+	private final JTextField maxVolume           = new JTextField();
+	private final JCheckBox  convexHullDetection = new JCheckBox();
+	private final JTextField xCalibration        = new JTextField();
+	private final JTextField yCalibration        = new JTextField();
+	private final JTextField zCalibration        = new JTextField();
+	private final JCheckBox  addCalibrationBox   = new JCheckBox();
+	private final JButton    buttonOK            = new JButton("Done");
+	private final JPanel     volumePane;
+	private       JPanel     xCalibrationPanel;
+	private       JPanel     yCalibrationPanel;
+	private       JPanel     zCalibrationPanel;
 	
 	
 	public SegmentationConfigDialog(SegmentationDialog caller) {
-		this.caller = caller;
 		super.setTitle("Segmentation - NucleusJ3");
 		super.setSize(300, 340);
 		super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		container = super.getContentPane();
+		Container     container     = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{1.0};
 		gridBagLayout.rowHeights = new int[]{300};
@@ -188,7 +184,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() == convexHullDetection) {
-			isConvexHullDetection = convexHullDetection.isSelected();
+			Boolean isConvexHullDetection = convexHullDetection.isSelected();
 		} else if (e.getSource() == addCalibrationBox) {
 			if (addCalibrationBox.isSelected()) {
 				

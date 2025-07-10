@@ -6,7 +6,8 @@ import fr.igred.omero.exception.ServiceException;
 import java.util.concurrent.ExecutionException;
 
 
+@FunctionalInterface
 public interface IDialogListener {
-	void OnStart() throws AccessException, ServiceException, ExecutionException;
+	void onStart() throws AccessException, ServiceException, ExecutionException;
 	
 }

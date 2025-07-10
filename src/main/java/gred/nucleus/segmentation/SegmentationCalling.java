@@ -8,19 +8,11 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import fr.igred.omero.roi.ROIWrapper;
-import gred.nucleus.core.ConvexHullSegmentation;
 import gred.nucleus.core.NucleusSegmentation;
 import gred.nucleus.files.Directory;
 import gred.nucleus.files.FilesNames;
 import gred.nucleus.files.OutputTextFile;
-import gred.nucleus.nucleuscaracterisations.NucleusAnalysis;
 import ij.ImagePlus;
-import ij.io.FileSaver;
-import ij.measure.Calibration;
-import ij.plugin.ContrastEnhancer;
-import ij.plugin.GaussianBlur3D;
-import ij.process.StackConverter;
-import ij.process.StackStatistics;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +53,7 @@ public class SegmentationCalling {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	/** Number of threads used to download images */
-	private final int downloaderThreads = 1;
-	
-	/** Prefix of the output files */
-	private String prefix = "";
+	private static final int DOWNLOADER_THREADS = 1;
 	
 	/** ImagePlus raw image */
 	private ImagePlus imgInput = new ImagePlus();
@@ -74,9 +63,6 @@ public class SegmentationCalling {
 	
 	/** String of the path for the output files */
 	private String output;
-	
-	/** Input directory */
-	private String inputDir = "";
 	
 	/** SegmentationParameters object containing the parameters for the segmentation */
 	private SegmentationParameters segmentationParameters;
@@ -122,8 +108,7 @@ public class SegmentationCalling {
 	}
 	
 	
-	public SegmentationCalling(String inputDir, String outputDir) {
-		this.inputDir = inputDir;
+	public SegmentationCalling(String outputDir) {
 		this.output = outputDir;
 		this.outputCropGeneralInfoOTSU = segmentationParameters.getAnalysisParameters();
 		this.outputCropGeneralInfoConvexHull = segmentationParameters.getAnalysisParameters();
@@ -171,7 +156,6 @@ public class SegmentationCalling {
 	public SegmentationCalling(String inputDir, String outputDir, short vMin, int vMax) {
 		segmentationParameters.setMinVolumeNucleus(vMin);
 		segmentationParameters.setMaxVolumeNucleus(vMax);
-		this.inputDir = inputDir;
 		this.output = outputDir;
 		Directory dirOutput = new Directory(output);
 		dirOutput.checkAndCreateDir();
@@ -179,49 +163,31 @@ public class SegmentationCalling {
 	}
 	
 	
-	/**
-	 * @return ImagePlus the segmented nucleus
-	 *
-	 * @deprecated Method to run an ImagePlus input the method will call method in NucleusSegmentation and
-	 * ConvexHullSegmentation to segment the input nucleus. if the input boolean is true the convex hull algorithm will
-	 * be use, if false the Otsu modified method will be used. If a segmentation results is find the method will then
-	 * computed the different parameters with the NucleusAnalysis class, results will be print in the console. If no
-	 * nucleus is detected a log message is print in teh console
-	 */
-	@Deprecated
-	public int runOneImage() throws IOException, FormatException {
-		
-		ImagePlus seg = imgInput;
-		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(seg,
-		                                                                  segmentationParameters.getMinVolumeNucleus(),
-		                                                                  segmentationParameters.getMaxVolumeNucleus(),
-		                                                                  segmentationParameters);
-		
-		Calibration cal = seg.getCalibration();
-		if (seg.getType() == ImagePlus.GRAY16) {
-			preProcessImage(seg);
-		}
-		
-		seg = nucleusSegmentation.applySegmentation(seg);
-		if (nucleusSegmentation.getBestThreshold() == -1) {
-			LOGGER.error("Segmentation error: \nNo object is detected between {} and {}",
-			             segmentationParameters.getMinVolumeNucleus(),
-			             segmentationParameters.getMaxVolumeNucleus());
-		} else {
-			LOGGER.info("OTSU modified threshold: {}\n", nucleusSegmentation.getBestThreshold());
-			if (segmentationParameters.getConvexHullDetection()) {
-				ConvexHullSegmentation nuc = new ConvexHullSegmentation();
-				seg = nuc.convexHullDetection(seg, segmentationParameters);
-			}
-			seg.setTitle(output);
-			if (!output.isEmpty()) {
-				saveFile(seg, output);
-			}
-			NucleusAnalysis nucleusAnalysis = new NucleusAnalysis(imgInput, seg, segmentationParameters);
-			// System.out.println(nucleusAnalysis.nucleusParameter3D());
-		}
-		this.imgSeg = seg;
-		return nucleusSegmentation.getBestThreshold();
+	public static String getResultsColumnNames() {
+		return "Image," +
+		       "Dataset," +
+		       "ImageName," +
+		       "Volume," +
+		       "Flatness," +
+		       "Elongation," +
+		       "Esr," +
+		       "SurfaceArea," +
+		       "Sphericity," +
+		       "MeanIntensityNucleus," +
+		       "MeanIntensityBackground," +
+		       "StandardDeviation," +
+		       "MinIntensity," +
+		       "MaxIntensity," +
+		       "MedianIntensityImage," +
+		       "MedianIntensityNucleus," +
+		       "MedianIntensityBackground," +
+		       "ImageSize," +
+		       "Moment 1," +
+		       "Moment 2," +
+		       "Moment 3," +
+		       "AspectRatio," +
+		       "Circularity," +
+		       "OTSUThreshold," + "\n";
 	}
 	
 	
@@ -325,7 +291,7 @@ public class SegmentationCalling {
 					
 					latch.countDown();
 				} catch (IOException | FormatException e) {
-					e.printStackTrace();
+					LOGGER.error("Error processing image: {}", file.getName(), e);
 				}
 			}
 			
@@ -365,7 +331,8 @@ public class SegmentationCalling {
 		File       currentFile      = new File(filePath);
 		String     fileImg          = currentFile.toString();
 		FilesNames outPutFilesNames = new FilesNames(fileImg);
-		this.prefix = outPutFilesNames.prefixNameFile();
+		
+		String prefix = outPutFilesNames.prefixNameFile();
 		LOGGER.info("Current image in process: {}", currentFile);
 		
 		String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
@@ -478,9 +445,12 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERO(Collection<ImageWrapper> images, Long output, Client client, Long inputID)
+	public String runSeveralImagesOMERO(Collection<? extends ImageWrapper> images,
+	                                    Long output,
+	                                    Client client,
+	                                    Long inputID)
 	throws AccessException, ServiceException, ExecutionException, InterruptedException {
-		ExecutorService   downloadExecutor      = Executors.newFixedThreadPool(downloaderThreads);
+		ExecutorService   downloadExecutor      = Executors.newFixedThreadPool(DOWNLOADER_THREADS);
 		ExecutorService   processExecutor       = Executors.newFixedThreadPool(executorThreads);
 		Map<Long, String> otsuResultLines       = new ConcurrentHashMap<>();
 		Map<Long, String> convexHullResultLines = new ConcurrentHashMap<>();
@@ -526,7 +496,8 @@ public class SegmentationCalling {
 			public void run() {
 				try {
 					String fileImg = img.getName();
-					String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(
+							Calendar.getInstance().getTime());
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, timeStampStart);
 					NucleusSegmentation nucleusSegmentation =
 							new NucleusSegmentation(img, imp, segmentationParameters, client);
@@ -541,7 +512,8 @@ public class SegmentationCalling {
 					convexHullResultLines.put(img.getId(),
 					                          nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
 					
-					timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(
+							Calendar.getInstance().getTime());
 					LOGGER.info("End: {} at {}", fileImg, timeStampStart);
 					
 					latch.countDown();
@@ -783,7 +755,7 @@ public class SegmentationCalling {
 	}
 	
 	
-	public String runSeveralImagesOMERObyROIs(Iterable<ImageWrapper> images, Long output, Client client)
+	public String runSeveralImagesOMERObyROIs(Iterable<? extends ImageWrapper> images, Long output, Client client)
 	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
 		StringBuilder log = new StringBuilder();
 		
@@ -792,68 +764,6 @@ public class SegmentationCalling {
 		}
 		
 		return log.toString();
-	}
-	
-	
-	/**
-	 * Method which save the image in the directory.
-	 *
-	 * @param imagePlusInput Image to be save
-	 * @param pathFile       path of directory
-	 */
-	private void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiffStack(pathFile);
-	}
-	
-	
-	/**
-	 * 16bits image preprocessing normalised the histogram distribution apply a gaussian filter to smooth the signal
-	 * convert the image in 8bits
-	 *
-	 * @param img 16bits ImagePlus
-	 */
-	//TODO A ENLEVER APRES RESTRUCTURATION ATTENTION INTEGRATION DANS LES FENETRES GRAPHIQUES PAS ENCORE UPDATE DC CA CRASH!!!!!
-	private void preProcessImage(ImagePlus img) {
-		ContrastEnhancer enh = new ContrastEnhancer();
-		enh.setNormalize(true);
-		enh.setUseStackHistogram(true);
-		enh.setProcessStack(true);
-		enh.stretchHistogram(img, 0.05);
-		StackStatistics statistics = new StackStatistics(img);
-		img.setDisplayRange(statistics.min, statistics.max);
-		
-		GaussianBlur3D.blur(img, 0.5, 0.5, 1);
-		StackConverter stackConverter = new StackConverter(img);
-		stackConverter.convertToGray8();
-	}
-	
-	
-	public String getResultsColumnNames() {
-		return "Image," +
-		       "Dataset," +
-		       "ImageName," +
-		       "Volume," +
-		       "Flatness," +
-		       "Elongation," +
-		       "Esr," +
-		       "SurfaceArea," +
-		       "Sphericity," +
-		       "MeanIntensityNucleus," +
-		       "MeanIntensityBackground," +
-		       "StandardDeviation," +
-		       "MinIntensity," +
-		       "MaxIntensity," +
-		       "MedianIntensityImage," +
-		       "MedianIntensityNucleus," +
-		       "MedianIntensityBackground," +
-		       "ImageSize," +
-		       "Moment 1," +
-		       "Moment 2," +
-		       "Moment 3," +
-		       "AspectRatio," +
-		       "Circularity," +
-		       "OTSUThreshold," + "\n";
 	}
 	
 }

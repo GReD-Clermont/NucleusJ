@@ -61,6 +61,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 	
 	
 	/** Run the the analyse, call the graphical windows */
+	/* This method is used by plugins.config */
 	@Override
 	public void run(String arg) {
 		if (IJ.versionLessThan("1.32c")) {
@@ -71,7 +72,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 	
 	
 	@Override
-	public void OnStart() throws AccessException, ServiceException, ExecutionException {
+	public void onStart() throws AccessException, ServiceException, ExecutionException {
 		if (chromocentersPipelineBatchDialog.isOmeroEnabled()) {
 			runOMERO();
 		} else {

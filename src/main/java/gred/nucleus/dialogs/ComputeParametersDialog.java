@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class ComputeParametersDialog extends JFrame implements ItemListener {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 7134074339815211476L;
 	
 	private static final JButton jButtonWorkDirectory = new JButton("Seg Data folder");
 	
@@ -65,14 +65,9 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	private final JTextField     jTextFieldUsername = new JTextField();
 	private final JPasswordField jPasswordField     = new JPasswordField();
 	private final JTextField     jTextFieldGroup    = new JTextField();
-	private final String[]       dataTypes          = {"Dataset"};
-	
-	private final JComboBox<String> jComboBoxDataType  = new JComboBox<>(dataTypes);
-	private final JComboBox<String> jComboBoxDataType2 = new JComboBox<>(dataTypes);
 	
 	private final JTextField jTextFieldRawID         = new JTextField();
 	private final JTextField jTextFieldSegmentedID   = new JTextField();
-	private final JTextField jTextFieldOutputProject = new JTextField();
 	
 	private final Container container;
 	
@@ -318,6 +313,10 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
 		c.gridx = 1;
+		
+		String[] dataTypes = {"Dataset"};
+		
+		JComboBox<String> jComboBoxDataType = new JComboBox<>(dataTypes);
 		omeroPanel.add(jComboBoxDataType, c);
 		c.gridx = 2;
 		omeroPanel.add(jTextFieldRawID, c);
@@ -330,6 +329,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSegmentedDataset, c);
 		c.gridx = 1;
+		JComboBox<String> jComboBoxDataType2 = new JComboBox<>(dataTypes);
 		omeroPanel.add(jComboBoxDataType2, c);
 		c.gridx = 2;
 		omeroPanel.add(jTextFieldSegmentedID, c);
@@ -569,7 +569,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		public void actionPerformed(ActionEvent actionEvent) {
 			if (useOMERO) {
 				try {
-					dialogListener.OnStart();
+					dialogListener.onStart();
 				} catch (AccessException | ServiceException | ExecutionException e) {
 					throw new RuntimeException(e);
 				}
@@ -584,7 +584,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 				} else {
 					start = true;
 					try {
-						dialogListener.OnStart();
+						dialogListener.onStart();
 					} catch (AccessException | ServiceException | ExecutionException e) {
 						throw new RuntimeException(e);
 					}
@@ -608,8 +608,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused")
-				String run = jFileChooser.getSelectedFile().getName();
 				String workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldWorkDirectory.setText(workDirectory);
 			}
@@ -632,8 +630,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused")
-				String run = jFileChooser.getSelectedFile().getName();
 				String rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldRawData.setText(rawDataDirectory);
 			}

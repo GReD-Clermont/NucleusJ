@@ -20,8 +20,6 @@ public class Directory {
 	private final List<File> fileListND = new ArrayList<>();
 	
 	/** Directory path */
-	private File       dir;
-	/** Directory path */
 	private String     dirPath  = "";
 	/** List of files in current folder + recursive folder */
 	private List<File> fileList = new ArrayList<>();
@@ -39,7 +37,6 @@ public class Directory {
 	public Directory(String path) {
 		try {
 			this.dirPath = path;
-			this.dir = new File(dirPath);
 			this.separator = File.separator;
 		} catch (Exception exp) {
 			LOGGER.error("Could not create Directory object.", exp);
@@ -76,7 +73,7 @@ public class Directory {
 			if (isDirCreated) {
 				LOGGER.info("New directory: {}", dirPath);
 			} else {
-				IJ.error("{}: directory cannot be created", dirPath);
+				LOGGER.error("{}: directory cannot be created", dirPath);
 				System.exit(-1);
 			}
 		}

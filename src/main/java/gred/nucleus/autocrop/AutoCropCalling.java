@@ -46,8 +46,6 @@ public class AutoCropCalling {
 	/** Column names */
 	private static final String HEADERS = "FileName\tNumberOfCrop\tOTSUThreshold\tDefaultOTSUThreshold\n";
 	
-	/** image prefix name */
-	private String             prefix                = "";
 	/** Get general information of cropping analysis */
 	private String             outputCropGeneralInfo = "#HEADER\n";
 	/** Parameters for crop analysis */
@@ -185,7 +183,8 @@ public class AutoCropCalling {
 		LOGGER.info("Current file: {}", currentFile.getAbsolutePath());
 		String     fileImg          = currentFile.toString();
 		FilesNames outPutFilesNames = new FilesNames(fileImg);
-		this.prefix = outPutFilesNames.prefixNameFile();
+		/* image prefix name */
+		String prefix = outPutFilesNames.prefixNameFile();
 		try {
 			AutoCrop autoCrop = new AutoCrop(currentFile, prefix, autocropParameters);
 			autoCrop.thresholdKernels(typeThresholding);
@@ -257,7 +256,7 @@ public class AutoCropCalling {
 	}
 	
 	
-	public void runSeveralImageOMERO(Collection<ImageWrapper> images, Long[] outputsDatImages, Client client)
+	public void runSeveralImageOMERO(Collection<? extends ImageWrapper> images, Long[] outputsDatImages, Client client)
 	throws AccessException, ServiceException, ExecutionException, InterruptedException {
 		ExecutorService downloadExecutor = Executors.newFixedThreadPool(DOWNLOADER_THREADS);
 		ExecutorService processExecutor  = Executors.newFixedThreadPool(executorThreads);
@@ -312,7 +311,7 @@ public class AutoCropCalling {
 					annotate.run();
 					annotate.saveProjectionOMERO(client, outputProject);
 				} catch (AccessException | ServiceException | OMEROServerError | IOException | ExecutionException e) {
-					e.printStackTrace();
+					LOGGER.error("Cannot run autocrop on: {}", image.getName(), e);
 				}
 				
 				outputCropGeneralLines.put(image.getName(), autoCrop.getImageCropInfo());
@@ -341,7 +340,7 @@ public class AutoCropCalling {
 				try {
 					autoCrop = new AutoCrop(image, autocropParameters, client);
 				} catch (ServiceException | AccessException | ExecutionException e) {
-					e.printStackTrace();
+					LOGGER.error("Cannot create AutoCrop for image: {}", fileImg, e);
 				}
 				processExecutor.submit(new ImageProcessor(autoCrop, image));
 			}

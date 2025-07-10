@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class GenerateOverlayDialog extends JFrame implements ActionListener, ItemListener {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 4963585921321275469L;
 	
 	private static final String INPUT_CHOOSER  = "inputChooser";
 	private static final String INPUT_CHOOSER2 = "inputChooser2";
@@ -61,8 +61,8 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	private final JTextField jTextFieldSourceID      = new JTextField();
 	private final JTextField zProjectionTextField    = new JTextField();
 	private final JTextField jTextFieldOutputProject = new JTextField();
-	private final JTextField DICFileChooser          = new JTextField();
-	private final JTextField ZprojectionFileChooser  = new JTextField();
+	private final JTextField dicFileChooser         = new JTextField();
+	private final JTextField zProjectionFileChooser = new JTextField();
 	private final Container  container;
 	
 	private boolean start;
@@ -106,7 +106,8 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		radioOmeroPanel.add(omeroYesButton);
 		radioOmeroPanel.add(omeroNoButton);
 		container.add(radioOmeroPanel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                                      GridBagConstraints.FIRST_LINE_START, GridBagConstraints.NONE,
+		                                                      GridBagConstraints.FIRST_LINE_START,
+		                                                      GridBagConstraints.NONE,
 		                                                      new Insets(60, 30, 0, 0), 0, 0));
 		
 		// Local mode layout
@@ -124,10 +125,10 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		c.gridx = 1;
 		c.insets = new Insets(0, 0, 0, 20);
 		
-		localPanel.add(DICFileChooser, c);
-		DICFileChooser.setMaximumSize(new Dimension(10000, 20));
-		DICFileChooser.setSize(new Dimension(180, 20));
-		DICFileChooser.setText("path\\DIC Folder\\");
+		localPanel.add(dicFileChooser, c);
+		dicFileChooser.setMaximumSize(new Dimension(10000, 20));
+		dicFileChooser.setSize(new Dimension(180, 20));
+		dicFileChooser.setText("path\\DIC Folder\\");
 		
 		JButton sourceButton = new JButton("....");
 		sourceButton.setSize(new Dimension(20, 18));
@@ -145,10 +146,10 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		localPanel.add(jLabelInput2, c);
 		c.gridx = 1;
 		c.gridy = 3;
-		localPanel.add(ZprojectionFileChooser, c);
-		ZprojectionFileChooser.setMaximumSize(new Dimension(10000, 20));
-		ZprojectionFileChooser.setSize(new Dimension(180, 20));
-		ZprojectionFileChooser.setText("path\\Z projection Folder\\");
+		localPanel.add(zProjectionFileChooser, c);
+		zProjectionFileChooser.setMaximumSize(new Dimension(10000, 20));
+		zProjectionFileChooser.setSize(new Dimension(180, 20));
+		zProjectionFileChooser.setText("path\\Z projection Folder\\");
 		
 		JButton sourceButton2 = new JButton("...");
 		sourceButton2.setSize(new Dimension(20, 20));
@@ -299,12 +300,12 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	
 	
 	public String getDICInput() {
-		return DICFileChooser.getText();
+		return dicFileChooser.getText();
 	}
 	
 	
 	public String getZprojectionInput() {
-		return ZprojectionFileChooser.getText();
+		return zProjectionFileChooser.getText();
 	}
 	
 	
@@ -377,11 +378,11 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 			switch (((Component) e.getSource()).getName()) {
 				case INPUT_CHOOSER:
 					File selectedInput = fc.getSelectedFile();
-					DICFileChooser.setText(selectedInput.getPath());
+					dicFileChooser.setText(selectedInput.getPath());
 					break;
 				case INPUT_CHOOSER2:
 					File selectedInput2 = fc.getSelectedFile();
-					ZprojectionFileChooser.setText(selectedInput2.getPath());
+					zProjectionFileChooser.setText(selectedInput2.getPath());
 					break;
 				case OUTPUT_CHOOSER:
 					File selectedOutput = fc.getSelectedFile();
@@ -436,7 +437,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		
 		
 		/** @param dialog  */
-		public StartListener(GenerateOverlayDialog dialog) {
+		StartListener(GenerateOverlayDialog dialog) {
 			this.dialog = dialog;
 		}
 		
@@ -445,7 +446,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 			start = true;
 			dialog.dispose();
 			try {
-				dialogListener.OnStart();
+				dialogListener.onStart();
 			} catch (AccessException | ServiceException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}

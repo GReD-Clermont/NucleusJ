@@ -23,9 +23,10 @@ public class GenerateProjectionFromCoordinates {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
+	private final String pathToCoordinates;
+	
 	private String pathToConvexHullSeg;
 	private String pathToZProjection;
-	private String pathToCoordinates;
 	private String pathToRaw;
 	
 	

@@ -40,7 +40,7 @@ import java.util.concurrent.ExecutionException;
  * @author pouletaxel
  */
 public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements ItemListener {
-	private static final long         serialVersionUID        = 1L;
+	private static final long         serialVersionUID        = 896147828956284745L;
 	private final        JTextField   jTextFieldWorkDirectory = new JTextField();
 	private final        JTextField   jTextFieldRawData       = new JTextField();
 	private final        JRadioButton jRadioButtonRhfV        = new JRadioButton("VolumeRHF");
@@ -779,12 +779,8 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 				start = true;
 				chromocentersAnalysisPipelineBatchDialog.dispose();
 				try {
-					dialogListener.OnStart();
-				} catch (AccessException e) {
-					throw new RuntimeException(e);
-				} catch (ServiceException e) {
-					throw new RuntimeException(e);
-				} catch (ExecutionException e) {
+					dialogListener.onStart();
+				} catch (AccessException | ExecutionException | ServiceException e) {
 					throw new RuntimeException(e);
 				}
 			}
@@ -805,8 +801,6 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused")
-				String run = jFileChooser.getSelectedFile().getName();
 				String workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldWorkDirectory.setText(workDirectory);
 			}
@@ -829,8 +823,6 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused")
-				String run = jFileChooser.getSelectedFile().getName();
 				String rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldRawData.setText(rawDataDirectory);
 			}

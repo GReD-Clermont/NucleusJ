@@ -32,6 +32,12 @@ import java.util.TreeMap;
  * @author Tristan Dubos and Axel Poulet
  */
 public class Measure3D {
+	private final Map<Double, Integer> segmentedNucleusHistogram = new TreeMap<>();
+	private final Map<Double, Integer> backgroundHistogram       = new TreeMap<>();
+	
+	private final Map<Double, Integer> segmentedNucleusHisto = new TreeMap<>();
+	private final Map<Double, Integer> backgroundHisto       = new TreeMap<>();
+	
 	private ResultsTable resultsTable;
 	
 	private ImagePlus[] imageSegs;
@@ -42,13 +48,7 @@ public class Measure3D {
 	private double yCal;
 	private double zCal;
 	
-	private Map<Double, Integer> segmentedNucleusHistogram = new TreeMap<>();
-	private Map<Double, Integer> backgroundHistogram       = new TreeMap<>();
-	
 	private ImagePlus _rawImage;
-	
-	private Map<Double, Integer> segmentedNucleusHisto = new TreeMap<>();
-	private Map<Double, Integer> backgroundHisto       = new TreeMap<>();
 	
 	
 	public Measure3D() {
@@ -938,7 +938,6 @@ public class Measure3D {
 	public String nucleusParameter3D() {
 		String results;
 		histogramSegmentedNucleus();
-		// double volume = computeVolumeObject2(255);
 		
 		double   volume         = computeVolumeObjectML();
 		double   surfaceArea    = computeSurfaceObject(255);

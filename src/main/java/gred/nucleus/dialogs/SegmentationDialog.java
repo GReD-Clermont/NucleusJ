@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
 
 
 public class SegmentationDialog extends JFrame implements ActionListener, ItemListener {
-	private static final long                          serialVersionUID        = 1L;
+	private static final long                          serialVersionUID        = -8291261260165229794L;
 	private static final String                        INPUT_CHOOSER           = "inputChooser";
 	private static final String                        OUTPUT_CHOOSER          = "outputChooser";
 	private static final String                        CONFIG_CHOOSER          = "configChooser";
@@ -498,7 +498,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 			segmentationDialog.dispose();
 			segmentationConfigFileDialog.dispose();
 			try {
-				dialogListener.OnStart();
+				dialogListener.onStart();
 			} catch (AccessException | ServiceException | ExecutionException e) {
 				throw new RuntimeException(e);
 			}

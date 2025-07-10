@@ -9,12 +9,13 @@ import ij.measure.Calibration;
 import ij.process.ImageStatistics;
 import ij.process.StackStatistics;
 import inra.ijpb.binary.BinaryImages;
-import inra.ijpb.watershed.Watershed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.invoke.MethodHandles;
+
+import static inra.ijpb.watershed.Watershed.computeWatershed;
 
 
 /**
@@ -59,10 +60,12 @@ public final class ChromocentersEnhancement {
 		ImagePlus             imagePlusGradient     = myGradient.run();
 		RegionalExtremaFilter regionalExtremaFilter = new RegionalExtremaFilter();
 		regionalExtremaFilter.setMask(imagePlusSegmented);
-		ImagePlus imagePlusExtrema = regionalExtremaFilter.applyWithMask(imagePlusGradient);
-		ImagePlus imagePlusLabels  = BinaryImages.componentsLabeling(imagePlusExtrema, 26, 32);
-		ImagePlus imagePlusWatershed =
-				Watershed.computeWatershed(imagePlusGradient, imagePlusLabels, imagePlusSegmented, 26, false, false);
+		ImagePlus imagePlusExtrema   = regionalExtremaFilter.applyWithMask(imagePlusGradient);
+		ImagePlus imagePlusLabels    = BinaryImages.componentsLabeling(imagePlusExtrema, 26, 32);
+		ImagePlus imagePlusWatershed = computeWatershed(imagePlusGradient,
+		                                                imagePlusLabels,
+		                                                imagePlusSegmented,
+		                                                26, false, false);
 		// Change -1 value in 0
 		// TODO remove this line after updating morpholib_J versions (>=1.4.3)
 		imagePlusWatershed = convertNegativeValue(imagePlusWatershed);
