@@ -393,8 +393,8 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused") String run           = jFileChooser.getSelectedFile().getName();
-				String                             workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
+				String run           = jFileChooser.getSelectedFile().getName();
+				String workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldWorkDirectory.setText(workDirectory);
 			}
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -416,8 +416,8 @@ public class NucleusSegmentationBatchDialog extends JFrame {
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused") String run              = jFileChooser.getSelectedFile().getName();
-				String                             rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
+				String run              = jFileChooser.getSelectedFile().getName();
+				String rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
 				jTextFieldRawData.setText(rawDataDirectory);
 			}
 			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

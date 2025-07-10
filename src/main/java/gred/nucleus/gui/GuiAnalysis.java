@@ -855,7 +855,6 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 			}
 			int returnValue = jFileChooser.showOpenDialog(getParent());
 			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				@SuppressWarnings("unused")
 				String run = jFileChooser.getSelectedFile().getName();
 				String text = jFileChooser.getSelectedFile().getAbsolutePath();
 				jtf.setText(text);

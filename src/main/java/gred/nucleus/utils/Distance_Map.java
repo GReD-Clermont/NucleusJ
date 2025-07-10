@@ -294,7 +294,6 @@ public class Distance_Map implements PlugInFilter {
 			}
 			int       noResult   = 3 * (n + 1) * (n + 1);
 			boolean[] background = new boolean[n];
-			@SuppressWarnings("unused")
 			boolean nonempty;
 			int test;
 			int min;
@@ -361,7 +360,6 @@ public class Distance_Map implements PlugInFilter {
 			int zStop;
 			int zBegin;
 			int zEnd;
-			@SuppressWarnings("unused")
 			float[] sk;
 			int n = w;
 			if (h > n) {
