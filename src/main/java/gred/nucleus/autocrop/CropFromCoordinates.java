@@ -9,8 +9,6 @@ import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.files.Directory;
 import gred.nucleus.files.FilesNames;
-import ij.ImagePlus;
-import ij.io.FileSaver;
 import loci.formats.FormatException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -27,6 +25,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
+
+import static gred.nucleus.utils.Rd2ToTif.saveFile;
 
 
 public class CropFromCoordinates {
@@ -67,12 +67,6 @@ public class CropFromCoordinates {
 		this.pathToCoordinates = pathToCoordinates;
 		this.pathToRaw = "." + File.separator + "tmp-raw_cropFromCoordinate" + File.separator;
 		this.pathToOutput = "." + File.separator + "tmp-cropped_nuclei_cropFromCoordinate" + File.separator;
-	}
-	
-	
-	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiff(pathFile);
 	}
 	
 	

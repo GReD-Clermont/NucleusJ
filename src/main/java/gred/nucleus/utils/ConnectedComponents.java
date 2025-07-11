@@ -242,14 +242,4 @@ public class ConnectedComponents {
 		this.image = image;
 	}
 	
-	
-	/**
-	 * @param label
-	 *
-	 * @return
-	 */
-	public List<VoxelRecord> getBoundaryVoxel(int label) {
-		return detectVoxelBoundary(label);
-	}
-	
 }

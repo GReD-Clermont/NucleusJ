@@ -2,9 +2,7 @@ package gred.nucleus.utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -131,47 +129,6 @@ public class FileList {
 	
 	
 	/**
-	 * @param filePathway
-	 * @param tableFile
-	 *
-	 * @return
-	 */
-	public static boolean isInDirectory(String filePathway, File[] tableFile) {
-		boolean testFile = false;
-		for (File file : tableFile) {
-			if (file.toString().equals(filePathway)) {
-				testFile = true;
-				break;
-			}
-		}
-		return testFile;
-	}
-	
-	
-	/**
-	 * @param regex
-	 * @param tFile
-	 *
-	 * @return
-	 */
-	public String fileSearch(String regex, File[] tFile) {
-		if (windows) {
-			String as  = "\\";
-			String das = "\\\\";
-			regex = regex.replace(as, das);
-		}
-		String file = null;
-		for (File value : tFile) {
-			if (value.toString().matches(regex)) {
-				file = value.toString();
-				break;
-			}
-		}
-		return file;
-	}
-	
-	
-	/**
 	 * @param regex
 	 * @param tFile
 	 *
@@ -191,34 +148,6 @@ public class FileList {
 			}
 		}
 		return testFile;
-	}
-	
-	
-	/**
-	 * @param directory
-	 * @param tFile
-	 *
-	 * @return
-	 */
-	public static String[] getDirectoryFiles(CharSequence directory, File[] tFile) {
-		String[]             tRef         = SEP.split(directory);
-		String[]             tTemp        = new String[0];
-		List<String>         arrayList    = new ArrayList<>(tFile.length);
-		Map<String, Integer> directoryMap = new HashMap<>(tFile.length);
-		for (File file : tFile) {
-			String[] temp = SEP.split(file.toString());
-			if (temp.length > tRef.length + 1 && !directoryMap.containsKey(temp[tRef.length])) {
-				directoryMap.put(temp[tRef.length], 1);
-				arrayList.add(temp[tRef.length]);
-			}
-		}
-		if (!arrayList.isEmpty()) {
-			tTemp = new String[arrayList.size()];
-			for (int i = 0; i < arrayList.size(); ++i) {
-				tTemp[i] = arrayList.get(i);
-			}
-		}
-		return tTemp;
 	}
 	
 	

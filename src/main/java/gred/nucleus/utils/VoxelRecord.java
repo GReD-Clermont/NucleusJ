@@ -80,55 +80,6 @@ public class VoxelRecord {
 		this.value = value;
 	}
 	
-	/*
-	  Compare the values of two voxel
-	  0 if same voxel value
-	  -1 if value of voxel input > value voxel
-	  1 if value of voxel input < value voxel
-	 * @param object a voxel
-	 * @return results of comparison
-	 */
-
-  /*public int compareTo(Object object) {
-    VoxelRecord voxelRecord = (VoxelRecord)object;
-
-    if (value == voxelRecord.value)
-    	return 0;
-    else if (value < voxelRecord.value)
-    	return -1;
-    else
-    	return 1;
-  }*/
-	
-	
-	/**
-	 * Compares the values of two voxel 0 if same voxel value -1 if value of voxel input > value voxel 1 if value of
-	 * voxel input < value voxel
-	 *
-	 * @param object a voxel
-	 *
-	 * @return results of comparison
-	 */
-	public int compareCoordinatesTo(Object object) {
-		VoxelRecord voxelRecord = (VoxelRecord) object;
-		
-		if (i == voxelRecord.i && j == voxelRecord.j && k == voxelRecord.k) {
-			return 0;
-		} else {
-			return 1;
-		}
-	}
-	
-	
-	/**
-	 * Computes a addition between the coordinates between two voxel
-	 *
-	 * @param p a VoxelRecord
-	 */
-	public void shiftCoordinates(VoxelRecord p) {
-		setLocation(i + p.i, j + p.j, k + p.k);
-	}
-	
 	
 	/**
 	 * Multiplies the coordinates of voxel with a different factor for each coordinates
@@ -139,16 +90,6 @@ public class VoxelRecord {
 	 */
 	public void multiply(double a, double b, double c) {
 		setLocation(i * a, j * b, k * c);
-	}
-	
-	
-	/**
-	 * Multiplies the coordinates of voxel with a same factor for each coordinates
-	 *
-	 * @param a
-	 */
-	public void multiply(double a) {
-		setLocation(i * a, j * a, k * a);
 	}
 	
 }

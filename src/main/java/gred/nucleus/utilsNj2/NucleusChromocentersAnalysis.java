@@ -75,7 +75,7 @@ public class NucleusChromocentersAnalysis {
 		
 		if (histogram.getNbLabels() > 0) {
 			double[] tVolumesObjects =
-					measure3D.computeVolumeofAllObjects(imagePlusChromocenter);
+					measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
 			int    nbCc         = Measure3D.getNumberOfObject(imagePlusChromocenter);
 			double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,
@@ -177,7 +177,7 @@ public class NucleusChromocentersAnalysis {
 		
 		if (histogram.getNbLabels() > 0) {
 			double[] tVolumesObjects =
-					measure3D.computeVolumeofAllObjects(imagePlusChromocenter);
+					measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
 			int    nbCc         = Measure3D.getNumberOfObject(imagePlusChromocenter);
 			double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,

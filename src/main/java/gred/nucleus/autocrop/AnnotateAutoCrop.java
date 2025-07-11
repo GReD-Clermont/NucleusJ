@@ -9,7 +9,6 @@ import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.files.Directory;
 import ij.ImagePlus;
 import ij.gui.TextRoi;
-import ij.io.FileSaver;
 import ij.plugin.ContrastEnhancer;
 import ij.plugin.ZProjector;
 import ij.process.ImageConverter;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
+import static gred.nucleus.utils.Rd2ToTif.saveFile;
 import static loci.plugins.BF.openImagePlus;
 
 
@@ -173,18 +173,6 @@ public class AnnotateAutoCrop {
 		                     outputFilesPrefix + "_Zprojection.tif";
 		LOGGER.info("outFileZBox: {}", outFileZBox);
 		saveFile(zProjection, outFileZBox);
-	}
-	
-	
-	/**
-	 * Save the ImagePlus Z-projection image
-	 *
-	 * @param imagePlusInput image to save
-	 * @param pathFile       path to save the image
-	 */
-	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiff(pathFile);
 	}
 	
 	

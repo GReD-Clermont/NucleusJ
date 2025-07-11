@@ -9,7 +9,6 @@ import gred.nucleus.files.Directory;
 import gred.nucleus.files.OutputTextFile;
 import gred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
-import ij.io.FileSaver;
 import ij.measure.Calibration;
 import loci.formats.FormatException;
 import loci.plugins.BF;
@@ -25,6 +24,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static gred.nucleus.utils.Rd2ToTif.saveFile;
+
 
 public class ComputeNucleiParameters {
 	/** Logger */
@@ -34,20 +35,6 @@ public class ComputeNucleiParameters {
 	
 	private String segDatasetName;
 	private String currentTime;
-	
-	
-	/**
-	 * Constructor with input, output and config files
-	 *
-	 * @param rawImagesInputDirectory  path to raw images
-	 * @param segmentedImagesDirectory path to segmented images associated
-	 * @param pathToConfig             path to config file
-	 */
-	public ComputeNucleiParameters(String rawImagesInputDirectory,
-	                               String segmentedImagesDirectory,
-	                               String pathToConfig) {
-		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory, pathToConfig);
-	}
 	
 	
 	/**
@@ -85,12 +72,6 @@ public class ComputeNucleiParameters {
 	                               Calibration cal) {
 		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory,
 		                                             cal.pixelWidth, cal.pixelHeight, cal.pixelDepth);
-	}
-	
-	
-	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiff(pathFile);
 	}
 	
 	

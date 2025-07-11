@@ -604,16 +604,6 @@ public class AutoCrop {
 	
 	
 	/**
-	 * Getter for the outputFile ArrayList
-	 *
-	 * @return outputFile: ArrayList of String for the path of the output files created.
-	 */
-	public List<String> getOutputFileList() {
-		return new ArrayList<>(outputFile);
-	}
-	
-	
-	/**
 	 * Getter for the boxCoordinates
 	 *
 	 * @return boxCoordinates: ArrayList of String which contain the coordinates of the boxes
@@ -719,16 +709,6 @@ public class AutoCrop {
 	
 	
 	/**
-	 * Getter column name for the tab delimited file
-	 *
-	 * @return columns name for output text file
-	 */
-	public static String getColumnNames() {
-		return HEADERS;
-	}
-	
-	
-	/**
 	 * Write analysis info in output text file
 	 */
 	public void writeAnalyseInfo() {
@@ -814,14 +794,5 @@ public class AutoCrop {
 		}
 	}
 	
-	
-	/**
-	 * Set a list of boxes
-	 *
-	 * @param boxes list of boxes
-	 */
-	public void setBoxes(Map<Double, ? extends Box> boxes) {
-		this.boxes = new HashMap<>(boxes);
-	}
 	
 }

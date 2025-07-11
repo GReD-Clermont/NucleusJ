@@ -10,7 +10,6 @@ import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.files.Directory;
 import ij.ImagePlus;
 import ij.gui.ImageRoi;
-import ij.io.FileSaver;
 import ij.plugin.Duplicator;
 import ij.plugin.LutLoader;
 import ij.process.ImageConverter;
@@ -35,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import static gred.nucleus.utils.Rd2ToTif.saveFile;
 
 
 public class GenerateOverlay {
@@ -61,18 +62,6 @@ public class GenerateOverlay {
 		this.pathToProjection = pathToProjection;
 		this.pathToDic = pathToDic;
 		this.pathToOutput = pathToProjection + File.separator + "overlay";
-	}
-	
-	
-	/**
-	 * Save output file in tiff format for OMERO
-	 *
-	 * @param imagePlusInput image to save
-	 * @param pathFile       path to save image
-	 */
-	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiff(pathFile);
 	}
 	
 	

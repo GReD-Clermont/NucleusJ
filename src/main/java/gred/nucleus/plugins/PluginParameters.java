@@ -39,11 +39,6 @@ public class PluginParameters {
 	protected boolean gaussianIsOn;
 	
 	
-	/** Constructor with default parameter */
-	public PluginParameters() {
-	}
-	
-	
 	/**
 	 * Constructor with default parameter
 	 *

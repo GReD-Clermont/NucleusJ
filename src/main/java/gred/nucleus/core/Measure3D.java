@@ -42,13 +42,10 @@ public class Measure3D {
 	
 	private ImagePlus[] imageSegs;
 	private ImagePlus   rawImage;
-	private ImagePlus   imageSeg;
 	
 	private double xCal;
 	private double yCal;
 	private double zCal;
-	
-	private ImagePlus _rawImage;
 	
 	
 	public Measure3D() {
@@ -68,16 +65,6 @@ public class Measure3D {
 		this.xCal = xCal;
 		this.yCal = yCal;
 		this.zCal = zCal;
-	}
-	
-	
-	public Measure3D(ImagePlus imageSeg, ImagePlus rawImage, double xCal, double ycal, double zCal) {
-		this._rawImage = rawImage;
-		this.imageSeg = imageSeg;
-		this.xCal = xCal;
-		this.yCal = ycal;
-		this.zCal = zCal;
-		histogramSegmentedNucleus2();
 	}
 	
 	
@@ -296,21 +283,6 @@ public class Measure3D {
 	
 	
 	/**
-	 * compute the equivalent spherical radius with ImagePlus in input
-	 *
-	 * @param imagePlusBinary ImagePlus of the segmented image
-	 *
-	 * @return double the equivalent spherical radius
-	 */
-	public double equivalentSphericalRadius(ImagePlus imagePlusBinary) {
-		double radius = 3 * computeVolumeObject(imagePlusBinary, 255)
-		                / (4 * Math.PI);
-		radius = Math.pow(radius, 1.0 / 3.0);
-		return radius;
-	}
-	
-	
-	/**
 	 * Method which compute the sphericity : 36Pi*Volume^2/Surface^3 = 1 if perfect sphere
 	 *
 	 * @param volume  double volume of the object
@@ -319,8 +291,7 @@ public class Measure3D {
 	 * @return double sphercity
 	 */
 	public static double computeSphericity(double volume, double surface) {
-		return 36 * Math.PI * (volume * volume)
-		       / (surface * surface * surface);
+		return 36 * Math.PI * (volume * volume) / (surface * surface * surface);
 	}
 	
 	
@@ -717,38 +688,6 @@ public class Measure3D {
 				}
 			}
 		}
-	}
-	
-	
-	private void histogramSegmentedNucleus2() {
-		
-		ImageStack imageStackRaw = _rawImage.getStack();
-		ImageStack imageStackSeg = imageSeg.getStack();
-		Histogram  histogram     = new Histogram();
-		histogram.run(_rawImage);
-		for (int k = 0; k < _rawImage.getStackSize(); ++k) {
-			for (int i = 0; i < _rawImage.getWidth(); ++i) {
-				for (int j = 0; j < _rawImage.getHeight(); ++j) {
-					double voxelValue = imageStackSeg.getVoxel(i, j, k);
-					if (voxelValue == 255) {
-						if (segmentedNucleusHisto.containsKey(imageStackRaw.getVoxel(i, j, k))) {
-							segmentedNucleusHisto.put(imageStackRaw.getVoxel(i, j, k),
-							                          segmentedNucleusHisto.get(imageStackRaw.getVoxel(i, j, k)) + 1);
-						} else {
-							segmentedNucleusHisto.put(imageStackRaw.getVoxel(i, j, k), 1);
-						}
-					} else {
-						if (backgroundHisto.containsKey(imageStackRaw.getVoxel(i, j, k))) {
-							backgroundHisto.put(imageStackRaw.getVoxel(i, j, k),
-							                    backgroundHisto.get(imageStackRaw.getVoxel(i, j, k)) + 1);
-						} else {
-							backgroundHisto.put(imageStackRaw.getVoxel(i, j, k), 1);
-						}
-					}
-				}
-			}
-		}
-		
 	}
 	
 	

@@ -4,7 +4,6 @@ import gred.nucleus.gradient.MyGradient;
 import gred.nucleus.utils.RegionalExtremaFilter;
 import ij.ImagePlus;
 import ij.ImageStack;
-import ij.io.FileSaver;
 import ij.measure.Calibration;
 import ij.process.ImageStatistics;
 import ij.process.StackStatistics;
@@ -12,7 +11,6 @@ import inra.ijpb.binary.BinaryImages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.lang.invoke.MethodHandles;
 
 import static inra.ijpb.watershed.Watershed.computeWatershed;
@@ -32,17 +30,6 @@ public final class ChromocentersEnhancement {
 	 *
 	 */
 	private ChromocentersEnhancement() {
-	}
-	
-	
-	public static void saveFile(ImagePlus imagePlus, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlus);
-		File      file      = new File(pathFile);
-		if (file.exists() || file.mkdirs()) {
-			fileSaver.saveAsTiffStack(pathFile + File.separator + imagePlus.getTitle());
-		} else {
-			LOGGER.error("Directory does not exist and could not be created: {}", pathFile);
-		}
 	}
 	
 	

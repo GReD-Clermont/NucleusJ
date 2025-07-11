@@ -52,40 +52,6 @@ public final class ChromocenterAnalysis {
 	
 	
 	/**
-	 * Compute the several parameters to characterize the chromocenter of one image, and return the results on the IJ
-	 * log windows
-	 *
-	 * @param imagePlusSegmented    image of the segmented nucleus
-	 * @param imagePlusChromocenter image of the segmented chromocenter
-	 */
-	public static void computeParametersChromocenter(ImagePlus imagePlusSegmented, ImagePlus imagePlusChromocenter) {
-		Histogram histogram = new Histogram();
-		histogram.run(imagePlusChromocenter);
-		Measure3D measure3D = new Measure3D();
-		double[]  tVolume   = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
-		LOGGER.info("CHROMOCENTER PARAMETERS");
-		LOGGER.info("Titre Volume BorderToBorderDistance BarycenterToBorderDistance BarycenterToBorderDistanceNucleus");
-		if (histogram.getNbLabels() > 0) {
-			double[] tBorderToBorderDistanceTable = computeBorderToBorderDistances(imagePlusSegmented,
-			                                                                       imagePlusChromocenter);
-			double[] tBarycenterToBorderDistanceTable = computeBarycenterToBorderDistances(imagePlusSegmented,
-			                                                                               imagePlusChromocenter);
-			double[] tBarycenterToBorderDistanceTableNucleus = computeBarycenterToBorderDistances(imagePlusSegmented,
-			                                                                                      imagePlusSegmented);
-			for (int i = 0; i < tBorderToBorderDistanceTable.length; ++i) {
-				LOGGER.info("{}_{} {} {} {} {}",
-				            imagePlusChromocenter.getTitle(),
-				            i,
-				            tVolume[i],
-				            tBorderToBorderDistanceTable[i],
-				            tBarycenterToBorderDistanceTable[i],
-				            tBarycenterToBorderDistanceTableNucleus[0]);
-			}
-		}
-	}
-	
-	
-	/**
 	 * Compute the several parameters to characterize the chromocenter of several images, and create one output file for
 	 * the results
 	 *

@@ -18,7 +18,6 @@ import gred.nucleus.utils.Histogram;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Macro;
-import ij.io.FileSaver;
 import ij.measure.Calibration;
 import ij.plugin.ChannelSplitter;
 import ij.plugin.Filters3D;
@@ -42,6 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
+
+import static gred.nucleus.utils.Rd2ToTif.saveFile;
 
 
 /**
@@ -219,16 +220,6 @@ public class NucleusSegmentation {
 	/**
 	 * Method to save 3D parameters computed
 	 *
-	 * @return list of 3D parameter computed
-	 */
-	public String saveImageResult() {
-		return measure3D.nucleusParameter3D();
-	}
-	
-	
-	/**
-	 * Method to save 3D parameters computed
-	 *
 	 * @param segmentedImage segmented image
 	 *
 	 * @return
@@ -240,18 +231,6 @@ public class NucleusSegmentation {
 		return measure3D.nucleusParameter3D();
 		
 		
-	}
-	
-	
-	/**
-	 * Method to save segmented image
-	 *
-	 * @param imagePlusInput segmented image
-	 * @param pathFile       path to save the image
-	 */
-	private static void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiffStack(pathFile);
 	}
 	
 	

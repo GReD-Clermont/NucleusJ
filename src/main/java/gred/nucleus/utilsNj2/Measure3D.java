@@ -3,7 +3,6 @@ package gred.nucleus.utilsNj2;
 
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
-import gred.nucleus.utils.Gradient;
 import gred.nucleus.utils.Histogram;
 import gred.nucleus.utils.VoxelRecord;
 import ij.ImagePlus;
@@ -12,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -55,17 +53,6 @@ public class Measure3D {
 	private double zCal;
 	
 	
-	public Measure3D() {
-	}
-	
-	
-	public Measure3D(double xCal, double ycal, double zCal) {
-		this.xCal = xCal;
-		this.yCal = ycal;
-		this.zCal = zCal;
-	}
-	
-	
 	public Measure3D(ImagePlus imageSeg, ImagePlus rawImage, double xCal, double ycal, double zCal) {
 		this.rawImage = rawImage;
 		this.imageSeg = imageSeg;
@@ -77,60 +64,13 @@ public class Measure3D {
 	
 	
 	/**
-	 * Scan of image and if the voxel belong to the object of interest, looking, if in his neighborhood there are voxel
-	 * value == 0 then it is a boundary voxel. Adding the surface of the face of the voxel frontier, which are in
-	 * contact with the background of the image, to the surface total.
-	 *
-	 * @param label label of the interest object
-	 *
-	 * @return the surface
-	 */
-	
-	public double computeSurfaceObject(double label) {
-		ImageStack imageStackInput = imageSeg.getStack();
-		double     surfaceArea     = 0, voxelValue, neighborVoxelValue;
-		for (int k = 1; k < imageSeg.getStackSize(); ++k) {
-			for (int i = 1; i < imageSeg.getWidth(); ++i) {
-				for (int j = 1; j < imageSeg.getHeight(); ++j) {
-					voxelValue = imageStackInput.getVoxel(i, j, k);
-					if (voxelValue == label &&
-					    k - 2 >= 0 && k + 2 < imageSeg.getStackSize() &&
-					    i - 2 >= 0 && i + 2 < imageSeg.getWidth() &&
-					    j - 2 >= 0 && j + 2 < imageSeg.getHeight()) {
-						for (int kk = k - 1; kk <= k + 1; kk += 2) {
-							neighborVoxelValue = imageStackInput.getVoxel(i, j, kk);
-							if (voxelValue != neighborVoxelValue) {
-								surfaceArea += xCal * yCal;
-							}
-						}
-						for (int ii = i - 1; ii <= i + 1; ii += 2) {
-							neighborVoxelValue = imageStackInput.getVoxel(ii, j, k);
-							if (voxelValue != neighborVoxelValue) {
-								surfaceArea += yCal * zCal;
-							}
-						}
-						for (int jj = j - 1; jj <= j + 1; jj += 2) {
-							neighborVoxelValue = imageStackInput.getVoxel(i, jj, k);
-							if (voxelValue != neighborVoxelValue) {
-								surfaceArea += xCal * zCal;
-							}
-						}
-					}
-				}
-			}
-		}
-		return surfaceArea;
-	}
-	
-	
-	/**
 	 * This Method compute the volume of each segmented objects in imagePlus
 	 *
 	 * @param imagePlusInput ImagePlus segmented image
 	 *
 	 * @return double table which contain the volume of each image object
 	 */
-	public double[] computeVolumeofAllObjects(ImagePlus imagePlusInput) {
+	public double[] computeVolumeOfAllObjects(ImagePlus imagePlusInput) {
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusInput);
 		double[]             tlabel        = histogram.getLabels();
@@ -152,22 +92,6 @@ public class Measure3D {
 			}
 		}
 		return volumeTMP * xCal * yCal * zCal;
-	}
-	
-	
-	/**
-	 * Compute the volume of one object with this label
-	 *
-	 * @param imagePlusInput ImagePLus of the segmented image
-	 * @param label          double label of the object of interest
-	 *
-	 * @return double: the volume of the label of interest
-	 */
-	public double computeVolumeObject(ImagePlus imagePlusInput, double label) {
-		Histogram histogram = new Histogram();
-		histogram.run(imagePlusInput);
-		Map<Double, Integer> hashMapHisto = histogram.getHistogram();
-		return hashMapHisto.get(label) * xCal * yCal * zCal;
 	}
 	
 	
@@ -310,68 +234,6 @@ public class Measure3D {
 	
 	
 	/**
-	 * Method which compute the barycenter of each objects and return the result in a table of VoxelRecord
-	 *
-	 * @param imagePlusInput ImagePlus of labelled image
-	 * @param unit           if true the coordinates of barycenter are in µm.
-	 *
-	 * @return table of VoxelRecord for each object of the input image
-	 */
-	public VoxelRecord[] computeObjectBarycenter(ImagePlus imagePlusInput,
-	                                             boolean unit) {
-		Histogram histogram = new Histogram();
-		histogram.run(imagePlusInput);
-		double[]      tlabel       = histogram.getLabels();
-		VoxelRecord[] tVoxelRecord = new VoxelRecord[tlabel.length];
-		for (int i = 0; i < tlabel.length; ++i) {
-			tVoxelRecord[i] = computeBarycenter3D(unit, imagePlusInput, tlabel[i]);
-		}
-		return tVoxelRecord;
-	}
-	
-	
-	/**
-	 * Intensity of chromocenters/ intensity of the nucleus
-	 *
-	 * @param imagePlusInput        ImagePlus raw image
-	 * @param imagePlusSegmented    binary ImagePlus
-	 * @param imagePlusChromocenter ImagePlus of the chromocemters
-	 *
-	 * @return double Relative Heterochromatin Fraction compute on the Intensity ratio
-	 */
-	public static double computeIntensityRHF(ImagePlus imagePlusInput,
-	                                         ImagePlus imagePlusSegmented,
-	                                         ImagePlus imagePlusChromocenter) {
-		double     chromocenterIntensity  = 0;
-		double     nucleusIntensity       = 0;
-		double     voxelValueChromocenter;
-		double     voxelValueInput;
-		double     voxelValueSegmented;
-		ImageStack imageStackChromocenter = imagePlusChromocenter.getStack();
-		ImageStack imageStackSegmented    = imagePlusSegmented.getStack();
-		ImageStack imageStackInput        = imagePlusInput.getStack();
-		for (int k = 0; k < imagePlusInput.getNSlices(); ++k) {
-			for (int i = 0; i < imagePlusInput.getWidth(); ++i) {
-				for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
-					voxelValueSegmented = imageStackSegmented.getVoxel(i, j, k);
-					voxelValueInput = imageStackInput.getVoxel(i, j, k);
-					voxelValueChromocenter =
-							imageStackChromocenter.getVoxel(i, j, k);
-					
-					if (voxelValueSegmented > 0) {
-						if (voxelValueChromocenter > 0) {
-							chromocenterIntensity += voxelValueInput;
-						}
-						nucleusIntensity += voxelValueInput;
-					}
-				}
-			}
-		}
-		return chromocenterIntensity / nucleusIntensity;
-	}
-	
-	
-	/**
 	 * Method which compute the RHF (total chromocenters volume/nucleus volume)
 	 *
 	 * @param imagePlusSegmented     binary ImagePlus
@@ -384,11 +246,11 @@ public class Measure3D {
 		double volumeCc = 0;
 		//Calibration calSeg = imagePlusSegmented.getCalibration();
 		//Calibration calChrom = imagePlusChomocenters.getCalibration();
-		double[] tVolumeChromocenter = computeVolumeofAllObjects(imagePlusChromocenters);
+		double[] tVolumeChromocenter = computeVolumeOfAllObjects(imagePlusChromocenters);
 		for (double v : tVolumeChromocenter) {
 			volumeCc += v;
 		}
-		double[] tVolumeSegmented = computeVolumeofAllObjects(imagePlusSegmented);
+		double[] tVolumeSegmented = computeVolumeOfAllObjects(imagePlusSegmented);
 		return volumeCc / tVolumeSegmented[0];
 	}
 	
@@ -404,94 +266,6 @@ public class Measure3D {
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusInput);
 		return histogram.getNbLabels();
-	}
-	
-	
-	/**
-	 * Method to compute surface of the segmented object using gradient information.
-	 *
-	 * @return
-	 */
-	public double computeComplexSurface() {
-		Gradient           gradient            = new Gradient(rawImage);
-		List<Double>[][][] tableUnitaire       = gradient.getUnitaire();
-		ImageStack         imageStackSegmented = imageSeg.getStack();
-		double             surfaceArea         = 0, voxelValue, neighborVoxelValue;
-		VoxelRecord        voxelRecordIn       = new VoxelRecord();
-		VoxelRecord        voxelRecordOut      = new VoxelRecord();
-		
-		for (int k = 2; k < imageSeg.getNSlices() - 2; ++k) {
-			for (int i = 2; i < imageSeg.getWidth() - 2; ++i) {
-				for (int j = 2; j < imageSeg.getHeight() - 2; ++j) {
-					voxelValue = imageStackSegmented.getVoxel(i, j, k);
-					if (voxelValue > 0) {
-						for (int kk = k - 1; kk <= k + 1; kk += 2) {
-							neighborVoxelValue =
-									imageStackSegmented.getVoxel(i, j, kk);
-							if (voxelValue != neighborVoxelValue) {
-								voxelRecordIn.setLocation(i, j, k);
-								voxelRecordOut.setLocation(i, j, kk);
-								surfaceArea += computeSurfelContribution(tableUnitaire[i][j][k],
-								                                         tableUnitaire[i][j][kk],
-								                                         voxelRecordIn,
-								                                         voxelRecordOut,
-								                                         xCal * yCal);
-							}
-						}
-						for (int ii = i - 1; ii <= i + 1; ii += 2) {
-							neighborVoxelValue = imageStackSegmented.getVoxel(ii, j, k);
-							if (voxelValue != neighborVoxelValue) {
-								voxelRecordIn.setLocation(i, j, k);
-								voxelRecordOut.setLocation(ii, j, k);
-								surfaceArea += computeSurfelContribution(tableUnitaire[i][j][k],
-								                                         tableUnitaire[ii][j][k],
-								                                         voxelRecordIn, voxelRecordOut,
-								                                         yCal * zCal);
-							}
-						}
-						for (int jj = j - 1; jj <= j + 1; jj += 2) {
-							neighborVoxelValue = imageStackSegmented.getVoxel(i, jj, k);
-							if (voxelValue != neighborVoxelValue) {
-								voxelRecordIn.setLocation(i, j, k);
-								voxelRecordOut.setLocation(i, jj, k);
-								surfaceArea += computeSurfelContribution(tableUnitaire[i][j][k],
-								                                         tableUnitaire[i][jj][k],
-								                                         voxelRecordIn,
-								                                         voxelRecordOut,
-								                                         xCal * zCal);
-							}
-						}
-					}
-				}
-			}
-		}
-		return surfaceArea;
-	}
-	
-	
-	/**
-	 * Compute surface contribution of each voxels from gradients.
-	 *
-	 * @param listUnitaireIn
-	 * @param listUnitaireOut
-	 * @param voxelRecordIn
-	 * @param voxelRecordOut
-	 * @param as
-	 *
-	 * @return
-	 */
-	private static double computeSurfelContribution(List<Double> listUnitaireIn,
-	                                                List<Double> listUnitaireOut,
-	                                                VoxelRecord voxelRecordIn,
-	                                                VoxelRecord voxelRecordOut,
-	                                                double as) {
-		double dx = voxelRecordIn.i - voxelRecordOut.i;
-		double dy = voxelRecordIn.j - voxelRecordOut.j;
-		double dz = voxelRecordIn.k - voxelRecordOut.k;
-		double nx = (listUnitaireIn.get(0) + listUnitaireOut.get(0)) / 2;
-		double ny = (listUnitaireIn.get(1) + listUnitaireOut.get(1)) / 2;
-		double nz = (listUnitaireIn.get(2) + listUnitaireOut.get(2)) / 2;
-		return Math.abs((dx * nx + dy * ny + dz * nz) * as);
 	}
 	
 	
