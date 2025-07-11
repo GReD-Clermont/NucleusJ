@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-import static gred.nucleus.utils.Rd2ToTif.saveFile;
+import static gred.nucleus.utils.ImageSaver.saveFile;
 import static loci.plugins.BF.openImagePlus;
 
 

@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
-import static gred.nucleus.utils.Rd2ToTif.saveFile;
+import static gred.nucleus.utils.ImageSaver.saveFile;
 
 
 /**

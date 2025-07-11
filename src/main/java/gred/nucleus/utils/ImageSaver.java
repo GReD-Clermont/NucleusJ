@@ -4,11 +4,11 @@ import ij.ImagePlus;
 import ij.io.FileSaver;
 
 
-public final class Rd2ToTif {
+public final class ImageSaver {
 	
 	
 	/** Default constructor: private to prevent instantiation */
-	private Rd2ToTif() {
+	private ImageSaver() {
 		// Prevent instantiation
 	}
 	

@@ -26,7 +26,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-import static gred.nucleus.utils.Rd2ToTif.saveFile;
+import static gred.nucleus.utils.ImageSaver.saveFile;
 
 
 public class CropFromCoordinates {

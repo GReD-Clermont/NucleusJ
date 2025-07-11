@@ -2,7 +2,7 @@ package gred.nucleus.process;
 
 import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.utils.Histogram;
-import gred.nucleus.utils.Rd2ToTif;
+import gred.nucleus.utils.ImageSaver;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;
@@ -112,7 +112,7 @@ public class ChromocenterSegmentation {
 		                    chromocenterParams.gaussianBlurZsigma);
 		imageGradient.setCalibration(cal);
 		String diff = output.replace(".tif", "_diff.tif");
-		Rd2ToTif.saveFile(imageGradient, pathGradient);
+		ImageSaver.saveFile(imageGradient, pathGradient);
 		computeAverage3D(imageGradient);
 		computeStdDev3D(imageGradient);
 		this.threshold = avgNucIntensity + factor * stdDevNucIntensity;
@@ -125,7 +125,7 @@ public class ChromocenterSegmentation {
 			imageGradient.setCalibration(cal);
 		}
 		
-		Rd2ToTif.saveFile(imageGradient, output);
+		ImageSaver.saveFile(imageGradient, output);
 	}
 	
 	

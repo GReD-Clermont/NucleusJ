@@ -24,7 +24,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static gred.nucleus.utils.Rd2ToTif.saveFile;
+import static gred.nucleus.utils.ImageSaver.saveFile;
 
 
 public class ComputeNucleiParameters {
