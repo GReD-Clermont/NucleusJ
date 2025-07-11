@@ -46,6 +46,15 @@ class SegmentationTest {
 	}
 	
 	
+	private static void runSegmentation(String imageSourceFile, String output)
+	throws IOException, FormatException {
+		SegmentationParameters segmentationParams = new SegmentationParameters(imageSourceFile, output);
+		SegmentationCalling    segmentation       = new SegmentationCalling(segmentationParams);
+		segmentation.runOneImage(imageSourceFile);
+		segmentation.saveTestCropGeneralInfo();
+	}
+	
+	
 	@Test
 	@Tag("functional")
 	void test() throws Exception {
@@ -79,15 +88,6 @@ class SegmentationTest {
 				}
 			}
 		}
-	}
-	
-	
-	private static void runSegmentation(String imageSourceFile, String output)
-	throws IOException, FormatException {
-		SegmentationParameters segmentationParams = new SegmentationParameters(imageSourceFile, output);
-		SegmentationCalling    segmentation       = new SegmentationCalling(segmentationParams);
-		segmentation.runOneImage(imageSourceFile);
-		segmentation.saveTestCropGeneralInfo();
 	}
 	
 }

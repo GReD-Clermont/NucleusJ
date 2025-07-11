@@ -42,6 +42,14 @@ class AutoCropTest {
 	}
 	
 	
+	private static void runAutoCrop(String imageSourceFile, String output) {
+		AutocropParameters autocropParameters = new AutocropParameters(imageSourceFile, output);
+		AutoCropCalling    autoCrop           = new AutoCropCalling(autocropParameters);
+		autoCrop.runFile(imageSourceFile);
+		autoCrop.saveGeneralInfo();
+	}
+	
+	
 	@Test
 	@Tag("functional")
 	void test() {
@@ -75,14 +83,6 @@ class AutoCropTest {
 				}
 			}
 		}
-	}
-	
-	
-	private static void runAutoCrop(String imageSourceFile, String output) {
-		AutocropParameters autocropParameters = new AutocropParameters(imageSourceFile, output);
-		AutoCropCalling    autoCrop           = new AutoCropCalling(autocropParameters);
-		autoCrop.runFile(imageSourceFile);
-		autoCrop.saveGeneralInfo();
 	}
 	
 }
