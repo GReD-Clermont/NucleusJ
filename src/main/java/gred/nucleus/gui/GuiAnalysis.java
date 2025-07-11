@@ -92,12 +92,16 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	private boolean start;
 	
 	
+	/** Default constructor */
+	public GuiAnalysis() {
+		this(null);
+	}
+	
+	
 	/**
 	 * GUI Architecture
 	 */
 	public GuiAnalysis(IDialogListener dialogListener) {
-		this.dialogListener = dialogListener;
-		
 		// Global parameter of the JFram and def of the gridBaglayout
 		super.setTitle("NODeJ");
 		super.setSize(550, 720);
@@ -107,7 +111,8 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		super.setBackground(Color.LIGHT_GRAY);
 		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
-		//this._container = getContentPane();
+		this.dialogListener = dialogListener != null ? dialogListener : this;
+		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
 		gridBagLayout.rowHeights = new int[]{17, 500, 124, 7};
@@ -529,8 +534,8 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	 *
 	 * @param args
 	 */
-	public void main(String[] args) {
-		GuiAnalysis gui = new GuiAnalysis(this);
+	public static void main(String[] args) {
+		GuiAnalysis gui = new GuiAnalysis();
 		gui.setLocationRelativeTo(null);
 	}
 	
@@ -823,9 +828,9 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	 */
 	private class Listener implements ActionListener {
 		/**  */
-		private final JTextField  jtf;
+		private final JTextField jtf;
 		/**  */
-		private final boolean     file;
+		private final boolean    file;
 		
 		
 		/**
