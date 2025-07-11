@@ -169,7 +169,7 @@ public class ComputeNucleiParameters {
 	
 	
 	/** @return columns names for results */
-	private String getColNameResult() {
+	private static String getColNameResult() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
 		       "Flatness\t" +

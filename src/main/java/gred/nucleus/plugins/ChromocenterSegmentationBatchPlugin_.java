@@ -102,7 +102,7 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 	 * @param imagePlus imagePus to save
 	 * @param pathFile  the path where save the image
 	 */
-	public void saveFile(ImagePlus imagePlus, String pathFile) {
+	public static void saveFile(ImagePlus imagePlus, String pathFile) {
 		
 		FileSaver fileSaver = new FileSaver(imagePlus);
 		File      file      = new File(pathFile);

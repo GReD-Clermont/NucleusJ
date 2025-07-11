@@ -387,10 +387,10 @@ public class CLIRunActionOMERO {
 	}
 	
 	
-	public void segmentationOMERO(String inputDirectory,
-	                              String outputDirectory,
-	                              Client client,
-	                              SegmentationCalling otsuModified)
+	public static void segmentationOMERO(String inputDirectory,
+	                                     String outputDirectory,
+	                                     Client client,
+	                                     SegmentationCalling otsuModified)
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError {
 		String[] param = inputDirectory.split("/");
 		

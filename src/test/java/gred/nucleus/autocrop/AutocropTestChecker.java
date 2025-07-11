@@ -64,7 +64,7 @@ public class AutocropTestChecker {
 	}
 	
 	
-	private File getInfoFile(File file) {
+	private static File getInfoFile(File file) {
 		return new File(AutoCropTest.PATH_TO_OUTPUT +
 		                file.getName() + File.separator +
 		                PATH_TO_INFO);
@@ -78,7 +78,7 @@ public class AutocropTestChecker {
 	}
 	
 	
-	public AutocropResult extractGeneralInfo(AutocropResult result, File file) {
+	public static AutocropResult extractGeneralInfo(AutocropResult result, File file) {
 		LOGGER.debug("Extracting info from file: {}", file);
 		List<String> resultList = new ArrayList<>(0);
 		try {
@@ -93,7 +93,7 @@ public class AutocropTestChecker {
 	}
 	
 	
-	public AutocropResult extractCoordinates(AutocropResult result, File file) {
+	public static AutocropResult extractCoordinates(AutocropResult result, File file) {
 		List<String> fileList = new ArrayList<>(0);
 		try {
 			fileList = Files.readAllLines(file.toPath(), Charset.defaultCharset());
@@ -175,7 +175,7 @@ public class AutocropTestChecker {
 	 *
 	 * @return the percent of area overlapping according the sum of the volumes of each box
 	 */
-	private double boxesPercentOverlapping(Box a, Box b) {
+	private static double boxesPercentOverlapping(Box a, Box b) {
 		int aLeft  = a.getXMin(), aRight = a.getXMax();
 		int aTop   = a.getYMin(), aBottom = a.getYMax();
 		int aFront = a.getZMin(), aBack = a.getZMax();

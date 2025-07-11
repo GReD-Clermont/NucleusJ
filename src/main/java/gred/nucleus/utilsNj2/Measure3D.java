@@ -178,7 +178,7 @@ public class Measure3D {
 	 *
 	 * @return double the equivalent spherical radius
 	 */
-	public double equivalentSphericalRadius(double volume) {
+	public static double equivalentSphericalRadius(double volume) {
 		double radius = 3 * volume / (4 * Math.PI);
 		radius = Math.pow(radius, 1.0 / 3.0);
 		return radius;
@@ -193,7 +193,7 @@ public class Measure3D {
 	 *
 	 * @return double sphercity
 	 */
-	public double computeSphericity(double volume, double surface) {
+	public static double computeSphericity(double volume, double surface) {
 		//TODO: fix formula as cubic root of this
 		return 36 * Math.PI * (volume * volume) / (surface * surface * surface);
 	}
@@ -339,9 +339,9 @@ public class Measure3D {
 	 *
 	 * @return double Relative Heterochromatin Fraction compute on the Intensity ratio
 	 */
-	public double computeIntensityRHF(ImagePlus imagePlusInput,
-	                                  ImagePlus imagePlusSegmented,
-	                                  ImagePlus imagePlusChromocenter) {
+	public static double computeIntensityRHF(ImagePlus imagePlusInput,
+	                                         ImagePlus imagePlusSegmented,
+	                                         ImagePlus imagePlusChromocenter) {
 		double     chromocenterIntensity  = 0;
 		double     nucleusIntensity       = 0;
 		double     voxelValueChromocenter;
@@ -400,7 +400,7 @@ public class Measure3D {
 	 *
 	 * @return int nb of object in the image
 	 */
-	public int getNumberOfObject(ImagePlus imagePlusInput) {
+	public static int getNumberOfObject(ImagePlus imagePlusInput) {
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusInput);
 		return histogram.getNbLabels();
@@ -480,11 +480,11 @@ public class Measure3D {
 	 *
 	 * @return
 	 */
-	private double computeSurfelContribution(List<Double> listUnitaireIn,
-	                                         List<Double> listUnitaireOut,
-	                                         VoxelRecord voxelRecordIn,
-	                                         VoxelRecord voxelRecordOut,
-	                                         double as) {
+	private static double computeSurfelContribution(List<Double> listUnitaireIn,
+	                                                List<Double> listUnitaireOut,
+	                                                VoxelRecord voxelRecordIn,
+	                                                VoxelRecord voxelRecordOut,
+	                                                double as) {
 		double dx = voxelRecordIn.i - voxelRecordOut.i;
 		double dy = voxelRecordIn.j - voxelRecordOut.j;
 		double dz = voxelRecordIn.k - voxelRecordOut.k;

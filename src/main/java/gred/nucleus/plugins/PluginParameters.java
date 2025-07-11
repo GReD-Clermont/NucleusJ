@@ -241,7 +241,7 @@ public class PluginParameters {
 	 *
 	 * @return time in yyyy-MM-dd:HH-mm-ss format
 	 */
-	public String getLocalTime() {
+	public static String getLocalTime() {
 		return new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 	}
 	

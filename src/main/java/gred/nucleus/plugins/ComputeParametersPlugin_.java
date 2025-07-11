@@ -45,11 +45,11 @@ public class ComputeParametersPlugin_ implements PlugIn, IDialogListener {
 	}
 	
 	
-	public Client checkOMEROConnection(String hostname,
-	                                   String port,
-	                                   String username,
-	                                   char[] password,
-	                                   String group) {
+	public static Client checkOMEROConnection(String hostname,
+	                                          String port,
+	                                          String username,
+	                                          char[] password,
+	                                          String group) {
 		Client client = new Client();
 		try {
 			client.connect(hostname,

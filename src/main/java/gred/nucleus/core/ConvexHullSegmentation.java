@@ -33,7 +33,7 @@ public class ConvexHullSegmentation {
 	 *
 	 * @return segmented image
 	 */
-	public ImagePlus convexHullDetection(ImagePlus imagePlusInput, SegmentationParameters segmentationParameters) {
+	public static ImagePlus convexHullDetection(ImagePlus imagePlusInput, SegmentationParameters segmentationParameters) {
 		LOGGER.info("Running Convex Hull Algorithm.");
 		ConvexHullImageMaker nuc = new ConvexHullImageMaker();
 		nuc.setAxes("xy");
@@ -65,10 +65,10 @@ public class ConvexHullSegmentation {
 	 *
 	 * @see ConvexHullSegmentation#convexHullDetection(ImagePlus, SegmentationParameters)
 	 */
-	private ImagePlus imageMakingUnion(ImagePlus imagePlusInput,
-	                                   ImagePlus imagePlusXY,
-	                                   ImagePlus imagePlusXZ,
-	                                   ImagePlus imagePlusYZ) {
+	private static ImagePlus imageMakingUnion(ImagePlus imagePlusInput,
+	                                          ImagePlus imagePlusXY,
+	                                          ImagePlus imagePlusXZ,
+	                                          ImagePlus imagePlusYZ) {
 		ImagePlus imagePlusOutput = imagePlusInput.duplicate();
 		imagePlusOutput.setTitle(imagePlusInput.getTitle());
 		

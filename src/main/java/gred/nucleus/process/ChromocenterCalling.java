@@ -105,11 +105,11 @@ public class ChromocenterCalling {
 				                                                                                 chromocenterParameters);
 				chromocenterSegmentation.runCC3D(gradientFileName);
 				NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
-				nucleusChromocenterAnalysis.compute3DParameters(rhfChoice,
-				                                                raw[0],
-				                                                segNuc[0],
-				                                                IJ.openImage(outputFileName),
-				                                                chromocenterParameters);
+				NucleusChromocentersAnalysis.compute3DParameters(rhfChoice,
+				                                                 raw[0],
+				                                                 segNuc[0],
+				                                                 IJ.openImage(outputFileName),
+				                                                 chromocenterParameters);
 			} else {
 				IJ.log(segCC.getPathFile() + " is missing");
 			}
@@ -242,9 +242,9 @@ public class ChromocenterCalling {
 		
 		NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 		
-		File[] parameters3DTab = nucleusChromocenterAnalysis.compute3DParameters(rhfChoice, rawImage[0], segImage[0],
-		                                                                         IJ.openImage(outputFileName),
-		                                                                         chromocenterParameters);
+		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParameters(rhfChoice, rawImage[0], segImage[0],
+		                                                                          IJ.openImage(outputFileName),
+		                                                                          chromocenterParameters);
 		
 		/* Import Segmented image to OMERO */
 		project = client.getProject(Long.parseLong(outputDirectory));
@@ -309,13 +309,13 @@ public class ChromocenterCalling {
 		
 		NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 		
-		File[] parameters3DTab = nucleusChromocenterAnalysis.compute3DParametersOmero(rhfChoice,
-		                                                                              image,
-		                                                                              mask,
-		                                                                              IJ.openImage(outputFileName),
-		                                                                              chromocenterParameters,
-		                                                                              datasetName,
-		                                                                              client);
+		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParametersOmero(rhfChoice,
+		                                                                               image,
+		                                                                               mask,
+		                                                                               IJ.openImage(outputFileName),
+		                                                                               chromocenterParameters,
+		                                                                               datasetName,
+		                                                                               client);
 		
 		tab = parameters3DTab;
 		segImg = outputFileName;
@@ -354,11 +354,11 @@ public class ChromocenterCalling {
 			                                      currentFile.getName());
 			
 			NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
-			nucleusChromocenterAnalysis.compute3DParameters(rhfChoice,
-			                                                raw[0],
-			                                                segNuc[0],
-			                                                IJ.openImage(outputFileName),
-			                                                chromocenterParameters);
+			NucleusChromocentersAnalysis.compute3DParameters(rhfChoice,
+			                                                 raw[0],
+			                                                 segNuc[0],
+			                                                 IJ.openImage(outputFileName),
+			                                                 chromocenterParameters);
 		}
 	}
 	

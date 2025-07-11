@@ -27,13 +27,6 @@ public class Histogram {
 	private int nbLabel;
 	
 	
-	/**
-	 *
-	 */
-	public Histogram() {
-	}
-	
-	
 	/** @param imagePlusInput  */
 	public void run(ImagePlus imagePlusInput) {
 		Object[] tTemp = computeHistogram(imagePlusInput).keySet().toArray();

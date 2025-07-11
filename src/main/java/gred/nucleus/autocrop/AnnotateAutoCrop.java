@@ -182,7 +182,7 @@ public class AnnotateAutoCrop {
 	 * @param imagePlusInput image to save
 	 * @param pathFile       path to save the image
 	 */
-	public void saveFile(ImagePlus imagePlusInput, String pathFile) {
+	public static void saveFile(ImagePlus imagePlusInput, String pathFile) {
 		FileSaver fileSaver = new FileSaver(imagePlusInput);
 		fileSaver.saveAsTiff(pathFile);
 	}
@@ -218,7 +218,7 @@ public class AnnotateAutoCrop {
 	 *
 	 * @return Z projection
 	 */
-	private ImagePlus projectionMax(ZProjector project) {
+	private static ImagePlus projectionMax(ZProjector project) {
 		project.setMethod(ZProjector.MAX_METHOD);
 		project.doProjection();
 		return project.getProjection();

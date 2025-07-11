@@ -187,7 +187,7 @@ public class AutoCrop {
 	}
 	
 	
-	public ImagePlus getImageChannelOMERO(int channelNumber, ImageWrapper image, Client client)
+	public static ImagePlus getImageChannelOMERO(int channelNumber, ImageWrapper image, Client client)
 	throws ServiceException, AccessException, ExecutionException {
 		int[] cBound = {channelNumber, channelNumber};
 		return image.toImagePlus(client, null, null, cBound, null, null);
@@ -631,7 +631,7 @@ public class AutoCrop {
 	 *
 	 * @return The segmented binary image.
 	 */
-	private ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
+	private static ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
 		ImageStack imageStackInput     = imagePlusInput.getStack();
 		ImagePlus  imagePlusSegmented  = imagePlusInput.duplicate();
 		ImageStack imageStackSegmented = imagePlusSegmented.getStack();
@@ -723,7 +723,7 @@ public class AutoCrop {
 	 *
 	 * @return columns name for output text file
 	 */
-	public String getColumnNames() {
+	public static String getColumnNames() {
 		return HEADERS;
 	}
 	

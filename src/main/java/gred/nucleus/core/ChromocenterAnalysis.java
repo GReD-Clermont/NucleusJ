@@ -51,10 +51,6 @@ public final class ChromocenterAnalysis {
 	public String  unit;
 	
 	
-	public ChromocenterAnalysis() {
-	}
-	
-	
 	/**
 	 * Compute the several parameters to characterize the chromocenter of one image, and return the results on the IJ
 	 * log windows
@@ -252,7 +248,7 @@ public final class ChromocenterAnalysis {
 	}
 	
 	
-	private String fileDownloader(Client client, Long inputID, String subDirectoryName)
+	private static String fileDownloader(Client client, Long inputID, String subDirectoryName)
 	throws AccessException, ServiceException, ExecutionException, IOException {
 		ImageWrapper image = client.getImage(inputID);
 		// Get the name of the Image

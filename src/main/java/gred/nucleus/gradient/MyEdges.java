@@ -30,11 +30,6 @@ public class MyEdges {
 	private      double[][][]   tabMask;
 	
 	
-	/** Default constructor. */
-	public MyEdges() {
-	}
-	
-	
 	/**
 	 * Detects edges in images.
 	 *
@@ -256,10 +251,10 @@ public class MyEdges {
 	}
 	
 	
-	private void suppress3D(double[][][] gm,
-	                        double[][] aaIx,
-	                        double[][] aaIy,
-	                        double[][] aaIz) {
+	private static void suppress3D(double[][][] gm,
+	                               double[][] aaIx,
+	                               double[][] aaIy,
+	                               double[][] aaIz) {
 		
 		// Initialize:
 		int    dimsY   = aaIx.length;

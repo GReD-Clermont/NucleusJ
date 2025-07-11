@@ -47,7 +47,7 @@ public class FileList {
 	 *
 	 * @return list file
 	 */
-	public File[] repertoryFileList(String directory) {
+	public static File[] repertoryFileList(String directory) {
 		File   directoryToScan = new File(directory);
 		File[] tFileDirectory;
 		tFileDirectory = directoryToScan.listFiles();
@@ -75,7 +75,7 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public File[] resize(File[] tTempBeforeElement, File[] tTempAfterElement, File[] tTempFile, int indexMax) {
+	public static File[] resize(File[] tTempBeforeElement, File[] tTempAfterElement, File[] tTempFile, int indexMax) {
 		File[] tFile = new File[tTempBeforeElement.length + tTempFile.length + tTempAfterElement.length - 1];
 		//element insertion in the file list
 		for (int j = 0; j < tFile.length; ++j) {
@@ -104,7 +104,7 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public File[] stockFileBefore(int indexMax, File[] tFile) {
+	public static File[] stockFileBefore(int indexMax, File[] tFile) {
 		File[] tTempBeforeElement = new File[indexMax];
 		if (indexMax >= 0) {
 			System.arraycopy(tFile, 0, tTempBeforeElement, 0, indexMax);
@@ -119,7 +119,7 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public File[] stockFileAfter(int indexMax, File[] tFile) {
+	public static File[] stockFileAfter(int indexMax, File[] tFile) {
 		File[] tTempAfterElement = new File[tFile.length - indexMax];
 		int    j                 = 0;
 		for (int k = indexMax + 1; k < tFile.length; ++k) {
@@ -136,7 +136,7 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public boolean isInDirectory(String filePathway, File[] tableFile) {
+	public static boolean isInDirectory(String filePathway, File[] tableFile) {
 		boolean testFile = false;
 		for (File file : tableFile) {
 			if (file.toString().equals(filePathway)) {
@@ -200,7 +200,7 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public String[] getDirectoryFiles(CharSequence directory, File[] tFile) {
+	public static String[] getDirectoryFiles(CharSequence directory, File[] tFile) {
 		String[]             tRef         = SEP.split(directory);
 		String[]             tTemp        = new String[0];
 		List<String>         arrayList    = new ArrayList<>(tFile.length);

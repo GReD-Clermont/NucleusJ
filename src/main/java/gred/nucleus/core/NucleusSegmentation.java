@@ -249,7 +249,7 @@ public class NucleusSegmentation {
 	 * @param imagePlusInput segmented image
 	 * @param pathFile       path to save the image
 	 */
-	private void saveFile(ImagePlus imagePlusInput, String pathFile) {
+	private static void saveFile(ImagePlus imagePlusInput, String pathFile) {
 		FileSaver fileSaver = new FileSaver(imagePlusInput);
 		fileSaver.saveAsTiffStack(pathFile);
 	}
@@ -318,7 +318,7 @@ public class NucleusSegmentation {
 			    !firstStack && !lastStack) {
 				
 				double sphericity =
-						measure.computeSphericity(volume, measure.computeComplexSurface(tempSeg, gradient));
+						Measure3D.computeSphericity(volume, Measure3D.computeComplexSurface(tempSeg, gradient));
 				if (sphericity > bestSphericity) {
 					this.bestThreshold = t;
 					bestSphericity = sphericity;
@@ -381,7 +381,7 @@ public class NucleusSegmentation {
 	 *
 	 * @return segmented image of the nucleus
 	 */
-	public ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
+	public static ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
 		ImageStack imageStackInput    = imagePlusInput.getStack();
 		ImagePlus  imagePlusSegmented = imagePlusInput.duplicate();
 		imagePlusSegmented.setTitle(imagePlusInput.getTitle());
@@ -459,7 +459,7 @@ public class NucleusSegmentation {
 	 *
 	 * @return array lis which contain at the index 0 the min valu and index 1 the max value
 	 */
-	private List<Integer> computeMinMaxThreshold(ImagePlus imagePlusInput) {
+	private static List<Integer> computeMinMaxThreshold(ImagePlus imagePlusInput) {
 		List<Integer> arrayListMinMaxThreshold = new ArrayList<>();
 		
 		int             threshold       = Thresholding.computeOTSUThreshold(imagePlusInput);
@@ -487,9 +487,9 @@ public class NucleusSegmentation {
 	 *
 	 * @return boolean true if the nb of pixel is > to threshold else false
 	 */
-	private boolean isVoxelThresholded(ImagePlus imagePlusSegmented,
-	                                   int threshold,
-	                                   int stackIndex) {
+	private static boolean isVoxelThresholded(ImagePlus imagePlusSegmented,
+	                                          int threshold,
+	                                          int stackIndex) {
 		boolean    voxelThresolded     = false;
 		int        nbVoxelThresholded  = 0;
 		ImageStack imageStackSegmented = imagePlusSegmented.getStack();
@@ -512,7 +512,7 @@ public class NucleusSegmentation {
 	 *
 	 * @param imagePlusSegmented image to be correct
 	 */
-	private void morphologicalCorrection(ImagePlus imagePlusSegmented) {
+	private static void morphologicalCorrection(ImagePlus imagePlusSegmented) {
 		computeOpening(imagePlusSegmented);
 		computeClosing(imagePlusSegmented);
 		// TODO FIX?
@@ -525,7 +525,7 @@ public class NucleusSegmentation {
 	 *
 	 * @param imagePlusInput image segmented
 	 */
-	private void computeClosing(ImagePlus imagePlusInput) {
+	private static void computeClosing(ImagePlus imagePlusInput) {
 		ImageStack imageStackInput = imagePlusInput.getImageStack();
 		imageStackInput = Filters3D.filter(imageStackInput, Filters3D.MAX, 1, 1, 0.5f);
 		imageStackInput = Filters3D.filter(imageStackInput, Filters3D.MIN, 1, 1, 0.5f);
@@ -538,7 +538,7 @@ public class NucleusSegmentation {
 	 *
 	 * @param imagePlusInput image segmented
 	 */
-	private void computeOpening(ImagePlus imagePlusInput) {
+	private static void computeOpening(ImagePlus imagePlusInput) {
 		ImageStack imageStackInput = imagePlusInput.getImageStack();
 		
 		imageStackInput = Filters3D.filter(imageStackInput, Filters3D.MIN, 1, 1, 0.5f);
@@ -565,7 +565,7 @@ public class NucleusSegmentation {
 	 *
 	 * @return boolean if ratio object/image > 70% return false else return true
 	 */
-	private boolean testRelativeObjectVolume(double objectVolume, double imageVolume) {
+	private static boolean testRelativeObjectVolume(double objectVolume, double imageVolume) {
 		double ratio = objectVolume / imageVolume * 100;
 		return ratio < 70;
 	}
@@ -576,7 +576,7 @@ public class NucleusSegmentation {
 	 *
 	 * @param imgSeg ImagePlus of the segmented image
 	 */
-	private void deleteArtefact(ImagePlus imgSeg) {
+	private static void deleteArtefact(ImagePlus imgSeg) {
 		double     voxelValue;
 		double     mode            = getLabelOfLargestObject(imgSeg);
 		ImageStack imageStackInput = imgSeg.getStack();
@@ -602,7 +602,7 @@ public class NucleusSegmentation {
 	 *
 	 * @return double the label of the bigger object
 	 */
-	private double getLabelOfLargestObject(ImagePlus imgSeg) {
+	private static double getLabelOfLargestObject(ImagePlus imgSeg) {
 		Histogram histogram = new Histogram();
 		histogram.run(imgSeg);
 		double labelMax   = 0;
@@ -817,7 +817,7 @@ public class NucleusSegmentation {
 		LOGGER.info("Computing and saving Convex Hull segmentation.");
 		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
 			ConvexHullSegmentation nuc = new ConvexHullSegmentation();
-			imageSeg[0] = nuc.convexHullDetection(imageSeg[0], segmentationParameters);
+			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0], segmentationParameters);
 			String pathConvexHullSeg = segmentationParameters.getOutputFolder() +
 			                           CONVEX_HULL_ALGORITHM + File.separator + imageSeg[0].getTitle();
 			imageSeg[0].setTitle(pathConvexHullSeg);
@@ -836,7 +836,7 @@ public class NucleusSegmentation {
 		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
 			ConvexHullSegmentation nuc = new ConvexHullSegmentation();
 			
-			imageSeg[0] = nuc.convexHullDetection(imageSeg[0], segmentationParameters);
+			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0], segmentationParameters);
 			
 			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + CONVEX_HULL_ALGORITHM
 			              + File.separator + imageSeg[0].getTitle();

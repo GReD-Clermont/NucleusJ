@@ -153,7 +153,7 @@ public class CropFromCoordinates {
 	}
 	
 	
-	public Map<Double, Box> readCoordinatesTXT(File boxesFile) {
+	public static Map<Double, Box> readCoordinatesTXT(File boxesFile) {
 		Map<Double, Box> boxLists = new HashMap<>();
 		
 		try (Scanner scanner = new Scanner(boxesFile)) {

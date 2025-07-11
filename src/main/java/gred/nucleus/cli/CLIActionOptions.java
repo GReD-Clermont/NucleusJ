@@ -122,7 +122,7 @@ public class CLIActionOptions {
 	
 	
 	/** @return : helper info */
-	public String getHelperInfo() {
+	public static String getHelperInfo() {
 		return "More details for available actions:\n" +
 		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h \n" +
 		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help \n\n" +

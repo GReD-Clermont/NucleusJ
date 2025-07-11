@@ -29,13 +29,13 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 			isTrue(availableActionCMD(cmd.getOptionValue("action")));
 		} catch (ParseException exp) {
 			System.console().writer().println(exp.getMessage() + "\n");
-			System.console().writer().println(super.getHelperInfo());
+			System.console().writer().println(getHelperInfo());
 			System.exit(1);
 		} catch (Exception exp) {
 			System.console().writer().println("Action option \"" +
 			                                  cmd.getOptionValue("action") +
 			                                  "\" not available" + "\n");
-			System.console().writer().println(super.getHelperInfo());
+			System.console().writer().println(getHelperInfo());
 			System.exit(1);
 		}
 	}
