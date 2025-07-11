@@ -12,7 +12,10 @@ import ij.measure.Measurements;
 import ij.measure.ResultsTable;
 import ij.plugin.filter.ParticleAnalyzer;
 import ij.process.StackConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,21 +25,32 @@ import java.util.TreeMap;
 
 /**
  * Class computing 3D parameters from raw and his segmented image associated :
+ * <ul>
+ *     <li>Volume</li>
+ *     <li>Flatness</li>
+ *     <li>Elongation</li>
+ *     <li>Sphericity</li>
+ *     <li>Equivalent Spherical Radius</li>
+ *     <li>SurfaceArea</li>
+ *     <li>SurfaceAreaCorrected</li>
+ *     <li>SphericityCorrected</li>
+ *     <li>MeanIntensity</li>
+ *     <li>StandardDeviation</li>
+ *     <li>MinIntensity</li>
+ *     <li>MaxIntensity</li>
+ *     <li>OTSUThreshold</li>
+ * </ul>
  * <p>
- * Volume Flatness Elongation Sphericity Esr SurfaceArea SurfaceAreaCorrected SphericityCorrected MeanIntensity
- * StandardDeviation MinIntensity MaxIntensity OTSUThreshold
- * <p>
- * <p>
- * //TODO reecrire cette classe ya des choses que je fais 5 fois c'est inutil
+ * //TODO reecrire cette classe ya des choses que je fais 5 fois c'est inutile
  *
  * @author Tristan Dubos and Axel Poulet
  */
 public class Measure3D {
-	private final Map<Double, Integer> segmentedNucleusHistogram = new TreeMap<>();
-	private final Map<Double, Integer> backgroundHistogram       = new TreeMap<>();
+	/** Logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private final Map<Double, Integer> segmentedNucleusHisto = new TreeMap<>();
-	private final Map<Double, Integer> backgroundHisto       = new TreeMap<>();
+	private final Map<Double, Integer> segmentedNucleusHist = new TreeMap<>();
+	private final Map<Double, Integer> backgroundHist       = new TreeMap<>();
 	
 	private ResultsTable resultsTable;
 	
@@ -119,14 +133,13 @@ public class Measure3D {
 	 * @return double table which contain the volume of each image object
 	 */
 	public double[] computeVolumeOfAllObjects(ImagePlus imagePlusInput) {
-		
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusInput);
 		double[]             tlabel        = histogram.getLabels();
 		double[]             tObjectVolume = new double[tlabel.length];
-		Map<Double, Integer> histo         = histogram.getHistogram();
+		Map<Double, Integer> hist          = histogram.getHistogram();
 		for (int i = 0; i < tlabel.length; ++i) {
-			int nbVoxel = histo.get(tlabel[i]);
+			int nbVoxel = hist.get(tlabel[i]);
 			tObjectVolume[i] = nbVoxel * xCal * yCal * zCal;
 		}
 		return tObjectVolume;
@@ -152,7 +165,7 @@ public class Measure3D {
 	
 	private double computeVolumeObjectML() {
 		double volumeTMP = 0.0;
-		for (Map.Entry<Double, Integer> toto : segmentedNucleusHistogram.entrySet()) {
+		for (Map.Entry<Double, Integer> toto : segmentedNucleusHist.entrySet()) {
 			if (toto.getValue() > 0) {
 				volumeTMP += toto.getValue();
 			}
@@ -277,7 +290,7 @@ public class Measure3D {
 	 */
 	public static double equivalentSphericalRadius(double volume) {
 		double radius = 3 * volume / (4 * Math.PI);
-		radius = Math.pow(radius, 1.0 / 3.0);
+		radius = StrictMath.cbrt(radius);
 		return radius;
 	}
 	
@@ -291,7 +304,7 @@ public class Measure3D {
 	 * @return double sphercity
 	 */
 	public static double computeSphericity(double volume, double surface) {
-		return 36 * Math.PI * (volume * volume) / (surface * surface * surface);
+		return StrictMath.cbrt(36 * Math.PI * volume * volume) / surface;
 	}
 	
 	
@@ -474,7 +487,8 @@ public class Measure3D {
 	 * @return double Relative Heterochromatin Fraction compute on the Volume ratio
 	 */
 	public double computeVolumeRHF(ImagePlus imagePlusSegmented, ImagePlus imagePlusChromocenters) {
-		double   volumeCc            = 0;
+		double volumeCc = 0;
+		
 		double[] tVolumeChromocenter = computeVolumeOfAllObjects(imagePlusChromocenters);
 		for (double v : tVolumeChromocenter) {
 			volumeCc += v;
@@ -669,20 +683,18 @@ public class Measure3D {
 				for (int j = 0; j < rawImage.getHeight(); ++j) {
 					double voxelValue = imageStackSeg.getVoxel(i, j, k);
 					if (voxelValue == 255) {
-						if (segmentedNucleusHistogram.containsKey(imageStackRaw.getVoxel(i, j, k))) {
-							segmentedNucleusHistogram.put(imageStackRaw.getVoxel(i, j, k),
-							                              segmentedNucleusHistogram.get(imageStackRaw.getVoxel(i,
-							                                                                                   j,
-							                                                                                   k)) + 1);
+						if (segmentedNucleusHist.containsKey(imageStackRaw.getVoxel(i, j, k))) {
+							segmentedNucleusHist.put(imageStackRaw.getVoxel(i, j, k),
+							                         segmentedNucleusHist.get(imageStackRaw.getVoxel(i, j, k)) + 1);
 						} else {
-							segmentedNucleusHistogram.put(imageStackRaw.getVoxel(i, j, k), 1);
+							segmentedNucleusHist.put(imageStackRaw.getVoxel(i, j, k), 1);
 						}
 					} else {
-						if (backgroundHistogram.containsKey(imageStackRaw.getVoxel(i, j, k))) {
-							backgroundHistogram.put(imageStackRaw.getVoxel(i, j, k),
-							                        backgroundHistogram.get(imageStackRaw.getVoxel(i, j, k)) + 1);
+						if (backgroundHist.containsKey(imageStackRaw.getVoxel(i, j, k))) {
+							backgroundHist.put(imageStackRaw.getVoxel(i, j, k),
+							                   backgroundHist.get(imageStackRaw.getVoxel(i, j, k)) + 1);
 						} else {
-							backgroundHistogram.put(imageStackRaw.getVoxel(i, j, k), 1);
+							backgroundHist.put(imageStackRaw.getVoxel(i, j, k), 1);
 						}
 					}
 				}
@@ -700,9 +712,9 @@ public class Measure3D {
 	private double meanIntensity() {
 		int    numberOfVoxel = 0;
 		double mean          = 0;
-		for (Map.Entry<Double, Integer> histogram : segmentedNucleusHistogram.entrySet()) {
-			numberOfVoxel += histogram.getValue();
-			mean += histogram.getKey() * histogram.getValue();
+		for (Map.Entry<Double, Integer> hist : segmentedNucleusHist.entrySet()) {
+			numberOfVoxel += hist.getValue();
+			mean += hist.getKey() * hist.getValue();
 		}
 		return mean / numberOfVoxel;
 	}
@@ -743,9 +755,9 @@ public class Measure3D {
 	private double standardDeviationIntensity(Double mean) {
 		int    numberOfVoxel = 0;
 		double std           = 0;
-		for (Map.Entry<Double, Integer> histogram : segmentedNucleusHistogram.entrySet()) {
-			numberOfVoxel += histogram.getValue();
-			std = Math.abs(histogram.getKey() * histogram.getValue() - histogram.getValue() * mean);
+		for (Map.Entry<Double, Integer> hist : segmentedNucleusHist.entrySet()) {
+			numberOfVoxel += hist.getValue();
+			std = Math.abs(hist.getKey() * hist.getValue() - hist.getValue() * mean);
 		}
 		return std / (numberOfVoxel - 1);
 		
@@ -760,7 +772,7 @@ public class Measure3D {
 	 */
 	private double maxIntensity() {
 		double maxIntensity = 0;
-		for (Map.Entry<Double, Integer> entry : segmentedNucleusHistogram.entrySet()) {
+		for (Map.Entry<Double, Integer> entry : segmentedNucleusHist.entrySet()) {
 			if (maxIntensity == 0 || entry.getKey().compareTo(maxIntensity) > 0) {
 				maxIntensity = entry.getKey();
 			}
@@ -776,7 +788,7 @@ public class Measure3D {
 	 * @return the minimum intensity voxel of segmented object
 	 */
 	private double minIntensity() {
-		Iterator<Map.Entry<Double, Integer>> iterator     = segmentedNucleusHistogram.entrySet().iterator();
+		Iterator<Map.Entry<Double, Integer>> iterator     = segmentedNucleusHist.entrySet().iterator();
 		int                                  count        = 0;
 		double                               minIntensity = 0;
 		while (iterator.hasNext() && count == 0) {
@@ -822,12 +834,12 @@ public class Measure3D {
 	private double medianIntensityNucleus() {
 		double voxelMedianValue = 0;
 		int    nbNucleusVoxels  = 0;
-		for (int f : segmentedNucleusHistogram.values()) {
+		for (int f : segmentedNucleusHist.values()) {
 			nbNucleusVoxels += f;
 		}
 		int     increment = 0;
 		boolean even      = false;
-		for (Map.Entry<Double, Integer> entry : segmentedNucleusHistogram.entrySet()) {
+		for (Map.Entry<Double, Integer> entry : segmentedNucleusHist.entrySet()) {
 			increment += entry.getValue();
 			if (nbNucleusVoxels == 2 * increment) {
 				voxelMedianValue = entry.getKey();
@@ -847,12 +859,12 @@ public class Measure3D {
 	private double medianIntensityBackground() {
 		double voxelMedianValue   = 0;
 		int    nbBackgroundVoxels = 0;
-		for (int f : backgroundHistogram.values()) {
+		for (int f : backgroundHist.values()) {
 			nbBackgroundVoxels += f;
 		}
 		int     increment = 0;
 		boolean even      = false;
-		for (Map.Entry<Double, Integer> entry : backgroundHistogram.entrySet()) {
+		for (Map.Entry<Double, Integer> entry : backgroundHist.entrySet()) {
 			increment += entry.getValue();
 			if (nbBackgroundVoxels == 2 * increment) {
 				voxelMedianValue = entry.getKey();

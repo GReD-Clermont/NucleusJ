@@ -9,11 +9,14 @@ import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.utils.Histogram;
 import ij.ImagePlus;
 import ij.measure.Calibration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ExecutionException;
 
 import static gred.nucleus.core.RadialDistance.computeBarycenterToBorderDistances;
@@ -27,7 +30,8 @@ import static gred.nucleus.core.RadialDistance.computeBorderToBorderDistances;
  * @author Tristan Dubos and Axel Poulet
  */
 public class NucleusChromocentersAnalysis {
-	
+	/** Logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	//TODO INTEGRATION CLASS NEW MEASURE 3D
 	
@@ -46,6 +50,7 @@ public class NucleusChromocentersAnalysis {
 	                                         ImagePlus imagePlusInput, ImagePlus imagePlusSegmented,
 	                                         ImagePlus imagePlusChromocenter,
 	                                         ChromocenterParameters chromocenterParameters) throws IOException {
+		LOGGER.info("3D PARAMETERS ");
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusChromocenter);
 		Calibration calibration = imagePlusInput.getCalibration();
@@ -176,8 +181,7 @@ public class NucleusChromocentersAnalysis {
 		              measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) + ",";
 		
 		if (histogram.getNbLabels() > 0) {
-			double[] tVolumesObjects =
-					measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
+			double[] tVolumesObjects = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
 			int    nbCc         = Measure3D.getNumberOfObject(imagePlusChromocenter);
 			double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,
@@ -264,7 +268,7 @@ public class NucleusChromocentersAnalysis {
 	public static String getResultsColumnNames() {
 		return "ImageName," +
 		       "Volume," +
-		       "Flatnes," +
+		       "Flatness," +
 		       "Elongation," +
 		       "Esr," +
 		       //"SurfaceArea\t" +
