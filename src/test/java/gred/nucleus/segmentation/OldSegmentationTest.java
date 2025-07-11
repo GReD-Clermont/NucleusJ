@@ -22,10 +22,10 @@ class OldSegmentationTest {
 	@Test
 	@Tag("functional")
 	void test() throws Exception {
-		int nImages = SegmentationTestRunner.getNumberOfImages(PATH_TO_SEGMENTATION);
+		int nImages = SegmentationTest.getNumberOfImages(PATH_TO_SEGMENTATION);
 		LOGGER.info("Number of images: {}", nImages);
 		assumeFalse(nImages == 0);
-		SegmentationTestRunner.run(PATH_TO_SEGMENTATION, PATH_TO_OUTPUT);
+		SegmentationTest.run(PATH_TO_SEGMENTATION, PATH_TO_OUTPUT);
 	}
 	
 }

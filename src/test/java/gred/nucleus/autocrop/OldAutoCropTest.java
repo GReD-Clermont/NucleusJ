@@ -17,8 +17,8 @@ class OldAutoCropTest {
 	@Test
 	@Tag("functional")
 	void test() {
-		assumeFalse(AutocropTestRunner.getNumberOfImages(PATH_TO_AUTOCROP) == 0);
-		AutocropTestRunner.run(PATH_TO_AUTOCROP);
+		assumeFalse(AutocropTest.getNumberOfImages(PATH_TO_AUTOCROP) == 0);
+		AutocropTest.run(PATH_TO_AUTOCROP);
 	}
 	
 }

@@ -9,7 +9,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 
 
-public class AutocropTestRunner {
+public class AutocropTest {
 	public static final String PATH_TO_INPUT = "input" + File.separator;
 	
 	/** Logger */

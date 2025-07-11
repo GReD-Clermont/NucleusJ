@@ -12,7 +12,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 
-public final class SegmentationTestRunner {
+public final class SegmentationTest {
 	public static final String PATH_TO_INPUT  = "input" + File.separator;
 	public static final String PATH_TO_CONFIG = PATH_TO_INPUT +
 	                                            "config" + File.separator +
@@ -23,7 +23,7 @@ public final class SegmentationTestRunner {
 	
 	
 	/** Private constructor to prevent instantiation. */
-	private SegmentationTestRunner() {
+	private SegmentationTest() {
 	}
 	
 	
