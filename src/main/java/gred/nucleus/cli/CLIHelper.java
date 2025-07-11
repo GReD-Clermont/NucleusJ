@@ -9,6 +9,7 @@ import org.apache.commons.cli.HelpFormatter;
 /** Class to generate helper */
 public final class CLIHelper {
 	
+	/** Private constructor to avoid instantiation */
 	private CLIHelper() {
 		// DO NOTHING
 	}

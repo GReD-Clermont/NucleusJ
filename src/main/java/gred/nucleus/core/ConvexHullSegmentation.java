@@ -21,9 +21,16 @@ import java.lang.invoke.MethodHandles;
  *
  * @author Tristan Dubos and Axel Poulet
  */
-public class ConvexHullSegmentation {
+public final class ConvexHullSegmentation {
+	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	
+	/** Private constructor to prevent instantiation */
+	private ConvexHullSegmentation() {
+		// Private constructor to prevent instantiation
+	}
 	
 	
 	/**
@@ -63,7 +70,7 @@ public class ConvexHullSegmentation {
 	 *
 	 * @return ImagePlus image results of the convex hull algorithm
 	 *
-	 * @see ConvexHullSegmentation#convexHullDetection(ImagePlus, SegmentationParameters)
+	 * @see #convexHullDetection(ImagePlus, SegmentationParameters)
 	 */
 	private static ImagePlus imageMakingUnion(ImagePlus imagePlusInput,
 	                                          ImagePlus imagePlusXY,

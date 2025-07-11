@@ -13,7 +13,10 @@ import inra.ijpb.binary.BinaryImages;
  * @author Philippe Andrey, Tristan Dubos Axel poulet
  */
 public final class FillingHoles {
+	
+	/** Private constructor to prevent instantiation */
 	private FillingHoles() {
+		// This class should not be instantiated
 	}
 	
 	

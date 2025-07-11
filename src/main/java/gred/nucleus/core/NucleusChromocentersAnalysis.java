@@ -22,11 +22,17 @@ import static gred.nucleus.core.RadialDistance.computeBorderToBorderDistances;
  *
  * @author Tristan Dubos and Axel Poulet
  */
-public class NucleusChromocentersAnalysis {
+public final class NucleusChromocentersAnalysis {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	//TODO INTEGRATION CLASS NEW MEASURE 3D
+	
+	
+	/** Private constructor to avoid instantiation */
+	private NucleusChromocentersAnalysis() {
+		// This class should not be instantiated
+	}
 	
 	
 	/**

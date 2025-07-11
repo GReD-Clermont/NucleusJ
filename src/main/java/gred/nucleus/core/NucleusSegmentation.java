@@ -795,7 +795,6 @@ public class NucleusSegmentation {
 	public void saveConvexHullSeg() {
 		LOGGER.info("Computing and saving Convex Hull segmentation.");
 		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
-			ConvexHullSegmentation nuc = new ConvexHullSegmentation();
 			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0], segmentationParameters);
 			String pathConvexHullSeg = segmentationParameters.getOutputFolder() +
 			                           CONVEX_HULL_ALGORITHM + File.separator + imageSeg[0].getTitle();
@@ -813,8 +812,6 @@ public class NucleusSegmentation {
 	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
 		LOGGER.info("Computing and saving Convex Hull segmentation.");
 		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
-			ConvexHullSegmentation nuc = new ConvexHullSegmentation();
-			
 			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0], segmentationParameters);
 			
 			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + CONVEX_HULL_ALGORITHM

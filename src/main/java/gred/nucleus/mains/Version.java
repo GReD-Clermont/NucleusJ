@@ -8,11 +8,11 @@ import java.lang.invoke.MethodHandles;
 import java.util.Properties;
 
 
-public class Version {
+public final class Version {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	
+	/** Default constructor: private to prevent instantiation */
 	private Version() {
 		// DO NOTHING
 	}

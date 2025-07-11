@@ -29,11 +29,17 @@ import static gred.nucleus.core.RadialDistance.computeBorderToBorderDistances;
  *
  * @author Tristan Dubos and Axel Poulet
  */
-public class NucleusChromocentersAnalysis {
+public final class NucleusChromocentersAnalysis {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	//TODO INTEGRATION CLASS NEW MEASURE 3D
+	
+	
+	/** Private constructor to avoid instantiation */
+	private NucleusChromocentersAnalysis() {
+		// Private constructor to avoid instantiation
+	}
 	
 	
 	/**
@@ -182,8 +188,8 @@ public class NucleusChromocentersAnalysis {
 		
 		if (histogram.getNbLabels() > 0) {
 			double[] tVolumesObjects = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
-			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
-			int    nbCc         = Measure3D.getNumberOfObject(imagePlusChromocenter);
+			double   volumeCcMean    = computeMeanOfTable(tVolumesObjects);
+			int      nbCc            = Measure3D.getNumberOfObject(imagePlusChromocenter);
 			double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,
 			                                                                  imagePlusChromocenter);
 			double[] tBarycenterToBorderDistance = computeBarycenterToBorderDistances(imagePlusSegmented,

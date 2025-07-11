@@ -44,9 +44,15 @@ import java.util.TreeSet;
  * <p>
  * Currently uses an implementation of the Graham Scan
  */
-public class ConvexHullDetection {
+public final class ConvexHullDetection {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+
+	/** Private constructor to prevent instantiation */
+	private ConvexHullDetection() {
+		// Private constructor to prevent instantiation
+	}
 	
 	
 	/**

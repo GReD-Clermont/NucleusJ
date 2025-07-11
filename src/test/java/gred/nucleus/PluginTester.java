@@ -18,7 +18,13 @@ import gred.nucleus.plugins.ComputeParametersPlugin_;
 import ij.IJ;
 
 
-public class PluginTester {
+public final class PluginTester {
+	
+	/** Private constructor to prevent instantiation */
+	private PluginTester() {
+		// This class should not be instantiated
+	}
+	
 	
 	public static void main(String[] args) {
 		Class<?> clazz = ComputeParametersPlugin_.class;

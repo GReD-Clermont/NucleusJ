@@ -104,7 +104,6 @@ public class ChromocenterCalling {
 				                                                                                 outputFileName,
 				                                                                                 chromocenterParameters);
 				chromocenterSegmentation.runCC3D(gradientFileName);
-				NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 				NucleusChromocentersAnalysis.compute3DParameters(rhfChoice,
 				                                                 raw[0],
 				                                                 segNuc[0],
@@ -240,8 +239,6 @@ public class ChromocenterCalling {
 		
 		chromocenterSegmentation.runCC3D(gradientFileName);
 		
-		NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
-		
 		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParameters(rhfChoice, rawImage[0], segImage[0],
 		                                                                          IJ.openImage(outputFileName),
 		                                                                          chromocenterParameters);
@@ -307,8 +304,6 @@ public class ChromocenterCalling {
 		
 		chromocenterSegmentation.runCC3D(gradientFileName);
 		
-		NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
-		
 		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParametersOmero(rhfChoice,
 		                                                                               image,
 		                                                                               mask,
@@ -353,7 +348,6 @@ public class ChromocenterCalling {
 			                                      File.separator +
 			                                      currentFile.getName());
 			
-			NucleusChromocentersAnalysis nucleusChromocenterAnalysis = new NucleusChromocentersAnalysis();
 			NucleusChromocentersAnalysis.compute3DParameters(rhfChoice,
 			                                                 raw[0],
 			                                                 segNuc[0],

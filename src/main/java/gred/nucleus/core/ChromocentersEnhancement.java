@@ -26,10 +26,9 @@ public final class ChromocentersEnhancement {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
-	/**
-	 *
-	 */
+	/** Private constructor to prevent instantiation */
 	private ChromocentersEnhancement() {
+		// This class should not be instantiated
 	}
 	
 	
@@ -71,7 +70,9 @@ public final class ChromocentersEnhancement {
 		int             voxelValue;
 		int             neighborVoxelValue;
 		ImageStatistics imageStatistics = new StackStatistics(imagePlusWatershed);
+		
 		double[][] tRegionAdjacencyGraph = new double[(int) imageStatistics.histMax + 1][(int) imageStatistics.histMax + 1];
+		
 		Calibration calibration = imagePlusWatershed.getCalibration();
 		double volumeVoxel =
 				calibration.pixelWidth * calibration.pixelHeight * calibration.pixelDepth;

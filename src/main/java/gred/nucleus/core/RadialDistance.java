@@ -18,6 +18,12 @@ import ij.plugin.Resizer;
 public final class RadialDistance {
 	
 	
+	/** Default constructor: private to prevent instantiation */
+	private RadialDistance() {
+		// Prevent instantiation
+	}
+	
+	
 	/**
 	 * Method which compute the distance map of binary nucleus Rescale the voxel to obtain cubic voxel
 	 *
@@ -26,7 +32,6 @@ public final class RadialDistance {
 	 * @return
 	 */
 	public static ImagePlus computeDistanceMap(ImagePlus imagePlusSegmentedRescaled) {
-		Distance_Map distanceMap = new Distance_Map();
 		Distance_Map.apply(imagePlusSegmentedRescaled);
 		return imagePlusSegmentedRescaled;
 	}

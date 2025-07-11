@@ -11,8 +11,9 @@ import ij.process.StackStatistics;
 
 public final class Thresholding {
 	
-	
+	/** Default constructor: private to prevent instantiation */
 	private Thresholding() {
+		// Prevent instantiation
 	}
 	
 	

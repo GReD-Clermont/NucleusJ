@@ -21,9 +21,15 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class Main {
+public final class Main {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	
+	/** Default constructor: private to prevent instantiation */
+	private Main() {
+		// DO NOTHING
+	}
 	
 	
 	public static void main(String[] args)
