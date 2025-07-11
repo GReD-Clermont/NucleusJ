@@ -1,6 +1,8 @@
 package gred.nucleus.autocrop;
 
 import org.apache.commons.io.FilenameUtils;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,8 +10,15 @@ import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-public class AutocropTest {
+
+class AutoCropTest {
+	public static final String PATH_TO_AUTOCROP = "test-images" + File.separator + "autocrop" + File.separator;
+	public static final String PATH_TO_OUTPUT   = PATH_TO_AUTOCROP + "output" + File.separator;
+	// Make sure the output folder is empty before running the test otherwise the checker might use the wrong files
+	
 	public static final String PATH_TO_INPUT = "input" + File.separator;
 	
 	/** Logger */
@@ -33,29 +42,35 @@ public class AutocropTest {
 	}
 	
 	
-	public static void run(String dir) {
-		File   file  = new File(dir + PATH_TO_INPUT);
+	@Test
+	@Tag("functional")
+	void test() {
+		int nImages = getNumberOfImages(PATH_TO_AUTOCROP);
+		LOGGER.debug("Number of images: {}", nImages);
+		assumeFalse(nImages == 0, "No images found in the autocrop folder, skipping test.");
+		
+		String dir = PATH_TO_AUTOCROP + PATH_TO_INPUT;
+		
+		File   file  = new File(dir);
 		File[] files = file.listFiles();
-		LOGGER.info("Running test on directory: {}", dir + PATH_TO_INPUT);
+		LOGGER.info("Running test on directory: {}", dir);
 		
 		if (files != null) {
 			for (File f : files) {
 				String name = f.getName();
-				
 				if (f.isDirectory()) {
 					LOGGER.info("Directory skipped: {}", name);
 				} else {
 					String extension = FilenameUtils.getExtension(name).toLowerCase(Locale.ROOT);
 					if ("tif".equals(extension)) {
-						LOGGER.info("Beginning process on: {}", name);
-						runAutoCrop(f.toString(), OldAutoCropTest.PATH_TO_OUTPUT
-						                          + name);
-						LOGGER.info("Finished process on: {}", name);
-						LOGGER.info("Checking results:");
-						AutocropTestChecker checker = new AutocropTestChecker(name);
-						checker.checkValues(f);
+						LOGGER.debug("Beginning process on: {}", name);
+						runAutoCrop(f.toString(), PATH_TO_OUTPUT + name);
+						LOGGER.debug("Finished process on: {}", name);
+						LOGGER.debug("Checking results...");
+						AutocropChecker checker = new AutocropChecker(name);
+						assertTrue(checker.checkValues(f), "Autocrop test failed for file: " + name);
 					} else {
-						LOGGER.info("File of type {} skipped: {}", extension, name);
+						LOGGER.debug("File of type {} skipped: {}", extension, name);
 					}
 				}
 			}
