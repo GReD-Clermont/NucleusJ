@@ -96,11 +96,11 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 	}
 	
 	
-	public Client checkOMEROConnection(String hostname,
-	                                   String port,
-	                                   String username,
-	                                   char[] password,
-	                                   String group) {
+	public static Client checkOMEROConnection(String hostname,
+	                                          String port,
+	                                          String username,
+	                                          char[] password,
+	                                          String group) {
 		Client client = new Client();
 		try {
 			client.connect(hostname,
@@ -222,7 +222,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 	}
 	
 	
-	private String fileDownloader(Client client, Long inputID, String subDirectoryName)
+	private static String fileDownloader(Client client, Long inputID, String subDirectoryName)
 	throws AccessException, ServiceException, ExecutionException, IOException {
 		ImageWrapper image = client.getImage(inputID);
 		// Get the name of the Image

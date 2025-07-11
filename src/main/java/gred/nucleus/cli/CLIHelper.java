@@ -7,7 +7,7 @@ import org.apache.commons.cli.HelpFormatter;
 
 
 /** Class to generate helper */
-public class CLIHelper {
+public final class CLIHelper {
 	
 	private CLIHelper() {
 		// DO NOTHING
@@ -249,7 +249,7 @@ public class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				CLIActionOptions wrongAction = new CLIActionOptions(exampleCMD);
 				System.console().writer().println("Invalid action \"" + action + "\" :\n");
-				System.console().writer().println(wrongAction.getHelperInfo());
+				System.console().writer().println(CLIActionOptions.getHelperInfo());
 				break;
 		}
 	}

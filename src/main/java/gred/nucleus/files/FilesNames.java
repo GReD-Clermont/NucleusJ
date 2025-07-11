@@ -16,10 +16,6 @@ public class FilesNames {
 	private   boolean fileExists   = true;
 	
 	
-	public FilesNames() {
-	}
-	
-	
 	/** Constructor to create file object */
 	public FilesNames(String filePath) {
 		this.fullPathFile = filePath;

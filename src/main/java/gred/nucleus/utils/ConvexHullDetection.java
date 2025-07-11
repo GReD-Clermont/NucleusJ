@@ -122,33 +122,6 @@ public class ConvexHullDetection {
 	
 	
 	/**
-	 * Returns the convex hull of the points created from {@code xs} and {@code ys}. Note that the first and last point
-	 * in the returned {@code List<java.awt.Point>} are the same point.
-	 *
-	 * @param xs the x coordinates.
-	 * @param ys the y coordinates.
-	 *
-	 * @return the convex hull of the points created from {@code xs} and {@code ys}.
-	 *
-	 * @throws IllegalArgumentException if {@code xs} and {@code ys} don't have the same size, if all points are
-	 *                                  collinear or if there are less than 3 unique points present.
-	 */
-	public static List<Point> getConvexHull(int[] xs, int[] ys) {
-		if (xs.length != ys.length) {
-			throw new IllegalArgumentException("xs and ys don't have the same size");
-		}
-		
-		List<Point> points = new ArrayList<>(xs.length);
-		
-		for (int i = 0; i < xs.length; i++) {
-			points.add(new Point(xs[i], ys[i]));
-		}
-		
-		return getConvexHull(points);
-	}
-	
-	
-	/**
 	 * Returns the convex hull of the points created from the list {@code points}. Note that the first and last point in
 	 * the returned {@code List<java.awt.Point>} are the same point.
 	 *

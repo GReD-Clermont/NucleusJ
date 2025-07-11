@@ -57,11 +57,6 @@ public class AutoCropCalling {
 	private String typeThresholding = "Otsu";
 	
 	
-	/** Constructor Create the output directory if it doesn't exist. */
-	public AutoCropCalling() {
-	}
-	
-	
 	public AutoCropCalling(AutocropParameters autocropParameters) {
 		this.autocropParameters = autocropParameters;
 		this.outputCropGeneralInfo = autocropParameters.getAnalysisParameters() + HEADERS;

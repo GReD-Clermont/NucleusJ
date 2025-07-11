@@ -14,10 +14,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-public final class SegmentationTestChecker {
+public final class SegmentationChecker {
 	public static final String PATH_TO_INFO   = "OTSU" + File.separator + "result_Segmentation_Analyse_OTSU.csv";
 	public static final String PATH_TO_TARGET = "target" + File.separator;
 	public static final String PATH_TO_RESULT = "OTSU" + File.separator;
@@ -30,7 +28,7 @@ public final class SegmentationTestChecker {
 	private SegmentationResult target;
 	
 	
-	public SegmentationTestChecker(String targetPath) {
+	public SegmentationChecker(String targetPath) {
 		File targetFile = new File(SegmentationTest.PATH_TO_SEGMENTATION +
 		                           PATH_TO_TARGET +
 		                           targetPath + File.separator +
@@ -87,7 +85,7 @@ public final class SegmentationTestChecker {
 	}
 	
 	
-	public void checkResult(SegmentationResult result) {
+	public boolean checkResult(SegmentationResult result) {
 		ImagePlus imgDiff = new ImageCalculator().run("difference create stack",
 		                                              target.getImage(),
 		                                              result.getImage());
@@ -105,16 +103,16 @@ public final class SegmentationTestChecker {
 		            PERCENT_MASK_OVERLAPPED,
 		            targetMaskPixels * PERCENT_MASK_OVERLAPPED / 100);
 		LOGGER.info("Mask difference found = {}", diffPixels);
-		assertTrue(targetMaskPixels * PERCENT_MASK_OVERLAPPED / 100 > diffPixels);
+		return targetMaskPixels * PERCENT_MASK_OVERLAPPED / 100 > diffPixels;
 	}
 	
 	
-	public void checkValues(File file) {
+	public boolean checkValues(File file) {
 		SegmentationResult segmentationResult = extractGeneralInfo(new SegmentationResult(), getInfoFile(file));
 		segmentationResult = extractResult(segmentationResult, getResultPath(file));
 		
 		checkGeneralValues(segmentationResult);
-		checkResult(segmentationResult);
+		return checkResult(segmentationResult);
 	}
 	
 }

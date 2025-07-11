@@ -187,7 +187,7 @@ public class AutoCrop {
 	}
 	
 	
-	public ImagePlus getImageChannelOMERO(int channelNumber, ImageWrapper image, Client client)
+	public static ImagePlus getImageChannelOMERO(int channelNumber, ImageWrapper image, Client client)
 	throws ServiceException, AccessException, ExecutionException {
 		int[] cBound = {channelNumber, channelNumber};
 		return image.toImagePlus(client, null, null, cBound, null, null);
@@ -604,16 +604,6 @@ public class AutoCrop {
 	
 	
 	/**
-	 * Getter for the outputFile ArrayList
-	 *
-	 * @return outputFile: ArrayList of String for the path of the output files created.
-	 */
-	public List<String> getOutputFileList() {
-		return new ArrayList<>(outputFile);
-	}
-	
-	
-	/**
 	 * Getter for the boxCoordinates
 	 *
 	 * @return boxCoordinates: ArrayList of String which contain the coordinates of the boxes
@@ -631,7 +621,7 @@ public class AutoCrop {
 	 *
 	 * @return The segmented binary image.
 	 */
-	private ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
+	private static ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
 		ImageStack imageStackInput     = imagePlusInput.getStack();
 		ImagePlus  imagePlusSegmented  = imagePlusInput.duplicate();
 		ImageStack imageStackSegmented = imagePlusSegmented.getStack();
@@ -715,16 +705,6 @@ public class AutoCrop {
 		       "\n#Slice used for OTSU threshold: " +
 		       sliceUsedForOTSU +
 		       "\n";
-	}
-	
-	
-	/**
-	 * Getter column name for the tab delimited file
-	 *
-	 * @return columns name for output text file
-	 */
-	public String getColumnNames() {
-		return HEADERS;
 	}
 	
 	
@@ -814,14 +794,5 @@ public class AutoCrop {
 		}
 	}
 	
-	
-	/**
-	 * Set a list of boxes
-	 *
-	 * @param boxes list of boxes
-	 */
-	public void setBoxes(Map<Double, ? extends Box> boxes) {
-		this.boxes = new HashMap<>(boxes);
-	}
 	
 }

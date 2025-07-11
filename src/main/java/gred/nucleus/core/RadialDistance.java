@@ -16,8 +16,6 @@ import ij.plugin.Resizer;
  * @author Tristan Dubos and Axel Poulet
  */
 public final class RadialDistance {
-	public RadialDistance() {
-	}
 	
 	
 	/**
@@ -29,7 +27,7 @@ public final class RadialDistance {
 	 */
 	public static ImagePlus computeDistanceMap(ImagePlus imagePlusSegmentedRescaled) {
 		Distance_Map distanceMap = new Distance_Map();
-		distanceMap.apply(imagePlusSegmentedRescaled);
+		Distance_Map.apply(imagePlusSegmentedRescaled);
 		return imagePlusSegmentedRescaled;
 	}
 	

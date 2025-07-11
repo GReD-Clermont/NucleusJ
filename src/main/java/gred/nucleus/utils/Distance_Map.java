@@ -72,7 +72,7 @@ public class Distance_Map implements PlugInFilter {
 	}
 	
 	
-	public void apply(ImagePlus imagePlus) {
+	public static void apply(ImagePlus imagePlus) {
 		StackConverter stackConverter = new StackConverter(imagePlus);
 		if (imagePlus.getType() != ImagePlus.GRAY8) {
 			stackConverter.convertToGray8();
@@ -169,7 +169,7 @@ public class Distance_Map implements PlugInFilter {
 	
 	
 	//Modified from ImageJ code by Wayne Rasband
-	String stripExtension(String name) {
+	static String stripExtension(String name) {
 		String strippedName = name;
 		if (strippedName != null) {
 			int dotIndex = strippedName.lastIndexOf('.');

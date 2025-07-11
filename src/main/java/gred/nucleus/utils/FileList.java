@@ -2,9 +2,7 @@ package gred.nucleus.utils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -47,7 +45,7 @@ public class FileList {
 	 *
 	 * @return list file
 	 */
-	public File[] repertoryFileList(String directory) {
+	public static File[] repertoryFileList(String directory) {
 		File   directoryToScan = new File(directory);
 		File[] tFileDirectory;
 		tFileDirectory = directoryToScan.listFiles();
@@ -75,7 +73,7 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public File[] resize(File[] tTempBeforeElement, File[] tTempAfterElement, File[] tTempFile, int indexMax) {
+	public static File[] resize(File[] tTempBeforeElement, File[] tTempAfterElement, File[] tTempFile, int indexMax) {
 		File[] tFile = new File[tTempBeforeElement.length + tTempFile.length + tTempAfterElement.length - 1];
 		//element insertion in the file list
 		for (int j = 0; j < tFile.length; ++j) {
@@ -104,7 +102,7 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public File[] stockFileBefore(int indexMax, File[] tFile) {
+	public static File[] stockFileBefore(int indexMax, File[] tFile) {
 		File[] tTempBeforeElement = new File[indexMax];
 		if (indexMax >= 0) {
 			System.arraycopy(tFile, 0, tTempBeforeElement, 0, indexMax);
@@ -119,7 +117,7 @@ public class FileList {
 	 *
 	 * @return
 	 */
-	public File[] stockFileAfter(int indexMax, File[] tFile) {
+	public static File[] stockFileAfter(int indexMax, File[] tFile) {
 		File[] tTempAfterElement = new File[tFile.length - indexMax];
 		int    j                 = 0;
 		for (int k = indexMax + 1; k < tFile.length; ++k) {
@@ -127,47 +125,6 @@ public class FileList {
 			++j;
 		}
 		return tTempAfterElement;
-	}
-	
-	
-	/**
-	 * @param filePathway
-	 * @param tableFile
-	 *
-	 * @return
-	 */
-	public boolean isInDirectory(String filePathway, File[] tableFile) {
-		boolean testFile = false;
-		for (File file : tableFile) {
-			if (file.toString().equals(filePathway)) {
-				testFile = true;
-				break;
-			}
-		}
-		return testFile;
-	}
-	
-	
-	/**
-	 * @param regex
-	 * @param tFile
-	 *
-	 * @return
-	 */
-	public String fileSearch(String regex, File[] tFile) {
-		if (windows) {
-			String as  = "\\";
-			String das = "\\\\";
-			regex = regex.replace(as, das);
-		}
-		String file = null;
-		for (File value : tFile) {
-			if (value.toString().matches(regex)) {
-				file = value.toString();
-				break;
-			}
-		}
-		return file;
 	}
 	
 	
@@ -191,34 +148,6 @@ public class FileList {
 			}
 		}
 		return testFile;
-	}
-	
-	
-	/**
-	 * @param directory
-	 * @param tFile
-	 *
-	 * @return
-	 */
-	public String[] getDirectoryFiles(CharSequence directory, File[] tFile) {
-		String[]             tRef         = SEP.split(directory);
-		String[]             tTemp        = new String[0];
-		List<String>         arrayList    = new ArrayList<>(tFile.length);
-		Map<String, Integer> directoryMap = new HashMap<>(tFile.length);
-		for (File file : tFile) {
-			String[] temp = SEP.split(file.toString());
-			if (temp.length > tRef.length + 1 && !directoryMap.containsKey(temp[tRef.length])) {
-				directoryMap.put(temp[tRef.length], 1);
-				arrayList.add(temp[tRef.length]);
-			}
-		}
-		if (!arrayList.isEmpty()) {
-			tTemp = new String[arrayList.size()];
-			for (int i = 0; i < arrayList.size(); ++i) {
-				tTemp[i] = arrayList.get(i);
-			}
-		}
-		return tTemp;
 	}
 	
 	

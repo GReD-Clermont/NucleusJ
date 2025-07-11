@@ -118,7 +118,7 @@ public class ComputeNucleiParametersML {
 	/**
 	 * @return columns names for results
 	 */
-	public String getResultsColumnNames() {
+	public static String getResultsColumnNames() {
 		return "NucleusFileName\t" +
 		       "Volume\t" +
 		       "Moment 1\t" +

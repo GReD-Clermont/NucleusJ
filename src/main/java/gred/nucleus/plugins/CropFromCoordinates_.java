@@ -83,11 +83,11 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	}
 	
 	
-	public Client checkOMEROConnection(String hostname,
-	                                   String port,
-	                                   String username,
-	                                   char[] password,
-	                                   String group) {
+	public static Client checkOMEROConnection(String hostname,
+	                                          String port,
+	                                          String username,
+	                                          char[] password,
+	                                          String group) {
 		Client client = new Client();
 		try {
 			client.connect(hostname,
@@ -103,8 +103,8 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	}
 	
 	
-	private void cropImageFromOMERO2(Client client, ImageWrapper image, ImageWrapper imageToCrop,
-	                                 DatasetWrapper outputDataset, int c)
+	private static void cropImageFromOMERO2(Client client, ImageWrapper image, ImageWrapper imageToCrop,
+	                                        DatasetWrapper outputDataset, int c)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		List<ROIWrapper>     rois   = image.getROIs(client);
 		List<ChannelWrapper> canaux = imageToCrop.getChannels(client);
@@ -147,8 +147,8 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	}
 	
 	
-	private void cropImageFromOMERO(Client client, ImageWrapper image, ImageWrapper imageToCrop,
-	                                DatasetWrapper outputDataset)
+	private static void cropImageFromOMERO(Client client, ImageWrapper image, ImageWrapper imageToCrop,
+	                                       DatasetWrapper outputDataset)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		List<ROIWrapper> rois = image.getROIs(client);
 		for (ROIWrapper roi : rois) {

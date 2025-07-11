@@ -92,10 +92,6 @@ public class SegmentationCalling {
 	private long imgDatasetId;
 	
 	
-	public SegmentationCalling() {
-	}
-	
-	
 	/**
 	 * Constructor for ImagePlus input
 	 *
@@ -105,61 +101,6 @@ public class SegmentationCalling {
 		this.segmentationParameters = segmentationParameters;
 		this.outputCropGeneralInfoOTSU = this.segmentationParameters.getAnalysisParameters();
 		this.outputCropGeneralInfoConvexHull = this.segmentationParameters.getAnalysisParameters();
-	}
-	
-	
-	public SegmentationCalling(String outputDir) {
-		this.output = outputDir;
-		this.outputCropGeneralInfoOTSU = segmentationParameters.getAnalysisParameters();
-		this.outputCropGeneralInfoConvexHull = segmentationParameters.getAnalysisParameters();
-	}
-	
-	
-	/**
-	 * Constructor for ImagePlus input
-	 *
-	 * @param img       ImagePlus raw image
-	 * @param vMin      volume min of the detected object
-	 * @param vMax      volume max of the detected object
-	 * @param outputImg String of of the path to save the img of the segmented nucleus.
-	 */
-	public SegmentationCalling(ImagePlus img, short vMin, int vMax, String outputImg) {
-		segmentationParameters.setMinVolumeNucleus(vMin);
-		segmentationParameters.setMaxVolumeNucleus(vMax);
-		this.imgInput = img;
-		this.output = outputImg + File.separator + "Segmented" + imgInput.getTitle();
-	}
-	
-	
-	/**
-	 * Constructor for ImagePlus input
-	 *
-	 * @param img  ImagePlus raw image
-	 * @param vMin volume min of the detected object
-	 * @param vMax volume max of the detected object
-	 */
-	public SegmentationCalling(ImagePlus img, short vMin, int vMax) {
-		segmentationParameters.setMinVolumeNucleus(vMin);
-		segmentationParameters.setMaxVolumeNucleus(vMax);
-		this.imgInput = img;
-	}
-	
-	
-	/**
-	 * Constructor for directory input
-	 *
-	 * @param inputDir  String path of the input containing the tif/TIF file
-	 * @param outputDir String of of the path to save results img of the segmented nucleus.
-	 * @param vMin      volume min of the detected object
-	 * @param vMax      volume max of the detected object
-	 */
-	public SegmentationCalling(String inputDir, String outputDir, short vMin, int vMax) {
-		segmentationParameters.setMinVolumeNucleus(vMin);
-		segmentationParameters.setMaxVolumeNucleus(vMax);
-		this.output = outputDir;
-		Directory dirOutput = new Directory(output);
-		dirOutput.checkAndCreateDir();
-		this.output = dirOutput.getDirPath();
 	}
 	
 	

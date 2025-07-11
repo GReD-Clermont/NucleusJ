@@ -9,7 +9,6 @@ import fr.igred.omero.repository.ProjectWrapper;
 import gred.nucleus.files.Directory;
 import ij.ImagePlus;
 import ij.gui.TextRoi;
-import ij.io.FileSaver;
 import ij.plugin.ContrastEnhancer;
 import ij.plugin.ZProjector;
 import ij.process.ImageConverter;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
+import static gred.nucleus.utils.ImageSaver.saveFile;
 import static loci.plugins.BF.openImagePlus;
 
 
@@ -176,18 +176,6 @@ public class AnnotateAutoCrop {
 	}
 	
 	
-	/**
-	 * Save the ImagePlus Z-projection image
-	 *
-	 * @param imagePlusInput image to save
-	 * @param pathFile       path to save the image
-	 */
-	public void saveFile(ImagePlus imagePlusInput, String pathFile) {
-		FileSaver fileSaver = new FileSaver(imagePlusInput);
-		fileSaver.saveAsTiff(pathFile);
-	}
-	
-	
 	public void saveProjectionOMERO(Client client, Long output)
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
 		long                 datasetID;
@@ -218,7 +206,7 @@ public class AnnotateAutoCrop {
 	 *
 	 * @return Z projection
 	 */
-	private ImagePlus projectionMax(ZProjector project) {
+	private static ImagePlus projectionMax(ZProjector project) {
 		project.setMethod(ZProjector.MAX_METHOD);
 		project.doProjection();
 		return project.getProjection();

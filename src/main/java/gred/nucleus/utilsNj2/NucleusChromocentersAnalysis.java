@@ -9,11 +9,14 @@ import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.utils.Histogram;
 import ij.ImagePlus;
 import ij.measure.Calibration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ExecutionException;
 
 import static gred.nucleus.core.RadialDistance.computeBarycenterToBorderDistances;
@@ -27,7 +30,8 @@ import static gred.nucleus.core.RadialDistance.computeBorderToBorderDistances;
  * @author Tristan Dubos and Axel Poulet
  */
 public class NucleusChromocentersAnalysis {
-	
+	/** Logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	//TODO INTEGRATION CLASS NEW MEASURE 3D
 	
@@ -42,10 +46,11 @@ public class NucleusChromocentersAnalysis {
 	 *
 	 * @throws IOException
 	 */
-	public File[] compute3DParameters(String rhfChoice,
-	                                  ImagePlus imagePlusInput, ImagePlus imagePlusSegmented,
-	                                  ImagePlus imagePlusChromocenter,
-	                                  ChromocenterParameters chromocenterParameters) throws IOException {
+	public static File[] compute3DParameters(String rhfChoice,
+	                                         ImagePlus imagePlusInput, ImagePlus imagePlusSegmented,
+	                                         ImagePlus imagePlusChromocenter,
+	                                         ChromocenterParameters chromocenterParameters) throws IOException {
+		LOGGER.info("3D PARAMETERS ");
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusChromocenter);
 		Calibration calibration = imagePlusInput.getCalibration();
@@ -75,9 +80,9 @@ public class NucleusChromocentersAnalysis {
 		
 		if (histogram.getNbLabels() > 0) {
 			double[] tVolumesObjects =
-					measure3D.computeVolumeofAllObjects(imagePlusChromocenter);
+					measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
-			int    nbCc         = measure3D.getNumberOfObject(imagePlusChromocenter);
+			int    nbCc         = Measure3D.getNumberOfObject(imagePlusChromocenter);
 			double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,
 			                                                                  imagePlusChromocenter);
 			double[] tBarycenterToBorderDistance = computeBarycenterToBorderDistances(imagePlusSegmented,
@@ -121,13 +126,13 @@ public class NucleusChromocentersAnalysis {
 	}
 	
 	
-	public File[] compute3DParametersOmero(String rhfChoice,
-	                                       ImageWrapper imageInput,
-	                                       ImageWrapper imageSegmented,
-	                                       ImagePlus imagePlusChromocenter,
-	                                       ChromocenterParameters chromocenterParameters,
-	                                       String datasetName,
-	                                       Client client)
+	public static File[] compute3DParametersOmero(String rhfChoice,
+	                                              ImageWrapper imageInput,
+	                                              ImageWrapper imageSegmented,
+	                                              ImagePlus imagePlusChromocenter,
+	                                              ChromocenterParameters chromocenterParameters,
+	                                              String datasetName,
+	                                              Client client)
 	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
 		long imageId = imageInput.getId();  // Get the image ID
 		
@@ -176,10 +181,9 @@ public class NucleusChromocentersAnalysis {
 		              measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) + ",";
 		
 		if (histogram.getNbLabels() > 0) {
-			double[] tVolumesObjects =
-					measure3D.computeVolumeofAllObjects(imagePlusChromocenter);
+			double[] tVolumesObjects = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
-			int    nbCc         = measure3D.getNumberOfObject(imagePlusChromocenter);
+			int    nbCc         = Measure3D.getNumberOfObject(imagePlusChromocenter);
 			double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,
 			                                                                  imagePlusChromocenter);
 			double[] tBarycenterToBorderDistance = computeBarycenterToBorderDistances(imagePlusSegmented,
@@ -264,7 +268,7 @@ public class NucleusChromocentersAnalysis {
 	public static String getResultsColumnNames() {
 		return "ImageName," +
 		       "Volume," +
-		       "Flatnes," +
+		       "Flatness," +
 		       "Elongation," +
 		       "Esr," +
 		       //"SurfaceArea\t" +
@@ -289,7 +293,7 @@ public class NucleusChromocentersAnalysis {
 	}
 	
 	
-	public String getResultsColumnNamesCC() {
+	public static String getResultsColumnNamesCC() {
 		return "ImageName," +
 		       "Volume," +
 		       "NormIntensity," +
