@@ -7,6 +7,10 @@ jobs:
     runs-on : ubuntu-latest
     permissions:
       contents: read
+    env:
+      HAVE_SONAR_TOKEN: ${{ secrets.SONAR_TOKEN != '' }}
+      HAVE_SONAR_DETAILS: ${{ vars.SONAR_PROJECTKEY != '' && vars.SONAR_ORGANIZATION != '' }}
+      HAVE_DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN != '' }}
     steps :
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,6 +29,12 @@ jobs:
           distribution: 'adopt'
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -40,6 +50,17 @@ jobs:
           mvn versions:set -DnewVersion=$VERSION-${GITHUB_REF##*/}
       - name : Package and test
         run: mvn clean package
+      - name: Set folders ownership back to current user
+        run: sudo chown -R $(id -u):$(id -g) $GITHUB_WORKSPACE && sudo chown -R $(id -u):$(id -g) $HOME
+      - name: Sonar analysis
+        if: ${{ env.HAVE_SONAR_TOKEN == 'true' && env.HAVE_SONAR_DETAILS == 'true' }}
+        run: mvn sonar:sonar -Dsonar.host.url=$SONAR_URL -Dsonar.projectKey=$SONAR_PROJECTKEY -Dsonar.organization=$SONAR_ORGANIZATION
+        env:
+          SONAR_PROJECTKEY: ${{ vars.SONAR_PROJECTKEY }}
+          SONAR_ORGANIZATION: ${{ vars.SONAR_ORGANIZATION }}
+          SONAR_URL: ${{ vars.SONAR_URL }}
+          GITHUB_TOKEN: ${{ github.token }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
