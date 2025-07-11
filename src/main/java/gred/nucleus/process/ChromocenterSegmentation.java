@@ -143,7 +143,7 @@ public class ChromocenterSegmentation {
 			FloatProcessor ipDiff = new FloatProcessor(is.getWidth(), is.getHeight());
 			for (int i = 0; i < raw[0].getWidth(); ++i) {
 				for (int j = 0; j < raw[0].getHeight(); ++j) {
-					float  sum    = 0;
+					double sum    = 0;
 					int    nb     = 0;
 					double valueA = is.getVoxel(i, j, k);
 					if (isBin.getVoxel(i, j, k) > 0) {
@@ -169,7 +169,8 @@ public class ChromocenterSegmentation {
 								}
 							}
 						}
-						ipDiff.setf(i, j, sum / nb);
+						sum = nb != 0 ? sum / nb : Double.NaN;
+						ipDiff.setf(i, j, (float) sum);
 					}
 					
 				}
