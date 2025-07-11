@@ -48,7 +48,7 @@ public class AutocropTestRunner {
 					String extension = FilenameUtils.getExtension(name).toLowerCase(Locale.ROOT);
 					if ("tif".equals(extension)) {
 						LOGGER.info("Beginning process on: {}", name);
-						runAutoCrop(f.toString(), AutoCropTest.PATH_TO_OUTPUT
+						runAutoCrop(f.toString(), OldAutoCropTest.PATH_TO_OUTPUT
 						                          + name);
 						LOGGER.info("Finished process on: {}", name);
 						LOGGER.info("Checking results:");

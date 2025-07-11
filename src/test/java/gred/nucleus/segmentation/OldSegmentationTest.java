@@ -11,7 +11,7 @@ import java.lang.invoke.MethodHandles;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 
-class SegmentationTest {
+class OldSegmentationTest {
 	public static final String PATH_TO_SEGMENTATION = "test-images" + File.separator + "segmentation" + File.separator;
 	public static final String PATH_TO_OUTPUT       = PATH_TO_SEGMENTATION + "output" + File.separator;
 	

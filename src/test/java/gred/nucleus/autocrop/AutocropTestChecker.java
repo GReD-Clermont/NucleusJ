@@ -37,13 +37,13 @@ public class AutocropTestChecker {
 	public AutocropTestChecker(String targetPath) {
 		PATH_TO_COORDINATES = "coordinates" + File.separator + FilenameUtils.removeExtension(targetPath) + ".txt";
 		
-		File targetInfoFile = new File(AutoCropTest.PATH_TO_AUTOCROP +
+		File targetInfoFile = new File(OldAutoCropTest.PATH_TO_AUTOCROP +
 		                               PATH_TO_TARGET +
 		                               targetPath + File.separator +
 		                               PATH_TO_INFO
 		);
 		
-		File targetCoordinatesFile = new File(AutoCropTest.PATH_TO_AUTOCROP +
+		File targetCoordinatesFile = new File(OldAutoCropTest.PATH_TO_AUTOCROP +
 		                                      PATH_TO_TARGET +
 		                                      targetPath + File.separator +
 		                                      PATH_TO_COORDINATES
@@ -65,14 +65,14 @@ public class AutocropTestChecker {
 	
 	
 	private static File getInfoFile(File file) {
-		return new File(AutoCropTest.PATH_TO_OUTPUT +
+		return new File(OldAutoCropTest.PATH_TO_OUTPUT +
 		                file.getName() + File.separator +
 		                PATH_TO_INFO);
 	}
 	
 	
 	private File getCoordinatesFile(File file) {
-		return new File(AutoCropTest.PATH_TO_OUTPUT +
+		return new File(OldAutoCropTest.PATH_TO_OUTPUT +
 		                file.getName() + File.separator +
 		                PATH_TO_COORDINATES);
 	}
