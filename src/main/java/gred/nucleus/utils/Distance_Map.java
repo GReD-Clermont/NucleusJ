@@ -153,9 +153,9 @@ public class Distance_Map implements PlugInFilter {
 				if ((data[k][ind] & 255) < THRESHOLD) {
 					sk[ind] = 0;
 				} else {
-					dist = (float) Math.sqrt(sk[ind]);
+					dist = (float) StrictMath.sqrt(sk[ind]);
 					sk[ind] = dist;
-					distMax = Math.max(dist, distMax);
+					distMax = StrictMath.max(dist, distMax);
 				}
 			}
 		}

@@ -314,7 +314,7 @@ public class Measure3D {
 			numberOfVoxel += hist.getValue();
 			mean += hist.getKey() * hist.getValue();
 		}
-		return mean / numberOfVoxel;
+		return numberOfVoxel != 0 ? mean / numberOfVoxel : 0;
 	}
 	
 	
@@ -338,8 +338,7 @@ public class Measure3D {
 				}
 			}
 		}
-		meanIntensity /= voxelCounted;
-		return meanIntensity;
+		return voxelCounted != 0 ? meanIntensity / voxelCounted : 0;
 		
 	}
 	
@@ -366,9 +365,9 @@ public class Measure3D {
 				}
 			}
 		}
-		meanIntensity /= voxelCounted;
+		
 		//System.out.println(meanIntensity);
-		return meanIntensity;
+		return voxelCounted != 0 ? meanIntensity / voxelCounted : 0;
 	}
 	
 	

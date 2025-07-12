@@ -213,7 +213,7 @@ public final class ConvexHullDetection {
 	 *
 	 * @see ConvexHullDetection#getLowestPoint(java.util.List)
 	 */
-	protected static Set<Point> getSortedPointSet(List<Point> points) {
+	private static Set<Point> getSortedPointSet(List<? extends Point> points) {
 		
 		Point lowest = getLowestPoint(points);
 		
@@ -226,8 +226,8 @@ public final class ConvexHullDetection {
 				}
 				
 				// use longs to guard against int-underflow
-				double thetaA = Math.atan2((long) a.y - lowest.y, (long) a.x - lowest.x);
-				double thetaB = Math.atan2((long) b.y - lowest.y, (long) b.x - lowest.x);
+				double thetaA = StrictMath.atan2((long) a.y - lowest.y, (long) a.x - lowest.x);
+				double thetaB = StrictMath.atan2((long) b.y - lowest.y, (long) b.x - lowest.x);
 				
 				if (thetaA < thetaB) {
 					return -1;

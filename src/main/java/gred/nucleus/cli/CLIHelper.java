@@ -244,11 +244,6 @@ public final class CLIHelper {
 				break;
 			
 			default:
-				exampleArgument = "-action segmentation " +
-				                  "-input path/to/input/folder/ " +
-				                  "-output path/to/output/folder/ ";
-				exampleCMD = exampleArgument.split(" ");
-				CLIActionOptions wrongAction = new CLIActionOptions(exampleCMD);
 				System.console().writer().println("Invalid action \"" + action + "\" :\n");
 				System.console().writer().println(CLIActionOptions.getHelperInfo());
 				break;

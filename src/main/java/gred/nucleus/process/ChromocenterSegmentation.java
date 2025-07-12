@@ -10,7 +10,10 @@ import ij.plugin.GaussianBlur3D;
 import ij.process.FloatProcessor;
 import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Map;
 
 
@@ -18,6 +21,9 @@ import java.util.Map;
  * Parent class for chromocenter  segmentation
  */
 public class ChromocenterSegmentation {
+	/** Logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
 	private final ImagePlus[] raw;
 	private final ImagePlus[] segNuc;
 	
@@ -36,32 +42,6 @@ public class ChromocenterSegmentation {
 	
 	
 	/**
-	 * Contructor for 2D images
-	 *
-	 * @param raw    : raw image input
-	 * @param segNuc : segmented/Binary nucleus associated image
-	 */
-	public ChromocenterSegmentation(ImagePlus[] raw,
-	                                ImagePlus[] segNuc,
-	                                String outputFileName,
-	                                ChromocenterParameters chromocenterParams,
-	                                boolean image2D) {
-		this.chromocenterParams = chromocenterParams;
-		this.raw = raw;
-		this.segNuc = segNuc;
-		this.output = outputFileName;
-		setNbPixelNuc2D();
-		if (nbPixelNuc * getPixelSurface2D() > 30) {
-			this.neigh = (int) (this.chromocenterParams.neighbours * 2.5);
-			this.factor = this.chromocenterParams.factor + 1;
-		} else {
-			this.neigh = this.chromocenterParams.neighbours;
-			this.factor = this.chromocenterParams.factor;
-		}
-	}
-	
-	
-	/**
 	 * Contructor for 3D images
 	 *
 	 * @param raw    : raw image input
@@ -77,7 +57,7 @@ public class ChromocenterSegmentation {
 		this.output = outputFileName;
 		setNbPixelNuc3D();
 		int initialV = chromocenterParameters.neighbours;
-		System.out.print("\t" + initialV);
+		LOGGER.info("\t{}", initialV);
 		if (!chromocenterParams.noChange && nbPixelNuc * getVoxelVolume3D() > 50) {
 			this.neigh = (int) (chromocenterParams.neighbours * 2.5);
 			this.factor = chromocenterParams.factor + 1;
@@ -85,7 +65,7 @@ public class ChromocenterSegmentation {
 			this.neigh = chromocenterParams.neighbours;
 			this.factor = chromocenterParams.factor;
 		}
-		System.out.print("\t" + neigh + " " + factor + "\n");
+		LOGGER.info("\t{} {}\n", neigh, factor);
 	}
 	
 	
@@ -111,13 +91,11 @@ public class ChromocenterSegmentation {
 		                    chromocenterParams.gaussianBlurYsigma,
 		                    chromocenterParams.gaussianBlurZsigma);
 		imageGradient.setCalibration(cal);
-		String diff = output.replace(".tif", "_diff.tif");
 		ImageSaver.saveFile(imageGradient, pathGradient);
 		computeAverage3D(imageGradient);
 		computeStdDev3D(imageGradient);
 		this.threshold = avgNucIntensity + factor * stdDevNucIntensity;
-		System.out.println(output + " " + threshold + " avg " + avgNucIntensity +
-		                   " std " + stdDevNucIntensity);
+		LOGGER.info("{} {} avg {} std {}", output, threshold, avgNucIntensity, stdDevNucIntensity);
 		imageGradient = binarize3D(imageGradient);
 		imageGradient.setCalibration(cal);
 		if (chromocenterParams.sizeFilterConnectedComponent) {

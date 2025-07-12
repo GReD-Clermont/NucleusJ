@@ -23,8 +23,8 @@ public class AutocropChecker {
 	
 	private static final Pattern TAB = Pattern.compile("\\t");
 	
-	private static final int    validCropNumberRange = 10;
-	private static final double validCropPercentage  = 60;
+	private static final int    VALID_CROP_NUMBER_RANGE = 10;
+	private static final double VALID_CROP_PERCENTAGE   = 60;
 	
 	private final String pathToCoordinates;
 	
@@ -119,8 +119,8 @@ public class AutocropChecker {
 	
 	public boolean checkGeneralValues(AutocropResult foundResult) {
 		LOGGER.info("Crop(s): (target) {} / {} (found)", target.getCropNb(), foundResult.getCropNb());
-		return target.getCropNb() + validCropNumberRange >= foundResult.getCropNb()
-		       && target.getCropNb() - validCropNumberRange <= foundResult.getCropNb();
+		return target.getCropNb() + VALID_CROP_NUMBER_RANGE >= foundResult.getCropNb()
+		       && target.getCropNb() - VALID_CROP_NUMBER_RANGE <= foundResult.getCropNb();
 	}
 	
 	
@@ -129,7 +129,7 @@ public class AutocropChecker {
 		LOGGER.info("Crops found overlapping (at least 80% overlapped) with targeted ones (={}) = {}",
 		            target.getCropNb(), overlappingCrops);
 		/* To change: valid if 90% of the crops found */
-		return overlappingCrops >= target.getCropNb() * validCropPercentage / 100;
+		return overlappingCrops >= target.getCropNb() * VALID_CROP_PERCENTAGE / 100;
 	}
 	
 	

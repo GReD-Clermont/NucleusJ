@@ -15,8 +15,6 @@ public class Gradient {
 	/**  */
 	private final List<Double>[][][] tableUnitNormals;
 	
-	private List<Double>[][][] _tableUnitaire = null;
-	
 	
 	@SuppressWarnings("unchecked")
 	public Gradient(ImagePlus imagePlusInput) {
@@ -61,7 +59,7 @@ public class Gradient {
 					list.add(dz);
 					tableGradient[i][j][k] = list;
 					/* temp variable */
-					double norm = Math.sqrt(dx * dx + dy * dy + dz * dz);
+					double norm = StrictMath.sqrt(dx * dx + dy * dy + dz * dz);
 					double nx   = 0;
 					double ny   = 0;
 					double nz   = 0;
@@ -91,11 +89,6 @@ public class Gradient {
 	/** @return  */
 	public List<Double>[][][] getGradient() {
 		return tableGradient;
-	}
-	
-	
-	public List<Double>[][][] getUnitaire() {
-		return _tableUnitaire;
 	}
 	
 }

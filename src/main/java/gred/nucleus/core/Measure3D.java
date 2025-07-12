@@ -83,49 +83,6 @@ public class Measure3D {
 	
 	
 	/**
-	 * Scan of image and if the voxel belong to the object of interest, looking, if in his neighborhood there are voxel
-	 * value == 0 then it is a boundary voxel. Adding the surface of the face of the voxel frontier, which are in
-	 * contact with the background of the image, to the surface total.
-	 *
-	 * @param label label of the interest object
-	 *
-	 * @return the surface
-	 */
-	public double computeSurfaceObject(double label) {
-		ImageStack imageStackInput = imageSegs[0].getStack();
-		double     surfaceArea     = 0, voxelValue, neighborVoxelValue;
-		for (int k = 1; k < imageSegs[0].getStackSize(); ++k) {
-			for (int i = 1; i < imageSegs[0].getWidth(); ++i) {
-				for (int j = 1; j < imageSegs[0].getHeight(); ++j) {
-					voxelValue = imageStackInput.getVoxel(i, j, k);
-					if (voxelValue == label) {
-						for (int kk = k - 1; kk <= k + 1; kk += 2) {
-							neighborVoxelValue = imageStackInput.getVoxel(i, j, kk);
-							if (voxelValue != neighborVoxelValue) {
-								surfaceArea += xCal * yCal;
-							}
-						}
-						for (int ii = i - 1; ii <= i + 1; ii += 2) {
-							neighborVoxelValue = imageStackInput.getVoxel(ii, j, k);
-							if (voxelValue != neighborVoxelValue) {
-								surfaceArea += yCal * zCal;
-							}
-						}
-						for (int jj = j - 1; jj <= j + 1; jj += 2) {
-							neighborVoxelValue = imageStackInput.getVoxel(i, jj, k);
-							if (voxelValue != neighborVoxelValue) {
-								surfaceArea += xCal * zCal;
-							}
-						}
-					}
-				}
-			}
-		}
-		return surfaceArea;
-	}
-	
-	
-	/**
 	 * This Method compute the volume of each segmented objects in imagePlus
 	 *
 	 * @param imagePlusInput ImagePlus segmented image
@@ -474,7 +431,7 @@ public class Measure3D {
 				}
 			}
 		}
-		return chromocenterIntensity / nucleusIntensity;
+		return nucleusIntensity != 0 ? chromocenterIntensity / nucleusIntensity : 0;
 	}
 	
 	
@@ -716,7 +673,7 @@ public class Measure3D {
 			numberOfVoxel += hist.getValue();
 			mean += hist.getKey() * hist.getValue();
 		}
-		return mean / numberOfVoxel;
+		return numberOfVoxel != 0 ? mean / numberOfVoxel : 0;
 	}
 	
 	
@@ -740,8 +697,7 @@ public class Measure3D {
 				}
 			}
 		}
-		meanIntensity /= voxelCounted;
-		return meanIntensity;
+		return voxelCounted != 0 ? meanIntensity / voxelCounted : 0;
 	}
 	
 	
@@ -891,7 +847,6 @@ public class Measure3D {
 		histogramSegmentedNucleus();
 		
 		double   volume         = computeVolumeObjectML();
-		double   surfaceArea    = computeSurfaceObject(255);
 		double   surfaceAreaNew = computeComplexSurface();
 		double[] tEigenValues   = computeEigenValue3D(255);
 		compute2dParameters();
@@ -912,9 +867,9 @@ public class Measure3D {
 		          + medianIntensityNucleus() + ","
 		          + medianIntensityBackground() + ","
 		          + rawImage.getHeight() * rawImage.getWidth() * rawImage.getNSlices() + ","
-		          + computeEigenValue3D(255)[0] + ","
-		          + computeEigenValue3D(255)[1] + ","
-		          + computeEigenValue3D(255)[2] + ","
+		          + tEigenValues[0] + ","
+		          + tEigenValues[1] + ","
+		          + tEigenValues[2] + ","
 		          + getAspectRatio() + ","
 		          + getCirculairty();
 		return results;

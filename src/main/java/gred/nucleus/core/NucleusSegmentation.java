@@ -84,31 +84,6 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Constructor for the segmentation analysis for a single image.
-	 *
-	 * @param imgRaw                 raw image to analyse
-	 * @param vMin                   minimum volume of detected object
-	 * @param vMax                   maximum volume of detected object
-	 * @param segmentationParameters list the parameters for the analyse
-	 *
-	 * @throws IOException
-	 * @throws FormatException
-	 */
-	public NucleusSegmentation(ImagePlus imgRaw,
-	                           int vMin,
-	                           int vMax,
-	                           SegmentationParameters segmentationParameters)
-	throws IOException, FormatException {
-		this.vMin = vMin;
-		this.vMax = vMax;
-		this.segmentationParameters = segmentationParameters;
-		this.imgRaw = imgRaw;
-		this.imgRaw = getImageChannel(0);
-		this.imgRawTransformed = this.imgRaw;
-	}
-	
-	
-	/**
 	 * Constructor for the segmentation analysis for a folder containing images.
 	 *
 	 * @param imageFile              Current image analysed

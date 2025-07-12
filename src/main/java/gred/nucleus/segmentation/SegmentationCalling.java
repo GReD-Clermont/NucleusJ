@@ -55,14 +55,8 @@ public class SegmentationCalling {
 	/** Number of threads used to download images */
 	private static final int DOWNLOADER_THREADS = 1;
 	
-	/** ImagePlus raw image */
-	private ImagePlus imgInput = new ImagePlus();
-	
 	/** ImagePlus segmented image */
 	private ImagePlus imgSeg = new ImagePlus();
-	
-	/** String of the path for the output files */
-	private String output;
 	
 	/** SegmentationParameters object containing the parameters for the segmentation */
 	private SegmentationParameters segmentationParameters;

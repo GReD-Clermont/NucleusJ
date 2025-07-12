@@ -92,12 +92,14 @@ public class GenerateOverlay {
 	private LUT getNucleiLUT() throws IOException {
 		InputStream    in = getClass().getResourceAsStream("/overlay/LUT.txt");
 		BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-		BufferedWriter bw = new BufferedWriter(new FileWriter("./tmp-LUT.txt"));
-		String         l;
-		while ((l = br.readLine()) != null) {
-			bw.write(l + "\n");
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter("./tmp-LUT.txt"))) {
+			String l = br.readLine();
+			while(l != null) {
+				bw.write(l);
+				bw.newLine();
+				l = br.readLine();
+			}
 		}
-		bw.close();
 		LUT fire = LutLoader.openLut("./tmp-LUT.txt");
 		Files.delete(Paths.get("./tmp-LUT.txt"));
 		return fire;

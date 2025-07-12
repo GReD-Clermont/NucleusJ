@@ -128,7 +128,7 @@ public final class ChromocentersEnhancement {
 					neighborVolumeTotal += tRegionAdjacencyGraph[i][j];
 				}
 			}
-			if (tContrast[i] <= 0) {
+			if (tContrast[i] <= 0 || neighborVolumeTotal == 0) {
 				tContrast[i] = 0;
 			} else {
 				tContrast[i] /= neighborVolumeTotal;

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 
 /**
@@ -14,8 +13,6 @@ import java.util.regex.Pattern;
  */
 public class FileList {
 	private final boolean windows;
-	
-	private static final Pattern SEP = Pattern.compile(Pattern.quote(File.separator));
 	
 	
 	/**

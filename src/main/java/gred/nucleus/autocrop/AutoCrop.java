@@ -78,9 +78,6 @@ public class AutoCrop {
 	/** The path of the image to be processed */
 	private final String             imageFilePath;
 	
-	/** File to process (Image input) */
-	private final File currentFile;
-	
 	/** Raw image */
 	private ImagePlus        rawImg;
 	/** Segmented image */
@@ -114,7 +111,6 @@ public class AutoCrop {
 	public AutoCrop(File imageFile, String outputFilesPrefix, AutocropParameters autocropParametersAnalyse)
 	throws IOException, FormatException {
 		this.autocropParameters = autocropParametersAnalyse;
-		this.currentFile = imageFile;
 		this.imageFilePath = imageFile.getAbsolutePath();
 		this.outputDirPath = autocropParameters.getOutputFolder();
 		this.outputFilesPrefix = outputFilesPrefix;
@@ -130,7 +126,6 @@ public class AutoCrop {
 	
 	public AutoCrop(ImageWrapper image, AutocropParameters autocropParametersAnalyse, Client client)
 	throws ServiceException, AccessException, ExecutionException {
-		this.currentFile = new File(image.getName());
 		this.autocropParameters = autocropParametersAnalyse;
 		this.outputDirPath = autocropParameters.getOutputFolder();
 		this.outputFilesPrefix = FilenameUtils.removeExtension(image.getName());
@@ -154,7 +149,6 @@ public class AutoCrop {
 	                Map<Double, Box> boxes)
 	throws IOException, FormatException {
 		this.autocropParameters = autocropParametersAnalyse;
-		this.currentFile = imageFile;
 		this.imageFilePath = imageFile.getAbsolutePath();
 		this.outputDirPath = autocropParameters.getOutputFolder();
 		this.outputFilesPrefix = outputFilesPrefix;
