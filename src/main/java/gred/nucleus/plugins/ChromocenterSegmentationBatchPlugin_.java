@@ -2,7 +2,7 @@ package gred.nucleus.plugins;
 
 import gred.nucleus.core.ChromocentersEnhancement;
 import gred.nucleus.dialogs.ChromocenterSegmentationPipelineBatchDialog;
-import gred.nucleus.utils.FileList;
+import gred.nucleus.io.FileList;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;

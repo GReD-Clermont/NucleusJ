@@ -1,6 +1,6 @@
 package gred.nucleus.plugins;
 
-import gred.nucleus.files.Directory;
+import gred.nucleus.io.Directory;
 import ij.IJ;
 import ij.ImagePlus;
 import org.slf4j.Logger;

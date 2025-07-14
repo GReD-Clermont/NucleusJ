@@ -9,7 +9,7 @@ import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.roi.GenericShapeWrapper;
 import fr.igred.omero.roi.ROIWrapper;
 import fr.igred.omero.roi.RectangleWrapper;
-import gred.nucleus.files.Directory;
+import gred.nucleus.io.Directory;
 import gred.nucleus.imageprocessing.Thresholding;
 import gred.nucleus.segmentation.SegmentationParameters;
 import gred.nucleus.utils.FillingHoles;
@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
-import static gred.nucleus.utils.ImageSaver.saveFile;
+import static gred.nucleus.io.ImageSaver.saveFile;
 
 
 /**

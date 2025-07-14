@@ -1,4 +1,4 @@
-package gred.nucleus.files;
+package gred.nucleus.io;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;

@@ -9,7 +9,7 @@ import gred.nucleus.core.ChromocenterAnalysis;
 import gred.nucleus.core.NucleusChromocentersAnalysis;
 import gred.nucleus.dialogs.ChromocentersAnalysisPipelineBatchDialog;
 import gred.nucleus.dialogs.IDialogListener;
-import gred.nucleus.utils.FileList;
+import gred.nucleus.io.FileList;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.io.FileSaver;

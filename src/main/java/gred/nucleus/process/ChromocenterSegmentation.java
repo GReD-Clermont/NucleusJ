@@ -2,7 +2,7 @@ package gred.nucleus.process;
 
 import gred.nucleus.plugins.ChromocenterParameters;
 import gred.nucleus.utils.Histogram;
-import gred.nucleus.utils.ImageSaver;
+import gred.nucleus.io.ImageSaver;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.measure.Calibration;

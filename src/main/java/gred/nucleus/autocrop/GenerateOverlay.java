@@ -7,7 +7,7 @@ import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
-import gred.nucleus.files.Directory;
+import gred.nucleus.io.Directory;
 import ij.ImagePlus;
 import ij.gui.ImageRoi;
 import ij.plugin.Duplicator;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static gred.nucleus.utils.ImageSaver.saveFile;
+import static gred.nucleus.io.ImageSaver.saveFile;
 
 
 public class GenerateOverlay {

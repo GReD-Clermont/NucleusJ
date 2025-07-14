@@ -7,8 +7,8 @@ import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
-import gred.nucleus.files.Directory;
-import gred.nucleus.files.FilesNames;
+import gred.nucleus.io.Directory;
+import gred.nucleus.io.FilesNames;
 import loci.formats.FormatException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -28,7 +28,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-import static gred.nucleus.utils.ImageSaver.saveFile;
+import static gred.nucleus.io.ImageSaver.saveFile;
 
 
 public class CropFromCoordinates {

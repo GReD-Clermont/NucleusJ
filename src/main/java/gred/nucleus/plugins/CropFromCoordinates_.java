@@ -13,7 +13,7 @@ import fr.igred.omero.roi.ROIWrapper;
 import gred.nucleus.autocrop.CropFromCoordinates;
 import gred.nucleus.dialogs.CropFromCoordinatesDialog;
 import gred.nucleus.dialogs.IDialogListener;
-import gred.nucleus.files.FilesNames;
+import gred.nucleus.io.FilesNames;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;

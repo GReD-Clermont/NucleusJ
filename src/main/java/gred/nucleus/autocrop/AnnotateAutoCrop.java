@@ -6,7 +6,7 @@ import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
-import gred.nucleus.files.Directory;
+import gred.nucleus.io.Directory;
 import ij.ImagePlus;
 import ij.gui.TextRoi;
 import ij.plugin.ContrastEnhancer;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
-import static gred.nucleus.utils.ImageSaver.saveFile;
+import static gred.nucleus.io.ImageSaver.saveFile;
 import static loci.plugins.BF.openImagePlus;
 
 

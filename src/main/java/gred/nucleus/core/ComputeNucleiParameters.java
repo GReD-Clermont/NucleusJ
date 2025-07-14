@@ -5,8 +5,8 @@ import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
-import gred.nucleus.files.Directory;
-import gred.nucleus.files.OutputTextFile;
+import gred.nucleus.io.Directory;
+import gred.nucleus.io.OutputTextFile;
 import gred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
 import ij.measure.Calibration;
@@ -24,7 +24,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import static gred.nucleus.utils.ImageSaver.saveFile;
+import static gred.nucleus.io.ImageSaver.saveFile;
 
 
 public class ComputeNucleiParameters {

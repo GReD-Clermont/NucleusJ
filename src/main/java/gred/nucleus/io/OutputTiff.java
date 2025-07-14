@@ -1,4 +1,4 @@
-package gred.nucleus.files;
+package gred.nucleus.io;
 
 import ij.ImagePlus;
 import ij.io.FileSaver;

@@ -5,7 +5,7 @@ import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
-import gred.nucleus.utils.FileList;
+import gred.nucleus.io.FileList;
 import gred.nucleus.utils.Histogram;
 import ij.IJ;
 import ij.ImagePlus;

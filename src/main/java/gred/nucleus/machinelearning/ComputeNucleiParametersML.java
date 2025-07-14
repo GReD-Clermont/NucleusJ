@@ -1,8 +1,8 @@
 package gred.nucleus.machinelearning;
 
 import gred.nucleus.core.Measure3D;
-import gred.nucleus.files.Directory;
-import gred.nucleus.files.OutputTextFile;
+import gred.nucleus.io.Directory;
+import gred.nucleus.io.OutputTextFile;
 import gred.nucleus.plugins.PluginParameters;
 import gred.nucleus.utils.Histogram;
 import ij.ImagePlus;

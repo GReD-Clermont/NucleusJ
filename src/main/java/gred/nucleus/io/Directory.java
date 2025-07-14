@@ -1,4 +1,4 @@
-package gred.nucleus.files;
+package gred.nucleus.io;
 
 import ij.IJ;
 import org.apache.commons.io.FilenameUtils;

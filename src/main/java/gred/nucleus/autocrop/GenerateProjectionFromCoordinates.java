@@ -1,7 +1,7 @@
 package gred.nucleus.autocrop;
 
-import gred.nucleus.files.Directory;
-import gred.nucleus.files.FilesNames;
+import gred.nucleus.io.Directory;
+import gred.nucleus.io.FilesNames;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
