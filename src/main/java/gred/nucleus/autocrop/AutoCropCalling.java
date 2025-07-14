@@ -121,10 +121,10 @@ public class AutoCropCalling {
 					autoCrop.computeConnectedComponent();
 					autoCrop.componentBorderFilter();
 					autoCrop.componentSizeFilter();
-					autoCrop.computeBoxes2();
-					autoCrop.addCROPParameter();
+					autoCrop.computeBoxes();
+					autoCrop.addCropParameter();
 					autoCrop.boxIntersection();
-					autoCrop.cropKernels2();
+					autoCrop.cropKernels();
 					autoCrop.writeAnalyseInfo();
 					AnnotateAutoCrop annotate = new AnnotateAutoCrop(autoCrop.getFileCoordinates(),
 					                                                 file,
@@ -186,10 +186,10 @@ public class AutoCropCalling {
 			autoCrop.computeConnectedComponent();
 			autoCrop.componentBorderFilter();
 			autoCrop.componentSizeFilter();
-			autoCrop.computeBoxes2();
-			autoCrop.addCROPParameter();
+			autoCrop.computeBoxes();
+			autoCrop.addCropParameter();
 			autoCrop.boxIntersection();
-			autoCrop.cropKernels2();
+			autoCrop.cropKernels();
 			LOGGER.info("ENDED CROPPING");
 			autoCrop.writeAnalyseInfo();
 			AnnotateAutoCrop annotate = new AnnotateAutoCrop(autoCrop.getFileCoordinates(),
@@ -225,8 +225,8 @@ public class AutoCropCalling {
 		autoCrop.computeConnectedComponent();
 		autoCrop.componentBorderFilter();
 		autoCrop.componentSizeFilter();
-		autoCrop.computeBoxes2();
-		autoCrop.addCROPParameter();
+		autoCrop.computeBoxes();
+		autoCrop.addCropParameter();
 		autoCrop.boxIntersection();
 		autoCrop.cropKernelsOMERO(image, outputsDatImages, client);
 		autoCrop.writeAnalyseInfoOMERO(outputsDatImages[autocropParameters.getChannelToComputeThreshold()], client);
@@ -289,8 +289,8 @@ public class AutoCropCalling {
 				autoCrop.computeConnectedComponent();
 				autoCrop.componentBorderFilter();
 				autoCrop.componentSizeFilter();
-				autoCrop.computeBoxes2();
-				autoCrop.addCROPParameter();
+				autoCrop.computeBoxes();
+				autoCrop.addCropParameter();
 				autoCrop.boxIntersection();
 				try {
 					autoCrop.cropKernelsOMERO(image, outputsDatImages, client);

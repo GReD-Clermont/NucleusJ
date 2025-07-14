@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,11 +76,16 @@ public class CropFromCoordinates {
 		File coordinateDir = new File(pathToCoordinates);
 		File rawDir        = new File(pathToRaw);
 		
-		Map<File, File> coordinateToRaw = new HashMap<>();
+		File[] coordFiles = coordinateDir.listFiles();
+		File[] rawFiles   = rawDir.listFiles();
+		
+		List<File>      coords          = coordFiles != null ? Arrays.asList(coordFiles) : new ArrayList<>(0);
+		List<File>      raws            = rawFiles != null ? Arrays.asList(rawFiles) : new ArrayList<>(0);
+		Map<File, File> coordinateToRaw = new HashMap<>(raws.size());
 		// Gather all pair of files
-		for (File fc : coordinateDir.listFiles()) {
+		for (File fc : coords) {
 			String coordName = FilenameUtils.removeExtension(fc.getName());
-			for (File fr : rawDir.listFiles()) {
+			for (File fr : raws) {
 				String rawName = FilenameUtils.removeExtension(fr.getName());
 				if (rawName.equals(coordName)) {
 					coordinateToRaw.put(fc, fr);
@@ -104,7 +111,7 @@ public class CropFromCoordinates {
 			FilesNames         outPutFilesNames   = new FilesNames(e.getValue().getName());
 			String             prefix             = outPutFilesNames.prefixNameFile();
 			AutoCrop           autoCrop           = new AutoCrop(rawImage, prefix, autocropParameters, boxes);
-			autoCrop.cropKernels3(); // TODO PROBLEM : Currently crops only channel 0 for any given channel number === DONE
+			autoCrop.cropKernels();
 		}
 	}
 	
@@ -128,17 +135,19 @@ public class CropFromCoordinates {
 		run();
 		
 		DatasetWrapper outputDataset;
-		List<DatasetWrapper> datasets =
-				outputProject.getDatasets("raw_" + "C" + channelToCrop + "_" + rawDataset.getName());
+		
+		List<DatasetWrapper> datasets = outputProject.getDatasets("raw_C" + channelToCrop + "_" + rawDataset.getName());
 		if (datasets.isEmpty()) {
-			outputDataset =
-					outputProject.addDataset(client, "raw_" + "C" + channelToCrop + "_" + rawDataset.getName(), "");
+			outputDataset = outputProject.addDataset(client, "raw_C" + channelToCrop + "_" + rawDataset.getName(), "");
 		} else {
 			outputDataset = datasets.get(0);
 		}
 		
-		File crops = new File(pathToOutput);
-		for (File crop : crops.listFiles()) {
+		File   crops     = new File(pathToOutput);
+		File[] cropFiles = crops.listFiles();
+		
+		Iterable<File> cropList = cropFiles != null ? Arrays.asList(cropFiles) : new ArrayList<>(0);
+		for (File crop : cropList) {
 			outputDataset.importImages(client, crop.getPath());
 		}
 		

@@ -194,7 +194,7 @@ public class AutoCrop {
 	 * @throws IOException
 	 * @throws FormatException
 	 */
-	public void setChannelNumbers() throws IOException, FormatException {
+	private void setChannelNumbers() throws IOException, FormatException {
 		ImagePlus[] currentImage = BF.openImagePlus(imageFilePath);
 		currentImage = ChannelSplitter.split(currentImage[0]);
 		this.rawImg = currentImage[0];
@@ -204,7 +204,7 @@ public class AutoCrop {
 	}
 	
 	
-	public void setChannelNumbersOMERO(ImageWrapper image, Client client)
+	private void setChannelNumbersOMERO(ImageWrapper image, Client client)
 	throws ServiceException, AccessException, ExecutionException {
 		int[] cBound = {autocropParameters.getChannelToComputeThreshold(),
 		                autocropParameters.getChannelToComputeThreshold()};
@@ -308,7 +308,7 @@ public class AutoCrop {
 	 * <p>In order to use with a grey-level image, use either {@link AutoCrop#thresholdKernels(String type)} or your
 	 * own binarization method.
 	 */
-	public void computeBoxes2() {
+	public void computeBoxes() {
 		LOGGER.info("Computing boxes.");
 		try {
 			ImageStack imageStackInput = imageSegLabelled.getStack();
@@ -344,7 +344,7 @@ public class AutoCrop {
 	 *     <li>zCropBoxSize</li>
 	 * </ul>
 	 */
-	public void addCROPParameter() {
+	public void addCropParameter() {
 		LOGGER.info("Adding CROP parameter.");
 		for (Map.Entry<Double, Box> entry : new TreeMap<>(boxes).entrySet()) {
 			Box box  = entry.getValue();
@@ -388,23 +388,27 @@ public class AutoCrop {
 	 * the ImageCore put in input in this method (crop method available in the imagej wrapper).
 	 * <p>Then the image results obtained was used to create a new ImageCoreIJ, and the image is saved.
 	 */
-	public void cropKernels2() {
-		LOGGER.info("Cropping kernels (2).");
+	public void cropKernels() {
+		LOGGER.info("Cropping kernels.");
+		String eol = String.format("%n");
+		
 		StringBuilder info      = new StringBuilder();
-		Directory     dirOutput = new Directory(outputDirPath + "nuclei");
+		Directory     dirOutput = new Directory(outputDirPath + File.separator + "nuclei");
 		dirOutput.checkAndCreateDir();
 		info.append(getSpecificImageInfo()).append(HEADERS);
 		for (int c = 0; c < channelNumbers; c++) {
 			for (Map.Entry<Double, Box> entry : new TreeMap<>(boxes).entrySet()) {
 				int i = entry.getKey().intValue();
 				LOGGER.info("Processing box number: {}", i);
-				Box       box    = entry.getValue();
-				int       xMin   = box.getXMin();
-				int       yMin   = box.getYMin();
-				int       zMin   = box.getZMin();
-				int       width  = box.getXMax() - box.getXMin() + 1;
-				int       height = box.getYMax() - box.getYMin() + 1;
-				int       depth  = box.getZMax() - box.getZMin() + 1;
+				
+				Box box    = entry.getValue();
+				int xMin   = box.getXMin();
+				int yMin   = box.getYMin();
+				int zMin   = box.getZMin();
+				int width  = box.getXMax() - box.getXMin() + 1;
+				int height = box.getYMax() - box.getYMin() + 1;
+				int depth  = box.getZMax() - box.getZMin() + 1;
+				
 				ImagePlus croppedImage;
 				if (rawImg.getNSlices() > 1) {
 					croppedImage = cropImage(xMin, yMin, zMin, width, height, depth, c);
@@ -425,7 +429,7 @@ public class AutoCrop {
 				    .append(zMin).append("\t")
 				    .append(width).append("\t")
 				    .append(height).append("\t")
-				    .append(depth).append("\n");
+				    .append(depth).append(eol);
 				fileOutput.saveImage(croppedImage);
 				outputFile.add(outputDirPath + File.separator +
 				               outputFilesPrefix + File.separator +
@@ -437,7 +441,7 @@ public class AutoCrop {
 					int zMax = zMin + depth;
 					boxCoordinates.add(outputDirPath + File.separator +
 					                   outputFilesPrefix + "_" +
-					                   String.format("%02d", i) + "\t" +
+					                   String.format("%03d", i) + "\t" +
 					                   xMin + "\t" +
 					                   xMax + "\t" +
 					                   yMin + "\t" +
@@ -454,6 +458,8 @@ public class AutoCrop {
 	public void cropKernelsOMERO(ImageWrapper image, Long[] outputsDat, Client client)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		LOGGER.info("Cropping kernels (OMERO).");
+		String eol = String.format("%n");
+		
 		StringBuilder info = new StringBuilder();
 		info.append(getSpecificImageInfo()).append(HEADERS);
 		for (int c = 0; c < channelNumbers; c++) {
@@ -499,7 +505,7 @@ public class AutoCrop {
 				    .append(zMin).append("\t")
 				    .append(width).append("\t")
 				    .append(height).append("\t")
-				    .append(depth).append("\n");
+				    .append(depth).append(eol);
 				fileOutput.saveImage(croppedImage);
 				outputFile.add(outputFilesPrefix + "_" +
 				               String.format("%03d", i) + ".tif");
@@ -528,69 +534,6 @@ public class AutoCrop {
 			List<ROIWrapper> roisGetter = image.getROIs(client);
 			if (roisGetter.isEmpty()) {
 				image.saveROIs(client, rois);
-			}
-		}
-		this.infoImageAnalysis += info.toString();
-	}
-	
-	
-	/** Method crops a box of interest, from coordinate files. */
-	public void cropKernels3() {
-		LOGGER.info("Cropping kernels (3).");
-		StringBuilder info      = new StringBuilder();
-		Directory     dirOutput = new Directory(outputDirPath + File.separator + "Nuclei");
-		dirOutput.checkAndCreateDir();
-		info.append(getSpecificImageInfo()).append(HEADERS);
-		for (int c = 0; c < channelNumbers; c++) {
-			for (Map.Entry<Double, Box> entry : new TreeMap<>(boxes).entrySet()) {
-				int i = entry.getKey().intValue();
-				LOGGER.info("Processing box number: {}", i);
-				Box       box    = entry.getValue();
-				int       xMin   = box.getXMin();
-				int       yMin   = box.getYMin();
-				int       zMin   = box.getZMin();
-				int       width  = box.getXMax() - box.getXMin() + 1;
-				int       height = box.getYMax() - box.getYMin() + 1;
-				int       depth  = box.getZMax() - box.getZMin() + 1;
-				ImagePlus croppedImage;
-				if (rawImg.getNSlices() > 1) {
-					croppedImage = cropImage(xMin, yMin, zMin, width, height, depth, c);
-				} else {
-					croppedImage = cropImage2D(xMin, yMin, width, height, c);
-				}
-				Calibration cal = rawImg.getCalibration();
-				croppedImage.setCalibration(cal);
-				String tiffPath = dirOutput.getDirPath() + File.separator +
-				                  outputFilesPrefix +
-				                  "_" + String.format("%03d", i) + ".tif";
-				OutputTiff fileOutput = new OutputTiff(tiffPath);
-				info.append(tiffPath).append("\t")
-				    .append(c).append("\t")
-				    .append(i).append("\t")
-				    .append(xMin).append("\t")
-				    .append(yMin).append("\t")
-				    .append(zMin).append("\t")
-				    .append(width).append("\t")
-				    .append(height).append("\t")
-				    .append(depth).append("\n");
-				fileOutput.saveImage(croppedImage);
-				outputFile.add(outputDirPath + File.separator +
-				               outputFilesPrefix + File.separator +
-				               outputFilesPrefix + "_" +
-				               String.format("%03d", i) + ".tif");
-				if (c == 0) {
-					int xMax = xMin + width;
-					int yMax = yMin + height;
-					int zMax = zMin + depth;
-					boxCoordinates.add(outputDirPath + File.separator +
-					                   outputFilesPrefix + "_" + i + "\t" +
-					                   xMin + "\t" +
-					                   xMax + "\t" +
-					                   yMin + "\t" +
-					                   yMax + "\t" +
-					                   zMin + "\t" +
-					                   zMax);
-				}
 			}
 		}
 		this.infoImageAnalysis += info.toString();
