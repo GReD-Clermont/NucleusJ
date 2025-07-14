@@ -21,13 +21,13 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public final class Main {
+public final class NucleusJ {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
 	/** Default constructor: private to prevent instantiation */
-	private Main() {
+	private NucleusJ() {
 		// DO NOTHING
 	}
 	
