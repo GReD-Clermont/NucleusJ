@@ -1,4 +1,4 @@
-package gred.nucleus.mains;
+package gred.nucleus;
 
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
