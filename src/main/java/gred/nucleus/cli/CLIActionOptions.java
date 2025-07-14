@@ -1,6 +1,6 @@
 package gred.nucleus.cli;
 
-import gred.nucleus.mains.Version;
+import gred.nucleus.Version;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
