@@ -22,57 +22,55 @@ public final class FillingHoles {
 	
 	/** Method in two dimensions which process each plan z independent, */
 	public static ImagePlus apply2D(ImagePlus imagePlusInput) {
-		ImagePlus  imagePlusCorrected  = imagePlusInput;
-		ImageStack imageStackCorrected = imagePlusCorrected.getStack();
+		ImageStack imageStackCorrected = imagePlusInput.getStack();
 		double     voxelValue;
-		ImageStack imageStackOutput =
-				new ImageStack(imageStackCorrected.getWidth(), imageStackCorrected.getHeight());
+		ImageStack imageStackOutput = new ImageStack(imageStackCorrected.getWidth(), imageStackCorrected.getHeight());
 		for (int k = 1; k <= imageStackCorrected.getSize(); ++k) {
-			ImageProcessor imageProcessorLabeled = imageStackCorrected.getProcessor(k);
+			ImageProcessor labelProcessor = imageStackCorrected.getProcessor(k);
 			for (int i = 0; i < imageStackCorrected.getWidth(); ++i) {
 				for (int j = 0; j < imageStackCorrected.getHeight(); ++j) {
-					voxelValue = imageProcessorLabeled.getPixel(i, j);
+					voxelValue = labelProcessor.getPixel(i, j);
 					if (voxelValue > 0) {
-						imageProcessorLabeled.putPixelValue(i, j, 0);
+						labelProcessor.putPixelValue(i, j, 0);
 					} else {
-						imageProcessorLabeled.putPixelValue(i, j, 255);
+						labelProcessor.putPixelValue(i, j, 255);
 					}
 				}
 			}
-			imageProcessorLabeled = BinaryImages.componentsLabeling(imageProcessorLabeled, 26, 32);
+			labelProcessor = BinaryImages.componentsLabeling(labelProcessor, 26, 32);
 			int       label;
-			boolean[] tEdgeFlags = new boolean[(int) imageProcessorLabeled.getMax() + 1];
+			boolean[] tEdgeFlags = new boolean[(int) labelProcessor.getMax() + 1];
 			// Analysis of extreme plans along x axis
 			for (int j = 0; j < imageStackCorrected.getHeight(); ++j) {
-				label = (int) imageProcessorLabeled.getf(0, j);
+				label = (int) labelProcessor.getf(0, j);
 				tEdgeFlags[label] = true;
-				label = (int) imageProcessorLabeled.getf(imageStackCorrected.getWidth() - 1, j);
+				label = (int) labelProcessor.getf(imageStackCorrected.getWidth() - 1, j);
 				tEdgeFlags[label] = true;
 			}
 			// Analysis of extreme plans along y axis
 			for (int i = 0; i < imageStackCorrected.getWidth(); ++i) {
-				label = (int) imageProcessorLabeled.getf(i, 0);
+				label = (int) labelProcessor.getf(i, 0);
 				tEdgeFlags[label] = true;
-				label = (int) imageProcessorLabeled.getf(i, imageStackCorrected.getHeight() - 1);
+				label = (int) labelProcessor.getf(i, imageStackCorrected.getHeight() - 1);
 				tEdgeFlags[label] = true;
 			}
 			
 			for (int i = 0; i < imageStackCorrected.getWidth(); ++i) {
 				for (int j = 0; j < imageStackCorrected.getHeight(); ++j) {
-					label = (int) imageProcessorLabeled.getf(i, j);
+					label = (int) labelProcessor.getf(i, j);
 					if (label == 0 || !tEdgeFlags[label]) {
-						imageProcessorLabeled.putPixelValue(i, j, 255);
+						labelProcessor.putPixelValue(i, j, 255);
 					} else {
-						imageProcessorLabeled.putPixelValue(i, j, 0);
+						labelProcessor.putPixelValue(i, j, 0);
 					}
 				}
 			}
-			imageStackOutput.addSlice(imageProcessorLabeled);
+			imageStackOutput.addSlice(labelProcessor);
 		}
-		imagePlusCorrected.setStack(imageStackOutput);
-		StackConverter stackConverter = new StackConverter(imagePlusCorrected);
+		imagePlusInput.setStack(imageStackOutput);
+		StackConverter stackConverter = new StackConverter(imagePlusInput);
 		stackConverter.convertToGray8();
-		return imagePlusCorrected;
+		return imagePlusInput;
 	}
 	
 }

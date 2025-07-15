@@ -208,8 +208,7 @@ public class AutoCropCalling {
 	
 	public void saveGeneralInfo() {
 		LOGGER.info("{}result_Autocrop_Analyse", autocropParameters.getInputFolder());
-		OutputTextFile resultFileOutput =
-				new OutputTextFile(autocropParameters.getOutputFolder() + "result_Autocrop_Analyse.csv");
+		OutputTextFile resultFileOutput = new OutputTextFile(autocropParameters.getOutputFolder() + "result_Autocrop_Analyse.csv");
 		resultFileOutput.saveTextFile(outputCropGeneralInfo, true);
 	}
 	

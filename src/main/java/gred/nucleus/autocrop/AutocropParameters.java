@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.Properties;
 
+import static java.lang.Integer.parseInt;
+
 
 /** This class extend plugin parameters and contain the list of specific parameters available for Autocrop function. */
 public class AutocropParameters extends PluginParameters {
@@ -177,39 +179,40 @@ public class AutocropParameters extends PluginParameters {
 		for (String idProp : prop.stringPropertyNames()) {
 			switch (idProp) {
 				case "xCropBoxSize":
-					this.xCropBoxSize = Integer.parseInt(prop.getProperty("xCropBoxSize"));
+					this.xCropBoxSize = parseInt(prop.getProperty("xCropBoxSize"));
 					break;
 				case "yCropBoxSize":
-					this.yCropBoxSize = Integer.parseInt(prop.getProperty("yCropBoxSize"));
+					this.yCropBoxSize = parseInt(prop.getProperty("yCropBoxSize"));
 					break;
 				case "zCropBoxSize":
-					this.zCropBoxSize = Integer.parseInt(prop.getProperty("zCropBoxSize"));
+					this.zCropBoxSize = parseInt(prop.getProperty("zCropBoxSize"));
 					break;
 				case "boxNumberFontSize":
-					this.numberFontSize = Integer.parseInt(prop.getProperty("boxNumberFontSize"));
+					this.numberFontSize = parseInt(prop.getProperty("boxNumberFontSize"));
 					break;
 				case "thresholdOTSUComputing":
-					this.thresholdOTSUComputing = Integer.parseInt(prop.getProperty("thresholdOTSUComputing"));
+					this.thresholdOTSUComputing = parseInt(prop.getProperty("thresholdOTSUComputing"));
 					break;
 				case "slicesOTSUComputing":
-					this.slicesOTSUComputing = Integer.parseInt(prop.getProperty("slicesOTSUComputing"));
+					this.slicesOTSUComputing = parseInt(prop.getProperty("slicesOTSUComputing"));
 					break;
 				case "channelToComputeThreshold":
-					this.channelToComputeThreshold = Integer.parseInt(prop.getProperty("channelToComputeThreshold"));
+					this.channelToComputeThreshold = parseInt(prop.getProperty("channelToComputeThreshold"));
 					break;
 				case "maxVolumeNucleus":
-					this.maxVolumeNucleus = Integer.parseInt(prop.getProperty("maxVolumeNucleus"));
+					this.maxVolumeNucleus = parseInt(prop.getProperty("maxVolumeNucleus"));
 					break;
 				case "minVolumeNucleus":
-					this.minVolumeNucleus = Integer.parseInt(prop.getProperty("minVolumeNucleus"));
+					this.minVolumeNucleus = parseInt(prop.getProperty("minVolumeNucleus"));
 					break;
 				case "boxesPercentSurfaceToFilter":
-					this.boxesPercentSurfaceToFilter =
-							Integer.parseInt(prop.getProperty("boxesPercentSurfaceToFilter"));
+					this.boxesPercentSurfaceToFilter = parseInt(prop.getProperty("boxesPercentSurfaceToFilter"));
 					break;
 				case "boxesRegrouping":
 					this.boxesRegrouping = Boolean.parseBoolean(prop.getProperty("boxesRegrouping"));
 					break;
+				default:
+					LOGGER.warn("Unknown property in config file: {}", idProp);
 			}
 		}
 	}

@@ -62,8 +62,8 @@ public class AutoCrop {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	/** Column names */
-	private static final String HEADERS =
-			"FileName\tChannelNumber\tCropNumber\tXStart\tYStart\tZStart\twidth\theight\tdepth\n";
+	private static final String HEADERS = "FileName\tChannelNumber\tCropNumber\t" +
+	                                      "XStart\tYStart\tZStart\twidth\theight\tdepth\n";
 	
 	/** the path of the directory where are saved the crop of the object */
 	private final String             outputDirPath;
@@ -231,8 +231,7 @@ public class AutoCrop {
 		if (thresh < autocropParameters.getThresholdOTSUComputing()) {
 			ImagePlus imp2;
 			if (autocropParameters.getSlicesOTSUComputing() == 0) {
-				this.sliceUsedForOTSU =
-						"Start:" + imageSeg.getStackSize() / 2 + "-" + imageSeg.getStackSize();
+				this.sliceUsedForOTSU = "Start:" + imageSeg.getStackSize() / 2 + "-" + imageSeg.getStackSize();
 				imp2 = new Duplicator().run(imageSeg,
 				                            imageSeg.getStackSize() / 2,
 				                            imageSeg.getStackSize());

@@ -117,26 +117,26 @@ public class ChromocenterSegmentation {
 		ImageStack is     = raw[0].getStack();
 		ImageStack isBin  = segNuc[0].getStack();
 		ImageStack isDiff = new ImageStack(raw[0].getWidth(), raw[0].getHeight(), raw[0].getNSlices());
-		for (int k = 0; k < raw[0].getNSlices(); ++k) {
+		for (int z = 0; z < raw[0].getNSlices(); ++z) {
 			FloatProcessor ipDiff = new FloatProcessor(is.getWidth(), is.getHeight());
-			for (int i = 0; i < raw[0].getWidth(); ++i) {
-				for (int j = 0; j < raw[0].getHeight(); ++j) {
+			for (int x = 0; x < raw[0].getWidth(); ++x) {
+				for (int y = 0; y < raw[0].getHeight(); ++y) {
 					double sum    = 0;
 					int    nb     = 0;
-					double valueA = is.getVoxel(i, j, k);
-					if (isBin.getVoxel(i, j, k) > 0) {
-						for (int kk = k - neigh; kk < k + neigh; ++kk) {
-							for (int ii = i - neigh; ii < i + neigh; ++ii) {
-								for (int jj = j - neigh; jj < j + neigh; ++jj) {
-									if (ii < raw[0].getWidth() &&
-									    jj < raw[0].getHeight() &&
-									    kk < raw[0].getNSlices()) {
-										if (isBin.getVoxel(ii, jj, kk) > 0) {
-											double valueB = is.getVoxel(ii, jj, kk);
-											if (Double.isNaN(is.getVoxel(i, j, k))) {
+					double valueA = is.getVoxel(x, y, z);
+					if (isBin.getVoxel(x, y, z) > 0) {
+						for (int zz = z - neigh; zz < z + neigh; ++zz) {
+							for (int xx = x - neigh; xx < x + neigh; ++xx) {
+								for (int yy = y - neigh; yy < y + neigh; ++yy) {
+									if (xx < raw[0].getWidth() &&
+									    yy < raw[0].getHeight() &&
+									    zz < raw[0].getNSlices()) {
+										if (isBin.getVoxel(xx, yy, zz) > 0) {
+											double valueB = is.getVoxel(xx, yy, zz);
+											if (Double.isNaN(is.getVoxel(x, y, z))) {
 												valueA = 0;
 											}
-											if (Double.isNaN(is.getVoxel(ii, jj, kk))) {
+											if (Double.isNaN(is.getVoxel(xx, yy, zz))) {
 												valueB = 0;
 											}
 											double plop = valueA - valueB;
@@ -148,12 +148,12 @@ public class ChromocenterSegmentation {
 							}
 						}
 						sum = nb != 0 ? sum / nb : Double.NaN;
-						ipDiff.setf(i, j, (float) sum);
+						ipDiff.setf(x, y, (float) sum);
 					}
 					
 				}
 			}
-			isDiff.setProcessor(ipDiff, k + 1);
+			isDiff.setProcessor(ipDiff, z + 1);
 		}
 		ImagePlus imgDiff = new ImagePlus();
 		imgDiff.setStack(isDiff);

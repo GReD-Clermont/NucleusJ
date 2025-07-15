@@ -227,12 +227,11 @@ public final class CLIHelper {
 				                              "yCal:1\n" +
 				                              "zCal:1";
 				
-				String segConfigOption =
-						"thresholdOTSUComputing:20\n" +
-						"ConvexHullDetection:true\n" +
-						"xCal:1\n" +
-						"yCal:1\n" +
-						"zCal:1";
+				String segConfigOption = "thresholdOTSUComputing:20\n" +
+				                         "ConvexHullDetection:true\n" +
+				                         "xCal:1\n" +
+				                         "yCal:1\n" +
+				                         "zCal:1";
 				System.console().writer().println("Two config file with default parameters generate: \n");
 				
 				saveFile(autocropConfigOption, "autocropConfigListParameters");

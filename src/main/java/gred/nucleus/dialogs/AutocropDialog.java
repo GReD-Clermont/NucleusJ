@@ -41,7 +41,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	private static final String OUTPUT_CHOOSER = "outputChooser";
 	private static final String CONFIG_CHOOSER = "configChooser";
 	
-	private final IDialogListener dialogListener;
+	private final transient IDialogListener dialogListener;
 	
 	private final Container    container;
 	private final JFileChooser fc                 = new JFileChooser();

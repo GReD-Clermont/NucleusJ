@@ -77,12 +77,14 @@ public class ComputeNucleiParametersML {
 	 * @throws FormatException
 	 */
 	public void run() throws IOException, FormatException {
-		PluginParameters pluginParameters =
-				new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
+		PluginParameters pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
+		
 		Directory directoryInput = new Directory(pluginParameters.getOutputFolder());
 		directoryInput.listImageFiles(pluginParameters.getOutputFolder());
 		directoryInput.checkIfEmpty();
+		
 		List<File> segImages = directoryInput.getFileList();
+		
 		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder(pluginParameters.getAnalysisParameters() +
 		                                                            getResultsColumnNames());
 		for (File currentFile : segImages) {

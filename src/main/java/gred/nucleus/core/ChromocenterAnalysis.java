@@ -73,8 +73,8 @@ public final class ChromocenterAnalysis {
 				Measure3D measure3D = new Measure3D(imagePlusChromocenter.getCalibration().pixelWidth,
 				                                    imagePlusChromocenter.getCalibration().pixelHeight,
 				                                    imagePlusChromocenter.getCalibration().pixelDepth);
-				double[] tVolume =
-						measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
+				double[] tVolume = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
+				
 				double[] tBorderToBorderDistanceTable = computeBorderToBorderDistances(imagePlusSegmented,
 				                                                                       imagePlusChromocenter);
 				double[] tBarycenterToBorderDistanceTableCc = computeBarycenterToBorderDistances(imagePlusSegmented,
@@ -264,8 +264,6 @@ public final class ChromocenterAnalysis {
 	
 	
 	private void runCCAnalysis(String rawDataDir, String workDirectory) {
-		
-		
 		FileList fileList      = new FileList();
 		File[]   tFileRawImage = fileList.run(rawDataDir);
 		
@@ -290,11 +288,10 @@ public final class ChromocenterAnalysis {
 			for (int i = 0; i < listImageChromocenter.size(); ++i) {
 				LOGGER.info("image {}/{}", i + 1, listImageChromocenter.size());
 				String pathImageChromocenter = listImageChromocenter.get(i);
-				String pathNucleusRaw =
-						pathImageChromocenter.replace("SegmentedDataCc", "RawDataNucleus");
-				String pathNucleusSegmented =
-						pathImageChromocenter.replace("SegmentedDataCc", "SegmentedDataNucleus");
+				
+				String pathNucleusRaw = pathImageChromocenter.replace("SegmentedDataCc", "RawDataNucleus");
 				LOGGER.info(pathNucleusRaw);
+				String pathNucleusSegmented = pathImageChromocenter.replace("SegmentedDataCc", "SegmentedDataNucleus");
 				LOGGER.info(pathNucleusSegmented);
 				if (fileList.isDirectoryOrFileExist(pathNucleusRaw, tFileRawImage) &&
 				    fileList.isDirectoryOrFileExist(pathNucleusSegmented, tFileRawImage)) {
@@ -303,10 +300,10 @@ public final class ChromocenterAnalysis {
 						IJ.error("image format", "No images in gray scale 8bits in 3D");
 						return;
 					}
-					ImagePlus   imagePlusChromocenter = IJ.openImage(listImageChromocenter.get(i));
-					ImagePlus   imagePlusSegmented    = IJ.openImage(pathNucleusSegmented);
+					ImagePlus imagePlusChromocenter = IJ.openImage(listImageChromocenter.get(i));
+					ImagePlus imagePlusSegmented    = IJ.openImage(pathNucleusSegmented);
 					
-					Calibration cal                   = new Calibration();
+					Calibration cal = new Calibration();
 					if (calibration) {
 						cal.pixelWidth = xCalibration;
 						cal.pixelHeight = yCalibration;

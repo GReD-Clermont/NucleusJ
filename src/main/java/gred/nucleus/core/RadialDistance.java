@@ -66,8 +66,7 @@ public final class RadialDistance {
 					for (int j = 0; j < imagePlusChromocenter.getHeight(); ++j) {
 						voxelValue = imageStackDistanceMap.getVoxel(i, j, k);
 						if (voxelValue < voxelValueMin &&
-						    tLabel[l] ==
-						    imageStackChromocenter.getVoxel(i, j, k)) {
+						    tLabel[l] == imageStackChromocenter.getVoxel(i, j, k)) {
 							voxelValueMin = voxelValue;
 						}
 					}
@@ -93,11 +92,9 @@ public final class RadialDistance {
 	                                                          ImagePlus imagePlusChromocenter) {
 		Calibration calibration  = imagePlusSegmented.getCalibration();
 		double      xCalibration = calibration.pixelWidth;
-		ImagePlus imagePlusChromocenterRescale =
-				resizeImage(imagePlusChromocenter);
+		ImagePlus imagePlusChromocenterRescale = resizeImage(imagePlusChromocenter);
 		imagePlusSegmented = resizeImage(imagePlusSegmented);
-		ImagePlus imagePlusDistanceMap =
-				computeDistanceMap(imagePlusSegmented);
+		ImagePlus imagePlusDistanceMap = computeDistanceMap(imagePlusSegmented);
 		ImageStack imageStackDistanceMap = imagePlusDistanceMap.getStack();
 		Measure3D  measure3D             = new Measure3D();
 		

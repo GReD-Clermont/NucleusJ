@@ -85,8 +85,8 @@ public final class NucleusChromocentersAnalysis {
 		        measure3D.computeVolumeRHF(imagePlusSegmented, imagePlusChromocenter) + ",";
 		
 		if (histogram.getNbLabels() > 0) {
-			double[] tVolumesObjects =
-					measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
+			double[] tVolumesObjects = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
+			
 			double volumeCcMean = computeMeanOfTable(tVolumesObjects);
 			int    nbCc         = Measure3D.getNumberOfObject(imagePlusChromocenter);
 			double[] tBorderToBorderDistance = computeBorderToBorderDistances(imagePlusSegmented,
@@ -154,12 +154,15 @@ public final class NucleusChromocentersAnalysis {
 		double      voxelVolume = calibration.pixelDepth * calibration.pixelHeight * calibration.pixelWidth;
 		
 		imagePlusSegmented.setCalibration(calibration);
-		Measure3D measure3D =
-				new Measure3D(imagePlusSegmented, imagePlusInput, imagePlusInput.getCalibration().pixelWidth,
-				              imagePlusInput.getCalibration().pixelHeight, imagePlusInput.getCalibration().pixelDepth);
+		Measure3D measure3D = new Measure3D(imagePlusSegmented, imagePlusInput,
+		                                    imagePlusInput.getCalibration().pixelWidth,
+		                                    imagePlusInput.getCalibration().pixelHeight,
+		                                    imagePlusInput.getCalibration().pixelDepth);
+		
 		File fileResults = new File(chromocenterParameters.outputFolder + "NucAndCcParameters3D.csv");
-		File fileResultsParade =
-				new File(chromocenterParameters.outputFolder + "NucAndCcParameters3D_Parade.csv");
+		
+		File fileResultsParade = new File(chromocenterParameters.outputFolder + "NucAndCcParameters3D_Parade.csv");
+		
 		File    fileResultsCC       = new File(chromocenterParameters.outputFolder + "CcParameters3D.csv");
 		File    fileResultsCCParade = new File(chromocenterParameters.outputFolder + "CcParameters3D_Parade.csv");
 		boolean exist               = fileResults.exists();
@@ -230,25 +233,25 @@ public final class NucleusChromocentersAnalysis {
 		text += voxelVolume + "\n";  // Append voxelVolume at the end of the row
 		textParade += voxelVolume + "\n";  // Same for Parade
 		
-		BufferedWriter bufferedWriterOutput = new BufferedWriter(new FileWriter(fileResults, true));
-		bufferedWriterOutput.write(text);
-		bufferedWriterOutput.flush();
-		bufferedWriterOutput.close();
+		try (BufferedWriter output = new BufferedWriter(new FileWriter(fileResults, true))) {
+			output.write(text);
+			output.flush();
+		}
 		
-		BufferedWriter bufferedWriterOutputParade = new BufferedWriter(new FileWriter(fileResultsParade, true));
-		bufferedWriterOutputParade.write(textParade);
-		bufferedWriterOutputParade.flush();
-		bufferedWriterOutputParade.close();
+		try (BufferedWriter outputParade = new BufferedWriter(new FileWriter(fileResultsParade, true))) {
+			outputParade.write(textParade);
+			outputParade.flush();
+		}
 		
-		BufferedWriter bufferedWriterOutputCC = new BufferedWriter(new FileWriter(fileResultsCC, true));
-		bufferedWriterOutputCC.write(textCC);
-		bufferedWriterOutputCC.flush();
-		bufferedWriterOutputCC.close();
+		try (BufferedWriter outputCC = new BufferedWriter(new FileWriter(fileResultsCC, true))) {
+			outputCC.write(textCC);
+			outputCC.flush();
+		}
 		
-		BufferedWriter bufferedWriterOutputCCParade = new BufferedWriter(new FileWriter(fileResultsCCParade, true));
-		bufferedWriterOutputCCParade.write(textCCParade);
-		bufferedWriterOutputCCParade.flush();
-		bufferedWriterOutputCCParade.close();
+		try (BufferedWriter outputCCParade = new BufferedWriter(new FileWriter(fileResultsCCParade, true))) {
+			outputCCParade.write(textCCParade);
+			outputCCParade.flush();
+		}
 		
 		return new File[]{fileResults, fileResultsCC, fileResultsParade, fileResultsCCParade};
 	}

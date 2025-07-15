@@ -46,6 +46,8 @@ public class AnnotateAutoCrop {
 	private static final Pattern TAB = Pattern.compile("\\t");
 	private static final Pattern SEP = Pattern.compile(Pattern.quote(File.separator));
 	
+	private static final String ZPROJ_NAME = "zprojection";
+	
 	/** List of the coordinate boxes of cropped nucleus */
 	private final List<String>       boxCoordinates;
 	/** the path of the directory where image with boxes is saved */
@@ -78,7 +80,7 @@ public class AnnotateAutoCrop {
 	throws IOException, FormatException {
 		this(boxesCoordinates, imageFile, outputDirPath, autocropParameters);
 		this.outputFilesPrefix = prefix;
-		Directory dirOutput = new Directory(this.outputDirPath + "zprojection");
+		Directory dirOutput = new Directory(this.outputDirPath + ZPROJ_NAME);
 		dirOutput.checkAndCreateDir();
 	}
 	
@@ -116,7 +118,7 @@ public class AnnotateAutoCrop {
 		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
 		this.outputFilesPrefix = prefix;
-		Directory dirOutput = new Directory(this.outputDirPath + "zprojection");
+		Directory dirOutput = new Directory(this.outputDirPath + ZPROJ_NAME);
 		dirOutput.checkAndCreateDir();
 	}
 	
@@ -169,7 +171,7 @@ public class AnnotateAutoCrop {
 			addBoxCropToZProjection(boxCoordinate, Integer.parseInt(name[name.length - 1]), Color.BLACK);
 		}
 		String outFileZBox = outputDirPath + File.separator +
-		                     "zprojection" + File.separator +
+		                     ZPROJ_NAME + File.separator +
 		                     outputFilesPrefix + "_Zprojection.tif";
 		LOGGER.info("outFileZBox: {}", outFileZBox);
 		saveFile(zProjection, outFileZBox);
@@ -187,7 +189,7 @@ public class AnnotateAutoCrop {
 			datasetID = datasets.get(0).getId();
 		}
 		String outFileZBox = outputDirPath + File.separator +
-		                     "zprojection" + File.separator +
+		                     ZPROJ_NAME + File.separator +
 		                     outputFilesPrefix + "_Zprojection.tif";
 		client.getDataset(datasetID).importImages(client, outFileZBox);
 		File file = new File(outFileZBox);

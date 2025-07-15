@@ -404,8 +404,9 @@ public class Measure3D {
 	 *
 	 * @return double Relative Heterochromatin Fraction compute on the Intensity ratio
 	 */
-	public static double computeIntensityRHF(ImagePlus imagePlusInput
-			, ImagePlus imagePlusSegmented, ImagePlus imagePlusChromocenter) {
+	public static double computeIntensityRHF(ImagePlus imagePlusInput,
+	                                         ImagePlus imagePlusSegmented,
+	                                         ImagePlus imagePlusChromocenter) {
 		double     chromocenterIntensity  = 0;
 		double     nucleusIntensity       = 0;
 		double     voxelValueChromocenter;
@@ -414,13 +415,12 @@ public class Measure3D {
 		ImageStack imageStackChromocenter = imagePlusChromocenter.getStack();
 		ImageStack imageStackSegmented    = imagePlusSegmented.getStack();
 		ImageStack imageStackInput        = imagePlusInput.getStack();
-		for (int k = 0; k < imagePlusInput.getNSlices(); ++k) {
-			for (int i = 0; i < imagePlusInput.getWidth(); ++i) {
-				for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
-					voxelValueSegmented = imageStackSegmented.getVoxel(i, j, k);
-					voxelValueInput = imageStackInput.getVoxel(i, j, k);
-					voxelValueChromocenter =
-							imageStackChromocenter.getVoxel(i, j, k);
+		for (int z = 0; z < imagePlusInput.getNSlices(); ++z) {
+			for (int y = 0; y < imagePlusInput.getHeight(); ++y) {
+				for (int x = 0; x < imagePlusInput.getWidth(); ++x) {
+					voxelValueSegmented = imageStackSegmented.getVoxel(x, y, z);
+					voxelValueInput = imageStackInput.getVoxel(x, y, z);
+					voxelValueChromocenter = imageStackChromocenter.getVoxel(x, y, z);
 					
 					if (voxelValueSegmented > 0) {
 						if (voxelValueChromocenter > 0) {
@@ -488,8 +488,7 @@ public class Measure3D {
 					voxelValue = imageStackSegmented.getVoxel(i, j, k);
 					if (voxelValue > 0) {
 						for (int kk = k - 1; kk <= k + 1; kk += 2) {
-							neighborVoxelValue =
-									imageStackSegmented.getVoxel(i, j, kk);
+							neighborVoxelValue = imageStackSegmented.getVoxel(i, j, kk);
 							if (voxelValue != neighborVoxelValue) {
 								voxelRecordIn.setLocation(i, j, k);
 								voxelRecordOut.setLocation(i, j, kk);
@@ -556,7 +555,7 @@ public class Measure3D {
 					if (voxelValue > 0) {
 						for (int kk = k - 1; kk <= k + 1; kk += 2) {
 							neighborVoxelValue = imageStackSegmented.getVoxel(i, j, kk);
-							if (voxelValue != neighborVoxelValue) {
+							if (voxelValue - neighborVoxelValue != 0) {
 								voxelRecordIn.setLocation(i, j, k);
 								voxelRecordOut.setLocation(i, j, kk);
 								surfaceArea += computeSurfelContribution(tableUnitary[i][j][k],
@@ -568,7 +567,7 @@ public class Measure3D {
 						}
 						for (int ii = i - 1; ii <= i + 1; ii += 2) {
 							neighborVoxelValue = imageStackSegmented.getVoxel(ii, j, k);
-							if (voxelValue != neighborVoxelValue) {
+							if (voxelValue - neighborVoxelValue != 0) {
 								voxelRecordIn.setLocation(i, j, k);
 								voxelRecordOut.setLocation(ii, j, k);
 								surfaceArea += computeSurfelContribution(tableUnitary[i][j][k],
@@ -580,7 +579,7 @@ public class Measure3D {
 						}
 						for (int jj = j - 1; jj <= j + 1; jj += 2) {
 							neighborVoxelValue = imageStackSegmented.getVoxel(i, jj, k);
-							if (voxelValue != neighborVoxelValue) {
+							if (voxelValue - neighborVoxelValue != 0) {
 								voxelRecordIn.setLocation(i, j, k);
 								voxelRecordOut.setLocation(i, jj, k);
 								surfaceArea += computeSurfelContribution(tableUnitary[i][j][k],
@@ -716,8 +715,6 @@ public class Measure3D {
 			std = Math.abs(hist.getKey() * hist.getValue() - hist.getValue() * mean);
 		}
 		return std / (numberOfVoxel - 1);
-		
-		
 	}
 	
 	
@@ -734,7 +731,6 @@ public class Measure3D {
 			}
 		}
 		return maxIntensity;
-		
 	}
 	
 	

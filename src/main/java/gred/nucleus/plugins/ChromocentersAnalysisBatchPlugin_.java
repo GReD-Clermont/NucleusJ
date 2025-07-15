@@ -296,11 +296,10 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 			for (int i = 0; i < listImageChromocenter.size(); ++i) {
 				LOGGER.info("image {}/{}", i + 1, listImageChromocenter.size());
 				String pathImageChromocenter = listImageChromocenter.get(i);
-				String pathNucleusRaw =
-						pathImageChromocenter.replace("SegmentedDataCc", "RawDataNucleus");
-				String pathNucleusSegmented =
-						pathImageChromocenter.replace("SegmentedDataCc", "SegmentedDataNucleus");
+				
+				String pathNucleusRaw = pathImageChromocenter.replace("SegmentedDataCc", "RawDataNucleus");
 				LOGGER.info(pathNucleusRaw);
+				String pathNucleusSegmented = pathImageChromocenter.replace("SegmentedDataCc", "SegmentedDataNucleus");
 				LOGGER.info(pathNucleusSegmented);
 				if (fileList.isDirectoryOrFileExist(pathNucleusRaw, tFileRawImage) &&
 				    fileList.isDirectoryOrFileExist(pathNucleusSegmented, tFileRawImage)) {

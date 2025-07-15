@@ -74,8 +74,7 @@ public final class ChromocentersEnhancement {
 		double[][] tRegionAdjacencyGraph = new double[(int) imageStatistics.histMax + 1][(int) imageStatistics.histMax + 1];
 		
 		Calibration calibration = imagePlusWatershed.getCalibration();
-		double volumeVoxel =
-				calibration.pixelWidth * calibration.pixelHeight * calibration.pixelDepth;
+		double volumeVoxel = calibration.pixelWidth * calibration.pixelHeight * calibration.pixelDepth;
 		ImageStack imageStackWatershed = imagePlusWatershed.getStack();
 		for (int k = 1; k < imagePlusWatershed.getNSlices() - 1; ++k) {
 			for (int i = 1; i < imagePlusWatershed.getWidth() - 1; ++i) {

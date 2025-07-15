@@ -44,15 +44,13 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 			if (fileList.isDirectoryOrFileExist(".+RawDataNucleus.+", tFileRawData) &&
 			    fileList.isDirectoryOrFileExist(".+SegmentedDataNucleus.+", tFileRawData)) {
 				
-				List<String> listImageSegmentedDataNucleus =
-						fileList.fileSearchList(".+SegmentedDataNucleus.+", tFileRawData);
-				String workDirectory =
-						chromocenterSegmentationPipelineBatchDialog.getWorkDirectory();
+				List<String> listImageSegmentedDataNucleus = fileList.fileSearchList(".+SegmentedDataNucleus.+", tFileRawData);
+				String workDirectory = chromocenterSegmentationPipelineBatchDialog.getWorkDirectory();
 				for (int i = 0; i < listImageSegmentedDataNucleus.size(); ++i) {
 					LOGGER.info("image {}/{}", i + 1, listImageSegmentedDataNucleus.size());
 					String pathImageSegmentedNucleus = listImageSegmentedDataNucleus.get(i);
-					String pathNucleusRaw =
-							pathImageSegmentedNucleus.replace("SegmentedDataNucleus", "RawDataNucleus");
+					
+					String pathNucleusRaw = pathImageSegmentedNucleus.replace("SegmentedDataNucleus", "RawDataNucleus");
 					LOGGER.info(pathNucleusRaw);
 					if (fileList.isDirectoryOrFileExist(pathNucleusRaw, tFileRawData)) {
 						ImagePlus imagePlusSegmented = IJ.openImage(pathImageSegmentedNucleus);
@@ -80,8 +78,7 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 						} else {
 							calibration = imagePlusInput.getCalibration();
 						}
-						ImagePlus imagePlusContrast =
-								ChromocentersEnhancement.applyEnhanceChromocenters(imagePlusInput, imagePlusSegmented);
+						ImagePlus imagePlusContrast = ChromocentersEnhancement.applyEnhanceChromocenters(imagePlusInput, imagePlusSegmented);
 						imagePlusContrast.setTitle(imagePlusInput.getTitle());
 						imagePlusContrast.setCalibration(calibration);
 						saveFile(imagePlusContrast, workDirectory + File.separator + "ContrastDataNucleus");

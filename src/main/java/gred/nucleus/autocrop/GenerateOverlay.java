@@ -30,6 +30,8 @@ import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,13 +72,20 @@ public class GenerateOverlay {
 		File dicDir        = new File(pathToDic);
 		
 		Map<File, File> allDicToProj = new HashMap<>();
+		
+		File[] projFiles = projectionDir.listFiles();
+		File[] dicFiles  = dicDir.listFiles();
+		
+		List<File> projFilesList = projFiles != null ? Arrays.asList(projFiles) : new ArrayList<>(0);
+		List<File> dicFilesList  = dicFiles != null ? Arrays.asList(dicFiles) : new ArrayList<>(0);
+		
 		// Gather all pair of files
-		for (File fp : projectionDir.listFiles()) {
+		for (File fp : projFilesList) {
 			String   projName = FilenameUtils.removeExtension(fp.getName());
 			String[] pNameTab = projName.split("_");
 			projName = projName.replace(pNameTab[pNameTab.length - 1], "");
 			
-			for (File fd : dicDir.listFiles()) {
+			for (File fd : dicFilesList) {
 				String   dicName  = FilenameUtils.removeExtension(fd.getName());
 				String[] dNameTab = dicName.split("_");
 				dicName = dicName.replace(dNameTab[dNameTab.length - 1], "");
@@ -90,18 +99,20 @@ public class GenerateOverlay {
 	
 	
 	private LUT getNucleiLUT() throws IOException {
+		String tmpLutPath = "." + File.separator + "tmp-LUT.txt";
+		
 		InputStream    in = getClass().getResourceAsStream("/overlay/LUT.txt");
 		BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter("./tmp-LUT.txt"))) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(tmpLutPath))) {
 			String l = br.readLine();
-			while(l != null) {
+			while (l != null) {
 				bw.write(l);
 				bw.newLine();
 				l = br.readLine();
 			}
 		}
-		LUT fire = LutLoader.openLut("./tmp-LUT.txt");
-		Files.delete(Paths.get("./tmp-LUT.txt"));
+		LUT fire = LutLoader.openLut(tmpLutPath);
+		Files.delete(Paths.get(tmpLutPath));
 		return fire;
 	}
 	
@@ -172,8 +183,12 @@ public class GenerateOverlay {
 			outputDataset = datasets.get(0);
 		}
 		
-		File overlays = new File(pathToOutput);
-		for (File overlayFile : overlays.listFiles()) {
+		File   overlays     = new File(pathToOutput);
+		File[] overlayFiles = overlays.listFiles();
+		
+		List<File> overlayFilesList = overlayFiles != null ? Arrays.asList(overlayFiles) : new ArrayList<>(0);
+		
+		for (File overlayFile : overlayFilesList) {
 			outputDataset.importImage(client, overlayFile.getPath());
 		}
 		FileUtils.deleteDirectory(new File(pathToProjection));

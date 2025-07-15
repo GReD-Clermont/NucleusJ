@@ -207,8 +207,7 @@ public class SegmentationCalling {
 					String timeStampStart =
 							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, timeStampStart);
-					NucleusSegmentation nucleusSegmentation =
-							new NucleusSegmentation(file, prefix, segmentationParameters);
+					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, prefix, segmentationParameters);
 					
 					nucleusSegmentation.preProcessImage();
 					nucleusSegmentation.findOTSUMaximisingSphericity();

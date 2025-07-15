@@ -159,8 +159,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 				
 				for (int i = 0; i < sizeC; i++) {
 					DatasetWrapper dataset = new DatasetWrapper("C" + i + "_" + image.getName(), "");
-					outputsDat[i] =
-							client.getProject(outputID).addDataset(client, dataset).getId();
+					outputsDat[i] = client.getProject(outputID).addDataset(client, dataset).getId();
 				}
 				
 				autoCrop.runImageOMERO(image, outputsDat, client); // Run segmentation
@@ -182,8 +181,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 				Long[] outputsDat = new Long[sizeC];
 				for (int i = 0; i < sizeC; i++) {
 					DatasetWrapper dataset = new DatasetWrapper("raw_C" + i + "_" + name, "");
-					outputsDat[i] =
-							client.getProject(outputID).addDataset(client, dataset).getId();
+					outputsDat[i] = client.getProject(outputID).addDataset(client, dataset).getId();
 				}
 				
 				autoCrop.runSeveralImageOMERO(images, outputsDat, client); // Run segmentation

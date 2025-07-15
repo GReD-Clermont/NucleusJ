@@ -200,12 +200,8 @@ public class NucleusSegmentation {
 	 * @return
 	 */
 	public String saveImageResult(ImagePlus[] segmentedImage) {
-		
-		this.measure3D =
-				new Measure3D(segmentedImage, imgRaw, getXCalibration(), getYCalibration(), getZCalibration());
+		this.measure3D = new Measure3D(segmentedImage, imgRaw, getXCalibration(), getYCalibration(), getZCalibration());
 		return measure3D.nucleusParameter3D();
-		
-		
 	}
 	
 	
@@ -271,8 +267,7 @@ public class NucleusSegmentation {
 			    volume <= segmentationParameters.getMaxVolumeNucleus() &&
 			    !firstStack && !lastStack) {
 				
-				double sphericity =
-						Measure3D.computeSphericity(volume, Measure3D.computeComplexSurface(tempSeg, gradient));
+				double sphericity = Measure3D.computeSphericity(volume, Measure3D.computeComplexSurface(tempSeg, gradient));
 				if (sphericity > bestSphericity) {
 					this.bestThreshold = t;
 					bestSphericity = sphericity;
