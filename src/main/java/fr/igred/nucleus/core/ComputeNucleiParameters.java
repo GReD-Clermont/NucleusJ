@@ -1,0 +1,177 @@
+package fr.igred.nucleus.core;
+
+import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+import fr.igred.omero.repository.DatasetWrapper;
+import fr.igred.omero.repository.ImageWrapper;
+import fr.igred.nucleus.io.Directory;
+import fr.igred.nucleus.io.OutputTextFile;
+import fr.igred.nucleus.plugins.PluginParameters;
+import ij.ImagePlus;
+import ij.measure.Calibration;
+import loci.formats.FormatException;
+import loci.plugins.BF;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import static fr.igred.nucleus.io.ImageSaver.saveFile;
+
+
+public class ComputeNucleiParameters {
+	/** Logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	private final PluginParameters pluginParameters;
+	
+	private String segDatasetName;
+	private String currentTime;
+	
+	
+	/**
+	 * Constructor with input and output files
+	 *
+	 * @param rawImagesInputDirectory  path to raw images
+	 * @param segmentedImagesDirectory path to segmented images associated
+	 */
+	public ComputeNucleiParameters(String rawImagesInputDirectory, String segmentedImagesDirectory) {
+		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
+	}
+	
+	
+	public ComputeNucleiParameters() {
+		String rawPath       = "." + File.separator + "raw-computeNucleiParameters";
+		String segmentedPath = "." + File.separator + "segmented-computeNucleiParameters";
+		
+		Directory rawDirectory = new Directory(rawPath);
+		rawDirectory.checkAndCreateDir();
+		Directory segmentedDirectory = new Directory(segmentedPath);
+		segmentedDirectory.checkAndCreateDir();
+		
+		this.pluginParameters = new PluginParameters(rawPath, segmentedPath);
+	}
+	
+	
+	/**
+	 * Constructor with input, output files and calibration from dialog.
+	 *
+	 * @param rawImagesInputDirectory  path to raw images
+	 * @param segmentedImagesDirectory path to segmented images associated
+	 * @param cal                      calibration from dialog
+	 */
+	public ComputeNucleiParameters(String rawImagesInputDirectory, String segmentedImagesDirectory,
+	                               Calibration cal) {
+		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory,
+		                                             cal.pixelWidth, cal.pixelHeight, cal.pixelDepth);
+	}
+	
+	
+	/**
+	 * Compute nuclei parameters generate from segmentation ( OTSU / Convex Hull) Useful if parallel segmentation was
+	 * used to get results parameter in the same folder.
+	 */
+	public void run() {
+		Directory directoryRawInput = new Directory(pluginParameters.getInputFolder());
+		directoryRawInput.listImageFiles(pluginParameters.getInputFolder());
+		directoryRawInput.checkIfEmpty();
+		Directory directorySegmentedInput = new Directory(pluginParameters.getOutputFolder());
+		directorySegmentedInput.listImageFiles(pluginParameters.getOutputFolder());
+		directorySegmentedInput.checkIfEmpty();
+		List<File>    segmentedImages           = directorySegmentedInput.getFileList();
+		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder();
+		
+		outputCropGeneralInfoOTSU.append(pluginParameters.getAnalysisParameters()).append(getColNameResult());
+		
+		for (File f : segmentedImages) {
+			ImagePlus raw = new ImagePlus(pluginParameters.getInputFolder() + File.separator + f.getName());
+			try {
+				ImagePlus[] segmented = BF.openImagePlus(f.getAbsolutePath());
+				
+				Measure3D measure3D = new Measure3D(segmented,
+				                                    raw,
+				                                    pluginParameters.getXCalibration(raw),
+				                                    pluginParameters.getYCalibration(raw),
+				                                    pluginParameters.getZCalibration(raw));
+				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append("\n");
+			} catch (IOException | FormatException e) {
+				LOGGER.error("An error occurred.", e);
+			}
+		}
+		LocalDate        date       = LocalDate.now();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy-MM-dd-HH.mm.ss");
+		currentTime = dateFormat.format(date);
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile(pluginParameters.getOutputFolder()
+		                                                         + directoryRawInput.getSeparator()
+		                                                         + segDatasetName + currentTime + "_.csv");
+		
+		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU.toString(), true);
+	}
+	
+	
+	public void runFromOMERO(String rawDatasetID, String segmentedDatasetID, Client client)
+	throws AccessException, ServiceException, ExecutionException, InterruptedException, IOException {
+		DatasetWrapper rawDataset       = client.getDataset(Long.parseLong(rawDatasetID));
+		DatasetWrapper segmentedDataset = client.getDataset(Long.parseLong(segmentedDatasetID));
+		segDatasetName = segmentedDataset.getName();
+		
+		for (ImageWrapper raw : rawDataset.getImages(client)) {
+			saveFile(raw.toImagePlus(client), pluginParameters.getInputFolder() + File.separator + raw.getName());
+		}
+		
+		for (ImageWrapper segmented : segmentedDataset.getImages(client)) {
+			saveFile(segmented.toImagePlus(client),
+			         pluginParameters.getOutputFolder() + File.separator + segmented.getName());
+		}
+		
+		run();
+		
+		segmentedDataset.addFile(client,
+		                         new File(pluginParameters.getOutputFolder() + File.separator +
+		                                  segDatasetName + currentTime + "_.csv"));
+		
+		FileUtils.deleteDirectory(new File(pluginParameters.getInputFolder()));
+		FileUtils.deleteDirectory(new File(pluginParameters.getOutputFolder()));
+	}
+	
+	
+	public void addConfigParameters(String pathToConfig) {
+		pluginParameters.addGeneralProperties(pathToConfig);
+		
+	}
+	
+	
+	/** @return columns names for results */
+	private static String getColNameResult() {
+		return "NucleusFileName\t" +
+		       "Volume\t" +
+		       "Flatness\t" +
+		       "Elongation\t" +
+		       "Esr\t" +
+		       "SurfaceArea\t" +
+		       "Sphericity\t" +
+		       "MeanIntensityNucleus\t" +
+		       "MeanIntensityBackground\t" +
+		       "StandardDeviation\t" +
+		       "MinIntensity\t" +
+		       "MaxIntensity\t" +
+		       "MedianIntensityImage\t" +
+		       "MedianIntensityNucleus\t" +
+		       "MedianIntensityBackground\t" +
+		       "ImageSize\t" +
+		       "Moment 1\t" +
+		       "Moment 2\t" +
+		       "Moment 3\t" +
+		       "Aspect Ratio\t" +
+		       " Circularity \n";
+	}
+	
+}
