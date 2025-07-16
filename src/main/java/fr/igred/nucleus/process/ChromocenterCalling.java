@@ -127,8 +127,7 @@ public class ChromocenterCalling {
 				                                                                                 outputFileName,
 				                                                                                 chromocenterParameters);
 				chromocenterSegmentation.runCC3D(gradientFileName);
-				NucleusChromocentersAnalysis.compute3DParameters(rhfChoice,
-				                                                 raw[0],
+				NucleusChromocentersAnalysis.compute3DParameters(raw[0],
 				                                                 segNuc[0],
 				                                                 IJ.openImage(outputFileName),
 				                                                 chromocenterParameters);
@@ -228,9 +227,6 @@ public class ChromocenterCalling {
 	/** Function For OMERO */
 	public void runOneImageOMERO(Long inputDirectoryRaw, Long inputDirectorySeg, String outputDirectory, Client client)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError, InterruptedException {
-		
-		String rhfChoice = "Volume";
-		
 		/* Getting the image and mask from omero */
 		ImageWrapper image = client.getImage(inputDirectoryRaw);
 		ImageWrapper mask  = client.getImage(inputDirectorySeg);
@@ -261,7 +257,7 @@ public class ChromocenterCalling {
 		
 		chromocenterSegmentation.runCC3D(gradientFileName);
 		
-		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParameters(rhfChoice, rawImage[0], segImage[0],
+		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParameters(rawImage[0], segImage[0],
 		                                                                          IJ.openImage(outputFileName),
 		                                                                          chromocenterParameters);
 		
@@ -325,8 +321,7 @@ public class ChromocenterCalling {
 		
 		chromocenterSegmentation.runCC3D(gradientFileName);
 		
-		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParametersOmero(rhfChoice,
-		                                                                               image,
+		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParametersOmero(image,
 		                                                                               mask,
 		                                                                               IJ.openImage(outputFileName),
 		                                                                               chromocenterParameters,

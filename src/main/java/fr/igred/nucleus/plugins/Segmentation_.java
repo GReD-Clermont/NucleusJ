@@ -94,6 +94,51 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 	}
 	
 	
+	private SegmentationParameters setParametersFromDialog(String input, String output) {
+		SegmentationParameters params = null;
+		// Check config
+		String config = segmentationDialog.getConfig();
+		switch (segmentationDialog.getConfigMode()) {
+			case FILE:
+				if (config == null || config.isEmpty()) {
+					IJ.error("Config file is missing");
+				} else {
+					LOGGER.info("Config file");
+					params = new SegmentationParameters(input, output, config);
+				}
+				break;
+			case INPUT:
+				SegmentationConfigDialog scd = segmentationDialog.getSegmentationConfigFileDialog();
+				if (scd.isCalibrationSelected()) {
+					LOGGER.info("with calibration\tx: {}\ty: {}\tz: {}",
+					            scd.getXCalibration(), scd.getYCalibration(), scd.getZCalibration());
+					
+					params = new SegmentationParameters(input, output,
+					                                  Integer.parseInt(scd.getXCalibration()),
+					                                  Integer.parseInt(scd.getYCalibration()),
+					                                  Integer.parseInt(scd.getZCalibration()),
+					                                  Integer.parseInt(scd.getMinVolume()),
+					                                  Integer.parseInt(scd.getMaxVolume()),
+					                                  scd.getConvexHullDetection()
+					);
+				} else {
+					LOGGER.info("without calibration");
+					params = new SegmentationParameters(input, output,
+					                                  Integer.parseInt(scd.getMinVolume()),
+					                                  Integer.parseInt(scd.getMaxVolume()),
+					                                  scd.getConvexHullDetection()
+					);
+				}
+				break;
+			case DEFAULT:
+			default:
+				LOGGER.info("without config");
+				params = new SegmentationParameters(input, output);
+		}
+		return params;
+	}
+	
+	
 	private void runOmeroSegmentation() {
 		// Check connection
 		String hostname = segmentationDialog.getHostname();
@@ -102,43 +147,11 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 		char[] password = segmentationDialog.getPassword();
 		String group    = segmentationDialog.getGroup();
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
+		String input    = ".";
+		String output   = ".";
 		
-		SegmentationParameters segmentationParameters = null;
-		// Check config
-		String configFile = segmentationDialog.getConfig();
-		switch (segmentationDialog.getConfigMode()) {
-			case DEFAULT:
-				segmentationParameters = new SegmentationParameters(".", ".");
-				break;
-			case FILE:
-				segmentationParameters = new SegmentationParameters(".", ".", configFile);
-				break;
-			case INPUT:
-				SegmentationConfigDialog scd = segmentationDialog.getSegmentationConfigFileDialog();
-				if (scd.isCalibrationSelected()) {
-					LOGGER.info("with calibration");
-					segmentationParameters = new SegmentationParameters(".", ".",
-					                                                    Integer.parseInt(scd.getXCalibration()),
-					                                                    Integer.parseInt(scd.getYCalibration()),
-					                                                    Integer.parseInt(scd.getZCalibration()),
-					                                                    Integer.parseInt(scd.getMinVolume()),
-					                                                    Integer.parseInt(scd.getMaxVolume()),
-					                                                    scd.getConvexHullDetection()
-					);
-				} else {
-					LOGGER.info("without calibration");
-					segmentationParameters = new SegmentationParameters(".", ".",
-					                                                    Integer.parseInt(scd.getMinVolume()),
-					                                                    Integer.parseInt(scd.getMaxVolume()),
-					                                                    scd.getConvexHullDetection()
-					);
-				}
-				break;
-			default:
-				LOGGER.error("Unknown config mode: {}", segmentationDialog.getConfigMode());
-		}
-		
-		SegmentationCalling segmentation = new SegmentationCalling(segmentationParameters);
+		SegmentationParameters params       = setParametersFromDialog(input, output);
+		SegmentationCalling    segmentation = new SegmentationCalling(params);
 		segmentation.setExecutorThreads(segmentationDialog.getThreads());
 		
 		// Handle the source according to the type given
@@ -146,16 +159,12 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 		Long   inputID  = Long.valueOf(segmentationDialog.getSourceID());
 		Long   outputID = Long.valueOf(segmentationDialog.getOutputProject());
 		try {
+			String log;
 			if ("Image".equals(dataType)) {
 				ImageWrapper image = client.getImage(inputID);
-				String       log;
 				
 				log = segmentation.runOneImageOMERO(image, outputID, client);
 				segmentation.saveCropGeneralInfoOmero(client, outputID);
-				
-				if (!log.isEmpty()) {
-					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
-				}
 			} else {
 				List<ImageWrapper> images = null;
 				
@@ -175,11 +184,10 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 					default:
 						LOGGER.error("Unknown data type: {}", dataType);
 				}
-				String log;
 				log = segmentation.runSeveralImagesOMERO(images, outputID, client, inputID);
-				if (!log.isEmpty()) {
-					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
-				}
+			}
+			if (!log.isEmpty()) {
+				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 			}
 			LOGGER.info("Segmentation process has ended successfully");
 			IJ.showMessage("Segmentation process ended successfully on " +
@@ -200,61 +208,21 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 	public void runLocalSegmentation() {
 		String input  = segmentationDialog.getInput();
 		String output = segmentationDialog.getOutput();
-		String config = segmentationDialog.getConfig();
 		if (input == null || input.isEmpty()) {
 			IJ.error("Input file or directory is missing");
 		} else if (output == null || output.isEmpty()) {
 			IJ.error("Output directory is missing");
 		} else {
+			LOGGER.info("Begin Segmentation process ");
+			SegmentationParameters params = setParametersFromDialog(input, output);
 			try {
-				LOGGER.info("Begin Segmentation process ");
-				SegmentationParameters segmentationParameters = null;
-				
-				switch (segmentationDialog.getConfigMode()) {
-					case FILE:
-						if (config == null || config.isEmpty()) {
-							IJ.error("Config file is missing");
-						} else {
-							LOGGER.info("Config file");
-							segmentationParameters = new SegmentationParameters(input, output, config);
-						}
-						break;
-					case INPUT:
-						SegmentationConfigDialog scd = segmentationDialog.getSegmentationConfigFileDialog();
-						if (scd.isCalibrationSelected()) {
-							LOGGER.info("with calibration\tx: {}\ty: {}\tz: {}",
-							            scd.getXCalibration(), scd.getYCalibration(), scd.getZCalibration());
-							
-							segmentationParameters = new SegmentationParameters(input, output,
-							                                                    Integer.parseInt(scd.getXCalibration()),
-							                                                    Integer.parseInt(scd.getYCalibration()),
-							                                                    Integer.parseInt(scd.getZCalibration()),
-							                                                    Integer.parseInt(scd.getMinVolume()),
-							                                                    Integer.parseInt(scd.getMaxVolume()),
-							                                                    scd.getConvexHullDetection()
-							);
-						} else {
-							LOGGER.info("without calibration");
-							segmentationParameters = new SegmentationParameters(input, output,
-							                                                    Integer.parseInt(scd.getMinVolume()),
-							                                                    Integer.parseInt(scd.getMaxVolume()),
-							                                                    scd.getConvexHullDetection()
-							);
-						}
-						break;
-					case DEFAULT:
-						LOGGER.info("without config");
-						segmentationParameters = new SegmentationParameters(input, output);
-						break;
-				}
-				
-				SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
+				SegmentationCalling otsuModified = new SegmentationCalling(params);
 				otsuModified.setExecutorThreads(segmentationDialog.getThreads());
 				
 				File   file = new File(input);
 				String log  = "";
 				if (file.isDirectory()) {
-					log = otsuModified.runSeveralImages2();
+					log = otsuModified.runSeveralImages();
 				} else if (file.isFile()) {
 					log = otsuModified.runOneImage(input);
 					otsuModified.saveCropGeneralInfo();
@@ -262,7 +230,6 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				if (!log.isEmpty()) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}
-				
 				LOGGER.info("Segmentation process has ended successfully");
 				IJ.showMessage("Segmentation process ended successfully on " + file.getName());
 			} catch (IOException ioe) {
@@ -271,7 +238,6 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				LOGGER.error("An error occurred.", e);
 			}
 		}
-		
 	}
 	
 }

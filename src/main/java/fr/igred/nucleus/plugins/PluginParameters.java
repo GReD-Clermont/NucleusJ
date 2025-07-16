@@ -125,7 +125,6 @@ public class PluginParameters {
 	
 	
 	public void addGeneralProperties(String pathToConfigFile) {
-		
 		Properties prop = new Properties();
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
 			prop.load(is);
@@ -147,6 +146,8 @@ public class PluginParameters {
 				case "zCal":
 					setZCal(Double.parseDouble(prop.getProperty("zCal")));
 					break;
+				default:
+					// Do nothing for other properties
 			}
 		}
 	}

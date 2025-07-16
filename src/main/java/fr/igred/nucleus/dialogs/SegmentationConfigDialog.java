@@ -54,7 +54,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	private       JPanel     zCalibrationPanel;
 	
 	
-	public SegmentationConfigDialog(SegmentationDialog caller) {
+	public SegmentationConfigDialog() {
 		super.setTitle("Segmentation - NucleusJ3");
 		super.setSize(300, 340);
 		super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

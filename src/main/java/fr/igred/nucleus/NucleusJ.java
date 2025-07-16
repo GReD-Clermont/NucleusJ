@@ -70,6 +70,7 @@ public final class NucleusJ {
 			CLIRunAction cli = new CLIRunAction(command.getCmd());
 			cli.run();
 		} else {
+			LOGGER.info("Starting NucleusJ GUI...");
 			SwingUtilities.invokeLater(() -> {
 				MainGui gui = new MainGui();
 				gui.setVisible(true);

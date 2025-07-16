@@ -23,7 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
 
 
 public class OutputTiff extends FilesNames {
@@ -46,7 +48,7 @@ public class OutputTiff extends FilesNames {
 		try {
 			if (fileExists()) {
 				File old = new File(fullPathFile);
-				if (old.delete()) {
+				if (Files.deleteIfExists(old.toPath())) {
 					LOGGER.debug("Deleted old {}", fullPathFile);
 				}
 				if (imageToSave.getNSlices() > 1) {
@@ -65,7 +67,7 @@ public class OutputTiff extends FilesNames {
 					fileSaver.saveAsTiff(fullPathFile);
 				}
 			}
-		} catch (Exception e) {
+		} catch (IOException e) {
 			LOGGER.error("An error occurred.", e);
 		}
 	}

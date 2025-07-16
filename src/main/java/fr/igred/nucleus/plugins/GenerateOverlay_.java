@@ -108,24 +108,22 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 		String zProjectionID = generateOverlayDialog.getSourceID();
 		String dicID         = generateOverlayDialog.getzProjectionID();
 		
-		try {
-			if ("Dataset".equals(dicDataType) && "Dataset".equals(zProjectionDataType)) {
-				try {
-					LOGGER.info("Begin Overlay process ");
-					DatasetWrapper     dicDataset = client.getDataset(Long.parseLong(dicID));
-					List<ImageWrapper> dicImages  = dicDataset.getImages(client);
-					if (!dicImages.isEmpty()) {
-						generateOverlay.runFromOMERO(zProjectionID, dicID, output, client); // Run Overlay process
-					}
-					LOGGER.info("Overlay process has ended successfully");
-				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
-					LOGGER.error("Overlay process has failed: ", e);
-				} catch (NumberFormatException e) {
-					LOGGER.error("Invalid Dataset ID", e);
+		if (client.isConnected() && "Dataset".equals(dicDataType) && "Dataset".equals(zProjectionDataType)) {
+			try {
+				LOGGER.info("Begin Overlay process ");
+				DatasetWrapper     dicDataset = client.getDataset(Long.parseLong(dicID));
+				List<ImageWrapper> dicImages  = dicDataset.getImages(client);
+				if (!dicImages.isEmpty()) {
+					generateOverlay.runFromOMERO(zProjectionID, dicID, output, client); // Run Overlay process
 				}
+				LOGGER.info("Overlay process has ended successfully");
+			} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
+				LOGGER.error("Overlay process has failed: ", e);
+			} catch (NumberFormatException e) {
+				LOGGER.error("Invalid Dataset ID", e);
+			} catch (RuntimeException e) {
+				LOGGER.error("An error occurred.", e);
 			}
-		} catch (Exception e) {
-			LOGGER.error("An error occurred.", e);
 		}
 	}
 	
@@ -137,14 +135,11 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 	                                          String group) {
 		Client client = new Client();
 		try {
-			client.connect(hostname, Integer.parseInt(port),
-			               username, password, Long.valueOf(group));
+			client.connect(hostname, Integer.parseInt(port), username, password, Long.valueOf(group));
 		} catch (ServiceException exp) {
 			LOGGER.error("ServiceException: ", exp);
-			return null;
 		} catch (NumberFormatException e) {
 			LOGGER.error("Invalid port or group value: ", e);
-			return null;
 		}
 		return client;
 	}

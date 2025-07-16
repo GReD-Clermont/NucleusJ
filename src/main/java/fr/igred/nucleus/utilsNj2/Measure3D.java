@@ -382,8 +382,6 @@ public class Measure3D {
 				}
 			}
 		}
-		
-		//System.out.println(meanIntensity);
 		return voxelCounted != 0 ? meanIntensity / voxelCounted : 0;
 	}
 	

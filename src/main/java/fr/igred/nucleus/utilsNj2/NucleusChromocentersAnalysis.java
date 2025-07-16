@@ -19,7 +19,6 @@ package fr.igred.nucleus.utilsNj2;
 
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
-import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.nucleus.plugins.ChromocenterParameters;
@@ -60,17 +59,17 @@ public final class NucleusChromocentersAnalysis {
 	
 	
 	/**
-	 * Analysis for several nuclei, the results are stock on output file
+	 * Analysis for several nuclei, the results are stock in the output file
 	 *
-	 * @param rhfChoice
 	 * @param imagePlusInput
 	 * @param imagePlusSegmented
 	 * @param imagePlusChromocenter
+	 * @param chromocenterParameters
+	 * @return File[] with the results of the analysis
 	 *
 	 * @throws IOException
 	 */
-	public static File[] compute3DParameters(String rhfChoice,
-	                                         ImagePlus imagePlusInput, ImagePlus imagePlusSegmented,
+	public static File[] compute3DParameters(ImagePlus imagePlusInput, ImagePlus imagePlusSegmented,
 	                                         ImagePlus imagePlusChromocenter,
 	                                         ChromocenterParameters chromocenterParameters) throws IOException {
 		LOGGER.info("3D PARAMETERS ");
@@ -149,14 +148,13 @@ public final class NucleusChromocentersAnalysis {
 	}
 	
 	
-	public static File[] compute3DParametersOmero(String rhfChoice,
-	                                              ImageWrapper imageInput,
+	public static File[] compute3DParametersOmero(ImageWrapper imageInput,
 	                                              ImageWrapper imageSegmented,
 	                                              ImagePlus imagePlusChromocenter,
 	                                              ChromocenterParameters chromocenterParameters,
 	                                              String datasetName,
 	                                              Client client)
-	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
+	throws IOException, AccessException, ServiceException, ExecutionException {
 		long imageId = imageInput.getId();  // Get the image ID
 		
 		// Image to ImagePlus conversion

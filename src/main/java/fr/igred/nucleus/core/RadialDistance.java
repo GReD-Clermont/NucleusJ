@@ -17,7 +17,7 @@
  */
 package fr.igred.nucleus.core;
 
-import fr.igred.nucleus.utils.Distance_Map;
+import fr.igred.nucleus.utils.DistanceMap;
 import fr.igred.nucleus.utils.Histogram;
 import fr.igred.nucleus.utils.VoxelRecord;
 import ij.ImagePlus;
@@ -49,7 +49,7 @@ public final class RadialDistance {
 	 * @return
 	 */
 	public static ImagePlus computeDistanceMap(ImagePlus imagePlusSegmentedRescaled) {
-		Distance_Map.apply(imagePlusSegmentedRescaled);
+		DistanceMap.apply(imagePlusSegmentedRescaled);
 		return imagePlusSegmentedRescaled;
 	}
 	
@@ -74,7 +74,8 @@ public final class RadialDistance {
 		imagePlusSegmented = resizeImage(imagePlusSegmented);
 		ImagePlus  imagePlusDistanceMap  = computeDistanceMap(imagePlusSegmented);
 		ImageStack imageStackDistanceMap = imagePlusDistanceMap.getStack();
-		double     voxelValueMin, voxelValue;
+		double     voxelValueMin;
+		double     voxelValue;
 		double[]   tDistanceRadial       = new double[tLabel.length];
 		for (int l = 0; l < tLabel.length; ++l) {
 			voxelValueMin = Double.MAX_VALUE;

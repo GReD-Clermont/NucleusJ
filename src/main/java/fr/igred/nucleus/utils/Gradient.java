@@ -93,7 +93,6 @@ public class Gradient {
 				}
 			}
 		}
-		// IJ.log("fin Gradient");
 	}
 	
 	

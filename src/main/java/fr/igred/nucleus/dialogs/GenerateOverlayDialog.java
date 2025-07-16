@@ -58,8 +58,10 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	private static final String INPUT_CHOOSER2 = "inputChooser2";
 	private static final String OUTPUT_CHOOSER = "outputChooser";
 	
-	private final JFileChooser    fc                 = new JFileChooser();
-	private final IDialogListener dialogListener;
+	private final JFileChooser fc = new JFileChooser();
+	
+	private final transient IDialogListener dialogListener;
+	
 	private final JRadioButton    omeroYesButton     = new JRadioButton("Yes");
 	private final JRadioButton    omeroNoButton      = new JRadioButton("No");
 	private final JPanel          omeroModeLayout    = new JPanel();
@@ -405,6 +407,8 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 					File selectedOutput = fc.getSelectedFile();
 					jTextFieldOutputProject.setText(selectedOutput.getPath());
 					break;
+				default:
+					throw new IllegalArgumentException("Unknown action source: " + e.getSource());
 			}
 		}
 		fc.setSelectedFile(null);

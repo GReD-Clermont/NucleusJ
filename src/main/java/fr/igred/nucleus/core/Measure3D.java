@@ -495,7 +495,9 @@ public class Measure3D {
 		Gradient           gradient            = new Gradient(rawImage);
 		List<Double>[][][] tableUnitary        = gradient.getUnitNormals();
 		ImageStack         imageStackSegmented = imageSegs[0].getStack();
-		double             surfaceArea         = 0, voxelValue, neighborVoxelValue;
+		double             surfaceArea         = 0;
+		double             voxelValue;
+		double             neighborVoxelValue;
 		VoxelRecord        voxelRecordIn       = new VoxelRecord();
 		VoxelRecord        voxelRecordOut      = new VoxelRecord();
 		
@@ -558,7 +560,9 @@ public class Measure3D {
 	public static double computeComplexSurface(ImagePlus imagePlusSegmented, Gradient gradient) {
 		List<Double>[][][] tableUnitary        = gradient.getUnitNormals();
 		ImageStack         imageStackSegmented = imagePlusSegmented.getStack();
-		double             surfaceArea         = 0, voxelValue, neighborVoxelValue;
+		double             surfaceArea         = 0;
+		double             voxelValue;
+		double             neighborVoxelValue;
 		VoxelRecord        voxelRecordIn       = new VoxelRecord();
 		VoxelRecord        voxelRecordOut      = new VoxelRecord();
 		Calibration        calibration         = imagePlusSegmented.getCalibration();

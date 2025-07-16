@@ -214,7 +214,7 @@ public class CLIRunAction {
 				if (cmd.hasOption("threads")) {
 					otsuModified.setExecutorThreads(parseInt(cmd.getOptionValue("threads")));
 				}
-				String log = otsuModified.runSeveralImages2();
+				String log = otsuModified.runSeveralImages();
 				if (!log.isEmpty()) {
 					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
 				}

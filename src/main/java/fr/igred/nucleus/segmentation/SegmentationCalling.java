@@ -178,7 +178,7 @@ public class SegmentationCalling {
 	 * @throws IOException     if file doesn't existed
 	 * @throws FormatException Bio-formats exception
 	 */
-	public String runSeveralImages2() throws IOException, FormatException {
+	public String runSeveralImages() throws IOException, FormatException {
 		String              log                   = "";
 		ExecutorService     processExecutor       = Executors.newFixedThreadPool(executorThreads);
 		Map<String, String> otsuResultLines       = new ConcurrentHashMap<>();
@@ -410,7 +410,8 @@ public class SegmentationCalling {
 		ProjectWrapper project = client.getProject(output);
 		// Get OTSU dataset ID
 		List<DatasetWrapper> datasets = project.getDatasets("OTSU");
-		long                 otsuDataset, convexHullDataset;
+		long                 otsuDataset;
+		long                 convexHullDataset;
 		if (datasets.isEmpty()) {
 			otsuDataset = project.addDataset(client, "OTSU", "").getId();
 		} else {

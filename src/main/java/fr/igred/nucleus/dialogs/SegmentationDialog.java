@@ -52,40 +52,42 @@ import java.util.concurrent.ExecutionException;
 
 
 public class SegmentationDialog extends JFrame implements ActionListener, ItemListener {
-	private static final long                          serialVersionUID        = -8291261260165229794L;
-	private static final String                        INPUT_CHOOSER           = "inputChooser";
-	private static final String                        OUTPUT_CHOOSER          = "outputChooser";
-	private static final String                        CONFIG_CHOOSER          = "configChooser";
-	private final        IDialogListener               dialogListener;
-	private final        Container                     container;
-	private final        JFileChooser                  fc                      = new JFileChooser();
-	private final        JRadioButton                  omeroYesButton          = new JRadioButton("Yes");
-	private final        JRadioButton                  omeroNoButton           = new JRadioButton("No");
-	private final        JTextField                    jInputFileChooser       = new JTextField();
-	private final        JTextField                    jOutputFileChooser      = new JTextField();
-	private final        JPanel                        configFilePanel         = new JPanel();
-	private final        JLabel                        defConf                 = new JLabel("Default configuration");
-	private final        SegmentationConfigDialog      segmentationConfigFileDialog;
-	private final        JRadioButton                  rdoDefault              = new JRadioButton("Default");
-	private final        JRadioButton                  rdoAddConfigFile        = new JRadioButton("From file");
-	private final        JTextField                    jConfigFileChooser      = new JTextField();
-	private final        JRadioButton                  rdoAddConfigDialog      = new JRadioButton("New");
-	private final        JButton                       jButtonConfig           = new JButton("Config");
-	private final        JPanel                        localModeLayout         = new JPanel();
-	private final        JPanel                        omeroModeLayout         = new JPanel();
-	private final        JTextField                    jTextFieldHostname      = new JTextField();
-	private final        JTextField                    jTextFieldPort          = new JTextField();
-	private final        JTextField                    jTextFieldUsername      = new JTextField();
-	private final        JPasswordField                jPasswordField          = new JPasswordField();
-	private final        JTextField                    jTextFieldGroup         = new JTextField();
-	private final        String[]                      dataTypes               = {"Project", "Dataset", "Tag", "Image"};
-	private final        JComboBox<String>             jComboBoxDataType       = new JComboBox<>(dataTypes);
-	private final        JTextField                    jTextFieldSourceID      = new JTextField();
-	private final        JTextField                    jTextFieldOutputProject = new JTextField();
-	private final        JButton                       confButton              = new JButton("...");
-	private final        JSpinner                      jSpinnerThreads;
-	private              boolean                       useOMERO;
-	private              SegmentationDialog.ConfigMode configMode;
+	private static final long   serialVersionUID = -8291261260165229794L;
+	private static final String INPUT_CHOOSER    = "inputChooser";
+	private static final String OUTPUT_CHOOSER   = "outputChooser";
+	private static final String CONFIG_CHOOSER   = "configChooser";
+	
+	private final transient IDialogListener dialogListener;
+	
+	private final Container                     container;
+	private final JFileChooser                  fc                      = new JFileChooser();
+	private final JRadioButton                  omeroYesButton          = new JRadioButton("Yes");
+	private final JRadioButton                  omeroNoButton           = new JRadioButton("No");
+	private final JTextField                    jInputFileChooser       = new JTextField();
+	private final JTextField                    jOutputFileChooser      = new JTextField();
+	private final JPanel                        configFilePanel         = new JPanel();
+	private final JLabel                        defConf                 = new JLabel("Default configuration");
+	private final SegmentationConfigDialog      segmentationConfigFileDialog;
+	private final JRadioButton                  rdoDefault              = new JRadioButton("Default");
+	private final JRadioButton                  rdoAddConfigFile        = new JRadioButton("From file");
+	private final JTextField                    jConfigFileChooser      = new JTextField();
+	private final JRadioButton                  rdoAddConfigDialog      = new JRadioButton("New");
+	private final JButton                       jButtonConfig           = new JButton("Config");
+	private final JPanel                        localModeLayout         = new JPanel();
+	private final JPanel                        omeroModeLayout         = new JPanel();
+	private final JTextField                    jTextFieldHostname      = new JTextField();
+	private final JTextField                    jTextFieldPort          = new JTextField();
+	private final JTextField                    jTextFieldUsername      = new JTextField();
+	private final JPasswordField                jPasswordField          = new JPasswordField();
+	private final JTextField                    jTextFieldGroup         = new JTextField();
+	private final String[]                      dataTypes               = {"Project", "Dataset", "Tag", "Image"};
+	private final JComboBox<String>             jComboBoxDataType       = new JComboBox<>(dataTypes);
+	private final JTextField                    jTextFieldSourceID      = new JTextField();
+	private final JTextField                    jTextFieldOutputProject = new JTextField();
+	private final JButton                       confButton              = new JButton("...");
+	private final JSpinner                      jSpinnerThreads;
+	private       boolean                       useOMERO;
+	private       SegmentationDialog.ConfigMode configMode;
 	
 	
 	/** Architecture of the graphical windows */
@@ -98,7 +100,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		super.setMinimumSize(new Dimension(400, 500));
 		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		super.setLocationRelativeTo(null);
-		segmentationConfigFileDialog = new SegmentationConfigDialog(this);
+		segmentationConfigFileDialog = new SegmentationConfigDialog();
 		segmentationConfigFileDialog.setVisible(false);
 		
 		container = super.getContentPane();

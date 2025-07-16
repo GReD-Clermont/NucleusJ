@@ -41,7 +41,7 @@ public class Histogram {
 	private double labelMax = -1;
 	
 	/**  */
-	private int nbLabel;
+	private int nbLabels;
 	
 	
 	/** @param imagePlusInput  */
@@ -52,7 +52,7 @@ public class Histogram {
 			label[i] = Double.parseDouble(tTemp[i].toString());
 		}
 		Arrays.sort(label);
-		if (nbLabel > 0) {
+		if (nbLabels > 0) {
 			labelMax = label[label.length - 1];
 		}
 	}
@@ -73,13 +73,10 @@ public class Histogram {
 				for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
 					voxelValue = imageStackInput.getVoxel(i, j, k);
 					if (voxelValue > 0) {
-						if (hHistogram.containsKey(voxelValue)) {
-							int nbVoxel = hHistogram.get(voxelValue);
-							++nbVoxel;
-							hHistogram.put(voxelValue, nbVoxel);
-						} else {
-							hHistogram.put(voxelValue, 1);
-							++nbLabel;
+						int nbVoxel = hHistogram.getOrDefault(voxelValue, 0) + 1;
+						hHistogram.put(voxelValue, nbVoxel);
+						if (nbVoxel == 1) {
+							++nbLabels;
 						}
 					}
 				}
@@ -113,7 +110,7 @@ public class Histogram {
 	
 	/** @return  */
 	public int getNbLabels() {
-		return nbLabel;
+		return nbLabels;
 	}
 	
 }

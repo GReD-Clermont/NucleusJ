@@ -26,7 +26,7 @@ import ij.process.ImageProcessor;
 import ij.process.StackConverter;
 
 
-public class Distance_Map implements PlugInFilter {
+public class DistanceMap implements PlugInFilter {
 	private static final int THRESHOLD = 126;
 	
 	private ImagePlus image;
