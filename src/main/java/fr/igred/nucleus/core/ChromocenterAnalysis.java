@@ -1,12 +1,12 @@
 package fr.igred.nucleus.core;
 
+import fr.igred.nucleus.io.FileList;
+import fr.igred.nucleus.utils.Histogram;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
-import fr.igred.nucleus.io.FileList;
-import fr.igred.nucleus.utils.Histogram;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.io.FileSaver;
@@ -110,14 +110,11 @@ public final class ChromocenterAnalysis {
 				    try {
 					    Files.delete(path);  // Delete each file/folder
 				    } catch (IOException e) {
-					    throw new RuntimeException("Failed to delete " + path,
-					                               e);  // Handle any exceptions during deletion
+					    LOGGER.error("Failed to delete {}", path, e);
 				    }
 			    });
 		}
 	}
-	
-	
 	public void runComputeParametersCC(String rawInput, String segInput, String ccInput, Client client)
 	throws AccessException, ServiceException, ExecutionException {
 		// Check connection
@@ -144,10 +141,13 @@ public final class ChromocenterAnalysis {
 			// Check if all data types are "Dataset"
 			else if ("Dataset".equals(sourceDatatype) && "Dataset".equals(segDatatype) &&
 			         "Dataset".equals(ccDatatype)) {
-				long sourceImageId, segImageId, ccImageId;
-				DatasetWrapper sourceDataset = client.getDataset(inputID),
-						segDataset = client.getDataset(segID),
-						ccDataset = client.getDataset(ccID);
+				long sourceImageId;
+				long segImageId;
+				long ccImageId;
+				
+				DatasetWrapper sourceDataset = client.getDataset(inputID);
+				DatasetWrapper segDataset    = client.getDataset(segID);
+				DatasetWrapper ccDataset     = client.getDataset(ccID);
 				
 				List<ImageWrapper> sourceImages = sourceDataset.getImages(client);
 				List<ImageWrapper> segImages    = segDataset.getImages(client);
@@ -229,7 +229,7 @@ public final class ChromocenterAnalysis {
 		File mainDirectory = new File(mainDirectoryPath);
 		if (!mainDirectory.exists()) {
 			if (mainDirectory.mkdirs()) {
-				System.out.println("Main directory created: " + mainDirectory.getAbsolutePath());
+				LOGGER.info("Main directory created: {}", mainDirectory.getAbsolutePath());
 			} else {
 				throw new IOException("Failed to create main directory: " + mainDirectoryPath);
 			}
@@ -239,7 +239,7 @@ public final class ChromocenterAnalysis {
 		File subDirectory = new File(mainDirectoryPath + File.separator + subDirectoryName);
 		if (!subDirectory.exists()) {
 			if (subDirectory.mkdirs()) {
-				System.out.println("Subdirectory created: " + subDirectory.getAbsolutePath());
+				LOGGER.info("Subdirectory created: {}", subDirectory.getAbsolutePath());
 			} else {
 				throw new IOException("Failed to create subdirectory: " + subDirectory.getAbsolutePath());
 			}

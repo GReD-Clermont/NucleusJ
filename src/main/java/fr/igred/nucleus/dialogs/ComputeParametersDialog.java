@@ -40,7 +40,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	
 	private static final JButton jButtonWorkDirectory = new JButton("Seg Data folder");
 	
-	private final IDialogListener dialogListener;
+	private final transient IDialogListener dialogListener;
 	
 	private final JTextField jTextFieldWorkDirectory = new JTextField();
 	private final JTextField jTextFieldRawData       = new JTextField();
@@ -462,7 +462,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		}
 		if (e.getSource() == addCalibrationBox) {
 			if (addCalibrationBox.isSelected()) {
-				
 				GridBagConstraints gc = new GridBagConstraints();
 				gc.insets = new Insets(0, 0, 5, 0);
 				

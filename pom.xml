@@ -170,7 +170,6 @@
 									<filter>
 										<artifact>*:*</artifact>
 										<excludes>
-											<!--<exclude>plugins.config</exclude>-->
 											<exclude>META-INF/*.SF</exclude>
 											<exclude>META-INF/*.DSA</exclude>
 											<exclude>META-INF/*.RSA</exclude>
@@ -194,11 +193,6 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
-			<!--<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.0.0</version>
-			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>

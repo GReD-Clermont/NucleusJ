@@ -73,7 +73,6 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 			               Long.valueOf(group));
 		} catch (ServiceException | NumberFormatException exp) {
 			IJ.error("Invalid connection values");
-			return null;
 		}
 		
 		return client;
@@ -140,6 +139,8 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 					);
 				}
 				break;
+			default:
+				LOGGER.error("Unknown config mode: {}", autocropDialog.getConfigMode());
 		}
 		
 		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
@@ -185,7 +186,6 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 				}
 				
 				autoCrop.runSeveralImageOMERO(images, outputsDat, client); // Run segmentation
-				
 			}
 			LOGGER.info("Autocrop process has ended successfully");
 			IJ.showMessage("Autocrop process ended successfully on " + autocropDialog.getDataType() + "\\" + inputID);

@@ -201,7 +201,7 @@ public class ChromocenterCalling {
 					Files.deleteIfExists(tab[2].toPath());
 					Files.deleteIfExists(tab[3].toPath());
 				} catch (IOException e) {
-					//LOGGER.error("Could not delete file: {}", outputFileName);
+					LOGGER.error("Could not delete file.", e);
 				}
 			}
 		}
@@ -273,7 +273,7 @@ public class ChromocenterCalling {
 			Files.deleteIfExists(parameters3DTab[2].toPath());
 			Files.deleteIfExists(parameters3DTab[3].toPath());
 		} catch (IOException e) {
-			//LOGGER.error("Could not delete file: {}", outputFileName);
+			LOGGER.error("Could not delete file.", e);
 		}
 	}
 	

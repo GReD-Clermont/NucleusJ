@@ -231,7 +231,6 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() == addCalibrationBox) {
 			if (addCalibrationBox.isSelected()) {
-				
 				GridBagConstraints gc = new GridBagConstraints();
 				gc.insets = new Insets(0, 0, 5, 0);
 				
@@ -284,7 +283,6 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 				readZCalibration.setVisible(true);
 				
 				//pack();
-				
 			} else {
 				jLabelXCalibration.setVisible(false);
 				jLabelYCalibration.setVisible(false);

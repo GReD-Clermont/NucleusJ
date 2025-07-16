@@ -146,7 +146,6 @@ public class RectangleIntersection {
 			StringBuilder listRectangleConnected          = new StringBuilder(String.valueOf(entry.getKey()));
 			String        listRectangleConnectedStartTurn = String.valueOf(entry.getKey());
 			for (int i = 0; i < rectangleIntersect.size(); i++) {
-				
 				String[] splitIntersect = rectangleIntersect.get(i).split("-");
 				if (splitIntersect[0].equals(Integer.toString(entry.getKey()))) {
 					String[] splitList = rectangleIntersect.get(i).split("-");

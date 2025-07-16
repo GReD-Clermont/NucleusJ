@@ -145,7 +145,9 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 			// Check if all data types are "Dataset"
 			else if ("Dataset".equals(sourceDatatype) && "Dataset".equals(segDatatype) &&
 			         "Dataset".equals(ccDatatype)) {
-				long sourceImageId, segImageId, ccImageId;
+				long sourceImageId;
+				long segImageId;
+				long ccImageId;
 				
 				DatasetWrapper sourceDataset = client.getDataset(inputID);
 				DatasetWrapper segDataset    = client.getDataset(segID);
@@ -237,7 +239,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 		File mainDirectory = new File(mainDirectoryPath);
 		if (!mainDirectory.exists()) {
 			if (mainDirectory.mkdirs()) {
-				System.out.println("Main directory created: " + mainDirectory.getAbsolutePath());
+				LOGGER.info("Main directory created: {}", mainDirectory.getAbsolutePath());
 			} else {
 				throw new IOException("Failed to create main directory: " + mainDirectoryPath);
 			}
@@ -247,7 +249,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 		File subDirectory = new File(mainDirectoryPath + File.separator + subDirectoryName);
 		if (!subDirectory.exists()) {
 			if (subDirectory.mkdirs()) {
-				System.out.println("Subdirectory created: " + subDirectory.getAbsolutePath());
+				LOGGER.info("Subdirectory created: {}", subDirectory.getAbsolutePath());
 			} else {
 				throw new IOException("Failed to create subdirectory: " + subDirectory.getAbsolutePath());
 			}
@@ -278,7 +280,6 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 		if (fileList.isDirectoryOrFileExist(".+RawDataNucleus.+", tFileRawImage) &&
 		    fileList.isDirectoryOrFileExist(".+SegmentedDataNucleus.+", tFileRawImage) &&
 		    fileList.isDirectoryOrFileExist(".+SegmentedDataCc.+", tFileRawImage)) {
-			
 			String rhfChoice;
 			if (chromocentersPipelineBatchDialog.isRHFVolumeAndIntensity()) {
 				rhfChoice = "Volume and intensity";

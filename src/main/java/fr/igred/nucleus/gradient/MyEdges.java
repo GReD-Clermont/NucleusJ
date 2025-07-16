@@ -321,7 +321,6 @@ public class MyEdges {
 			double[] aIz    = aaIz[y];
 			
 			for (int x = 0, xp1 = 1; x < dimsX; ++x, ++xp1) {
-				
 				gmVal = gm1yp1[xp1];
 				if (gmVal == 0) {
 					aIx[x] = 0;

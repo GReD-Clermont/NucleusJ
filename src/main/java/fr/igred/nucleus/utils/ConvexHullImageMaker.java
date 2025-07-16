@@ -176,33 +176,39 @@ public class ConvexHullImageMaker {
 		for (int i = 0; i < convexHull.size(); ++i) {
 			switch (axesName) {
 				case "xy":
-					tableWidth[i] = (int) convexHull.get(i).i;
-					tableHeight[i] = (int) convexHull.get(i).j;
+					tableWidth[i] = (int) convexHull.get(i).getI();
+					tableHeight[i] = (int) convexHull.get(i).getJ();
 					break;
 				case "xz":
-					tableWidth[i] = (int) convexHull.get(i).i;
-					tableHeight[i] = (int) convexHull.get(i).k;
+					tableWidth[i] = (int) convexHull.get(i).getI();
+					tableHeight[i] = (int) convexHull.get(i).getK();
 					break;
 				case "yz":
-					tableWidth[i] = (int) convexHull.get(i).j;
-					tableHeight[i] = (int) convexHull.get(i).k;
+					tableWidth[i] = (int) convexHull.get(i).getJ();
+					tableHeight[i] = (int) convexHull.get(i).getK();
 					break;
+				default:
+					LOGGER.error("Invalid axes name: {}", axesName);
+					throw new IllegalArgumentException("Invalid axes name: " + axesName);
 			}
 		}
 		
 		switch (axesName) {
 			case "xy":
-				tableWidth[convexHull.size()] = (int) convexHull.get(0).i;
-				tableHeight[convexHull.size()] = (int) convexHull.get(0).j;
+				tableWidth[convexHull.size()] = (int) convexHull.get(0).getI();
+				tableHeight[convexHull.size()] = (int) convexHull.get(0).getJ();
 				break;
 			case "xz":
-				tableWidth[convexHull.size()] = (int) convexHull.get(0).i;
-				tableHeight[convexHull.size()] = (int) convexHull.get(0).k;
+				tableWidth[convexHull.size()] = (int) convexHull.get(0).getI();
+				tableHeight[convexHull.size()] = (int) convexHull.get(0).getK();
 				break;
 			case "yz":
-				tableWidth[convexHull.size()] = (int) convexHull.get(0).j;
-				tableHeight[convexHull.size()] = (int) convexHull.get(0).k;
+				tableWidth[convexHull.size()] = (int) convexHull.get(0).getJ();
+				tableHeight[convexHull.size()] = (int) convexHull.get(0).getK();
 				break;
+			default:
+				LOGGER.error("Invalid axes name: {}", axesName);
+				throw new IllegalArgumentException("Invalid axes name: " + axesName);
 		}
 		
 		ip.setImage(bufferedImage);

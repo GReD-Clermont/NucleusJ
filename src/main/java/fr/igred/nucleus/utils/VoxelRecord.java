@@ -6,8 +6,11 @@ package fr.igred.nucleus.utils;
  * @author Philippe Andrey, Tristan and Axel Poulet
  */
 public class VoxelRecord {
-	/** Coordinates voxel */
-	public double i, j, k;
+	/** Voxel coordinates */
+	private double i;
+	private double j;
+	private double k;
+	
 	/** Voxel value */
 	private double value;
 	

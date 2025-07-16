@@ -502,11 +502,11 @@ public class SegmentationCalling {
 			/* create results file compatible with OMERO.Parade*/
 			imgDatasetName = client.getDataset(inputID).getName();
 			imgDatasetId = client.getDataset(inputID).getId();
-			otsuInfoBuilder.append(img.getId() + ",");
-			otsuInfoBuilder.append(imgDatasetName + ",");
+			otsuInfoBuilder.append(img.getId()).append(",");
+			otsuInfoBuilder.append(imgDatasetName).append(",");
 			otsuInfoBuilder.append(otsuResultLines.get(img.getId()));
-			convexHullInfoBuilder.append(img.getId() + ",");
-			convexHullInfoBuilder.append(imgDatasetName + ",");
+			convexHullInfoBuilder.append(img.getId()).append(",");
+			convexHullInfoBuilder.append(imgDatasetName).append(",");
 			convexHullInfoBuilder.append(convexHullResultLines.get(img.getId()));
 		}
 		

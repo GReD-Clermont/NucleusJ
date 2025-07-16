@@ -43,7 +43,6 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 			File[]   tFileRawData = fileList.run(chromocenterSegmentationPipelineBatchDialog.getRawDataDirectory());
 			if (fileList.isDirectoryOrFileExist(".+RawDataNucleus.+", tFileRawData) &&
 			    fileList.isDirectoryOrFileExist(".+SegmentedDataNucleus.+", tFileRawData)) {
-				
 				List<String> listImageSegmentedDataNucleus = fileList.fileSearchList(".+SegmentedDataNucleus.+", tFileRawData);
 				String workDirectory = chromocenterSegmentationPipelineBatchDialog.getWorkDirectory();
 				for (int i = 0; i < listImageSegmentedDataNucleus.size(); ++i) {

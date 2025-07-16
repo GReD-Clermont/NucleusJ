@@ -69,21 +69,21 @@ public final class ConvexHullDetection {
 		
 		switch (axesName) {
 			case "xy":
-				constantAxe = lVoxelBoundary.get(0).k;
+				constantAxe = lVoxelBoundary.get(0).getK();
 				for (VoxelRecord v : lVoxelBoundary) {
-					points.add(new Point((int) v.i, (int) v.j));
+					points.add(new Point((int) v.getI(), (int) v.getJ()));
 				}
 				break;
 			case "xz":
-				constantAxe = lVoxelBoundary.get(0).j;
+				constantAxe = lVoxelBoundary.get(0).getJ();
 				for (VoxelRecord v : lVoxelBoundary) {
-					points.add(new Point((int) v.i, (int) v.k));
+					points.add(new Point((int) v.getI(), (int) v.getK()));
 				}
 				break;
 			case "yz":
-				constantAxe = lVoxelBoundary.get(0).i;
+				constantAxe = lVoxelBoundary.get(0).getI();
 				for (VoxelRecord v : lVoxelBoundary) {
-					points.add(new Point((int) v.j, (int) v.k));
+					points.add(new Point((int) v.getJ(), (int) v.getK()));
 				}
 				break;
 			default:
@@ -220,14 +220,13 @@ public final class ConvexHullDetection {
 		Set<Point> set = new TreeSet<>(new Comparator<Point>() {
 			@Override
 			public int compare(Point a, Point b) {
-				
 				if (a == b || a.equals(b)) {
 					return 0;
 				}
 				
 				// use longs to guard against int-underflow
-				double thetaA = StrictMath.atan2((long) a.y - lowest.y, (long) a.x - lowest.x);
-				double thetaB = StrictMath.atan2((long) b.y - lowest.y, (long) b.x - lowest.x);
+				double thetaA = StrictMath.atan2((double) a.y - lowest.y, (double) a.x - lowest.x);
+				double thetaB = StrictMath.atan2((double) b.y - lowest.y, (double) b.x - lowest.x);
 				
 				if (thetaA < thetaB) {
 					return -1;
@@ -237,10 +236,10 @@ public final class ConvexHullDetection {
 					// collinear with the 'lowest' point, let the point closest to it come first
 					
 					// use longs to guard against int-over/underflow
-					double distanceA = Math.sqrt(((long) lowest.x - a.x) * ((long) lowest.x - a.x) +
-					                             ((long) lowest.y - a.y) * ((long) lowest.y - a.y));
-					double distanceB = Math.sqrt(((long) lowest.x - b.x) * ((long) lowest.x - b.x) +
-					                             ((long) lowest.y - b.y) * ((long) lowest.y - b.y));
+					double distanceA = Math.sqrt(((double) lowest.x - a.x) * ((double) lowest.x - a.x) +
+					                             ((double) lowest.y - a.y) * ((double) lowest.y - a.y));
+					double distanceB = Math.sqrt(((double) lowest.x - b.x) * ((double) lowest.x - b.x) +
+					                             ((double) lowest.y - b.y) * ((double) lowest.y - b.y));
 					
 					if (distanceA < distanceB) {
 						return -1;

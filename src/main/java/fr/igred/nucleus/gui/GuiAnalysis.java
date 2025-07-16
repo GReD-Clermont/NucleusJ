@@ -34,6 +34,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 
 /**
@@ -45,7 +46,9 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	/**  */
 	private static final long serialVersionUID = 7560518666194907298L;
 	
-	private final IDialogListener dialogListener;
+	private static final Pattern COMMA = Pattern.compile(",", Pattern.LITERAL);
+	
+	private final transient IDialogListener dialogListener;
 	
 	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
 	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
@@ -565,43 +568,43 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	
 	public double getMin() {
 		String x = jtfMin.getText();
-		return Double.parseDouble(x.replaceAll(",", "."));
+		return Double.parseDouble(COMMA.matcher(x).replaceAll("."));
 	}
 	
 	
 	public double getFactor() {
 		String x = jtfFactor.getText();
-		return Double.parseDouble(x.replaceAll(",", "."));
+		return Double.parseDouble(COMMA.matcher(x).replaceAll("."));
 	}
 	
 	
 	public int getNeigh() {
 		String x = jtfNeigh.getText();
-		return Integer.parseInt(x.replaceAll(",", "."));
+		return Integer.parseInt(COMMA.matcher(x).replaceAll("."));
 	}
 	
 	
 	public double getMax() {
 		String x = jtfMax.getText();
-		return Double.parseDouble(x.replaceAll(",", "."));
+		return Double.parseDouble(COMMA.matcher(x).replaceAll("."));
 	}
 	
 	
 	public double getGaussianX() {
 		String x = jtfGX.getText();
-		return Double.parseDouble(x.replaceAll(",", "."));
+		return Double.parseDouble(COMMA.matcher(x).replaceAll("."));
 	}
 	
 	
 	public double getGaussianY() {
 		String x = jtfGY.getText();
-		return Double.parseDouble(x.replaceAll(",", "."));
+		return Double.parseDouble(COMMA.matcher(x).replaceAll("."));
 	}
 	
 	
 	public double getGaussianZ() {
 		String x = jtfGZ.getText();
-		return Double.parseDouble(x.replaceAll(",", "."));
+		return Double.parseDouble(COMMA.matcher(x).replaceAll("."));
 	}
 	
 	
@@ -704,6 +707,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	
 	@Override
 	public void onStart() {
+		// DO NOTHING
 	}
 	
 	

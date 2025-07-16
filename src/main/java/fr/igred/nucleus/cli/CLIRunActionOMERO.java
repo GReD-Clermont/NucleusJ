@@ -1,13 +1,5 @@
 package fr.igred.nucleus.cli;
 
-import fr.igred.omero.Client;
-import fr.igred.omero.annotations.TagAnnotationWrapper;
-import fr.igred.omero.exception.AccessException;
-import fr.igred.omero.exception.OMEROServerError;
-import fr.igred.omero.exception.ServiceException;
-import fr.igred.omero.repository.DatasetWrapper;
-import fr.igred.omero.repository.ImageWrapper;
-import fr.igred.omero.repository.ProjectWrapper;
 import fr.igred.nucleus.autocrop.AutoCropCalling;
 import fr.igred.nucleus.autocrop.AutocropParameters;
 import fr.igred.nucleus.autocrop.CropFromCoordinates;
@@ -18,6 +10,14 @@ import fr.igred.nucleus.plugins.ChromocenterParameters;
 import fr.igred.nucleus.process.ChromocenterCalling;
 import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.nucleus.segmentation.SegmentationParameters;
+import fr.igred.omero.Client;
+import fr.igred.omero.annotations.TagAnnotationWrapper;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
+import fr.igred.omero.repository.DatasetWrapper;
+import fr.igred.omero.repository.ImageWrapper;
+import fr.igred.omero.repository.ProjectWrapper;
 import loci.formats.FormatException;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
@@ -143,6 +143,88 @@ public class CLIRunActionOMERO {
 	}
 	
 	
+	public static void segmentationOMERO(String inputDirectory,
+	                                     String outputDirectory,
+	                                     Client client,
+	                                     SegmentationCalling otsuModified)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError {
+		String[] param = inputDirectory.split("/");
+		
+		if (param.length >= 2) {
+			Long id = Long.parseLong(param[1]);
+			if ("image".equals(param[0])) {
+				ImageWrapper image = client.getImage(id);
+				
+				try {
+					String log;
+					if (param.length == 3 && "ROI".equals(param[2])) {
+						log = otsuModified.runOneImageOMERObyROIs(image, Long.parseLong(outputDirectory), client);
+					} else {
+						log = otsuModified.runOneImageOMERO(image, Long.parseLong(outputDirectory), client);
+					}
+					otsuModified.saveCropGeneralInfoOmero(client, Long.parseLong(outputDirectory));
+					if (!log.isEmpty()) {
+						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+					}
+				} catch (IOException | OMEROServerError e) {
+					LOGGER.error("An error occurred.", e);
+				} catch (InterruptedException e) {
+					LOGGER.error("An interruption occurred.", e);
+					Thread.currentThread().interrupt();
+				}
+			} else {
+				List<ImageWrapper> images;
+				
+				switch (param[0]) {
+					case "dataset":
+						DatasetWrapper dataset = client.getDataset(id);
+						
+						if (param.length == 4 && "tag".equals(param[2])) {
+							images = dataset.getImagesTagged(client, Long.parseLong(param[3]));
+						} else {
+							images = dataset.getImages(client);
+						}
+						break;
+					case "project":
+						ProjectWrapper project = client.getProject(id);
+						
+						if (param.length == 4 && "tag".equals(param[2])) {
+							images = project.getImagesTagged(client, Long.parseLong(param[3]));
+						} else {
+							images = project.getImages(client);
+						}
+						break;
+					case "tag":
+						TagAnnotationWrapper tag = client.getTag(id);
+						images = client.getImages(tag);
+						break;
+					default:
+						throw new IllegalArgumentException();
+				}
+				try {
+					String log;
+					if (param.length == 3 && "ROI".equals(param[2]) ||
+					    param.length == 5 && "ROI".equals(param[4])) {
+						log = otsuModified.runSeveralImagesOMERObyROIs(images, Long.parseLong(outputDirectory), client);
+					} else {
+						log = otsuModified.runSeveralImagesOMERO(images, Long.parseLong(outputDirectory), client, id);
+					}
+					if (!log.isEmpty()) {
+						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+					}
+				} catch (IOException e) {
+					LOGGER.error("An error occurred.", e);
+				} catch (InterruptedException e) {
+					LOGGER.error("An interruption occurred.", e);
+					Thread.currentThread().interrupt();
+				}
+			}
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	
 	public void addLoginCredentials(String pathToConfigFile) {
 		Properties prop = new Properties();
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
@@ -176,6 +258,8 @@ public class CLIRunActionOMERO {
 					case "sessionID":
 						this.sessionID = prop.getProperty("sessionID");
 						break;
+					default:
+						LOGGER.warn("Unknown property in OMERO config file: {}", idProp);
 				}
 			} catch (NumberFormatException nfe) {
 				LOGGER.error("OMERO config error : Port and groupID must be number");
@@ -384,88 +468,6 @@ public class CLIRunActionOMERO {
 		                  cmd.getOptionValue("output"),
 		                  client,
 		                  otsuModified);
-	}
-	
-	
-	public static void segmentationOMERO(String inputDirectory,
-	                                     String outputDirectory,
-	                                     Client client,
-	                                     SegmentationCalling otsuModified)
-	throws AccessException, ServiceException, ExecutionException, OMEROServerError {
-		String[] param = inputDirectory.split("/");
-		
-		if (param.length >= 2) {
-			Long id = Long.parseLong(param[1]);
-			if ("image".equals(param[0])) {
-				ImageWrapper image = client.getImage(id);
-				
-				try {
-					String log;
-					if (param.length == 3 && "ROI".equals(param[2])) {
-						log = otsuModified.runOneImageOMERObyROIs(image, Long.parseLong(outputDirectory), client);
-					} else {
-						log = otsuModified.runOneImageOMERO(image, Long.parseLong(outputDirectory), client);
-					}
-					otsuModified.saveCropGeneralInfoOmero(client, Long.parseLong(outputDirectory));
-					if (!log.isEmpty()) {
-						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
-					}
-				} catch (IOException | OMEROServerError e) {
-					LOGGER.error("An error occurred.", e);
-				} catch (InterruptedException e) {
-					LOGGER.error("An interruption occurred.", e);
-					Thread.currentThread().interrupt();
-				}
-			} else {
-				List<ImageWrapper> images;
-				
-				switch (param[0]) {
-					case "dataset":
-						DatasetWrapper dataset = client.getDataset(id);
-						
-						if (param.length == 4 && "tag".equals(param[2])) {
-							images = dataset.getImagesTagged(client, Long.parseLong(param[3]));
-						} else {
-							images = dataset.getImages(client);
-						}
-						break;
-					case "project":
-						ProjectWrapper project = client.getProject(id);
-						
-						if (param.length == 4 && "tag".equals(param[2])) {
-							images = project.getImagesTagged(client, Long.parseLong(param[3]));
-						} else {
-							images = project.getImages(client);
-						}
-						break;
-					case "tag":
-						TagAnnotationWrapper tag = client.getTag(id);
-						images = client.getImages(tag);
-						break;
-					default:
-						throw new IllegalArgumentException();
-				}
-				try {
-					String log;
-					if (param.length == 3 && "ROI".equals(param[2]) ||
-					    param.length == 5 && "ROI".equals(param[4])) {
-						log = otsuModified.runSeveralImagesOMERObyROIs(images, Long.parseLong(outputDirectory), client);
-					} else {
-						log = otsuModified.runSeveralImagesOMERO(images, Long.parseLong(outputDirectory), client, id);
-					}
-					if (!log.isEmpty()) {
-						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
-					}
-				} catch (IOException e) {
-					LOGGER.error("An error occurred.", e);
-				} catch (InterruptedException e) {
-					LOGGER.error("An interruption occurred.", e);
-					Thread.currentThread().interrupt();
-				}
-			}
-		} else {
-			throw new IllegalArgumentException();
-		}
 	}
 	
 	

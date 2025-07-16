@@ -41,11 +41,11 @@ public class ConnectedComponents {
 	private void breadthFirstSearch(double labelIni, VoxelRecord voxelRecord, int currentLabel) {
 		List<VoxelRecord> voxelBoundary = detectVoxelBoundary(labelIni);
 		voxelBoundary.add(0, voxelRecord);
-		image[(int) voxelRecord.i][(int) voxelRecord.j] = currentLabel;
+		image[(int) voxelRecord.getI()][(int) voxelRecord.getJ()] = currentLabel;
 		while (!voxelBoundary.isEmpty()) {
 			VoxelRecord voxelRemove = voxelBoundary.remove(0);
-			for (int ii = (int) voxelRemove.i - 1; ii <= (int) voxelRemove.i + 1; ii++) {
-				for (int jj = (int) voxelRemove.j - 1; jj <= (int) voxelRemove.j + 1; jj++) {
+			for (int ii = (int) voxelRemove.getI() - 1; ii <= (int) voxelRemove.getI() + 1; ii++) {
+				for (int jj = (int) voxelRemove.getJ() - 1; jj <= (int) voxelRemove.getJ() + 1; jj++) {
 					if (ii >= 0 && ii <= image.length - 1 && jj >= 0 && jj <= image[0].length - 1) {
 						if (ii > 0 && ii < image.length - 1 && jj > 0 && jj < image[0].length - 1) {
 							if (image[ii][jj] == labelIni &&
@@ -206,12 +206,11 @@ public class ConnectedComponents {
 							voxelTest.setLocation(i, j, 0);
 							lVoxelBoundary.add(voxelTest);
 						}
-					} else if (j == image[0].length - 1) {
-						if (image[i - 1][j] == 0 || image[i + 1][j] == 0 || image[i][j - 1] == 0) {
-							VoxelRecord voxelTest = new VoxelRecord();
-							voxelTest.setLocation(i, j, 0);
-							lVoxelBoundary.add(voxelTest);
-						}
+					} else if (j == image[0].length - 1 &&
+					           (image[i - 1][j] == 0 || image[i + 1][j] == 0 || image[i][j - 1] == 0)) {
+						VoxelRecord voxelTest = new VoxelRecord();
+						voxelTest.setLocation(i, j, 0);
+						lVoxelBoundary.add(voxelTest);
 					}
 				}
 			}

@@ -266,7 +266,6 @@ public class NucleusSegmentation {
 			    volume >= segmentationParameters.getMinVolumeNucleus() &&
 			    volume <= segmentationParameters.getMaxVolumeNucleus() &&
 			    !firstStack && !lastStack) {
-				
 				double sphericity = Measure3D.computeSphericity(volume, Measure3D.computeComplexSurface(tempSeg, gradient));
 				if (sphericity > bestSphericity) {
 					this.bestThreshold = t;
@@ -380,7 +379,6 @@ public class NucleusSegmentation {
 			}
 			for (int j = 0; j < imagePlusInput.getHeight();
 			     j += imagePlusInput.getHeight() - 1) {
-				
 				for (int i = 0; i < imagePlusInput.getWidth(); i++) {
 					if (imageStackInput.getVoxel(i, j, k) == 255.0) {
 						this.badCrop = true;

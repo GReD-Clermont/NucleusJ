@@ -71,8 +71,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 			               password,
 			               Long.valueOf(group));
 		} catch (ServiceException | NumberFormatException exp) {
-			IJ.error("Invalid connection values");
-			return null;
+			LOGGER.error("Unable to connect to OMERO server", exp);
 		}
 		return client;
 	}
@@ -118,6 +117,8 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 					);
 				}
 				break;
+			default:
+				LOGGER.error("Unknown config mode: {}", segmentationDialog.getConfigMode());
 		}
 		
 		SegmentationCalling segmentation = new SegmentationCalling(segmentationParameters);
@@ -154,6 +155,8 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 						TagAnnotationWrapper tag = client.getTag(inputID);
 						images = tag.getImages(client);
 						break;
+					default:
+						LOGGER.error("Unknown data type: {}", dataType);
 				}
 				String log;
 				log = segmentation.runSeveralImagesOMERO(images, outputID, client, inputID);

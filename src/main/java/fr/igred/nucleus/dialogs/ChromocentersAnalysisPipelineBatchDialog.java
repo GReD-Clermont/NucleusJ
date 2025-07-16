@@ -60,7 +60,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	private final        JCheckBox    addCalibrationBox       = new JCheckBox();
 	private final        JPanel       calibration;
 	
-	private final IDialogListener dialogListener;
+	private final transient IDialogListener dialogListener;
 	
 	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
 	private final JRadioButton   omeroNoButton      = new JRadioButton("No");

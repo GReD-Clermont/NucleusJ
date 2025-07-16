@@ -613,9 +613,9 @@ public class Measure3D {
 	                                                VoxelRecord voxelRecordIn,
 	                                                VoxelRecord voxelRecordOut,
 	                                                double as) {
-		double dx = voxelRecordIn.i - voxelRecordOut.i;
-		double dy = voxelRecordIn.j - voxelRecordOut.j;
-		double dz = voxelRecordIn.k - voxelRecordOut.k;
+		double dx = voxelRecordIn.getI() - voxelRecordOut.getI();
+		double dy = voxelRecordIn.getJ() - voxelRecordOut.getJ();
+		double dz = voxelRecordIn.getK() - voxelRecordOut.getK();
 		double nx = (listUnitaryIn.get(0) + listUnitaryOut.get(0)) / 2;
 		double ny = (listUnitaryIn.get(1) + listUnitaryOut.get(1)) / 2;
 		double nz = (listUnitaryIn.get(2) + listUnitaryOut.get(2)) / 2;
