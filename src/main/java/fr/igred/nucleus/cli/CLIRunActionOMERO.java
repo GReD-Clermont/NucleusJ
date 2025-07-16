@@ -428,7 +428,7 @@ public class CLIRunActionOMERO {
 		try {
 			LOGGER.info("-Input Folder : {} -Segmentation Folder : {} -Output : {}",
 			            inputDirectory, segDirectory, outputDirectory);
-			ccCalling.SegmentationOMERO(inputDirectory, segDirectory, outputDirectory, client);
+			ccCalling.segmentationOMERO(inputDirectory, segDirectory, outputDirectory, client);
 		} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
 			LOGGER.error("An error occurred during chromocenter segmentation.", e);
 		} catch (InterruptedException e) {

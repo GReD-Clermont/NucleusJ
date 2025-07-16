@@ -28,7 +28,7 @@ import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.FilesNames;
 import fr.igred.nucleus.gui.Progress;
 import fr.igred.nucleus.plugins.ChromocenterParameters;
-import fr.igred.nucleus.utilsNj2.NucleusChromocentersAnalysis;
+import fr.igred.nucleus.utils2.NucleusChromocentersAnalysis;
 import ij.IJ;
 import ij.ImagePlus;
 import loci.common.DebugTools;
@@ -87,7 +87,6 @@ public class ChromocenterCalling {
 		Directory directoryInput = new Directory(chromocenterParameters.getInputFolder());
 		directoryInput.listImageFiles(chromocenterParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
-		String rhfChoice = "Volume";
 		String diffDir   = chromocenterParameters.outputFolder + "gradientImage";
 		File   file      = new File(diffDir);
 		if (!file.exists()) {
@@ -145,7 +144,7 @@ public class ChromocenterCalling {
 	}
 	
 	
-	public void SegmentationOMERO(String inputDirectoryRaw,
+	public void segmentationOMERO(String inputDirectoryRaw,
 	                              String inputDirectorySeg,
 	                              String outputDirectory,
 	                              Client client)
@@ -154,10 +153,9 @@ public class ChromocenterCalling {
 		String[] param  = inputDirectoryRaw.split("/");
 		String[] param1 = inputDirectorySeg.split("/");
 		
-		Long imageID = Long.parseLong(param[1]);
-		Long maskID  = Long.parseLong(param1[1]);
-		
 		if (param.length >= 2 && param1.length >= 2) {
+			Long imageID = Long.parseLong(param[1]);
+			Long maskID  = Long.parseLong(param1[1]);
 			if ("Image".equals(param[0]) && "Image".equals(param1[0])) {
 				runOneImageOMERO(imageID, maskID, outputDirectory, client);
 			} else if ("Dataset".equals(param[0]) && "Dataset".equals(param1[0])) {
@@ -292,9 +290,8 @@ public class ChromocenterCalling {
 	
 	
 	public void runSeveralImagesOMERO(ImageWrapper image, ImageWrapper mask, String datasetName, Client client)
-	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
+	throws AccessException, ServiceException, ExecutionException, IOException {
 		
-		String rhfChoice = "Volume";
 		String imageName = image.getName();
 		
 		/* image to imagePlus */

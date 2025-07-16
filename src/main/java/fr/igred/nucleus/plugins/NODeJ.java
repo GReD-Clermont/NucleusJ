@@ -116,11 +116,11 @@ public class NODeJ implements PlugIn, IDialogListener {
 			if ("Image".equals(dataType) && "Image".equals(dataTypeSegmented)) {
 				sourceID = "Image/" + gui.getSourceID();
 				segmentedID = "Image/" + gui.getSegmentedNucleiID();
-				ccAnalyse.SegmentationOMERO(sourceID, segmentedID, outputID, client);
+				ccAnalyse.segmentationOMERO(sourceID, segmentedID, outputID, client);
 			} else if ("Dataset".equals(dataType) && "Dataset".equals(dataTypeSegmented)) {
 				sourceID = "Dataset/" + gui.getSourceID();
 				segmentedID = "Dataset/" + gui.getSegmentedNucleiID();
-				ccAnalyse.SegmentationOMERO(sourceID, segmentedID, outputID, client);
+				ccAnalyse.segmentationOMERO(sourceID, segmentedID, outputID, client);
 			}
 		} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
 			LOGGER.error("Error during chromocenter segmentation", e);

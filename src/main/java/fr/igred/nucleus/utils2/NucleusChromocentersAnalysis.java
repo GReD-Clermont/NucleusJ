@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.utilsNj2;
+package fr.igred.nucleus.utils2;
 
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
