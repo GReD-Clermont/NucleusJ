@@ -60,7 +60,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	private       JPanel     zCalibrationPanel;
 	
 	
-	public AutocropConfigDialog(AutocropDialog caller) {
+	public AutocropConfigDialog() {
 		super.setTitle("Autocrop - NucleusJ3");
 		super.setSize(600, 350);
 		super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
