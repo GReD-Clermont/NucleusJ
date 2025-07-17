@@ -7,7 +7,7 @@
 	<root level="warn">
 		<appender-ref ref="STDOUT" />
 	</root>
-	<logger name="gred.nucleus" level="debug" />
+	<logger name="fr.igred.nucleus" level="debug" />
 	<logger name="loci.formats" level="warn" />
 	<logger name="ome.formats" level="warn" />
 </configuration>
