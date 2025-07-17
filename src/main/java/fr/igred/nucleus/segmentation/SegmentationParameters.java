@@ -18,7 +18,6 @@
 package fr.igred.nucleus.segmentation;
 
 
-import fr.igred.nucleus.core.NucleusSegmentation;
 import fr.igred.nucleus.plugins.PluginParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

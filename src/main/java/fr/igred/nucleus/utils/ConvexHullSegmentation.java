@@ -15,10 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.core;
+package fr.igred.nucleus.utils;
 
-import fr.igred.nucleus.segmentation.SegmentationParameters;
-import fr.igred.nucleus.utils.ConvexHullImageMaker;
 import ij.ImagePlus;
 import ij.ImageStack;
 import inra.ijpb.morphology.Morphology;
@@ -57,7 +55,7 @@ public final class ConvexHullSegmentation {
 	 *
 	 * @return segmented image
 	 */
-	public static ImagePlus convexHullDetection(ImagePlus imagePlusInput, SegmentationParameters segmentationParameters) {
+	public static ImagePlus convexHullDetection(ImagePlus imagePlusInput) {
 		LOGGER.info("Running Convex Hull Algorithm.");
 		ConvexHullImageMaker nuc = new ConvexHullImageMaker();
 		nuc.setAxes("xy");
@@ -87,7 +85,7 @@ public final class ConvexHullSegmentation {
 	 *
 	 * @return ImagePlus image results of the convex hull algorithm
 	 *
-	 * @see #convexHullDetection(ImagePlus, SegmentationParameters)
+	 * @see #convexHullDetection(ImagePlus)
 	 */
 	private static ImagePlus imageMakingUnion(ImagePlus imagePlusInput,
 	                                          ImagePlus imagePlusXY,

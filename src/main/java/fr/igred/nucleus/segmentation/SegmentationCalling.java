@@ -25,7 +25,6 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import fr.igred.omero.roi.ROIWrapper;
-import fr.igred.nucleus.core.NucleusSegmentation;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.FilesNames;
 import fr.igred.nucleus.io.OutputTextFile;

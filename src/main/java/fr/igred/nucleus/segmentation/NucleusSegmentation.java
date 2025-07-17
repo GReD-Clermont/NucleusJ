@@ -15,8 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.core;
+package fr.igred.nucleus.segmentation;
 
+import fr.igred.nucleus.core.Measure3D;
+import fr.igred.nucleus.utils.ConvexHullSegmentation;
+import fr.igred.nucleus.utils.FillingHoles;
 import fr.igred.omero.Client;
 import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
@@ -28,8 +31,6 @@ import fr.igred.omero.roi.ROIWrapper;
 import fr.igred.omero.roi.RectangleWrapper;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.imageprocessing.Thresholding;
-import fr.igred.nucleus.segmentation.SegmentationParameters;
-import fr.igred.nucleus.utils.FillingHoles;
 import fr.igred.nucleus.utils.Gradient;
 import fr.igred.nucleus.utils.Histogram;
 import ij.ImagePlus;
@@ -78,9 +79,9 @@ public class NucleusSegmentation {
 	/** Segmentation parameters for the analysis */
 	private final SegmentationParameters segmentationParameters;
 	/** ImagePlus input to process */
-	private final ImagePlus              imgRawTransformed;
+	private final ImagePlus imgRawTransformed;
 	/** List of the 3D parameters computed associated to the segmented image */
-	private       Measure3D              measure3D;
+	private       Measure3D measure3D;
 	/* String stocking the file name if any nucleus is detected*/
 	/** Threshold detected by the Otsu modified method */
 	private       int                    bestThreshold = -1;
@@ -780,7 +781,7 @@ public class NucleusSegmentation {
 	public void saveConvexHullSeg() {
 		LOGGER.info("Computing and saving Convex Hull segmentation.");
 		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
-			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0], segmentationParameters);
+			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0]);
 			String pathConvexHullSeg = segmentationParameters.getOutputFolder() +
 			                           CONVEX_HULL_ALGORITHM + File.separator + imageSeg[0].getTitle();
 			imageSeg[0].setTitle(pathConvexHullSeg);
@@ -797,7 +798,7 @@ public class NucleusSegmentation {
 	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
 		LOGGER.info("Computing and saving Convex Hull segmentation.");
 		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
-			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0], segmentationParameters);
+			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0]);
 			
 			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + CONVEX_HULL_ALGORITHM
 			              + File.separator + imageSeg[0].getTitle();

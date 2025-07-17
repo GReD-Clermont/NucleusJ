@@ -17,7 +17,6 @@
  */
 package fr.igred.nucleus.utils;
 
-import fr.igred.nucleus.core.ConvexHullSegmentation;
 import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.PolygonRoi;
@@ -87,7 +86,8 @@ public class ConvexHullImageMaker {
 			
 			// Calculate boundaries
 			if (listLabel.size() == 1) {  // If 1 single connected component
-				//LOGGER.trace("Processing the only label {} on slice {}/{}", listLabel.get(0), k, depth);
+				LOGGER.trace("Processing the only label {} on slice {}/{}",
+				             listLabel.get(0), k, depth);
 				List<VoxelRecord> lVoxelBoundary = detectVoxelBoundary(image, listLabel.get(0), k); // List the voxels of boundary of the component
 				if (lVoxelBoundary.size() > 5) { // When component is big enough
 					// Create temporary image of the component using the convex hull detection algorithm
@@ -98,7 +98,8 @@ public class ConvexHullImageMaker {
 			} else if (listLabel.size() > 1) { // If several connected components
 				ImageStack imageStackIp = ip.getImageStack();
 				for (Double label : listLabel) {
-					//LOGGER.trace("Processing label {} ({}/{}) on slice: {}/{}", label, listLabel.indexOf(label)+1, listLabel.size() , k, depth);
+					LOGGER.trace("Processing label {} ({}/{}) on slice: {}/{}",
+					             label, listLabel.indexOf(label)+1, listLabel.size() , k, depth);
 					List<VoxelRecord> lVoxelBoundary = detectVoxelBoundary(image, label, k); // List the voxels of boundary of the component
 					if (lVoxelBoundary.size() > 5) { // When the component is big enough make image
 						// Create temporary image of the component using the convex hull detection algorithm

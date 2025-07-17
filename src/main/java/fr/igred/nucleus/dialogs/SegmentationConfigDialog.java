@@ -17,7 +17,7 @@
  */
 package fr.igred.nucleus.dialogs;
 
-import fr.igred.nucleus.core.NucleusSegmentation;
+import fr.igred.nucleus.segmentation.NucleusSegmentation;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
