@@ -100,6 +100,8 @@ public class CLIRunActionOMERO {
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, InterruptedException {
 		String[] param = inputDirectory.split("/");
 		
+		ProjectWrapper project = client.getProject(Long.parseLong(outputDirectory));
+		
 		if (param.length >= 2) {
 			Long id = Long.parseLong(param[1]);
 			if ("image".equals(param[0])) {
@@ -110,9 +112,7 @@ public class CLIRunActionOMERO {
 				Long[] outputsDat = new Long[sizeC];
 				
 				for (int i = 0; i < sizeC; i++) {
-					DatasetWrapper dataset = new DatasetWrapper("C" + i + "_" + image.getName(), "");
-					outputsDat[i] =
-							client.getProject(Long.parseLong(outputDirectory)).addDataset(client, dataset).getId();
+					outputsDat[i] = project.addDataset(client, "C" + i + "_" + image.getName(), "").getId();
 				}
 				
 				autoCrop.runImageOMERO(image, outputsDat, client);
@@ -144,9 +144,7 @@ public class CLIRunActionOMERO {
 				Long[] outputsDat = new Long[sizeC];
 				
 				for (int i = 0; i < sizeC; i++) {
-					DatasetWrapper dataset = new DatasetWrapper("raw_C" + i + "_" + name, "");
-					outputsDat[i] =
-							client.getProject(Long.parseLong(outputDirectory)).addDataset(client, dataset).getId();
+					outputsDat[i] = project.addDataset(client, "raw_C" + i + "_" + name, "").getId();
 				}
 				
 				autoCrop.runSeveralImageOMERO(images, outputsDat, client);

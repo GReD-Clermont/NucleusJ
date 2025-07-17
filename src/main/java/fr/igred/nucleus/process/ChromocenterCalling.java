@@ -159,7 +159,9 @@ public class ChromocenterCalling {
 			if ("Image".equals(param[0]) && "Image".equals(param1[0])) {
 				runOneImageOMERO(imageID, maskID, outputDirectory, client);
 			} else if ("Dataset".equals(param[0]) && "Dataset".equals(param1[0])) {
-				String             datasetName = client.getDataset(imageID).getName();
+				String datasetName    = client.getDataset(imageID).getName();
+				String outDatasetName = "NODeJ_" + datasetName;
+				
 				List<ImageWrapper> images;
 				List<ImageWrapper> masks;
 				/* get raw images and masks datasets*/
@@ -167,15 +169,11 @@ public class ChromocenterCalling {
 				DatasetWrapper maskDataset  = client.getDataset(maskID);
 				/* get images List */
 				images = imageDataset.getImages(client);
-				/* Create Dataset named NodeJOMERO */
-				outDataset = new DatasetWrapper("NODeJ_" + datasetName, "");
-				DatasetWrapper outDatasetGradient = new DatasetWrapper("NODeJ_" + datasetName + "_Gradient", "");
+				/* retrieve project */
 				project = client.getProject(Long.parseLong(outputDirectory));
-				/* Add Dataset To the Project */
-				Long datasetId = project.addDataset(client, outDataset).getId();
-				outDataset = client.getDataset(datasetId);
-				Long gradientDatasetId = project.addDataset(client, outDatasetGradient).getId();
-				outDatasetGradient = client.getDataset(gradientDatasetId);
+				/* Create datasets named NodeJ on OMERO and add them to the project */
+				outDataset = project.addDataset(client, outDatasetName, "");
+				DatasetWrapper outDatasetGradient = project.addDataset(client, outDatasetName + "_Gradient", "");
 				
 				for (ImageWrapper image : images) {
 					try {
@@ -208,7 +206,7 @@ public class ChromocenterCalling {
 				outDataset.addFile(client, tab[1]);
 				project.addFile(client, tab[2]);
 				project.addFile(client, tab[3]);
-				/* Delete the tabs Locally*/
+				/* Delete the tabs locally */
 				try {
 					Files.deleteIfExists(tab[0].toPath());
 					Files.deleteIfExists(tab[1].toPath());
@@ -261,11 +259,8 @@ public class ChromocenterCalling {
 		
 		/* Import Segmented image to OMERO */
 		project = client.getProject(Long.parseLong(outputDirectory));
-		
 		/* Creating a Dataset in the Project */
-		outDataset = new DatasetWrapper("NODeJ_" + prefix, "");
-		Long datasetId = project.addDataset(client, outDataset).getId();
-		outDataset = client.getDataset(datasetId);
+		outDataset = project.addDataset(client, "NODeJ_" + prefix, "");
 		/*Import images and tabs to OMERO */
 		outDataset.importImages(client, outputFileName);
 		outDataset.importImages(client, gradientFileName);

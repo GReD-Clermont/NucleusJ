@@ -29,6 +29,7 @@ import fr.igred.nucleus.autocrop.AutocropParameters;
 import fr.igred.nucleus.dialogs.AutocropConfigDialog;
 import fr.igred.nucleus.dialogs.AutocropDialog;
 import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.omero.repository.ProjectWrapper;
 import ij.IJ;
 import ij.plugin.PlugIn;
 import org.slf4j.Logger;
@@ -170,19 +171,18 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		Long   inputID  = Long.valueOf(autocropDialog.getSourceID());
 		Long   outputID = Long.valueOf(autocropDialog.getOutputProject());
 		try {
+			ProjectWrapper project = client.getProject(outputID);
 			if ("Image".equals(dataType)) {
 				ImageWrapper image      = client.getImage(inputID);
 				int          sizeC      = image.getPixels().getSizeC();
 				Long[]       outputsDat = new Long[sizeC];
 				
 				for (int i = 0; i < sizeC; i++) {
-					DatasetWrapper dataset = new DatasetWrapper("C" + i + "_" + image.getName(), "");
-					outputsDat[i] = client.getProject(outputID).addDataset(client, dataset).getId();
+					outputsDat[i] = project.addDataset(client, "C" + i + "_" + image.getName(), "").getId();
 				}
 				
 				autoCrop.runImageOMERO(image, outputsDat, client); // Run segmentation
 				autoCrop.saveGeneralInfoOmero(client, outputsDat);
-				
 			} else {
 				List<ImageWrapper> images = null;
 				String             name   = "";
@@ -198,8 +198,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 				int    sizeC      = images.get(0).getPixels().getSizeC();
 				Long[] outputsDat = new Long[sizeC];
 				for (int i = 0; i < sizeC; i++) {
-					DatasetWrapper dataset = new DatasetWrapper("raw_C" + i + "_" + name, "");
-					outputsDat[i] = client.getProject(outputID).addDataset(client, dataset).getId();
+					outputsDat[i] = project.addDataset(client, "raw_C" + i + "_" + name, "").getId();
 				}
 				
 				autoCrop.runSeveralImageOMERO(images, outputsDat, client); // Run segmentation
