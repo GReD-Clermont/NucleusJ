@@ -1,0 +1,216 @@
+/*
+ * NucleusJ
+ * Copyright (C) 2014-2025 iGReD
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package fr.igred.nucleus.autocrop;
+
+import fr.igred.omero.Client;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
+import fr.igred.omero.repository.DatasetWrapper;
+import fr.igred.omero.repository.ImageWrapper;
+import fr.igred.omero.repository.ProjectWrapper;
+import fr.igred.nucleus.io.Directory;
+import ij.ImagePlus;
+import ij.gui.ImageRoi;
+import ij.plugin.Duplicator;
+import ij.plugin.LutLoader;
+import ij.process.ImageConverter;
+import ij.process.LUT;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import static fr.igred.nucleus.io.ImageSaver.saveFile;
+
+
+public class GenerateOverlay {
+	/** Logger */
+	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	private final String pathToProjection;
+	private final String pathToDic;
+	private final String pathToOutput;
+	
+	private final boolean isOMEROEnable;
+	
+	
+	public GenerateOverlay() {
+		isOMEROEnable = true;
+		pathToProjection = "." + File.separator + "tmp-zprojection-GenerateOverlay";
+		pathToDic = "." + File.separator + "tmp-dic-GenerateOverlay";
+		pathToOutput = pathToProjection + File.separator + "overlay";
+	}
+	
+	
+	public GenerateOverlay(String pathToProjection, String pathToDic) {
+		isOMEROEnable = false;
+		this.pathToProjection = pathToProjection;
+		this.pathToDic = pathToDic;
+		this.pathToOutput = pathToProjection + File.separator + "overlay";
+	}
+	
+	
+	private Map<File, File> gatherFilePairs() {
+		File projectionDir = new File(pathToProjection);
+		File dicDir        = new File(pathToDic);
+		
+		Map<File, File> allDicToProj = new HashMap<>();
+		
+		File[] projFiles = projectionDir.listFiles();
+		File[] dicFiles  = dicDir.listFiles();
+		
+		List<File> projFilesList = projFiles != null ? Arrays.asList(projFiles) : new ArrayList<>(0);
+		List<File> dicFilesList  = dicFiles != null ? Arrays.asList(dicFiles) : new ArrayList<>(0);
+		
+		// Gather all pair of files
+		for (File fp : projFilesList) {
+			String   projName = FilenameUtils.removeExtension(fp.getName());
+			String[] pNameTab = projName.split("_");
+			projName = projName.replace(pNameTab[pNameTab.length - 1], "");
+			
+			for (File fd : dicFilesList) {
+				String   dicName  = FilenameUtils.removeExtension(fd.getName());
+				String[] dNameTab = dicName.split("_");
+				dicName = dicName.replace(dNameTab[dNameTab.length - 1], "");
+				if (dicName.equals(projName)) {
+					allDicToProj.put(fd, fp);
+				}
+			}
+		}
+		return allDicToProj;
+	}
+	
+	
+	private LUT getNucleiLUT() throws IOException {
+		String tmpLutPath = "." + File.separator + "tmp-LUT.txt";
+		
+		InputStream    in = getClass().getResourceAsStream("/overlay/LUT.txt");
+		BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(tmpLutPath))) {
+			String l = br.readLine();
+			while (l != null) {
+				bw.write(l);
+				bw.newLine();
+				l = br.readLine();
+			}
+		}
+		LUT fire = LutLoader.openLut(tmpLutPath);
+		Files.delete(Paths.get(tmpLutPath));
+		return fire;
+	}
+	
+	
+	public void run() throws IOException {
+		Directory output = new Directory(pathToOutput);
+		output.checkAndCreateDir();
+		
+		Map<File, File> allDicToProj = gatherFilePairs();
+		
+		LUT fire = getNucleiLUT();
+		
+		// Process all pairs
+		for (Map.Entry<File, File> e : allDicToProj.entrySet()) {
+			String   name    = FilenameUtils.removeExtension(e.getKey().getName());
+			String[] nameTab = name.split("_");
+			name = name.replace(nameTab[nameTab.length - 1], "");
+			
+			ImagePlus proj    = new ImagePlus(e.getValue().getPath());
+			ImagePlus overlay = new Duplicator().run(proj);
+			ImagePlus dic     = new ImagePlus(e.getKey().getPath());
+			
+			new ImageConverter(overlay).convertToGray16();
+			
+			for (int i = 0; i < overlay.getNSlices(); i++) {
+				overlay.setSlice(i);
+				overlay.getProcessor().invertLut();
+				overlay.getProcessor().setLut(fire);
+			}
+			
+			ImageRoi overlayRoi = new ImageRoi(0, 0, dic.getProcessor());
+			overlayRoi.setOpacity(0.5);
+			overlay.setRoi(overlayRoi);
+			
+			if (isOMEROEnable) {
+				saveFile(overlay.flatten(), pathToOutput + File.separator + name + "_Overlay.tif");
+			} else {
+				saveFile(overlay, pathToOutput + File.separator + name + "_Overlay.tif");
+			}
+		}
+	}
+	
+	
+	public void runFromOMERO(String projectionDatasetID, String dicDatasetID, String outputProjectID, Client client)
+	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
+		DatasetWrapper projectionDataset = client.getDataset(Long.parseLong(projectionDatasetID));
+		DatasetWrapper dicDataset        = client.getDataset(Long.parseLong(dicDatasetID));
+		ProjectWrapper outputProject     = client.getProject(Long.parseLong(outputProjectID));
+		
+		Directory projectionDir = new Directory(pathToProjection);
+		projectionDir.checkAndCreateDir();
+		Directory dicDir = new Directory(pathToDic);
+		dicDir.checkAndCreateDir();
+		for (ImageWrapper projection : projectionDataset.getImages(client)) {
+			saveFile(projection.toImagePlus(client), pathToProjection + File.separator + projection.getName());
+		}
+		for (ImageWrapper dic : dicDataset.getImages(client)) {
+			saveFile(dic.toImagePlus(client), pathToDic + File.separator + dic.getName());
+		}
+		
+		run();
+		
+		DatasetWrapper       outputDataset;
+		List<DatasetWrapper> datasets = outputProject.getDatasets("Overlay");
+		if (datasets.isEmpty()) {
+			outputDataset = outputProject.addDataset(client, "Overlay", "");
+		} else {
+			outputDataset = datasets.get(0);
+		}
+		
+		File   overlays     = new File(pathToOutput);
+		File[] overlayFiles = overlays.listFiles();
+		
+		List<File> overlayFilesList = overlayFiles != null ? Arrays.asList(overlayFiles) : new ArrayList<>(0);
+		
+		for (File overlayFile : overlayFilesList) {
+			outputDataset.importImage(client, overlayFile.getPath());
+		}
+		FileUtils.deleteDirectory(new File(pathToProjection));
+		FileUtils.deleteDirectory(new File(pathToDic));
+		FileUtils.deleteDirectory(new File(pathToOutput));
+	}
+	
+}

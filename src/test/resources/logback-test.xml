@@ -7,8 +7,8 @@
 	<root level="warn">
 		<appender-ref ref="STDOUT" />
 	</root>
-	<logger name="gred.nucleus.autocrop.AutocropTest" level="debug" />
-	<logger name="gred.nucleus.autocrop.AutocropChecker" level="debug" />
-	<logger name="gred.nucleus.segmentation.SegmentationTest" level="debug" />
-	<logger name="gred.nucleus.segmentation.SegmentationChecker" level="debug" />
+	<logger name="fr.igred.nucleus.autocrop.AutocropTest" level="debug" />
+	<logger name="fr.igred.nucleus.autocrop.AutocropChecker" level="debug" />
+	<logger name="fr.igred.nucleus.segmentation.SegmentationTest" level="debug" />
+	<logger name="fr.igred.nucleus.segmentation.SegmentationChecker" level="debug" />
 </configuration>
