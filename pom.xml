@@ -99,6 +99,39 @@
 			<version>5.7.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2</artifactId>
+			<version>7.1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-ij</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-algorithm</artifactId>
+			<version>0.18.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-mesh</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<!-- ImgLib2 Marching-Cubes & TriangulatedMesh  -->
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-algorithm-gpl</artifactId>
+			<version>0.3.1</version>   <!-- same series as imglib2-algorithm -->
+		</dependency>
+
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej-mesh</artifactId>
+			<version>0.8.2</version>     <!-- Aug 2024, contains Mesh & Meshes -->
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -255,6 +288,11 @@
 	</developers>
 
 	<repositories>
+		<repository>
+			<id>sciJava.public</id>
+			<url>https://maven.scijava.org/content/repositories/public/</url>
+		</repository>
+
 		<repository>
 			<id>imagej.public</id>
 			<url>https://maven.imagej.net/content/groups/public</url>

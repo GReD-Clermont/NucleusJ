@@ -19,6 +19,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.img.ImagePlusAdapter;
+import net.imglib2.type.logic.BitType;
+import net.imagej.mesh.Mesh;
+import net.imagej.mesh.Meshes;
+import net.imagej.mesh.Vertices;
+import net.imagej.mesh.Triangles;
+import net.imglib2.realtransform.AffineTransform3D;
+
 
 /**
  * Class computing 3D parameters from raw and his segmented image associated :
@@ -47,8 +56,8 @@ public class Measure3D {
 	private ImagePlus _rawImage;
 	TreeMap< Double, Integer> _segmentedNucleusHisto =new TreeMap <Double, Integer>();
 	TreeMap< Double, Integer> _backgroundHisto =new TreeMap <Double, Integer>();
-	
-	
+
+
 	public Measure3D() {
 	}
 	
@@ -300,13 +309,30 @@ public class Measure3D {
 	 * @param surface double surface of the object
 	 *
 	 * @return double sphercity
-	 */
+
 	public double computeSphericity(double volume, double surface) {
 		return ((36 * Math.PI * (volume * volume))
 		        / (surface * surface * surface));
 	}
-	
-	
+	 */
+
+	/**
+	 * Compute 3D sphericity of an object using the Wadell formula.
+	 *
+	 * Formula:
+	 * Φ = (π^(1/3) * (6 * V)^(2/3)) / A
+	 *
+	 * @param volume  Volume of the object (real units, e.g. µm³)
+	 * @param surface Surface area of the object (real units, e.g. µm²)
+	 * @return Sphericity (dimensionless, 1 for a perfect sphere)
+	 */
+	public static double computeSphericity(double volume, double surface) {
+		if (volume <= 0 || surface <= 0) {
+			throw new IllegalArgumentException("Volume and surface area must be positive values.");
+		}
+		return (Math.cbrt(Math.PI) * Math.pow(6 * volume, 2.0 / 3.0)) / surface;
+	}
+
 	/**
 	 * Method which compute the eigen value of the matrix (differences between the coordinates of all points and the
 	 * barycenter. Obtaining a symmetric matrix : xx xy xz xy yy yz xz yz zz Compute the eigen value with the pakage
@@ -508,8 +534,69 @@ public class Measure3D {
 		histogram.run(imagePlusInput);
 		return histogram.getNbLabels();
 	}
-	
-	
+
+
+
+	/** Helper: flatten Vertices → double[] */
+	private static double[] flatXYZ(final Vertices verts) {
+		final double[] out = new double[(int) (verts.size() * 3)];
+		for (int i = 0; i < verts.size(); i++) {
+			out[i*3    ] = verts.x(i);
+			out[i*3 + 1] = verts.y(i);
+			out[i*3 + 2] = verts.z(i);
+		}
+		return out;
+	}
+
+	/** Returns {surface, volume} in calibrated units (µm² / µm³, etc.). */
+	public double[] mcSurfaceAndVolume() {
+
+		/* 1 — wrap the existing mask ImageStack as an ImgLib2 BitType image */
+		RandomAccessibleInterval<BitType> mask =
+				ImagePlusAdapter.wrap(this.imageSeg[0]);   // your field *is* the mask
+
+		/* 2 — Marching Cubes (iso-level 0.5 for {0,1} data) */
+		Mesh mesh = Meshes.marchingCubes(mask, 0.5);
+
+		/* 3 — copy vertices to a flat array and scale to physical units */
+		double[] v = flatXYZ(mesh.vertices());
+		for (int i = 0; i < v.length; i += 3) {
+			v[i]     *= xCal;   // x-coord
+			v[i + 1] *= yCal;   // y-coord
+			v[i + 2] *= zCal;   // z-coord
+		}
+
+		/* 4 — integrate triangles for surface & volume */
+		double surface = 0, volume = 0;
+		Triangles tris = mesh.triangles();
+
+		for (int t = 0; t < tris.size(); t++) {
+			int ia = (int) tris.vertex0(t) * 3;
+			int ib = (int) tris.vertex1(t) * 3;
+			int ic = (int) (tris.vertex2(t) * 3);
+
+			double ax = v[ia], ay = v[ia+1], az = v[ia+2];
+			double bx = v[ib], by = v[ib+1], bz = v[ib+2];
+			double cx = v[ic], cy = v[ic+1], cz = v[ic+2];
+
+			/* surface patch = ½‖(B−A)×(C−A)‖ */
+			double abx = bx - ax, aby = by - ay, abz = bz - az;
+			double acx = cx - ax, acy = cy - ay, acz = cz - az;
+			double nx  = aby*acz - abz*acy;
+			double ny  = abz*acx - abx*acz;
+			double nz  = abx*acy - aby*acx;
+			surface += 0.5 * Math.sqrt(nx*nx + ny*ny + nz*nz);
+
+			/* volume patch = ⅙ A·(B×C) */
+			volume  += (ax*(by*cz - bz*cy)
+					- ay*(bx*cz - bz*cx)
+					+ az*(bx*cy - by*cx)) / 6.0;
+		}
+
+		return new double[] { surface, Math.abs(volume) };
+	}
+
+
 	/**
 	 * Method to compute surface of the segmented object using gradient information.
 	 *
@@ -593,8 +680,6 @@ public class Measure3D {
 		}
 		return surfaceArea;
 	}
-	
-	
 	/**
 	 * Method to compute surface of the segmented object using gradient information.
 	 *
@@ -958,14 +1043,17 @@ public class Measure3D {
 		double   surfaceAreaNew = computeComplexSurface();
 		double[] tEigenValues   = computeEigenValue3D(255);
 		compute2dParameters();
+		double[] sv = mcSurfaceAndVolume();
+		//System.out.printf("Surface = %.3f   Volume = %.3f%n", sv[0], sv[1]);
+
 		results = this.rawImage.getTitle() + ","
 		          //  + computeVolumeObject2(255) + "\t"
-		          + computeVolumeObjectML() + ","
+		          + sv[1] + ","
 		          + computeFlatnessAndElongation(255)[0] + ","
 		          + computeFlatnessAndElongation(255)[1] +","
-		          + equivalentSphericalRadius(volume) + ","
-		          + surfaceAreaNew + ","
-		          + computeSphericity(volume, surfaceAreaNew) + ","
+		          + equivalentSphericalRadius(sv[1]) + ","
+		          + sv[0] + ","
+		          + computeSphericity(sv[1], sv[0]) + ","
 		          + meanIntensity() + ","
 		          + meanIntensityBackground() + ","
 		          + standardDeviationIntensity(meanIntensity()) + ","

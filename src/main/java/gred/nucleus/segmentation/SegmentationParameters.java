@@ -47,9 +47,9 @@ public class SegmentationParameters extends PluginParameters {
 	
 	public SegmentationParameters(String inputFolder,
 	                              String outputFolder,
-	                              int xCal,
-	                              int yCal,
-	                              int zCal,
+	                              float xCal,
+	                              float yCal,
+	                              float zCal,
 	                              int minVolume,
 	                              int maxVolume,
 	                              boolean convexHull) {

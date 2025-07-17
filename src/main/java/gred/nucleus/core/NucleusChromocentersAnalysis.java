@@ -121,9 +121,10 @@ public class NucleusChromocentersAnalysis {
 		tmp[0] = imagePlusSegmented;
 		Measure3D measure3D = new Measure3D(tmp,
 		                                    imagePlusInput,
-		                                    calibration.pixelDepth,
+
 		                                    calibration.pixelHeight,
-		                                    calibration.pixelWidth);
+		                                    calibration.pixelWidth,
+											calibration.pixelDepth);
 		double  volume      = measure3D.computeVolumeObject(imagePlusSegmented, 255);
 		double  surfaceArea = measure3D.computeComplexSurface();
 		File    fileResults = new File(pathResultsFile);

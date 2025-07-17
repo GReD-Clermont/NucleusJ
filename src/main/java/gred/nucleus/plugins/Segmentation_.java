@@ -94,9 +94,9 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				if (scd.isCalibrationSelected()) {
 					LOGGER.info("w/ calibration");
 					segmentationParameters = new SegmentationParameters(".", ".",
-					                                                    Integer.parseInt(scd.getXCalibration()),
-					                                                    Integer.parseInt(scd.getYCalibration()),
-					                                                    Integer.parseInt(scd.getZCalibration()),
+																		Float.parseFloat(scd.getXCalibration()),
+																		Float.parseFloat(scd.getYCalibration()),
+																		Float.parseFloat(scd.getZCalibration()),
 					                                                    Integer.parseInt(scd.getMinVolume()),
 					                                                    Integer.parseInt(scd.getMaxVolume()),
 					                                                    scd.getConvexHullDetection()
