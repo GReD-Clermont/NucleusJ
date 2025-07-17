@@ -45,13 +45,12 @@ public final class SegmentationChecker {
 	private SegmentationResult target;
 	
 	
-	public SegmentationChecker(String targetPath) {
-		File targetFile = new File(SegmentationTest.PATH_TO_SEGMENTATION +
+	public SegmentationChecker(String segmentationPath, String targetPath) {
+		File targetFile = new File(segmentationPath +
 		                           PATH_TO_TARGET +
 		                           targetPath + File.separator +
-		                           PATH_TO_INFO
-		);
-		String resultPath = SegmentationTest.PATH_TO_SEGMENTATION +
+		                           PATH_TO_INFO);
+		String resultPath = segmentationPath +
 		                    PATH_TO_TARGET +
 		                    targetPath + File.separator +
 		                    PATH_TO_RESULT + targetPath;
@@ -61,10 +60,8 @@ public final class SegmentationChecker {
 	}
 	
 	
-	public static File getInfoFile(File file) {
-		return new File(SegmentationTest.PATH_TO_OUTPUT +
-		                file.getName() + File.separator +
-		                PATH_TO_INFO);
+	public static File getInfoFile(File file, String outputPath) {
+		return new File(outputPath + file.getName() + File.separator + PATH_TO_INFO);
 	}
 	
 	
@@ -83,11 +80,8 @@ public final class SegmentationChecker {
 	}
 	
 	
-	public static String getResultPath(File file) {
-		return SegmentationTest.PATH_TO_OUTPUT +
-		       file.getName() + File.separator +
-		       PATH_TO_RESULT +
-		       file.getName();
+	public static String getResultPath(File file, String outputPath) {
+		return outputPath + file.getName() + File.separator + PATH_TO_RESULT + file.getName();
 	}
 	
 	
@@ -124,9 +118,10 @@ public final class SegmentationChecker {
 	}
 	
 	
-	public boolean checkValues(File file) {
-		SegmentationResult segmentationResult = extractGeneralInfo(new SegmentationResult(), getInfoFile(file));
-		segmentationResult = extractResult(segmentationResult, getResultPath(file));
+	public boolean checkValues(File file, String outputPath) {
+		File               infoFile           = getInfoFile(file, outputPath);
+		SegmentationResult segmentationResult = extractGeneralInfo(new SegmentationResult(), infoFile);
+		segmentationResult = extractResult(segmentationResult, getResultPath(file, outputPath));
 		
 		checkGeneralValues(segmentationResult);
 		return checkResult(segmentationResult);
