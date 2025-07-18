@@ -17,6 +17,7 @@
  */
 package fr.igred.nucleus.segmentation;
 
+import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
@@ -190,7 +191,7 @@ public class SegmentationCalling {
 		// Create output directories
 		Path otsuDirectory = Paths.get(segmentationParameters.getOutputFolder() + File.separator + "OTSU");
 		Path convexHullDirectory = Paths.get(segmentationParameters.getOutputFolder() + File.separator +
-		                                     NucleusSegmentation.CONVEX_HULL_ALGORITHM);
+		                                     ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 		File otsuDir = new File(otsuDirectory.toString());
 		if (!otsuDir.exists()) {
 			Files.createDirectory(otsuDirectory);
@@ -223,7 +224,7 @@ public class SegmentationCalling {
 					String timeStampStart =
 							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, timeStampStart);
-					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, prefix, segmentationParameters);
+					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, segmentationParameters);
 					
 					nucleusSegmentation.preProcessImage();
 					nucleusSegmentation.findOTSUMaximisingSphericity();
@@ -288,7 +289,7 @@ public class SegmentationCalling {
 		String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 		LOGGER.info("Start: {}", timeStampStart);
 		NucleusSegmentation nucleusSegmentation =
-				new NucleusSegmentation(currentFile, prefix, segmentationParameters);
+				new NucleusSegmentation(currentFile, segmentationParameters);
 		nucleusSegmentation.preProcessImage();
 		nucleusSegmentation.findOTSUMaximisingSphericity();
 		nucleusSegmentation.checkBadCrop(segmentationParameters.inputFolder);
@@ -317,11 +318,11 @@ public class SegmentationCalling {
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU, true);
 		if (segmentationParameters.getConvexHullDetection()) {
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(segmentationParameters.getOutputFolder()
-			                                                               + NucleusSegmentation.CONVEX_HULL_ALGORITHM
+			                                                               + ConvexHullDetection.CONVEX_HULL_ALGORITHM
 			                                                               + File.separator
 			                                                               + dateFormat.format(date)
 			                                                               + "-result_Segmentation_Analyse_" +
-			                                                               NucleusSegmentation.CONVEX_HULL_ALGORITHM +
+			                                                               ConvexHullDetection.CONVEX_HULL_ALGORITHM +
 			                                                               ".csv");
 			resultFileOutputConvexHull.saveTextFile(outputCropGeneralInfoConvexHull, true);
 		}
@@ -337,10 +338,10 @@ public class SegmentationCalling {
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU, true);
 		if (segmentationParameters.getConvexHullDetection()) {
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(segmentationParameters.getOutputFolder()
-			                                                               + NucleusSegmentation.CONVEX_HULL_ALGORITHM
+			                                                               + ConvexHullDetection.CONVEX_HULL_ALGORITHM
 			                                                               + File.separator
 			                                                               + "result_Segmentation_Analyse_" +
-			                                                               NucleusSegmentation.CONVEX_HULL_ALGORITHM +
+			                                                               ConvexHullDetection.CONVEX_HULL_ALGORITHM +
 			                                                               ".csv");
 			resultFileOutputConvexHull.saveTextFile(outputCropGeneralInfoConvexHull, true);
 		}
@@ -363,9 +364,9 @@ public class SegmentationCalling {
 		project = client.getProject(output);
 		// Get Convex Hull dataset ID
 		if (segmentationParameters.getConvexHullDetection()) {
-			datasets = project.getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM);
+			datasets = project.getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 			if (datasets.isEmpty()) {
-				convexHullDataset = project.addDataset(client, NucleusSegmentation.CONVEX_HULL_ALGORITHM, "").getId();
+				convexHullDataset = project.addDataset(client, ConvexHullDetection.CONVEX_HULL_ALGORITHM, "").getId();
 			} else {
 				convexHullDataset = datasets.get(0).getId();
 			}
@@ -419,9 +420,9 @@ public class SegmentationCalling {
 		project = client.getProject(output);
 		// Get Convex Hull dataset ID
 		if (segmentationParameters.getConvexHullDetection()) {
-			datasets = project.getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM);
+			datasets = project.getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 			if (datasets.isEmpty()) {
-				convexHullDataset = project.addDataset(client, NucleusSegmentation.CONVEX_HULL_ALGORITHM, "").getId();
+				convexHullDataset = project.addDataset(client, ConvexHullDetection.CONVEX_HULL_ALGORITHM, "").getId();
 			} else {
 				convexHullDataset = datasets.get(0).getId();
 			}
@@ -451,7 +452,7 @@ public class SegmentationCalling {
 							Calendar.getInstance().getTime());
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, timeStampStart);
 					NucleusSegmentation nucleusSegmentation =
-							new NucleusSegmentation(img, imp, segmentationParameters, client);
+							new NucleusSegmentation(img, imp, segmentationParameters);
 					nucleusSegmentation.preProcessImage();
 					nucleusSegmentation.findOTSUMaximisingSphericity();
 					nucleusSegmentation.checkBadCrop(img, client);
@@ -612,7 +613,7 @@ public class SegmentationCalling {
 			} catch (IOException e) {
 				LOGGER.error("Could not get canonical path for: {}", pathGraham, e);
 			}
-			dataset = client.getProject(output).getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM).get(0);
+			dataset = client.getProject(output).getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM).get(0);
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(pathGraham);
 			resultFileOutputConvexHull.saveTextFile(outputCropGeneralInfoConvexHull, false);
 			
@@ -689,7 +690,7 @@ public class SegmentationCalling {
 		}
 		
 		if (segmentationParameters.getConvexHullDetection()) {
-			dataset = client.getProject(output).getDatasets(NucleusSegmentation.CONVEX_HULL_ALGORITHM).get(0);
+			dataset = client.getProject(output).getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM).get(0);
 			OutputTextFile resultFileOutputConvexHull = new OutputTextFile(path);
 			resultFileOutputConvexHull.saveTextFile(outputCropGeneralInfoConvexHull, false);
 			

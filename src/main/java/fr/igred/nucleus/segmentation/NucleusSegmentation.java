@@ -18,6 +18,7 @@
 package fr.igred.nucleus.segmentation;
 
 import fr.igred.nucleus.core.Measure3D;
+import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.utils.ConvexHullSegmentation;
 import fr.igred.nucleus.utils.FillingHoles;
 import fr.igred.omero.Client;
@@ -70,8 +71,6 @@ import static fr.igred.nucleus.io.ImageSaver.saveFile;
  * @author Tristan Dubos and Axel Poulet
  */
 public class NucleusSegmentation {
-	/** Currently used algorithm to calculate nuclei convex hull */
-	public static final String CONVEX_HULL_ALGORITHM = "GRAHAM";
 	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -80,23 +79,12 @@ public class NucleusSegmentation {
 	private final SegmentationParameters segmentationParameters;
 	/** ImagePlus input to process */
 	private final ImagePlus imgRawTransformed;
-	/** List of the 3D parameters computed associated to the segmented image */
-	private       Measure3D measure3D;
-	/* String stocking the file name if any nucleus is detected*/
 	/** Threshold detected by the Otsu modified method */
 	private       int                    bestThreshold = -1;
-	/** volume min of the detected object */
-	private       int                    vMin;
-	/** volume max of the detected object */
-	private       int                    vMax;
 	/** ImagePlus input to process */
 	private       ImagePlus              imgRaw;
 	/** Check if the segmentation is not in border */
 	private       boolean                badCrop;
-	/** Current image analysed */
-	private       File                   currentFile;
-	/** String containing the output prefix */
-	private       String                 outputFilesPrefix;
 	/** Segmented image */
 	private       ImagePlus[]            imageSeg;
 	
@@ -105,36 +93,32 @@ public class NucleusSegmentation {
 	 * Constructor for the segmentation analysis for a folder containing images.
 	 *
 	 * @param imageFile              Current image analysed
-	 * @param outputFilesPrefix      prefix for the output file
-	 * @param segmentationParameters list the parameters for the analyse
+	 * @param params list the parameters for the analyse
 	 *
 	 * @throws IOException
 	 * @throws FormatException
 	 */
-	public NucleusSegmentation(File imageFile,
-	                           String outputFilesPrefix,
-	                           SegmentationParameters segmentationParameters)
+	public NucleusSegmentation(File imageFile, SegmentationParameters params)
 	throws IOException, FormatException {
-		this.segmentationParameters = segmentationParameters;
-		this.currentFile = imageFile;
-		this.imgRaw = getImageChannel(0);
+		this.segmentationParameters = params;
 		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
+		this.imgRaw = getImageChannel(imageFile, 0);
 		imgRaw.setTitle(imageFile.getName());
 		this.imgRawTransformed = imgRaw.duplicate();
 		imgRawTransformed.setTitle(imageFile.getName());
-		Directory dirOutputOTSU = new Directory(segmentationParameters.getOutputFolder() + "OTSU");
+		Directory dirOutputOTSU = new Directory(params.getOutputFolder() + "OTSU");
 		dirOutputOTSU.checkAndCreateDir();
-		if (segmentationParameters.getConvexHullDetection()) {
-			Directory dirOutputConvexHull = new Directory(segmentationParameters.getOutputFolder() +
-			                                              CONVEX_HULL_ALGORITHM);
+		if (params.getConvexHullDetection()) {
+			Directory dirOutputConvexHull = new Directory(params.getOutputFolder() +
+			                                              ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 			dirOutputConvexHull.checkAndCreateDir();
 		}
 	}
 	
 	
-	public NucleusSegmentation(ImageWrapper image, SegmentationParameters segmentationParameters, Client client)
+	public NucleusSegmentation(ImageWrapper image, SegmentationParameters params, Client client)
 	throws ServiceException, AccessException, ExecutionException {
-		this.segmentationParameters = segmentationParameters;
+		this.segmentationParameters = params;
 		
 		int[] cBound = {0, 0};
 		this.imgRaw = image.toImagePlus(client, null, null, cBound, null, null);
@@ -146,9 +130,8 @@ public class NucleusSegmentation {
 	
 	
 	// Changed HERE TO RETRIEVE ONLY ID, ALLOWING MULTI THREADING DOWNLOAD
-	public NucleusSegmentation(ImageWrapper image, ImagePlus imp, SegmentationParameters segmentationParameters,
-	                           Client client) {
-		this.segmentationParameters = segmentationParameters;
+	public NucleusSegmentation(ImageWrapper image, ImagePlus imp, SegmentationParameters params) {
+		this.segmentationParameters = params;
 		
 		this.imgRaw = imp;
 		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
@@ -161,10 +144,10 @@ public class NucleusSegmentation {
 	public NucleusSegmentation(ImageWrapper image,
 	                           ROIWrapper roi,
 	                           int i,
-	                           SegmentationParameters segmentationParameters,
+	                           SegmentationParameters params,
 	                           Client client)
 	throws ServiceException, AccessException, ExecutionException {
-		this.segmentationParameters = segmentationParameters;
+		this.segmentationParameters = params;
 		
 		List<RectangleWrapper> rectangles = roi.getShapes().getElementsOf(RectangleWrapper.class);
 		
@@ -196,16 +179,17 @@ public class NucleusSegmentation {
 	/**
 	 * Method to set a specific channel image
 	 *
-	 * @param channelNumber channel number of the current image to analyse
+	 * @param imageFile
+	 * @param channel   channel number of the current image to analyse
 	 *
 	 * @return channel image
 	 *
 	 * @throws IOException
 	 * @throws FormatException
 	 */
-	public ImagePlus getImageChannel(int channelNumber) throws IOException, FormatException {
-		ImagePlus[] currentImage = BF.openImagePlus(currentFile.getAbsolutePath());
-		currentImage = ChannelSplitter.split(currentImage[channelNumber]);
+	public static ImagePlus getImageChannel(File imageFile, int channel) throws IOException, FormatException {
+		ImagePlus[] currentImage = BF.openImagePlus(imageFile.getAbsolutePath());
+		currentImage = ChannelSplitter.split(currentImage[channel]);
 		return currentImage[0];
 	}
 	
@@ -218,7 +202,8 @@ public class NucleusSegmentation {
 	 * @return
 	 */
 	public String saveImageResult(ImagePlus[] segmentedImage) {
-		this.measure3D = new Measure3D(segmentedImage, imgRaw, getXCalibration(), getYCalibration(), getZCalibration());
+		Measure3D measure3D = new Measure3D(segmentedImage, imgRaw,
+		                                    getXCalibration(), getYCalibration(), getZCalibration());
 		return measure3D.nucleusParameter3D();
 	}
 	
@@ -425,7 +410,7 @@ public class NucleusSegmentation {
 	 * @return array lis which contain at the index 0 the min valu and index 1 the max value
 	 */
 	private static List<Integer> computeMinMaxThreshold(ImagePlus imagePlusInput) {
-		List<Integer> arrayListMinMaxThreshold = new ArrayList<>();
+		List<Integer> minMaxThreshold = new ArrayList<>(2);
 		
 		int             threshold       = Thresholding.computeOTSUThreshold(imagePlusInput);
 		StackStatistics stackStatistics = new StackStatistics(imagePlusInput);
@@ -434,12 +419,12 @@ public class NucleusSegmentation {
 		double          max             = threshold + stdDev / 2;
 		
 		if (min < 0) {
-			arrayListMinMaxThreshold.add(6);
+			minMaxThreshold.add(6);
 		} else {
-			arrayListMinMaxThreshold.add((int) min);
+			minMaxThreshold.add((int) min);
 		}
-		arrayListMinMaxThreshold.add((int) max);
-		return arrayListMinMaxThreshold;
+		minMaxThreshold.add((int) max);
+		return minMaxThreshold;
 	}
 	
 	
@@ -783,7 +768,7 @@ public class NucleusSegmentation {
 		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
 			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0]);
 			String pathConvexHullSeg = segmentationParameters.getOutputFolder() +
-			                           CONVEX_HULL_ALGORITHM + File.separator + imageSeg[0].getTitle();
+			                           ConvexHullDetection.CONVEX_HULL_ALGORITHM + File.separator + imageSeg[0].getTitle();
 			imageSeg[0].setTitle(pathConvexHullSeg);
 			saveFile(imageSeg[0], pathConvexHullSeg);
 		}
