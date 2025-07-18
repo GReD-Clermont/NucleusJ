@@ -15,10 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.core;
+package fr.igred.nucleus.utils;
 
-import fr.igred.nucleus.segmentation.SegmentationParameters;
-import fr.igred.nucleus.utils.ConvexHullImageMaker;
 import ij.ImagePlus;
 import ij.ImageStack;
 import inra.ijpb.morphology.Morphology;
@@ -57,7 +55,7 @@ public final class ConvexHullSegmentation {
 	 *
 	 * @return segmented image
 	 */
-	public static ImagePlus convexHullDetection(ImagePlus imagePlusInput, SegmentationParameters segmentationParameters) {
+	public static ImagePlus convexHullDetection(ImagePlus imagePlusInput) {
 		LOGGER.info("Running Convex Hull Algorithm.");
 		ConvexHullImageMaker nuc = new ConvexHullImageMaker();
 		nuc.setAxes("xy");
@@ -87,7 +85,7 @@ public final class ConvexHullSegmentation {
 	 *
 	 * @return ImagePlus image results of the convex hull algorithm
 	 *
-	 * @see #convexHullDetection(ImagePlus, SegmentationParameters)
+	 * @see #convexHullDetection(ImagePlus)
 	 */
 	private static ImagePlus imageMakingUnion(ImagePlus imagePlusInput,
 	                                          ImagePlus imagePlusXY,
@@ -104,13 +102,13 @@ public final class ConvexHullSegmentation {
 		for (int d = 0; d < imagePlusXY.getNSlices(); ++d) {
 			for (int w = 0; w < imagePlusXY.getWidth(); ++w) {
 				for (int h = 0; h < imagePlusXY.getHeight(); ++h) {
-					if (imageStackXY.getVoxel(w, h, d) != 0 ||
+					if ((imageStackXY.getVoxel(w, h, d) != 0 ||
 					    imageStackYZ.getVoxel(h, d, w) != 0 ||
-					    imageStackXZ.getVoxel(w, d, h) != 0) {
-						if (imageStackOutput.getVoxel(w, h, d) == 0) {
+					    imageStackXZ.getVoxel(w, d, h) != 0) &&
+					    imageStackOutput.getVoxel(w, h, d) == 0) {
 							imageStackOutput.setVoxel(w, h, d, 255);
 						}
-					}
+					
 				}
 			}
 		}

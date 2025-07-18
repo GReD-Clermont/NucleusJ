@@ -18,8 +18,8 @@
 package fr.igred.nucleus.segmentation;
 
 
-import fr.igred.nucleus.core.NucleusSegmentation;
 import fr.igred.nucleus.plugins.PluginParameters;
+import fr.igred.nucleus.utils.ConvexHullDetection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +117,7 @@ public class SegmentationParameters extends PluginParameters {
 		super.getAnalysisParameters();
 		this.headerInfo += "#maxVolumeNucleus:" + maxVolumeNucleus + "\n"
 		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n"
-		                   + "#ConvexHullDetection (" + NucleusSegmentation.CONVEX_HULL_ALGORITHM + "): "
+		                   + "#ConvexHullDetection (" + ConvexHullDetection.CONVEX_HULL_ALGORITHM + "): "
 		                   + convexHullDetection + "\n";
 		return headerInfo;
 	}

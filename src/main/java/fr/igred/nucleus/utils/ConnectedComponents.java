@@ -24,7 +24,6 @@ import java.util.List;
 public class ConnectedComponents {
 	private final List<Double> listLabel = new ArrayList<>();
 	private       double[][]   image;
-	private       String       axesName;
 	
 	
 	/**

@@ -124,7 +124,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		super.setMinimumSize(new Dimension(400, 500));
 		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		super.setLocationRelativeTo(null);
-		autocropConfigFileDialog = new AutocropConfigDialog(this);
+		autocropConfigFileDialog = new AutocropConfigDialog();
 		autocropConfigFileDialog.setVisible(false);
 		
 		container = super.getContentPane();

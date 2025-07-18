@@ -17,7 +17,7 @@
  */
 package fr.igred.nucleus.dialogs;
 
-import fr.igred.nucleus.core.NucleusSegmentation;
+import fr.igred.nucleus.utils.ConvexHullDetection;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -102,7 +102,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		JPanel convexHullPane = new JPanel();
 		convexHullPane.setLayout(new BoxLayout(convexHullPane, BoxLayout.LINE_AXIS));
 		convexHullPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-		JLabel zBox = new JLabel("Convex Hull Detection (" + NucleusSegmentation.CONVEX_HULL_ALGORITHM + ":");
+		JLabel zBox = new JLabel("Convex Hull Detection (" + ConvexHullDetection.CONVEX_HULL_ALGORITHM + ":");
 		convexHullPane.add(zBox);
 		convexHullPane.add(Box.createRigidArea(new Dimension(10, 0)));
 		convexHullDetection.setSelected(true);

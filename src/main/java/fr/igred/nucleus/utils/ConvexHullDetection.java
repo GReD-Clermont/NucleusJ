@@ -36,6 +36,10 @@ import java.util.TreeSet;
  * Currently uses an implementation of the Graham Scan
  */
 public final class ConvexHullDetection {
+	
+	/** Currently used algorithm to calculate nuclei convex hull */
+	public static final String CONVEX_HULL_ALGORITHM = "GRAHAM";
+	
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	

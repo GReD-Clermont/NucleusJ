@@ -97,8 +97,9 @@ class SegmentationTest {
 						runSegmentation(f.getPath(), PATH_TO_OUTPUT + name);
 						LOGGER.debug("Finished process on: {}", name);
 						LOGGER.debug("Checking results...");
-						SegmentationChecker checker = new SegmentationChecker(name);
-						assertTrue(checker.checkValues(f), "Too many differences in segmentation results for " + name);
+						SegmentationChecker checker = new SegmentationChecker(PATH_TO_SEGMENTATION, name);
+						assertTrue(checker.checkValues(f, PATH_TO_OUTPUT),
+						           "Too many differences in segmentation results for " + name);
 					} else {
 						LOGGER.debug("File of type {} skipped", extension);
 					}

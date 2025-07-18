@@ -92,8 +92,8 @@ class AutoCropTest {
 						runAutoCrop(f.toString(), PATH_TO_OUTPUT + name);
 						LOGGER.debug("Finished process on: {}", name);
 						LOGGER.debug("Checking results...");
-						AutocropChecker checker = new AutocropChecker(name);
-						assertTrue(checker.checkValues(f), "Autocrop test failed for file: " + name);
+						AutocropChecker checker = new AutocropChecker(PATH_TO_AUTOCROP, name);
+						assertTrue(checker.checkValues(f, PATH_TO_OUTPUT), "Autocrop test failed for file: " + name);
 					} else {
 						LOGGER.debug("File of type {} skipped: {}", extension, name);
 					}

@@ -48,16 +48,16 @@ public class AutocropChecker {
 	private AutocropResult target = new AutocropResult();
 	
 	
-	public AutocropChecker(String targetPath) {
+	public AutocropChecker(String autocropPath, String targetPath) {
 		pathToCoordinates = "coordinates" + File.separator + FilenameUtils.removeExtension(targetPath) + ".txt";
 		
-		File targetInfoFile = new File(AutoCropTest.PATH_TO_AUTOCROP +
+		File targetInfoFile = new File(autocropPath +
 		                               PATH_TO_TARGET +
 		                               targetPath + File.separator +
 		                               PATH_TO_INFO
 		);
 		
-		File targetCoordFiles = new File(AutoCropTest.PATH_TO_AUTOCROP +
+		File targetCoordFiles = new File(autocropPath +
 		                                 PATH_TO_TARGET +
 		                                 targetPath + File.separator +
 		                                 pathToCoordinates
@@ -68,26 +68,22 @@ public class AutocropChecker {
 	}
 	
 	
-	public boolean checkValues(File file) {
+	private static File getInfoFile(File file, String outputPath) {
+		return new File(outputPath + file.getName() + File.separator + PATH_TO_INFO);
+	}
+	
+	
+	public boolean checkValues(File file, String outputPath) {
 		AutocropResult autocropResult = new AutocropResult();
-		autocropResult = extractGeneralInfo(autocropResult, getInfoFile(file));
-		autocropResult = extractCoordinates(autocropResult, getCoordinatesFile(file));
+		autocropResult = extractGeneralInfo(autocropResult, getInfoFile(file, outputPath));
+		autocropResult = extractCoordinates(autocropResult, getCoordinatesFile(file, outputPath));
 		
 		return checkGeneralValues(autocropResult) && checkCoordinates(autocropResult);
 	}
 	
 	
-	private static File getInfoFile(File file) {
-		return new File(AutoCropTest.PATH_TO_OUTPUT +
-		                file.getName() + File.separator +
-		                PATH_TO_INFO);
-	}
-	
-	
-	private File getCoordinatesFile(File file) {
-		return new File(AutoCropTest.PATH_TO_OUTPUT +
-		                file.getName() + File.separator +
-		                pathToCoordinates);
+	private File getCoordinatesFile(File file, String outputPath) {
+		return new File(outputPath + file.getName() + File.separator + pathToCoordinates);
 	}
 	
 	
