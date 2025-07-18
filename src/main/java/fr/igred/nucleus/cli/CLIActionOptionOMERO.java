@@ -130,7 +130,7 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 			System.console().writer().println(exp.getMessage() + "\n");
 			System.console().writer().println(getHelperInfo());
 			System.exit(1);
-		} catch (Exception exp) {
+		} catch (RuntimeException exp) {
 			System.console().writer().println("Action option \"" +
 			                                  cmd.getOptionValue("action") +
 			                                  "\" not available" + "\n");
