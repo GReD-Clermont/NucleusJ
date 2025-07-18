@@ -221,9 +221,8 @@ public class SegmentationCalling {
 					FilesNames outputFilenames = new FilesNames(fileImg);
 					String     prefix          = outputFilenames.prefixNameFile();
 					
-					String timeStampStart =
-							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
-					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, timeStampStart);
+					String startTime = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, startTime);
 					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, segmentationParameters);
 					
 					nucleusSegmentation.preProcessImage();
@@ -236,9 +235,8 @@ public class SegmentationCalling {
 					convexHullResultLines.put(file.getName(),
 					                          nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
 					
-					timeStampStart =
-							new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
-					LOGGER.info("End: {} at {}", fileImg, timeStampStart);
+					startTime = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					LOGGER.info("End: {} at {}", fileImg, startTime);
 					
 					latch.countDown();
 				} catch (IOException | FormatException e) {
@@ -277,19 +275,18 @@ public class SegmentationCalling {
 	
 	
 	public String runOneImage(String filePath) throws IOException, FormatException {
-		
 		String     log              = "";
 		File       currentFile      = new File(filePath);
+		
 		String     fileImg          = currentFile.toString();
 		FilesNames outPutFilesNames = new FilesNames(fileImg);
 		
 		String prefix = outPutFilesNames.prefixNameFile();
 		LOGGER.info("Current image in process: {}", currentFile);
 		
-		String timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
-		LOGGER.info("Start: {}", timeStampStart);
-		NucleusSegmentation nucleusSegmentation =
-				new NucleusSegmentation(currentFile, segmentationParameters);
+		String startTime = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+		LOGGER.info("Start: {}", startTime);
+		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(currentFile, segmentationParameters);
 		nucleusSegmentation.preProcessImage();
 		nucleusSegmentation.findOTSUMaximisingSphericity();
 		nucleusSegmentation.checkBadCrop(segmentationParameters.inputFolder);
@@ -300,8 +297,8 @@ public class SegmentationCalling {
 		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
 		this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
 		
-		timeStampStart = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
-		LOGGER.info("End: {}", timeStampStart);
+		String endTime = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+		LOGGER.info("End: {}", endTime);
 		return log;
 	}
 	
@@ -354,14 +351,16 @@ public class SegmentationCalling {
 		
 		ProjectWrapper project = client.getProject(output);
 		// Get OTSU dataset ID
-		List<DatasetWrapper> datasets                       = project.getDatasets("OTSU");
-		long                 otsuDataset, convexHullDataset = -1;
+		List<DatasetWrapper> datasets = project.getDatasets("OTSU");
+		
+		long otsuDataset;
+		long convexHullDataset = -1;
 		if (datasets.isEmpty()) {
 			otsuDataset = project.addDataset(client, "OTSU", "").getId();
 		} else {
 			otsuDataset = datasets.get(0).getId();
 		}
-		project = client.getProject(output);
+		project.reload(client);
 		// Get Convex Hull dataset ID
 		if (segmentationParameters.getConvexHullDetection()) {
 			datasets = project.getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM);

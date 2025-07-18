@@ -280,7 +280,7 @@ public class NucleusSegmentation {
 		}
 		
 		if (bestThreshold != -1) {
-			morphologicalCorrection(imageSeg[0]);
+			imageSeg[0] = morphologicalCorrection(imageSeg[0]);
 			checkBorder(imageSeg[0]);
 		}
 	}
@@ -462,11 +462,11 @@ public class NucleusSegmentation {
 	 *
 	 * @param imagePlusSegmented image to be correct
 	 */
-	private static void morphologicalCorrection(ImagePlus imagePlusSegmented) {
+	private static ImagePlus morphologicalCorrection(ImagePlus imagePlusSegmented) {
 		computeOpening(imagePlusSegmented);
 		computeClosing(imagePlusSegmented);
 		// TODO FIX?
-		imagePlusSegmented = FillingHoles.apply2D(imagePlusSegmented);
+		return FillingHoles.apply2D(imagePlusSegmented);
 	}
 	
 	
