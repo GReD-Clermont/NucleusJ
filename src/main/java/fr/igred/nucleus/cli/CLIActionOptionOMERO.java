@@ -58,6 +58,15 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	                                      .desc("Password in OMERO")
 	                                      .numberOfArgs(1)
 	                                      .build();
+	
+	/** Session ID */
+	private final Option sessionID = Option.builder("s")
+	                                       .longOpt("sessionID")
+	                                       .type(String.class)
+	                                       .desc("Session ID in OMERO")
+	                                       .numberOfArgs(1)
+	                                       .build();
+	
 	/** Group user connection */
 	private final Option group    = Option.builder("g")
 	                                      .longOpt("group")
@@ -101,8 +110,12 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		if (!(listArgs.contains("-oc") || listArgs.contains("-omeroConfig"))) {
 			hostname.setRequired(true);
 			port.setRequired(true);
-			username.setRequired(true);
-			group.setRequired(true);
+			if (listArgs.contains("-s")) {
+				sessionID.setRequired(true);
+			} else {
+				username.setRequired(true);
+				group.setRequired(true);
+			}
 		}
 		options.addOption(action);
 		options.addOption(outputFolder);
@@ -111,6 +124,7 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		options.addOption(username);
 		options.addOption(password);
 		options.addOption(group);
+		options.addOption(sessionID);
 		options.addOption(obj);
 		options.addOption(rhf);
 		String inputDescription = "OMERO  inputs 2 information separated with slash separator :  " +

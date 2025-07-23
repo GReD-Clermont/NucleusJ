@@ -85,9 +85,13 @@ public class CLIRunActionOMERO {
 		} else {
 			this.hostname = this.cmd.getOptionValue("hostname");
 			this.port = Integer.parseInt(this.cmd.getOptionValue("port"));
-			this.username = this.cmd.getOptionValue("username");
-			getOMEROPassword();
-			this.groupID = Long.parseLong(this.cmd.getOptionValue("group"));
+			if (this.cmd.hasOption("sessionID")) {
+				this.sessionID = this.cmd.getOptionValue("sessionID");
+			} else {
+				this.username = this.cmd.getOptionValue("username");
+				getOMEROPassword();
+				this.groupID = Long.parseLong(this.cmd.getOptionValue("group"));
+			}
 		}
 		checkOMEROConnection();
 	}
@@ -240,7 +244,7 @@ public class CLIRunActionOMERO {
 	}
 	
 	
-	public void addLoginCredentials(String pathToConfigFile) {
+	private void addLoginCredentials(String pathToConfigFile) {
 		Properties prop = new Properties();
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
 			prop.load(is);
@@ -284,7 +288,7 @@ public class CLIRunActionOMERO {
 	}
 	
 	
-	public void getOMEROPassword() {
+	private void getOMEROPassword() {
 		if (cmd.hasOption("password")) {
 			this.password = cmd.getOptionValue("password").toCharArray();
 		} else {
@@ -295,7 +299,7 @@ public class CLIRunActionOMERO {
 	}
 	
 	
-	public void checkOMEROConnection() {
+	private void checkOMEROConnection() {
 		try {
 			if (sessionID == null) {
 				client.connect(hostname, port, username, password, groupID);
