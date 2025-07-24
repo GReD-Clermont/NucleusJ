@@ -202,6 +202,7 @@ public class AnnotateAutoCrop {
 		List<DatasetWrapper> datasets = project.getDatasets("Z-Projection");
 		if (datasets.isEmpty()) {
 			datasetID = project.addDataset(client, "Z-Projection", "").getId();
+			project.reload(client);
 		} else {
 			datasetID = datasets.get(0).getId();
 		}

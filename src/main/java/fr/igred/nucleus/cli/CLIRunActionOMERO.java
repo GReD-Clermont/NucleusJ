@@ -149,8 +149,8 @@ public class CLIRunActionOMERO {
 				
 				for (int i = 0; i < sizeC; i++) {
 					outputsDat[i] = project.addDataset(client, "raw_C" + i + "_" + name, "").getId();
+					project.reload(client);
 				}
-				
 				autoCrop.runSeveralImageOMERO(images, outputsDat, client);
 			}
 		} else {

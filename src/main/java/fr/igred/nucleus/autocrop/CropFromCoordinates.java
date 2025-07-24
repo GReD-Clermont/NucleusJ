@@ -156,6 +156,7 @@ public class CropFromCoordinates {
 		List<DatasetWrapper> datasets = outputProject.getDatasets("raw_C" + channelToCrop + "_" + rawDataset.getName());
 		if (datasets.isEmpty()) {
 			outputDataset = outputProject.addDataset(client, "raw_C" + channelToCrop + "_" + rawDataset.getName(), "");
+			outputProject.reload(client);
 		} else {
 			outputDataset = datasets.get(0);
 		}

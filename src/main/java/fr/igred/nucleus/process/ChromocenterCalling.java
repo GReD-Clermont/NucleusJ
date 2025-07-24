@@ -174,6 +174,7 @@ public class ChromocenterCalling {
 				/* Create datasets named NodeJ on OMERO and add them to the project */
 				outDataset = project.addDataset(client, outDatasetName, "");
 				DatasetWrapper outDatasetGradient = project.addDataset(client, outDatasetName + "_Gradient", "");
+				project.reload(client);
 				
 				for (ImageWrapper image : images) {
 					try {
@@ -261,6 +262,7 @@ public class ChromocenterCalling {
 		project = client.getProject(Long.parseLong(outputDirectory));
 		/* Creating a Dataset in the Project */
 		outDataset = project.addDataset(client, "NODeJ_" + prefix, "");
+		project.reload(client);
 		/*Import images and tabs to OMERO */
 		outDataset.importImages(client, outputFileName);
 		outDataset.importImages(client, gradientFileName);

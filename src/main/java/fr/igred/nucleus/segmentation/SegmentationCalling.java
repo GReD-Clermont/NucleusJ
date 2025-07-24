@@ -347,6 +347,7 @@ public class SegmentationCalling {
 		long convexHullDataset = -1;
 		if (datasets.isEmpty()) {
 			otsuDataset = project.addDataset(client, "OTSU", "").getId();
+			project.reload(client);
 		} else {
 			otsuDataset = datasets.get(0).getId();
 		}
@@ -356,6 +357,7 @@ public class SegmentationCalling {
 			datasets = project.getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 			if (datasets.isEmpty()) {
 				convexHullDataset = project.addDataset(client, ConvexHullDetection.CONVEX_HULL_ALGORITHM, "").getId();
+				project.reload(client);
 			} else {
 				convexHullDataset = datasets.get(0).getId();
 			}
@@ -401,6 +403,7 @@ public class SegmentationCalling {
 		long                 convexHullDataset;
 		if (datasets.isEmpty()) {
 			otsuDataset = project.addDataset(client, "OTSU", "").getId();
+			project.reload(client);
 		} else {
 			otsuDataset = datasets.get(0).getId();
 		}
@@ -410,6 +413,7 @@ public class SegmentationCalling {
 			datasets = project.getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 			if (datasets.isEmpty()) {
 				convexHullDataset = project.addDataset(client, ConvexHullDetection.CONVEX_HULL_ALGORITHM, "").getId();
+				project.reload(client);
 			} else {
 				convexHullDataset = datasets.get(0).getId();
 			}
