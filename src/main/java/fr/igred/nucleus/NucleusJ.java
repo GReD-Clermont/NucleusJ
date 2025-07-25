@@ -17,15 +17,16 @@
  */
 package fr.igred.nucleus;
 
-import fr.igred.omero.exception.AccessException;
-import fr.igred.omero.exception.OMEROServerError;
-import fr.igred.omero.exception.ServiceException;
 import fr.igred.nucleus.cli.CLIActionOptionCmdLine;
 import fr.igred.nucleus.cli.CLIActionOptionOMERO;
 import fr.igred.nucleus.cli.CLIHelper;
 import fr.igred.nucleus.cli.CLIRunAction;
 import fr.igred.nucleus.cli.CLIRunActionOMERO;
 import fr.igred.nucleus.dialogs.MainGui;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
+import ij.util.ThreadUtil;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,26 +50,47 @@ public final class NucleusJ {
 	}
 	
 	
-	public static void main(String[] args)
-	throws AccessException, ServiceException, OMEROServerError,
-	       IOException, ExecutionException, InterruptedException, FormatException {
+	public static void runOMEROCLI(String[] args) {
+		CLIActionOptionOMERO command = new CLIActionOptionOMERO(args);
+		
+		CLIRunActionOMERO cliOMERO = new CLIRunActionOMERO(command.getCmd());
+		try {
+			cliOMERO.run();
+		} catch (AccessException | ServiceException | OMEROServerError | ExecutionException e) {
+			LOGGER.error("Error while running OMERO CLI command", e);
+		} catch (IOException | FormatException e) {
+			LOGGER.error("IO error while running OMERO CLI command", e);
+		} catch (InterruptedException e) {
+			LOGGER.error("Thread interrupted while running CLI command", e);
+			Thread.currentThread().interrupt(); // Restore interrupted status
+		}
+	}
+	
+	
+	public static void runCLI(String[] args) {
+		CLIActionOptionCmdLine command = new CLIActionOptionCmdLine(args);
+		
+		CLIRunAction cli = new CLIRunAction(command.getCmd());
+		try {
+			cli.run();
+		} catch (IOException | FormatException e) {
+			LOGGER.error("IO error while running CLI command", e);
+		}
+	}
+	
+	
+	public static void main(String[] args) {
 		List<String> listArgs = Arrays.asList(args);
 		
 		/* Allow IJ threads from thread pool to timeout */
-		//ThreadUtil.threadPoolExecutor.allowCoreThreadTimeOut(true);
+		ThreadUtil.threadPoolExecutor.allowCoreThreadTimeOut(true);
 		
 		if (listArgs.contains("-h") || listArgs.contains("-help")) {
 			CLIHelper.run(args);
 		} else if (listArgs.contains("-ome") || listArgs.contains("-omero")) {
-			CLIActionOptionOMERO command = new CLIActionOptionOMERO(args);
-			
-			CLIRunActionOMERO cliOMERO = new CLIRunActionOMERO(command.getCmd());
-			cliOMERO.run();
+			runOMEROCLI(args);
 		} else if (listArgs.contains("-nj") || listArgs.contains("-cli") || listArgs.contains("-CLI")) {
-			CLIActionOptionCmdLine command = new CLIActionOptionCmdLine(args);
-			
-			CLIRunAction cli = new CLIRunAction(command.getCmd());
-			cli.run();
+			runCLI(args);
 		} else {
 			LOGGER.info("Starting NucleusJ GUI...");
 			SwingUtilities.invokeLater(() -> {
@@ -76,7 +98,7 @@ public final class NucleusJ {
 				gui.setVisible(true);
 			});
 		}
-		//ThreadUtil.threadPoolExecutor.shutdown();
+		ThreadUtil.threadPoolExecutor.shutdown();
 	}
 	
 }
