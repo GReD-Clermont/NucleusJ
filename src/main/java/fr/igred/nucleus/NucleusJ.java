@@ -86,7 +86,13 @@ public final class NucleusJ {
 		// Allow threads from thread pool to timeout
 		ThreadUtil.threadPoolExecutor.allowCoreThreadTimeOut(true);
 		
-		if (!listArgs.isEmpty()) {
+		if (listArgs.isEmpty()) {
+			LOGGER.info("Starting GUI...");
+			SwingUtilities.invokeLater(() -> {
+				MainGui gui = new MainGui();
+				gui.setVisible(true);
+			});
+		} else {
 			if (listArgs.contains("-h") || listArgs.contains("-help")) {
 				CLIHelper.run(args);
 			} else if (listArgs.contains("-ome") || listArgs.contains("-omero")) {
@@ -98,12 +104,6 @@ public final class NucleusJ {
 			// Shutdown the thread pool executor to clean up resources
 			ThreadUtil.threadPoolExecutor.shutdown();
 			LOGGER.info("NucleusJ is now closing.");
-		} else {
-			LOGGER.info("Starting GUI...");
-			SwingUtilities.invokeLater(() -> {
-				MainGui gui = new MainGui();
-				gui.setVisible(true);
-			});
 		}
 	}
 	
