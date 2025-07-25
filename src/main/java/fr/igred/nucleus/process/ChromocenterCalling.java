@@ -31,7 +31,6 @@ import fr.igred.nucleus.plugins.ChromocenterParameters;
 import fr.igred.nucleus.utils2.NucleusChromocentersAnalysis;
 import ij.IJ;
 import ij.ImagePlus;
-import loci.common.DebugTools;
 import loci.formats.FormatException;
 import loci.plugins.BF;
 import org.slf4j.Logger;
@@ -83,7 +82,6 @@ public class ChromocenterCalling {
 	 * @throws FormatException
 	 */
 	public void runSeveralImages2() throws IOException, FormatException {
-		DebugTools.enableLogging("OFF");
 		Directory directoryInput = new Directory(chromocenterParameters.getInputFolder());
 		directoryInput.listImageFiles(chromocenterParameters.getInputFolder());
 		directoryInput.checkIfEmpty();

@@ -22,7 +22,7 @@ import org.apache.commons.cli.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static org.apache.commons.lang.Validate.isTrue;
+import static org.apache.commons.lang3.Validate.isTrue;
 
 
 /** class to handle command line option */

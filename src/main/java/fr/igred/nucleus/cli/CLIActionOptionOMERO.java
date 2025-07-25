@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.apache.commons.lang.Validate.isTrue;
+import static org.apache.commons.lang3.Validate.isTrue;
 
 
 /** Inherited class to handle OMERO command line option */
