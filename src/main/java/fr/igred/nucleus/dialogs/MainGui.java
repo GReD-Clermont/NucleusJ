@@ -157,6 +157,7 @@ public class MainGui extends JFrame {
 			PlugIn computeCcParameters = new ChromocentersAnalysisBatchPlugin_();
 			computeCcParameters.run("");
 		});
+		LOGGER.info("Main GUI initialized");
 	}
 	
 }
