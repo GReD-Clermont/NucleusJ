@@ -81,8 +81,9 @@ public final class NucleusJ {
 	
 	public static void main(String[] args) {
 		List<String> listArgs = Arrays.asList(args);
+		LOGGER.info("Starting NucleusJ version: {}", Version.get());
 		
-		/* Allow IJ threads from thread pool to timeout */
+		// Allow threads from thread pool to timeout
 		ThreadUtil.threadPoolExecutor.allowCoreThreadTimeOut(true);
 		
 		if (listArgs.contains("-h") || listArgs.contains("-help")) {
@@ -92,13 +93,16 @@ public final class NucleusJ {
 		} else if (listArgs.contains("-nj") || listArgs.contains("-cli") || listArgs.contains("-CLI")) {
 			runCLI(args);
 		} else {
-			LOGGER.info("Starting NucleusJ GUI...");
+			LOGGER.info("Starting GUI...");
 			SwingUtilities.invokeLater(() -> {
 				MainGui gui = new MainGui();
 				gui.setVisible(true);
 			});
 		}
+		// Shutdown the thread pool executor to clean up resources
+		LOGGER.info("Shutting down thread pool executor...");
 		ThreadUtil.threadPoolExecutor.shutdown();
+		LOGGER.info("NucleusJ is now closing.");
 	}
 	
 }
