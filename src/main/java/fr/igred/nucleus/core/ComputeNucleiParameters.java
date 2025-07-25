@@ -36,9 +36,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import static fr.igred.nucleus.io.ImageSaver.saveFile;
@@ -123,9 +124,9 @@ public class ComputeNucleiParameters {
 				LOGGER.error("An error occurred.", e);
 			}
 		}
-		LocalDate        date       = LocalDate.now();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy-MM-dd-HH.mm.ss");
-		currentTime = dateFormat.format(date);
+		LocalDateTime     date      = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("-yyyy-MM-dd-HH.mm.ss", Locale.ROOT);
+		currentTime = formatter.format(date);
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(pluginParameters.getOutputFolder()
 		                                                         + directoryRawInput.getSeparator()
 		                                                         + segDatasetName + currentTime + "_.csv");

@@ -18,6 +18,9 @@
 package fr.igred.nucleus.segmentation;
 
 import fr.igred.nucleus.utils.ConvexHullDetection;
+import fr.igred.nucleus.io.Directory;
+import fr.igred.nucleus.io.FilesNames;
+import fr.igred.nucleus.io.OutputTextFile;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
@@ -26,9 +29,6 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import fr.igred.omero.roi.ROIWrapper;
-import fr.igred.nucleus.io.Directory;
-import fr.igred.nucleus.io.FilesNames;
-import fr.igred.nucleus.io.OutputTextFile;
 import ij.ImagePlus;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
@@ -41,10 +41,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -293,20 +295,20 @@ public class SegmentationCalling {
 	
 	
 	public void saveCropGeneralInfo() {
-		LocalDate        date       = LocalDate.now();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
+		LocalDateTime     date      = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss", Locale.ROOT);
 		LOGGER.info("Saving crop general info.");
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(params.getOutputFolder() +
 		                                                         "OTSU" +
 		                                                         File.separator +
-		                                                         dateFormat.format(date) +
+		                                                         formatter.format(date) +
 		                                                         "-result_Segmentation_Analyse_OTSU.csv");
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU, true);
 		if (params.getConvexHullDetection()) {
 			OutputTextFile outputConvexHull = new OutputTextFile(params.getOutputFolder() +
 			                                                     ConvexHullDetection.CONVEX_HULL_ALGORITHM +
 			                                                     File.separator +
-			                                                     dateFormat.format(date) +
+			                                                     formatter.format(date) +
 			                                                     "-result_Segmentation_Analyse_" +
 			                                                     ConvexHullDetection.CONVEX_HULL_ALGORITHM +
 			                                                     ".csv");
@@ -442,7 +444,8 @@ public class SegmentationCalling {
 			public void run() {
 				try {
 					String fileImg = img.getName();
-					String start   = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					
+					String start = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, start);
 					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(img, imp, params);
 					nucleusSegmentation.preProcessImage();
@@ -534,8 +537,8 @@ public class SegmentationCalling {
 	
 	public void saveCropGeneralInfoOmero(Client client, Long output)
 	throws ServiceException, AccessException, ExecutionException, InterruptedException {
-		LocalDate        date       = LocalDate.now();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
+		LocalDateTime     date      = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss", Locale.ROOT);
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		ProjectWrapper project = client.getProject(output);
@@ -544,22 +547,22 @@ public class SegmentationCalling {
 		/* Create paths for the files (Otsu,Graham.Parade)*/
 		String path = "." +
 		              File.separator +
-		              dateFormat.format(date) +
+		              formatter.format(date) +
 		              "_" +
 		              imgDatasetName +
 		              "_" +
 		              "result_Segmentation_OTSU.csv";
 		String pathGraham = "." + File.separator +
-		                    dateFormat.format(date) + "_" +
+		                    formatter.format(date) + "_" +
 		                    imgDatasetName + "_" +
 		                    "result_Segmentation_GRAHAM.csv";
 		String pathParade = "." +
 		                    File.separator +
-		                    dateFormat.format(date) + "_" +
+		                    formatter.format(date) + "_" +
 		                    imgDatasetName + "_" +
 		                    "result_Segmentation_OTSU_parade.csv";
 		String pathParadeGraham = "." + File.separator +
-		                          dateFormat.format(date) + "_" +
+		                          formatter.format(date) + "_" +
 		                          imgDatasetName + "_" +
 		                          "result_Segmentation_GRAHAM_parade.csv";
 		try {
