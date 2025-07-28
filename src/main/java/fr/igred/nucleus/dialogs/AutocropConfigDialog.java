@@ -49,9 +49,9 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	private final JTextField maxVolume                   = new JTextField();
 	private final JTextField thresholdOTSUComputing      = new JTextField();
 	private final JTextField channelToComputeThreshold   = new JTextField();
-	private final JTextField slicesOTSUComputing         = new JTextField();
-	private final JTextField boxesPercentSurfaceToFilter = new JTextField();
-	private final JCheckBox  regroupBoxes                = new JCheckBox();
+	private final JTextField slicesOTSUComputing = new JTextField();
+	private final JTextField boxesSurfacePercent = new JTextField();
+	private final JCheckBox  regroupBoxes        = new JCheckBox();
 	private final JCheckBox  addCalibrationBox           = new JCheckBox();
 	private final JPanel     cropBoxPane;
 	private       Boolean    isRegroupBoxesSelected      = true;
@@ -193,45 +193,45 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
         -------------------------- Other ---------------------------------------
         \*\/*/
 		
-		JPanel thresholdOTSUComputingPanel = new JPanel();
-		thresholdOTSUComputingPanel.setLayout(new BoxLayout(thresholdOTSUComputingPanel, BoxLayout.LINE_AXIS));
-		thresholdOTSUComputingPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+		JPanel otsuThreshPanel = new JPanel();
+		otsuThreshPanel.setLayout(new BoxLayout(otsuThreshPanel, BoxLayout.LINE_AXIS));
+		otsuThreshPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		JLabel tOTSUValue = new JLabel("Threshold OTSU computing:");
-		thresholdOTSUComputingPanel.add(tOTSUValue);
-		thresholdOTSUComputingPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		otsuThreshPanel.add(tOTSUValue);
+		otsuThreshPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		thresholdOTSUComputing.setText("20");
 		thresholdOTSUComputing.setMinimumSize(new Dimension(100, 10));
-		thresholdOTSUComputingPanel.add(thresholdOTSUComputing);
+		otsuThreshPanel.add(thresholdOTSUComputing);
 		
-		JPanel channelToComputeThresholdPanel = new JPanel();
-		channelToComputeThresholdPanel.setLayout(new BoxLayout(channelToComputeThresholdPanel, BoxLayout.LINE_AXIS));
-		channelToComputeThresholdPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-		JLabel thresholdChannelsValue = new JLabel("Channels to compute threshold:");
-		channelToComputeThresholdPanel.add(thresholdChannelsValue);
-		channelToComputeThresholdPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		JPanel threshChannelPanel = new JPanel();
+		threshChannelPanel.setLayout(new BoxLayout(threshChannelPanel, BoxLayout.LINE_AXIS));
+		threshChannelPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+		JLabel threshChannelsValue = new JLabel("Channels to compute threshold:");
+		threshChannelPanel.add(threshChannelsValue);
+		threshChannelPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		channelToComputeThreshold.setText("0");
 		channelToComputeThreshold.setMinimumSize(new Dimension(100, 10));
-		channelToComputeThresholdPanel.add(channelToComputeThreshold);
+		threshChannelPanel.add(channelToComputeThreshold);
 		
-		JPanel slicesOTSUComputingPanel = new JPanel();
-		slicesOTSUComputingPanel.setLayout(new BoxLayout(slicesOTSUComputingPanel, BoxLayout.LINE_AXIS));
-		slicesOTSUComputingPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+		JPanel otsuSlicesPanel = new JPanel();
+		otsuSlicesPanel.setLayout(new BoxLayout(otsuSlicesPanel, BoxLayout.LINE_AXIS));
+		otsuSlicesPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		JLabel slicesOTSUValue = new JLabel("Slices OTSU computing:");
-		slicesOTSUComputingPanel.add(slicesOTSUValue);
-		slicesOTSUComputingPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		otsuSlicesPanel.add(slicesOTSUValue);
+		otsuSlicesPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		slicesOTSUComputing.setText("0");
 		slicesOTSUComputing.setMinimumSize(new Dimension(100, 10));
-		slicesOTSUComputingPanel.add(slicesOTSUComputing);
+		otsuSlicesPanel.add(slicesOTSUComputing);
 		
-		JPanel boxesPercentSurfacePanel = new JPanel();
-		boxesPercentSurfacePanel.setLayout(new BoxLayout(boxesPercentSurfacePanel, BoxLayout.LINE_AXIS));
-		boxesPercentSurfacePanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+		JPanel boxesOnSurfacePanel = new JPanel();
+		boxesOnSurfacePanel.setLayout(new BoxLayout(boxesOnSurfacePanel, BoxLayout.LINE_AXIS));
+		boxesOnSurfacePanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
 		JLabel boxesSurfaceValue = new JLabel("Boxes percent surface to filter:");
-		boxesPercentSurfacePanel.add(boxesSurfaceValue);
-		boxesPercentSurfacePanel.add(Box.createRigidArea(new Dimension(10, 0)));
-		boxesPercentSurfaceToFilter.setText("50");
-		boxesPercentSurfaceToFilter.setMinimumSize(new Dimension(100, 10));
-		boxesPercentSurfacePanel.add(boxesPercentSurfaceToFilter);
+		boxesOnSurfacePanel.add(boxesSurfaceValue);
+		boxesOnSurfacePanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		boxesSurfacePercent.setText("50");
+		boxesSurfacePercent.setMinimumSize(new Dimension(100, 10));
+		boxesOnSurfacePanel.add(boxesSurfacePercent);
 		
 		JPanel regroupBoxesPanel = new JPanel();
 		regroupBoxesPanel.setLayout(new BoxLayout(regroupBoxesPanel, BoxLayout.LINE_AXIS));
@@ -244,10 +244,10 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		regroupBoxes.addItemListener(this);
 		regroupBoxesPanel.add(regroupBoxes);
 		
-		volumeNucleus.add(thresholdOTSUComputingPanel);
-		volumeNucleus.add(channelToComputeThresholdPanel);
-		volumeNucleus.add(slicesOTSUComputingPanel);
-		volumeNucleus.add(boxesPercentSurfacePanel);
+		volumeNucleus.add(otsuThreshPanel);
+		volumeNucleus.add(threshChannelPanel);
+		volumeNucleus.add(otsuSlicesPanel);
+		volumeNucleus.add(boxesOnSurfacePanel);
 		volumeNucleus.add(regroupBoxesPanel);
 		
         /*/\*\
@@ -331,8 +331,8 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	}
 	
 	
-	public String getBoxesPercentSurfaceToFilter() {
-		return boxesPercentSurfaceToFilter.getText();
+	public String getBoxesSurfacePercent() {
+		return boxesSurfacePercent.getText();
 	}
 	
 	

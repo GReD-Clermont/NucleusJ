@@ -44,7 +44,7 @@ public class ChromocenterSegmentation {
 	private final ImagePlus[] raw;
 	private final ImagePlus[] segNuc;
 	
-	private final ChromocenterParameters chromocenterParams;
+	private final ChromocenterParameters params;
 	
 	private final String output;
 	
@@ -67,20 +67,20 @@ public class ChromocenterSegmentation {
 	public ChromocenterSegmentation(ImagePlus[] raw,
 	                                ImagePlus[] segNuc,
 	                                String outputFileName,
-	                                ChromocenterParameters chromocenterParameters) {
-		chromocenterParams = chromocenterParameters;
+	                                ChromocenterParameters params) {
+		this.params = params;
 		this.raw = raw;
 		this.segNuc = segNuc;
 		this.output = outputFileName;
 		setNbPixelNuc3D();
-		int initialV = chromocenterParameters.neighbours;
+		int initialV = params.neighbours;
 		LOGGER.info("\t{}", initialV);
-		if (!chromocenterParams.noChange && nbPixelNuc * getVoxelVolume3D() > 50) {
-			this.neigh = (int) (chromocenterParams.neighbours * 2.5);
-			this.factor = chromocenterParams.factor + 1;
+		if (!this.params.noChange && nbPixelNuc * getVoxelVolume3D() > 50) {
+			this.neigh = (int) (this.params.neighbours * 2.5);
+			this.factor = this.params.factor + 1;
 		} else {
-			this.neigh = chromocenterParams.neighbours;
-			this.factor = chromocenterParams.factor;
+			this.neigh = this.params.neighbours;
+			this.factor = this.params.factor;
 		}
 		LOGGER.info("\t{} {}{}", neigh, factor, System.lineSeparator());
 	}
@@ -94,19 +94,19 @@ public class ChromocenterSegmentation {
 	 */
 	
 	public void runCC3D(String pathGradient) {
-		if (chromocenterParams.gaussianOnRaw) {
+		if (params.gaussianOnRaw) {
 			GaussianBlur3D.blur(raw[0],
-			                    chromocenterParams.gaussianBlurXsigma,
-			                    chromocenterParams.gaussianBlurYsigma,
-			                    chromocenterParams.gaussianBlurZsigma);
+			                    params.xGaussianSigma,
+			                    params.yGaussianSigma,
+			                    params.zGaussianSigma);
 		}
 		
 		ImagePlus   imageGradient = imgGradient3D();
 		Calibration cal           = raw[0].getCalibration();
 		GaussianBlur3D.blur(imageGradient,
-		                    chromocenterParams.gaussianBlurXsigma,
-		                    chromocenterParams.gaussianBlurYsigma,
-		                    chromocenterParams.gaussianBlurZsigma);
+		                    params.xGaussianSigma,
+		                    params.yGaussianSigma,
+		                    params.zGaussianSigma);
 		imageGradient.setCalibration(cal);
 		ImageSaver.saveFile(imageGradient, pathGradient);
 		computeAverage3D(imageGradient);
@@ -115,7 +115,7 @@ public class ChromocenterSegmentation {
 		LOGGER.info("{} {} avg {} std {}", output, threshold, avgNucIntensity, stdDevNucIntensity);
 		imageGradient = binarize3D(imageGradient);
 		imageGradient.setCalibration(cal);
-		if (chromocenterParams.sizeFilterConnectedComponent) {
+		if (params.sizeFilter) {
 			imageGradient = componentSizeFilter3D(imageGradient);
 			imageGradient.setCalibration(cal);
 		}
@@ -299,9 +299,9 @@ public class ChromocenterSegmentation {
 			Double  cle    = entry.getKey();
 			Integer valeur = entry.getValue();
 			if ((valeur * getVoxelVolume3D() <
-			     chromocenterParams.minSizeConnectedComponent ||
+			     params.minSize ||
 			     valeur * getVoxelVolume3D() >
-			     chromocenterParams.maxSizeConnectedComponent) && valeur > 1) {
+			     params.maxSize) && valeur > 1) {
 				for (int k = 0; k < raw[0].getNSlices(); ++k) {
 					for (int i = 0; i < raw[0].getWidth(); ++i) {
 						for (int j = 0; j < raw[0].getHeight(); ++j) {

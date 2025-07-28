@@ -198,9 +198,8 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 	
 	/** @param args arguments */
 	public static void main(String[] args) {
-		ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog =
-				new ChromocenterSegmentationPipelineBatchDialog();
-		chromocenterSegmentationPipelineBatchDialog.setLocationRelativeTo(null);
+		ChromocenterSegmentationPipelineBatchDialog ccSegDialog = new ChromocenterSegmentationPipelineBatchDialog();
+		ccSegDialog.setLocationRelativeTo(null);
 	}
 	
 	
@@ -323,12 +322,12 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 	 *
 	 */
 	private static class QuitListener implements ActionListener {
-		final ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog;
+		final ChromocenterSegmentationPipelineBatchDialog ccSegDialog;
 		
 		
-		/** @param chromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog GUI */
-		QuitListener(ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog) {
-			this.chromocenterSegmentationPipelineBatchDialog = chromocenterSegmentationPipelineBatchDialog;
+		/** @param ccSegDialog chromocenterSegmentationPipelineBatchDialog GUI */
+		QuitListener(ChromocenterSegmentationPipelineBatchDialog ccSegDialog) {
+			this.ccSegDialog = ccSegDialog;
 		}
 		
 		
@@ -336,19 +335,19 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		 *
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			chromocenterSegmentationPipelineBatchDialog.dispose();
+			ccSegDialog.dispose();
 		}
 		
 	}
 	
 	/** Classes listener to interact with the several elements of the window */
 	private class StartListener implements ActionListener {
-		final ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog;
+		final ChromocenterSegmentationPipelineBatchDialog ccSegDialog;
 		
 		
-		/** @param chromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog GUI */
-		StartListener(ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog) {
-			this.chromocenterSegmentationPipelineBatchDialog = chromocenterSegmentationPipelineBatchDialog;
+		/** @param ccSegDialog chromocenterSegmentationPipelineBatchDialog GUI */
+		StartListener(ChromocenterSegmentationPipelineBatchDialog ccSegDialog) {
+			this.ccSegDialog = ccSegDialog;
 		}
 		
 		
@@ -363,7 +362,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 				                              JOptionPane.ERROR_MESSAGE);
 			} else {
 				start = true;
-				chromocenterSegmentationPipelineBatchDialog.dispose();
+				ccSegDialog.dispose();
 			}
 		}
 		

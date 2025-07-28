@@ -57,9 +57,9 @@ public class AutocropParameters extends PluginParameters {
 	/** Slice start to compute OTSU threshold */
 	private int     slicesOTSUComputing;
 	/** Surface percent of boxes to groups them */
-	private int     boxesPercentSurfaceToFilter = 50;
+	private int     boxesSurfacePercent = 50;
 	/** Activation of boxes regrouping */
-	private boolean boxesRegrouping             = true;
+	private boolean boxesRegrouping     = true;
 	
 	
 	/**
@@ -76,30 +76,30 @@ public class AutocropParameters extends PluginParameters {
 	/**
 	 * Constructor with all manual parameters 2
 	 *
-	 * @param inputFolder                 Path folder containing Images
-	 * @param outputFolder                Path folder output analyse
-	 * @param xCropBoxSize                Number of voxels add in x axis around object
-	 * @param yCropBoxSize                Number of voxels add in z axis around object
-	 * @param zCropBoxSize                Number of stack add in z axis around object
-	 * @param channelToComputeThreshold   Channel number to compute OTSU
-	 * @param slicesOTSUComputing         Slice start to compute OTSU
-	 * @param thresholdOTSUComputing      Minimum OTSU threshold used
-	 * @param maxVolumeNucleus            Volume maximum of objects detected
-	 * @param minVolumeNucleus            Volume minimum of objects detected
-	 * @param boxesPercentSurfaceToFilter Surface percent of boxes to groups them
-	 * @param boxesRegrouping             Activation of boxes regrouping
+	 * @param inputFolder         Path folder containing Images
+	 * @param outputFolder        Path folder output analyse
+	 * @param xCropBoxSize        Number of voxels add in x axis around object
+	 * @param yCropBoxSize        Number of voxels add in z axis around object
+	 * @param zCropBoxSize        Number of stack add in z axis around object
+	 * @param otsuStartSlice      Slice start to compute OTSU
+	 * @param otsuMinThreshold    Minimum OTSU threshold used
+	 * @param thresholdChannel    Channel number to compute OTSU
+	 * @param maxVolumeNucleus    Volume maximum of objects detected
+	 * @param minVolumeNucleus    Volume minimum of objects detected
+	 * @param boxesSurfacePercent Surface percent of boxes to groups them
+	 * @param boxesRegrouping     Activation of boxes regrouping
 	 */
 	public AutocropParameters(String inputFolder, String outputFolder,
 	                          int xCropBoxSize,
 	                          int yCropBoxSize,
 	                          int zCropBoxSize,
 	                          int numberFontSize,
-	                          int slicesOTSUComputing,
-	                          int thresholdOTSUComputing,
-	                          int channelToComputeThreshold,
+	                          int otsuStartSlice,
+	                          int otsuMinThreshold,
+	                          int thresholdChannel,
 	                          int minVolumeNucleus,
 	                          int maxVolumeNucleus,
-	                          int boxesPercentSurfaceToFilter,
+	                          int boxesSurfacePercent,
 	                          boolean boxesRegrouping) {
 		
 		super(inputFolder, outputFolder);
@@ -107,34 +107,34 @@ public class AutocropParameters extends PluginParameters {
 		this.yCropBoxSize = yCropBoxSize;
 		this.zCropBoxSize = zCropBoxSize;
 		this.numberFontSize = numberFontSize;
-		this.thresholdOTSUComputing = thresholdOTSUComputing;
-		this.slicesOTSUComputing = slicesOTSUComputing;
-		this.channelToComputeThreshold = channelToComputeThreshold;
+		this.thresholdOTSUComputing = otsuMinThreshold;
+		this.slicesOTSUComputing = otsuStartSlice;
+		this.channelToComputeThreshold = thresholdChannel;
 		this.maxVolumeNucleus = maxVolumeNucleus;
 		this.minVolumeNucleus = minVolumeNucleus;
 		this.boxesRegrouping = boxesRegrouping;
-		this.boxesPercentSurfaceToFilter = boxesPercentSurfaceToFilter;
+		this.boxesSurfacePercent = boxesSurfacePercent;
 	}
 	
 	
 	/**
 	 * Constructor with box size modification and slice number used to start OTSU threshold calculation to last slice
 	 *
-	 * @param inputFolder                 Path folder containing Images
-	 * @param outputFolder                Path folder output analyse
-	 * @param xCal                        Image calibration X
-	 * @param yCal                        Image calibration Y
-	 * @param zCal                        Image calibration Z
-	 * @param xCropBoxSize                Number of voxels add in x axis around object
-	 * @param yCropBoxSize                Number of voxels add in z axis around object
-	 * @param zCropBoxSize                Number of stack add in z axis around object
-	 * @param channelToComputeThreshold   Channel number to compute OTSU
-	 * @param slicesOTSUComputing         Slice start to compute OTSU
-	 * @param thresholdOTSUComputing      Minimum OTSU threshold used
-	 * @param maxVolumeNucleus            Volume maximum of objects detected
-	 * @param minVolumeNucleus            Volume minimum of objects detected
-	 * @param boxesPercentSurfaceToFilter Surface percent of boxes to groups them
-	 * @param regroupBoxes                Activation of boxes regrouping
+	 * @param inputFolder         Path folder containing Images
+	 * @param outputFolder        Path folder output analyse
+	 * @param xCal                Image calibration X
+	 * @param yCal                Image calibration Y
+	 * @param zCal                Image calibration Z
+	 * @param xCropBoxSize        Number of voxels add in x axis around object
+	 * @param yCropBoxSize        Number of voxels add in z axis around object
+	 * @param zCropBoxSize        Number of stack add in z axis around object
+	 * @param thresholdChannel    Channel number to compute OTSU
+	 * @param otsuStartSlice      Slice start to compute OTSU
+	 * @param otsuMinThreshold    Minimum OTSU threshold used
+	 * @param maxVolumeNucleus    Volume maximum of objects detected
+	 * @param minVolumeNucleus    Volume minimum of objects detected
+	 * @param boxesSurfacePercent Surface percent of boxes to groups them
+	 * @param regroupBoxes        Activation of boxes regrouping
 	 */
 	public AutocropParameters(String inputFolder, String outputFolder,
 	                          double xCal,
@@ -144,27 +144,25 @@ public class AutocropParameters extends PluginParameters {
 	                          int yCropBoxSize,
 	                          int zCropBoxSize,
 	                          int numberFontSize,
-	                          int slicesOTSUComputing,
-	                          int thresholdOTSUComputing,
-	                          int channelToComputeThreshold,
+	                          int otsuStartSlice,
+	                          int otsuMinThreshold,
+	                          int thresholdChannel,
 	                          int minVolumeNucleus,
 	                          int maxVolumeNucleus,
-	                          int boxesPercentSurfaceToFilter,
+	                          int boxesSurfacePercent,
 	                          boolean regroupBoxes) {
-		
 		super(inputFolder, outputFolder, xCal, yCal, zCal);
 		this.xCropBoxSize = xCropBoxSize;
 		this.yCropBoxSize = yCropBoxSize;
 		this.zCropBoxSize = zCropBoxSize;
 		this.numberFontSize = numberFontSize;
-		this.thresholdOTSUComputing = thresholdOTSUComputing;
-		this.slicesOTSUComputing = slicesOTSUComputing;
-		this.channelToComputeThreshold = channelToComputeThreshold;
+		this.thresholdOTSUComputing = otsuMinThreshold;
+		this.slicesOTSUComputing = otsuStartSlice;
+		this.channelToComputeThreshold = thresholdChannel;
 		this.maxVolumeNucleus = maxVolumeNucleus;
 		this.minVolumeNucleus = minVolumeNucleus;
-		this.boxesPercentSurfaceToFilter = boxesPercentSurfaceToFilter;
+		this.boxesSurfacePercent = boxesSurfacePercent;
 		this.boxesRegrouping = regroupBoxes;
-		
 	}
 	
 	
@@ -223,7 +221,7 @@ public class AutocropParameters extends PluginParameters {
 					this.minVolumeNucleus = parseInt(prop.getProperty("minVolumeNucleus"));
 					break;
 				case "boxesPercentSurfaceToFilter":
-					this.boxesPercentSurfaceToFilter = parseInt(prop.getProperty("boxesPercentSurfaceToFilter"));
+					this.boxesSurfacePercent = parseInt(prop.getProperty("boxesPercentSurfaceToFilter"));
 					break;
 				case "boxesRegrouping":
 					this.boxesRegrouping = Boolean.parseBoolean(prop.getProperty("boxesRegrouping"));
@@ -258,7 +256,7 @@ public class AutocropParameters extends PluginParameters {
 		                 "#maxVolumeNucleus:" + maxVolumeNucleus + eol +
 		                 "#minVolumeNucleus: " + minVolumeNucleus + eol +
 		                 "#boxesRegrouping: " + boxesRegrouping + eol +
-		                 "#boxesPercentSurfaceToFilter: " + boxesPercentSurfaceToFilter + eol;
+		                 "#boxesPercentSurfaceToFilter: " + boxesSurfacePercent + eol;
 		setHeaderInfo(getHeaderInfo() + newInfo);
 		
 		return getHeaderInfo();
@@ -370,8 +368,8 @@ public class AutocropParameters extends PluginParameters {
 	 *
 	 * @return percentage surface
 	 */
-	public int getBoxesPercentSurfaceToFilter() {
-		return boxesPercentSurfaceToFilter;
+	public int getBoxesSurfacePercent() {
+		return boxesSurfacePercent;
 	}
 	
 }

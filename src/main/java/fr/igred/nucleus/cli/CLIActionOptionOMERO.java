@@ -164,15 +164,15 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	 * @return boolean existing action
 	 */
 	private static boolean availableActionOMERO(String action) {
-		Collection<String> actionAvailableInOMERO = new ArrayList<>(7);
-		actionAvailableInOMERO.add("autocrop");
-		actionAvailableInOMERO.add("segmentation");
-		actionAvailableInOMERO.add("generateOverlay");
-		actionAvailableInOMERO.add("cropFromCoordinate");
-		actionAvailableInOMERO.add("computeParameters");
-		actionAvailableInOMERO.add("segCC");
-		actionAvailableInOMERO.add("computeCcParameters");
-		return actionAvailableInOMERO.contains(action);
+		Collection<String> omeroActions = new ArrayList<>(7);
+		omeroActions.add("autocrop");
+		omeroActions.add("segmentation");
+		omeroActions.add("generateOverlay");
+		omeroActions.add("cropFromCoordinate");
+		omeroActions.add("computeParameters");
+		omeroActions.add("segCC");
+		omeroActions.add("computeCcParameters");
+		return omeroActions.contains(action);
 	}
 	
 	

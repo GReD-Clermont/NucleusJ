@@ -387,42 +387,42 @@ public class CLIRunActionOMERO {
 	
 	
 	private void runSegCC() {
-		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(".", ".", ".");
+		ChromocenterParameters params = new ChromocenterParameters(".", ".", ".");
 		if (cmd.hasOption("isG")) {
-			chromocenterParameters.gaussianOnRaw = true;
+			params.gaussianOnRaw = true;
 		}
 		if (cmd.hasOption("isF")) {
-			chromocenterParameters.sizeFilterConnectedComponent = true;
+			params.sizeFilter = true;
 		}
 		if (cmd.hasOption("noC")) {
-			chromocenterParameters.noChange = true;
+			params.noChange = true;
 		}
 		if (cmd.hasOption("gX")) {
-			chromocenterParameters.gaussianBlurXsigma = Double.parseDouble(cmd.getOptionValue("gX"));
+			params.xGaussianSigma = Double.parseDouble(cmd.getOptionValue("gX"));
 		}
 		
 		if (cmd.hasOption("gY")) {
-			chromocenterParameters.gaussianBlurYsigma = Double.parseDouble(cmd.getOptionValue("gY"));
+			params.yGaussianSigma = Double.parseDouble(cmd.getOptionValue("gY"));
 		}
 		
 		if (cmd.hasOption("gZ")) {
-			chromocenterParameters.gaussianBlurZsigma = Double.parseDouble(cmd.getOptionValue("gZ"));
+			params.zGaussianSigma = Double.parseDouble(cmd.getOptionValue("gZ"));
 		}
 		
 		if (cmd.hasOption("min")) {
-			chromocenterParameters.minSizeConnectedComponent = Double.parseDouble(cmd.getOptionValue("min"));
+			params.minSize = Double.parseDouble(cmd.getOptionValue("min"));
 		}
 		if (cmd.hasOption("max")) {
-			chromocenterParameters.maxSizeConnectedComponent = Double.parseDouble(cmd.getOptionValue("max"));
+			params.maxSize = Double.parseDouble(cmd.getOptionValue("max"));
 		}
 		if (cmd.hasOption("f")) {
-			chromocenterParameters.factor = Double.parseDouble(cmd.getOptionValue("f"));
+			params.factor = Double.parseDouble(cmd.getOptionValue("f"));
 		}
 		if (cmd.hasOption("n")) {
-			chromocenterParameters.neighbours = Integer.parseInt(cmd.getOptionValue("n"));
+			params.neighbours = Integer.parseInt(cmd.getOptionValue("n"));
 		}
 		
-		ChromocenterCalling ccCalling = new ChromocenterCalling(chromocenterParameters);
+		ChromocenterCalling ccCalling = new ChromocenterCalling(params);
 		
 		String inputDirectory  = cmd.getOptionValue("input");
 		String segDirectory    = cmd.getOptionValue("input2");
@@ -438,18 +438,18 @@ public class CLIRunActionOMERO {
 			LOGGER.error("An interruption occurred during chromocenter segmentation.", e);
 			Thread.currentThread().interrupt();
 		}
-		LOGGER.info("End !!! Results available: {}", chromocenterParameters.getOutputFolder());
+		LOGGER.info("End !!! Results available: {}", params.getOutputFolder());
 	}
 	
 	
 	private void runAutoCropOMERO()
 	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
-		AutocropParameters autocropParameters = new AutocropParameters(".", ".");
+		AutocropParameters params = new AutocropParameters(".", ".");
 		if (cmd.hasOption("config")) {
-			autocropParameters.addGeneralProperties(cmd.getOptionValue("config"));
-			autocropParameters.addProperties(cmd.getOptionValue("config"));
+			params.addGeneralProperties(cmd.getOptionValue("config"));
+			params.addProperties(cmd.getOptionValue("config"));
 		}
-		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+		AutoCropCalling autoCrop = new AutoCropCalling(params);
 		if (cmd.hasOption("thresholding")) {
 			autoCrop.setTypeThresholding(cmd.getOptionValue("thresholding"));
 		}
@@ -473,12 +473,12 @@ public class CLIRunActionOMERO {
 	
 	public void runSegmentationOMERO()
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError {
-		SegmentationParameters segmentationParameters = new SegmentationParameters(".", ".");
+		SegmentationParameters params = new SegmentationParameters(".", ".");
 		if (cmd.hasOption("config")) {
-			segmentationParameters.addGeneralProperties(cmd.getOptionValue("config"));
-			segmentationParameters.addProperties(cmd.getOptionValue("config"));
+			params.addGeneralProperties(cmd.getOptionValue("config"));
+			params.addProperties(cmd.getOptionValue("config"));
 		}
-		SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
+		SegmentationCalling otsuModified = new SegmentationCalling(params);
 		if (cmd.hasOption("threads")) {
 			otsuModified.setExecutorThreads(Integer.parseInt(cmd.getOptionValue("threads")));
 		}

@@ -36,21 +36,21 @@ public class ChromocenterParameters extends PluginParameters {
 	public Client omeroClient;
 	
 	/** Gaussian parameters */
-	public double gaussianBlurXsigma = 1;
-	public double gaussianBlurYsigma = 1;
-	public double gaussianBlurZsigma = 2;
+	public double xGaussianSigma = 1;
+	public double yGaussianSigma = 1;
+	public double zGaussianSigma = 2;
 	
 	/** Filter connected component */
-	public boolean sizeFilterConnectedComponent;
+	public boolean sizeFilter;
 	
 	/** Filter connected component */
 	public boolean noChange;
 	
 	/** Max volume connected component filter */
-	public double maxSizeConnectedComponent = 3;
+	public double maxSize = 3;
 	
 	/** Min volume connected component filter */
-	public double minSizeConnectedComponent = 0.003;
+	public double minSize = 0.003;
 	
 	
 	/** ChromocenterParameters Constructor For OMERO */
@@ -58,27 +58,27 @@ public class ChromocenterParameters extends PluginParameters {
 	                              String segInputFolder,
 	                              String outputFolder,
 	                              Client omeroClient,
-	                              double gaussianBlurXsigma,
-	                              double gaussianBlurYsigma,
-	                              double gaussianBlurZsigma,
+	                              double xGaussianSigma,
+	                              double yGaussianSigma,
+	                              double zGaussianSigma,
 	                              double factor,
 	                              int neigh,
 	                              boolean gaussian,
-	                              boolean sizeFilterConnectedComponent,
-	                              double maxSizeConnectedComponent,
-	                              double minSizeConnectedComponent) {
-		super(inputFolder, outputFolder, gaussianBlurXsigma, gaussianBlurYsigma, gaussianBlurZsigma, gaussian);
+	                              boolean sizeFilter,
+	                              double maxSize,
+	                              double minSize) {
+		super(inputFolder, outputFolder, xGaussianSigma, yGaussianSigma, zGaussianSigma, gaussian);
 		this.segInputFolder = segInputFolder;
 		this.omeroClient = omeroClient;
-		this.gaussianBlurXsigma = gaussianBlurXsigma;
-		this.gaussianBlurYsigma = gaussianBlurYsigma;
-		this.gaussianBlurZsigma = gaussianBlurZsigma;
+		this.xGaussianSigma = xGaussianSigma;
+		this.yGaussianSigma = yGaussianSigma;
+		this.zGaussianSigma = zGaussianSigma;
 		this.factor = factor;
 		this.neighbours = neigh;
 		this.gaussianOnRaw = gaussian;
-		this.sizeFilterConnectedComponent = sizeFilterConnectedComponent;
-		this.maxSizeConnectedComponent = maxSizeConnectedComponent;
-		this.minSizeConnectedComponent = minSizeConnectedComponent;
+		this.sizeFilter = sizeFilter;
+		this.maxSize = maxSize;
+		this.minSize = minSize;
 	}
 	
 	
@@ -93,22 +93,22 @@ public class ChromocenterParameters extends PluginParameters {
 	public ChromocenterParameters(String inputFolder,
 	                              String segInputFolder,
 	                              String outputFolder,
-	                              double gaussianBlurXsigma,
-	                              double gaussianBlurYsigma,
-	                              double gaussianBlurZsigma,
+	                              double xGaussianSigma,
+	                              double yGaussianSigma,
+	                              double zGaussianSigma,
 	                              boolean gaussian,
-	                              boolean sizeFilterConnectedComponent,
-	                              double maxSizeConnectedComponent,
-	                              double minSizeConnectedComponent) {
+	                              boolean sizeFilter,
+	                              double maxSize,
+	                              double minSize) {
 		super(inputFolder, outputFolder);
 		this.segInputFolder = segInputFolder;
-		this.gaussianBlurXsigma = gaussianBlurXsigma;
-		this.gaussianBlurYsigma = gaussianBlurYsigma;
-		this.gaussianBlurZsigma = gaussianBlurZsigma;
+		this.xGaussianSigma = xGaussianSigma;
+		this.yGaussianSigma = yGaussianSigma;
+		this.zGaussianSigma = zGaussianSigma;
 		this.gaussianOnRaw = gaussian;
-		this.sizeFilterConnectedComponent = sizeFilterConnectedComponent;
-		this.maxSizeConnectedComponent = maxSizeConnectedComponent;
-		this.minSizeConnectedComponent = minSizeConnectedComponent;
+		this.sizeFilter = sizeFilter;
+		this.maxSize = maxSize;
+		this.minSize = minSize;
 	}
 	
 }

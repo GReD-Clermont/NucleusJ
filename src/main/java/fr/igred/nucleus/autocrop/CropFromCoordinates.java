@@ -133,12 +133,12 @@ public class CropFromCoordinates {
 	}
 	
 	
-	public void runFromOMERO(String rawDatasetIDAndChannel, String outputProjectID, Client client)
+	public void runFromOMERO(String datasetIDAndChannel, String outputProjectID, Client client)
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, FormatException {
-		String[] splitRawInfo  = SEP.split(rawDatasetIDAndChannel);
+		String[] splitRawInfo  = SEP.split(datasetIDAndChannel);
 		String   channelNumber = splitRawInfo[splitRawInfo.length - 1];
 		this.channelToCrop = Integer.parseInt(channelNumber);
-		String rawDatasetID = rawDatasetIDAndChannel.replace(File.separator + channelNumber, "");
+		String rawDatasetID = datasetIDAndChannel.replace(File.separator + channelNumber, "");
 		
 		DatasetWrapper rawDataset    = client.getDataset(Long.parseLong(rawDatasetID));
 		ProjectWrapper outputProject = client.getProject(Long.parseLong(outputProjectID));

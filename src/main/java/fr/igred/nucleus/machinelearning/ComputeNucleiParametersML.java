@@ -48,12 +48,12 @@ public class ComputeNucleiParametersML {
 	/**
 	 * Constructor
 	 *
-	 * @param rawImagesInputDirectory  path to raw images
-	 * @param segmentedImagesDirectory path to list of segmented images from machine learning associated to raw
+	 * @param rawInputDir  path to raw images
+	 * @param segmentedInputDir path to list of segmented images from machine learning associated to raw
 	 */
-	public ComputeNucleiParametersML(String rawImagesInputDirectory, String segmentedImagesDirectory) {
-		this.rawImagesInputDirectory = rawImagesInputDirectory;
-		this.segmentedImagesDirectory = segmentedImagesDirectory;
+	public ComputeNucleiParametersML(String rawInputDir, String segmentedInputDir) {
+		this.rawImagesInputDirectory = rawInputDir;
+		this.segmentedImagesDirectory = segmentedInputDir;
 	}
 	
 	
@@ -104,8 +104,8 @@ public class ComputeNucleiParametersML {
 		
 		List<File> segImages = directoryInput.getFileList();
 		
-		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder(pluginParameters.getAnalysisParameters() +
-		                                                            getResultsColumnNames());
+		StringBuilder cropInfoOtsu = new StringBuilder(pluginParameters.getAnalysisParameters() +
+		                                               getResultsColumnNames());
 		for (File currentFile : segImages) {
 			LOGGER.info("Current File: {}", currentFile.getName());
 			ImagePlus raw = new ImagePlus(pluginParameters.getInputFolder() +
@@ -125,14 +125,14 @@ public class ComputeNucleiParametersML {
 				                                    pluginParameters.getXCalibration(raw),
 				                                    pluginParameters.getYCalibration(raw),
 				                                    pluginParameters.getZCalibration(raw));
-				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append(eol);
+				cropInfoOtsu.append(measure3D.nucleusParameter3D()).append(eol);
 			}
 		}
 		
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(pluginParameters.getOutputFolder()
 		                                                         + directoryInput.getSeparator()
 		                                                         + "result_Segmentation_Analyse.csv");
-		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU.toString(), true);
+		resultFileOutputOTSU.saveTextFile(cropInfoOtsu.toString(), true);
 	}
 	
 	

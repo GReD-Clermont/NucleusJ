@@ -86,8 +86,8 @@ public class MainGui extends JFrame {
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(80, 0, 0, 0), 85, 0));
 		
-		JButton cropFromCoordinatesButton = new JButton("Crop From Coordinates");
-		localPanel.add(cropFromCoordinatesButton,
+		JButton coordsCropButton = new JButton("Crop From Coordinates");
+		localPanel.add(coordsCropButton,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
@@ -100,8 +100,8 @@ public class MainGui extends JFrame {
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(160, 0, 0, 0), 130, 0));
 		
-		JButton computeParametersButton = new JButton("Compute Parameters Nuc");
-		localPanel.add(computeParametersButton,
+		JButton computeParamsButton = new JButton("Compute Parameters Nuc");
+		localPanel.add(computeParamsButton,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
@@ -114,8 +114,8 @@ public class MainGui extends JFrame {
 		                                      GridBagConstraints.HORIZONTAL,
 		                                      new Insets(240, 0, 0, 0), 140, 0));
 		
-		JButton computeCcParametersButton = new JButton("Compute Parameters Spots");
-		localPanel.add(computeCcParametersButton,
+		JButton computeCCParamsBtn = new JButton("Compute Parameters Spots");
+		localPanel.add(computeCCParamsBtn,
 		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.HORIZONTAL,
@@ -133,7 +133,7 @@ public class MainGui extends JFrame {
 			segmentation.run("");
 		});
 		
-		cropFromCoordinatesButton.addActionListener(e -> {
+		coordsCropButton.addActionListener(e -> {
 			PlugIn cropFromCoordinates = new CropFromCoordinates_();
 			cropFromCoordinates.run("");
 		});
@@ -143,7 +143,7 @@ public class MainGui extends JFrame {
 			overlay.run("");
 		});
 		
-		computeParametersButton.addActionListener(e -> {
+		computeParamsButton.addActionListener(e -> {
 			PlugIn computeParameters = new ComputeParametersPlugin_();
 			computeParameters.run("");
 		});
@@ -153,7 +153,7 @@ public class MainGui extends JFrame {
 			nodej.run("");
 		});
 		
-		computeCcParametersButton.addActionListener(e -> {
+		computeCCParamsBtn.addActionListener(e -> {
 			PlugIn computeCcParameters = new ChromocentersAnalysisBatchPlugin_();
 			computeCcParameters.run("");
 		});

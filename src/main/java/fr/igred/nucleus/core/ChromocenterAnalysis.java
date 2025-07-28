@@ -74,43 +74,42 @@ public final class ChromocenterAnalysis {
 	 *
 	 * @param pathResultsFile       path for the output file
 	 * @param imagePlusSegmented    image of the segmented nucleus
-	 * @param imagePlusChromocenter image of the chromocenter segmented
+	 * @param imagePlusCC image of the chromocenter segmented
 	 *
 	 * @throws IOException if file doesn't exist catch the exception
 	 */
 	public static void computeParametersChromocenter(String pathResultsFile,
 	                                                 ImagePlus imagePlusSegmented,
-	                                                 ImagePlus imagePlusChromocenter) throws IOException {
+	                                                 ImagePlus imagePlusCC) throws IOException {
 		Histogram histogram = new Histogram();
-		histogram.run(imagePlusChromocenter);
+		histogram.run(imagePlusCC);
 		if (histogram.getNbLabels() > 0) {
 			File    fileResults = new File(pathResultsFile);
 			boolean exist       = fileResults.exists();
 			try (BufferedWriter bufferedWriterOutput = new BufferedWriter(new FileWriter(fileResults, true))) {
-				Measure3D measure3D = new Measure3D(imagePlusChromocenter.getCalibration().pixelWidth,
-				                                    imagePlusChromocenter.getCalibration().pixelHeight,
-				                                    imagePlusChromocenter.getCalibration().pixelDepth);
-				double[] tVolume = measure3D.computeVolumeOfAllObjects(imagePlusChromocenter);
+				Measure3D measure3D = new Measure3D(imagePlusCC.getCalibration().pixelWidth,
+				                                    imagePlusCC.getCalibration().pixelHeight,
+				                                    imagePlusCC.getCalibration().pixelDepth);
+				double[] tVolume = measure3D.computeVolumeOfAllObjects(imagePlusCC);
 				
-				double[] tBorderToBorderDistanceTable = computeBorderToBorderDistances(imagePlusSegmented,
-				                                                                       imagePlusChromocenter);
-				double[] tBarycenterToBorderDistanceTableCc = computeBarycenterToBorderDistances(imagePlusSegmented,
-				                                                                                 imagePlusChromocenter);
-				double[] tBarycenterToBorderDistanceTableNucleus = computeBarycenterToBorderDistances(
-						imagePlusSegmented,
-						imagePlusSegmented);
+				double[] tBorder2BorderDist = computeBorderToBorderDistances(imagePlusSegmented,
+				                                                             imagePlusCC);
+				double[] tBary2BorderDistCC = computeBarycenterToBorderDistances(imagePlusSegmented,
+				                                                                 imagePlusCC);
+				double[] tBary2BorderDistNuc = computeBarycenterToBorderDistances(imagePlusSegmented,
+				                                                                  imagePlusSegmented);
 				if (!exist) {
 					bufferedWriterOutput.write("Titre\tVolume\tBorderToBorderDistance\t" +
 					                           "BarycenterToBorderDistance\tBarycenterToBorderDistanceNucleus" +
 					                           System.lineSeparator());
 				}
-				for (int i = 0; i < tBorderToBorderDistanceTable.length; ++i) {
-					bufferedWriterOutput.write(imagePlusChromocenter.getTitle() + "_" +
+				for (int i = 0; i < tBorder2BorderDist.length; ++i) {
+					bufferedWriterOutput.write(imagePlusCC.getTitle() + "_" +
 					                           i + "\t" +
 					                           tVolume[i] + "\t" +
-					                           tBorderToBorderDistanceTable[i] + "\t" +
-					                           tBarycenterToBorderDistanceTableCc[i] + "\t" +
-					                           tBarycenterToBorderDistanceTableNucleus[0] + System.lineSeparator());
+					                           tBorder2BorderDist[i] + "\t" +
+					                           tBary2BorderDistCC[i] + "\t" +
+					                           tBary2BorderDistNuc[0] + System.lineSeparator());
 				}
 				bufferedWriterOutput.flush();
 			}
@@ -298,18 +297,18 @@ public final class ChromocenterAnalysis {
 				rhfChoice = "Intensity";
 			}
 			
-			List<String> listImageChromocenter = fileList.fileSearchList(".+SegmentedDataCc.+", tFileRawImage);
+			List<String> ccImages = fileList.fileSearchList(".+SegmentedDataCc.+", tFileRawImage);
 			
-			String nameFileChromocenterAndNucleus = workDirectory + File.separator + "NucAndCcParameters.tab";
-			String nameFileChromocenter           = workDirectory + File.separator + "CcParameters.tab";
+			String nameFileCCAndNucleus = workDirectory + File.separator + "NucAndCcParameters.tab";
+			String nameFileChromocenter = workDirectory + File.separator + "CcParameters.tab";
 			
-			for (int i = 0; i < listImageChromocenter.size(); ++i) {
-				LOGGER.info("image {}/{}", i + 1, listImageChromocenter.size());
-				String pathImageChromocenter = listImageChromocenter.get(i);
+			for (int i = 0; i < ccImages.size(); ++i) {
+				LOGGER.info("image {}/{}", i + 1, ccImages.size());
+				String pathImageCC = ccImages.get(i);
 				
-				String pathNucleusRaw = pathImageChromocenter.replace("SegmentedDataCc", "RawDataNucleus");
+				String pathNucleusRaw = pathImageCC.replace("SegmentedDataCc", "RawDataNucleus");
 				LOGGER.info(pathNucleusRaw);
-				String pathNucleusSegmented = pathImageChromocenter.replace("SegmentedDataCc", "SegmentedDataNucleus");
+				String pathNucleusSegmented = pathImageCC.replace("SegmentedDataCc", "SegmentedDataNucleus");
 				LOGGER.info(pathNucleusSegmented);
 				if (fileList.isDirectoryOrFileExist(pathNucleusRaw, tFileRawImage) &&
 				    fileList.isDirectoryOrFileExist(pathNucleusSegmented, tFileRawImage)) {
@@ -318,8 +317,8 @@ public final class ChromocenterAnalysis {
 						IJ.error("image format", "No images in gray scale 8bits in 3D");
 						return;
 					}
-					ImagePlus imagePlusChromocenter = IJ.openImage(listImageChromocenter.get(i));
-					ImagePlus imagePlusSegmented    = IJ.openImage(pathNucleusSegmented);
+					ImagePlus imagePlusCC        = IJ.openImage(ccImages.get(i));
+					ImagePlus imagePlusSegmented = IJ.openImage(pathNucleusSegmented);
 					
 					Calibration cal = new Calibration();
 					if (calibration) {
@@ -330,31 +329,31 @@ public final class ChromocenterAnalysis {
 					} else {
 						cal = imagePlusInput.getCalibration();
 					}
-					imagePlusChromocenter.setCalibration(cal);
+					imagePlusCC.setCalibration(cal);
 					imagePlusSegmented.setCalibration(cal);
 					imagePlusInput.setCalibration(cal);
 					try {
 						if ("nuc_cc".equals(isNucAndCcAnalysis)) {
 							computeParametersChromocenter(nameFileChromocenter,
 							                              imagePlusSegmented,
-							                              imagePlusChromocenter);
+							                              imagePlusCC);
 							LOGGER.info("chromocenterAnalysis is computing...");
 							LOGGER.info("nucleusChromocenterAnalysis is computing...");
-							computeParameters(nameFileChromocenterAndNucleus,
+							computeParameters(nameFileCCAndNucleus,
 							                  rhfChoice,
 							                  imagePlusInput,
 							                  imagePlusSegmented,
-							                  imagePlusChromocenter);
+							                  imagePlusCC);
 						} else if ("cc".equals(isNucAndCcAnalysis)) {
 							computeParametersChromocenter(nameFileChromocenter,
 							                              imagePlusSegmented,
-							                              imagePlusChromocenter);
+							                              imagePlusCC);
 						} else {
-							computeParameters(nameFileChromocenterAndNucleus,
+							computeParameters(nameFileCCAndNucleus,
 							                  rhfChoice,
 							                  imagePlusInput,
 							                  imagePlusSegmented,
-							                  imagePlusChromocenter);
+							                  imagePlusCC);
 						}
 					} catch (IOException e) {
 						LOGGER.error("An error occurred.", e);
@@ -363,14 +362,14 @@ public final class ChromocenterAnalysis {
 					LOGGER.info("Image name problem: the image {} is not found " +
 					            "in the directory SegmentedDataNucleus or RawDataNucleus, " +
 					            "see nameProblem.txt in {}",
-					            pathImageChromocenter,
+					            pathImageCC,
 					            workDirectory);
-					try (BufferedWriter bufferedWriterLogFile = new BufferedWriter(new FileWriter(workDirectory +
-					                                                                              File.separator +
-					                                                                              "logNameProblem.log",
-					                                                                              true))) {
-						bufferedWriterLogFile.write(pathImageChromocenter + System.lineSeparator());
-						bufferedWriterLogFile.flush();
+					try (BufferedWriter logWriter = new BufferedWriter(new FileWriter(workDirectory +
+					                                                                  File.separator +
+					                                                                  "logNameProblem.log",
+					                                                                  true))) {
+						logWriter.write(pathImageCC + System.lineSeparator());
+						logWriter.flush();
 					} catch (IOException e) {
 						LOGGER.error("An error occurred.", e);
 					}

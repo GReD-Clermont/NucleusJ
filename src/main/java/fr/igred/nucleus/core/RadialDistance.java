@@ -44,13 +44,13 @@ public final class RadialDistance {
 	/**
 	 * Method which compute the distance map of binary nucleus Rescale the voxel to obtain cubic voxel
 	 *
-	 * @param imagePlusSegmentedRescaled
+	 * @param rescaledSegmentedImg
 	 *
 	 * @return
 	 */
-	public static ImagePlus computeDistanceMap(ImagePlus imagePlusSegmentedRescaled) {
-		DistanceMap.apply(imagePlusSegmentedRescaled);
-		return imagePlusSegmentedRescaled;
+	public static ImagePlus computeDistanceMap(ImagePlus rescaledSegmentedImg) {
+		DistanceMap.apply(rescaledSegmentedImg);
+		return rescaledSegmentedImg;
 	}
 	
 	
@@ -58,33 +58,32 @@ public final class RadialDistance {
 	 * Compute the shortest distance between the chromocenter periphery and the nuclear envelope
 	 *
 	 * @param imagePlusSegmented
-	 * @param imagePlusChromocenter
+	 * @param imagePlusCC
 	 *
 	 * @return
 	 */
-	public static double[] computeBorderToBorderDistances(ImagePlus imagePlusSegmented,
-	                                                      ImagePlus imagePlusChromocenter) {
+	public static double[] computeBorderToBorderDistances(ImagePlus imagePlusSegmented, ImagePlus imagePlusCC) {
 		Histogram histogram = new Histogram();
-		histogram.run(imagePlusChromocenter);
+		histogram.run(imagePlusCC);
 		double[]    tLabel       = histogram.getLabels();
 		Calibration calibration  = imagePlusSegmented.getCalibration();
 		double      xCalibration = calibration.pixelWidth;
-		imagePlusChromocenter = resizeImage(imagePlusChromocenter);
-		ImageStack imageStackChromocenter = imagePlusChromocenter.getStack();
+		imagePlusCC = resizeImage(imagePlusCC);
+		ImageStack imageStackCC = imagePlusCC.getStack();
 		imagePlusSegmented = resizeImage(imagePlusSegmented);
-		ImagePlus  imagePlusDistanceMap  = computeDistanceMap(imagePlusSegmented);
-		ImageStack imageStackDistanceMap = imagePlusDistanceMap.getStack();
+		ImagePlus  imagePlusDistanceMap = computeDistanceMap(imagePlusSegmented);
+		ImageStack imageStackDistMap    = imagePlusDistanceMap.getStack();
 		double     voxelValueMin;
 		double     voxelValue;
-		double[]   tDistanceRadial       = new double[tLabel.length];
+		double[]   tDistanceRadial      = new double[tLabel.length];
 		for (int l = 0; l < tLabel.length; ++l) {
 			voxelValueMin = Double.MAX_VALUE;
-			for (int k = 0; k < imagePlusChromocenter.getNSlices(); ++k) {
-				for (int i = 0; i < imagePlusChromocenter.getWidth(); ++i) {
-					for (int j = 0; j < imagePlusChromocenter.getHeight(); ++j) {
-						voxelValue = imageStackDistanceMap.getVoxel(i, j, k);
+			for (int k = 0; k < imagePlusCC.getNSlices(); ++k) {
+				for (int i = 0; i < imagePlusCC.getWidth(); ++i) {
+					for (int j = 0; j < imagePlusCC.getHeight(); ++j) {
+						voxelValue = imageStackDistMap.getVoxel(i, j, k);
 						if (voxelValue < voxelValueMin &&
-						    tLabel[l] == imageStackChromocenter.getVoxel(i, j, k)) {
+						    tLabel[l] == imageStackCC.getVoxel(i, j, k)) {
 							voxelValueMin = voxelValue;
 						}
 					}
@@ -102,28 +101,27 @@ public final class RadialDistance {
 	 * envelope.
 	 *
 	 * @param imagePlusSegmented
-	 * @param imagePlusChromocenter
+	 * @param imagePlusCC
 	 *
 	 * @return
 	 */
-	public static double[] computeBarycenterToBorderDistances(ImagePlus imagePlusSegmented,
-	                                                          ImagePlus imagePlusChromocenter) {
-		Calibration calibration  = imagePlusSegmented.getCalibration();
-		double      xCalibration = calibration.pixelWidth;
-		ImagePlus imagePlusChromocenterRescale = resizeImage(imagePlusChromocenter);
+	public static double[] computeBarycenterToBorderDistances(ImagePlus imagePlusSegmented, ImagePlus imagePlusCC) {
+		Calibration calibration        = imagePlusSegmented.getCalibration();
+		double      xCalibration       = calibration.pixelWidth;
+		ImagePlus   imagePlusCCRescale = resizeImage(imagePlusCC);
 		imagePlusSegmented = resizeImage(imagePlusSegmented);
-		ImagePlus imagePlusDistanceMap = computeDistanceMap(imagePlusSegmented);
-		ImageStack imageStackDistanceMap = imagePlusDistanceMap.getStack();
-		Measure3D  measure3D             = new Measure3D();
+		ImagePlus  imagePlusDistanceMap = computeDistanceMap(imagePlusSegmented);
+		ImageStack imageStackDistMap    = imagePlusDistanceMap.getStack();
+		Measure3D  measure3D            = new Measure3D();
 		
-		VoxelRecord[] tVoxelRecord    = measure3D.computeObjectBarycenter(imagePlusChromocenterRescale, false);
+		VoxelRecord[] tVoxelRecord    = measure3D.computeObjectBarycenter(imagePlusCCRescale, false);
 		double[]      tRadialDistance = new double[tVoxelRecord.length];
 		double        distance;
 		for (int i = 0; i < tVoxelRecord.length; ++i) {
 			VoxelRecord voxelRecord = tVoxelRecord[i];
-			distance = imageStackDistanceMap.getVoxel((int) voxelRecord.getI(),
-			                                          (int) voxelRecord.getJ(),
-			                                          (int) voxelRecord.getK());
+			distance = imageStackDistMap.getVoxel((int) voxelRecord.getI(),
+			                                      (int) voxelRecord.getJ(),
+			                                      (int) voxelRecord.getK());
 			tRadialDistance[i] = xCalibration * distance;
 		}
 		return tRadialDistance;

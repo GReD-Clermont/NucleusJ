@@ -67,16 +67,16 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 	 * @return boolean existing action
 	 */
 	private static boolean availableActionCMD(String action) {
-		Collection<String> actionAvailableInOMERO = new ArrayList<>(8);
-		actionAvailableInOMERO.add("autocrop");
-		actionAvailableInOMERO.add("segmentation");
-		actionAvailableInOMERO.add("computeParameters");
-		actionAvailableInOMERO.add("computeParametersDL");
-		actionAvailableInOMERO.add("generateProjection");
-		actionAvailableInOMERO.add("generateProjectionFiltered");
-		actionAvailableInOMERO.add("cropFromCoordinate");
-		actionAvailableInOMERO.add("generateOverlay");
-		return actionAvailableInOMERO.contains(action);
+		Collection<String> omeroActions = new ArrayList<>(8);
+		omeroActions.add("autocrop");
+		omeroActions.add("segmentation");
+		omeroActions.add("computeParameters");
+		omeroActions.add("computeParametersDL");
+		omeroActions.add("generateProjection");
+		omeroActions.add("generateProjectionFiltered");
+		omeroActions.add("cropFromCoordinate");
+		omeroActions.add("generateOverlay");
+		return omeroActions.contains(action);
 	}
 	
 	

@@ -83,8 +83,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	private final JPasswordField jPasswordField     = new JPasswordField();
 	private final JTextField     jTextFieldGroup    = new JTextField();
 	
-	private final JTextField jTextFieldRawID         = new JTextField();
-	private final JTextField jTextFieldSegmentedID   = new JTextField();
+	private final JTextField jTextFieldRawID       = new JTextField();
+	private final JTextField jTextFieldSegmentedID = new JTextField();
 	
 	private final Container container;
 	
@@ -337,10 +337,10 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jTextFieldRawID.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 6;
-		JLabel jLabelSegmentedDataset = new JLabel("Segmented:");
+		JLabel jLabelSegDataset = new JLabel("Segmented:");
 		c.gridx = 0;
 		c.gridwidth = 1;
-		omeroPanel.add(jLabelSegmentedDataset, c);
+		omeroPanel.add(jLabelSegDataset, c);
 		c.gridx = 1;
 		JComboBox<String> jComboBoxDataType2 = new JComboBox<>(dataTypes);
 		omeroPanel.add(jComboBoxDataType2, c);
@@ -371,9 +371,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	 * @param args arguments
 	 */
 	public static void main(String[] args) {
-		ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog =
-				new ChromocenterSegmentationPipelineBatchDialog();
-		chromocenterSegmentationPipelineBatchDialog.setLocationRelativeTo(null);
+		ChromocenterSegmentationPipelineBatchDialog ccSegDialog = new ChromocenterSegmentationPipelineBatchDialog();
+		ccSegDialog.setLocationRelativeTo(null);
 	}
 	
 	
@@ -545,12 +544,12 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	 *
 	 */
 	private static class QuitListener implements ActionListener {
-		private final ComputeParametersDialog computeParametersDialog;
+		private final ComputeParametersDialog computeParamsDialog;
 		
 		
-		/** @param computeParametersDialog Dialog parameters */
-		QuitListener(ComputeParametersDialog computeParametersDialog) {
-			this.computeParametersDialog = computeParametersDialog;
+		/** @param computeParamsDialog Dialog parameters */
+		QuitListener(ComputeParametersDialog computeParamsDialog) {
+			this.computeParamsDialog = computeParamsDialog;
 		}
 		
 		
@@ -558,18 +557,18 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		 *
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			computeParametersDialog.dispose();
+			computeParamsDialog.dispose();
 		}
 		
 	}
 	
 	private class StartListener implements ActionListener {
-		private final ComputeParametersDialog computeParametersDialog;
+		private final ComputeParametersDialog computeParamsDialog;
 		
 		
-		/** @param computeParametersDialog Dialog parameters */
-		StartListener(ComputeParametersDialog computeParametersDialog) {
-			this.computeParametersDialog = computeParametersDialog;
+		/** @param computeParamsDialog Dialog parameters */
+		StartListener(ComputeParametersDialog computeParamsDialog) {
+			this.computeParamsDialog = computeParamsDialog;
 		}
 		
 		
@@ -584,7 +583,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 					throw new RuntimeException(e);
 				}
 				start = true;
-				computeParametersDialog.dispose();
+				computeParamsDialog.dispose();
 			} else {
 				if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(null,
@@ -598,7 +597,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 					} catch (AccessException | ServiceException | ExecutionException e) {
 						throw new RuntimeException(e);
 					}
-					computeParametersDialog.dispose();
+					computeParamsDialog.dispose();
 				}
 			}
 		}

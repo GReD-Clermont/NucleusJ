@@ -183,8 +183,8 @@ public class Measure3D {
 		                      {xz / counter, yz / counter, zz / counter}};
 		Matrix matrix = new Matrix(tValues);
 		
-		EigenvalueDecomposition eigenValueDecomposition = matrix.eig();
-		return eigenValueDecomposition.getRealEigenvalues();
+		EigenvalueDecomposition eigenValDecomp = matrix.eig();
+		return eigenValDecomp.getRealEigenvalues();
 	}
 	
 	
@@ -216,12 +216,12 @@ public class Measure3D {
 	public VoxelRecord computeBarycenter3D(boolean unit,
 	                                       ImagePlus imagePlusInput,
 	                                       double label) {
-		ImageStack  imageStackInput       = imagePlusInput.getImageStack();
-		VoxelRecord voxelRecordBarycenter = new VoxelRecord();
-		int         count                 = 0;
-		long        sx                    = 0;
-		long        sy                    = 0;
-		long        sz                    = 0;
+		ImageStack  imageStackInput = imagePlusInput.getImageStack();
+		VoxelRecord voxelRecordBary = new VoxelRecord();
+		int         count           = 0;
+		long        sx              = 0;
+		long        sy              = 0;
+		long        sz              = 0;
 		double      voxelValue;
 		for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
 			for (int i = 0; i < imagePlusInput.getWidth(); ++i) {
@@ -239,11 +239,11 @@ public class Measure3D {
 		sx /= count;
 		sy /= count;
 		sz /= count;
-		voxelRecordBarycenter.setLocation(sx, sy, sz);
+		voxelRecordBary.setLocation(sx, sy, sz);
 		if (unit) {
-			voxelRecordBarycenter.multiplie(xCal, yCal, zCal);
+			voxelRecordBary.multiplie(xCal, yCal, zCal);
 		}
-		return voxelRecordBarycenter;
+		return voxelRecordBary;
 	}
 	
 	
@@ -251,20 +251,20 @@ public class Measure3D {
 	 * Method which compute the RHF (total chromocenters volume/nucleus volume)
 	 *
 	 * @param imagePlusSegmented     binary ImagePlus
-	 * @param imagePlusChromocenters ImagePLus of the chromocenters
+	 * @param imagePlusCC ImagePLus of the chromocenters
 	 *
 	 * @return double Relative Heterochromatin Fraction compute on the Volume ratio
 	 */
-	public double computeVolumeRHF(ImagePlus imagePlusSegmented, ImagePlus imagePlusChromocenters) {
-		double volumeCc = 0;
+	public double computeVolumeRHF(ImagePlus imagePlusSegmented, ImagePlus imagePlusCC) {
+		double volumeCC = 0;
 		//Calibration calSeg = imagePlusSegmented.getCalibration();
 		//Calibration calChrom = imagePlusChomocenters.getCalibration();
-		double[] tVolumeChromocenter = computeVolumeOfAllObjects(imagePlusChromocenters);
+		double[] tVolumeChromocenter = computeVolumeOfAllObjects(imagePlusCC);
 		for (double v : tVolumeChromocenter) {
-			volumeCc += v;
+			volumeCC += v;
 		}
 		double[] tVolumeSegmented = computeVolumeOfAllObjects(imagePlusSegmented);
-		return volumeCc / tVolumeSegmented[0];
+		return volumeCC / tVolumeSegmented[0];
 	}
 	
 	
@@ -275,7 +275,7 @@ public class Measure3D {
 	 *
 	 * @return int nb of object in the image
 	 */
-	public static int getNumberOfObject(ImagePlus imagePlusInput) {
+	public static int getNumberOfObjects(ImagePlus imagePlusInput) {
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusInput);
 		return histogram.getNbLabels();

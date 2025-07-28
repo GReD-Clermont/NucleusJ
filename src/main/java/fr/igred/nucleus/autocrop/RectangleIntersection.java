@@ -71,10 +71,10 @@ public class RectangleIntersection {
 	 * list of Z stack associated (zMin-zMax).
 	 *
 	 * @param boxes              List of boxes
-	 * @param autocropParameters Autocrop parameters
+	 * @param params Autocrop parameters
 	 */
-	public RectangleIntersection(Map<Double, Box> boxes, AutocropParameters autocropParameters) {
-		this.autocropParameters = autocropParameters;
+	public RectangleIntersection(Map<Double, Box> boxes, AutocropParameters params) {
+		this.autocropParameters = params;
 		zSlices = new ArrayList<>(boxes.size());
 		listRectangle = new ArrayList<>(boxes.size());
 		for (Map.Entry<Double, Box> entry : new TreeMap<>(boxes).entrySet()) {
@@ -137,9 +137,9 @@ public class RectangleIntersection {
 					if (listRectangle.get(i).intersects(listRectangle.get(y))) {
 						
 						if (percentOf2Rectangles(listRectangle.get(i), listRectangle.get(y)) >
-						    autocropParameters.getBoxesPercentSurfaceToFilter() ||
+						    autocropParameters.getBoxesSurfacePercent() ||
 						    percentOf2Rectangles(listRectangle.get(y), listRectangle.get(i)) >
-						    autocropParameters.getBoxesPercentSurfaceToFilter()) {
+						    autocropParameters.getBoxesSurfacePercent()) {
 							
 							rectangleIntersect.add(i + "-" + y);
 							rectangleIntersect.add(y + "-" + i);
@@ -160,13 +160,13 @@ public class RectangleIntersection {
 	public void rectangleRegroup() {
 		finalListRectangle.clear();
 		for (Map.Entry<Integer, Integer> entry : countIntersect.entrySet()) {
-			StringBuilder listRectangleConnected          = new StringBuilder(String.valueOf(entry.getKey()));
-			String        listRectangleConnectedStartTurn = String.valueOf(entry.getKey());
+			StringBuilder connectedRectangles = new StringBuilder(String.valueOf(entry.getKey()));
+			String        connRectStartTurn   = String.valueOf(entry.getKey());
 			for (int i = 0; i < rectangleIntersect.size(); i++) {
 				String[] splitIntersect = rectangleIntersect.get(i).split("-");
 				if (splitIntersect[0].equals(Integer.toString(entry.getKey()))) {
 					String[] splitList = rectangleIntersect.get(i).split("-");
-					listRectangleConnected.append("-").append(splitList[splitList.length - 1]);
+					connectedRectangles.append("-").append(splitList[splitList.length - 1]);
 					rectangleIntersect.remove(i);
 					rectangleIntersect.remove(splitList[splitList.length - 1] + "-" + entry.getKey());
 					List<String> listToIterateThrough = new ArrayList<>();
@@ -177,13 +177,13 @@ public class RectangleIntersection {
 							if (splitIntersect2[0].equals(listToIterateThrough.get(0))) {
 								String[] splitList2 = rectangleIntersect.get(y).split("-");
 								listToIterateThrough.add(splitList2[splitList.length - 1]);
-								listRectangleConnected.append("-").append(splitList2[splitList.length - 1]);
-								String[] splitCurrentRectangleConnected = listRectangleConnected.toString().split("-");
+								connectedRectangles.append("-").append(splitList2[splitList.length - 1]);
+								String[] splitCurrentRect = connectedRectangles.toString().split("-");
 								rectangleIntersect.remove(y);
 								rectangleIntersect.remove(splitList2[splitList.length - 1] +
 								                          "-" +
 								                          listToIterateThrough.get(0));
-								for (String s : splitCurrentRectangleConnected) {
+								for (String s : splitCurrentRect) {
 									rectangleIntersect.remove(splitList2[splitList.length - 1] + "-" + s);
 									rectangleIntersect.remove(s + "-" + splitList2[splitList.length - 1]);
 								}
@@ -193,12 +193,12 @@ public class RectangleIntersection {
 						listToIterateThrough.remove(0);
 					}
 				}
-				if (!listRectangleConnected.toString().equals(listRectangleConnectedStartTurn)) {
+				if (!connectedRectangles.toString().equals(connRectStartTurn)) {
 					i--;
-					listRectangleConnectedStartTurn = listRectangleConnected.toString();
+					connRectStartTurn = connectedRectangles.toString();
 				}
 			}
-			finalListRectangle.add(listRectangleConnected.toString());
+			finalListRectangle.add(connectedRectangles.toString());
 		}
 	}
 	
@@ -206,9 +206,9 @@ public class RectangleIntersection {
 	/** Compile of new rectangle by getting extreme coordinate of a group of rectangles. */
 	public void recompileRectangle() {
 		this.newBoxesAdded = false;
-		List<Rectangle> listOfRectangleToAdd       = new ArrayList<>();
-		List<String>    listOfRectangleZSliceToAdd = new ArrayList<>();
-		List<Rectangle> listOfRectangleToRemove    = new ArrayList<>();
+		List<Rectangle> rectanglesToAdd      = new ArrayList<>();
+		List<String>    rectangleZSliceToAdd = new ArrayList<>();
+		List<Rectangle> rectanglesToRemove   = new ArrayList<>();
 		for (String value : finalListRectangle) {
 			String[] splitList2       = value.split("-");
 			double   xMixNewRectangle = 0;
@@ -242,31 +242,31 @@ public class RectangleIntersection {
 					if (Integer.parseInt(zSliceTMP[0] + Integer.valueOf(zSliceTMP[1])) > maxZSlice || maxZSlice == 0) {
 						maxZSlice = Integer.parseInt(zSliceTMP[0]) + Integer.parseInt(zSliceTMP[1]);
 					}
-					listOfRectangleToRemove.add(new Rectangle((int) listRectangle.get(tmp).getX(),
-					                                          (int) listRectangle.get(tmp).getY(),
-					                                          (int) listRectangle.get(tmp).getWidth(),
-					                                          (int) listRectangle.get(tmp).getHeight()));
+					rectanglesToRemove.add(new Rectangle((int) listRectangle.get(tmp).getX(),
+					                                     (int) listRectangle.get(tmp).getY(),
+					                                     (int) listRectangle.get(tmp).getWidth(),
+					                                     (int) listRectangle.get(tmp).getHeight()));
 				}
 				
 				maxZSlice -= minZSlice;
-				listOfRectangleZSliceToAdd.add(minZSlice + "-" + maxZSlice);
+				rectangleZSliceToAdd.add(minZSlice + "-" + maxZSlice);
 				maxWidth = (int) maxWidth - (int) xMixNewRectangle;
 				maxHeight = (int) maxHeight - (int) yMinNewRectangle;
-				listOfRectangleToAdd.add(new Rectangle((int) xMixNewRectangle,
-				                                       (int) yMinNewRectangle,
-				                                       (int) maxWidth,
-				                                       (int) maxHeight));
+				rectanglesToAdd.add(new Rectangle((int) xMixNewRectangle,
+				                                  (int) yMinNewRectangle,
+				                                  (int) maxWidth,
+				                                  (int) maxHeight));
 			}
 		}
 		LOGGER.debug("{} boxes will be merged in {} new boxes",
-		             listOfRectangleToRemove.size(),
-		             listOfRectangleToAdd.size());
-		for (int i = 0; i < listOfRectangleToAdd.size(); i++) {
+		             rectanglesToRemove.size(),
+		             rectanglesToAdd.size());
+		for (int i = 0; i < rectanglesToAdd.size(); i++) {
 			this.newBoxesAdded = true;
-			listRectangle.add(listOfRectangleToAdd.get(i));
-			zSlices.add(listOfRectangleZSliceToAdd.get(i));
+			listRectangle.add(rectanglesToAdd.get(i));
+			zSlices.add(rectangleZSliceToAdd.get(i));
 		}
-		for (Rectangle rectangle : listOfRectangleToRemove) {
+		for (Rectangle rectangle : rectanglesToRemove) {
 			this.newBoxesAdded = true;
 			int indexRectangleRemove = listRectangle.indexOf(rectangle);
 			if (indexRectangleRemove != -1) {
@@ -283,8 +283,7 @@ public class RectangleIntersection {
 	 * @return list of new boxes
 	 */
 	public Map<Double, Box> getNewBoxes() {
-		Map<Double, Box> boxes = new HashMap<>();
-		
+		Map<Double, Box> boxes = new HashMap<>(listRectangle.size());
 		
 		for (int i = 0; i < listRectangle.size(); i++) {
 			String[] zSliceTMP = zSlices.get(i).split("-");

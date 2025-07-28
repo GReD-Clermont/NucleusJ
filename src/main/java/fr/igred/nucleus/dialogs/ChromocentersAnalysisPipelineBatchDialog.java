@@ -106,16 +106,14 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	
 	/** Architecture of the graphical windows */
 	public ChromocentersAnalysisPipelineBatchDialog(IDialogListener dialogListener) {
-		final String font     = "Albertus";
-		final String boldFont = "Albertus Extra Bold (W1)";
+		final String font = "Albertus";
 		container = super.getContentPane();
-		JLabel      jLabelWorkDirectory       = new JLabel("Work directory and data directory choice:");
-		JButton     jButtonWorkDirectory      = new JButton("Output Directory");
-		JButton     jButtonStart              = new JButton("Start");
-		JButton     jButtonQuit               = new JButton("Quit");
-		JButton     jButtonRawData            = new JButton("Raw Data");
-		ButtonGroup buttonGroupChoiceAnalysis = new ButtonGroup();
-		ButtonGroup buttonGroupChoiceRhf      = new ButtonGroup();
+		JLabel      jLabelWorkDirectory  = new JLabel("Work directory and data directory choice:");
+		JButton     jButtonWorkDirectory = new JButton("Output Directory");
+		JButton     jButtonStart         = new JButton("Start");
+		JButton     jButtonQuit          = new JButton("Quit");
+		JButton     jButtonRawData       = new JButton("Raw Data");
+		ButtonGroup buttonGroupChoiceRhf = new ButtonGroup();
 		JLabel      jLabelAnalysis;
 		JLabel      jLabelAnalysis2;
 		super.setTitle("Chromocenters Analysis Pipeline (Batch)");
@@ -755,12 +753,12 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	 *
 	 */
 	private static class QuitListener implements ActionListener {
-		private final ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog;
+		private final ChromocentersAnalysisPipelineBatchDialog ccAnalysisDialog;
 		
 		
-		/** @param chromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog GUI */
-		QuitListener(ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog) {
-			this.chromocentersAnalysisPipelineBatchDialog = chromocentersAnalysisPipelineBatchDialog;
+		/** @param ccAnalysisDialog chromocentersAnalysisPipelineBatchDialog GUI */
+		QuitListener(ChromocentersAnalysisPipelineBatchDialog ccAnalysisDialog) {
+			this.ccAnalysisDialog = ccAnalysisDialog;
 		}
 		
 		
@@ -768,7 +766,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		 *
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			chromocentersAnalysisPipelineBatchDialog.dispose();
+			ccAnalysisDialog.dispose();
 		}
 		
 	}
@@ -776,12 +774,12 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	/** Classes listener to interact with the several elements of the window */
 	private class StartListener implements ActionListener {
 		
-		final ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog;
+		final ChromocentersAnalysisPipelineBatchDialog ccAnalysisDialog;
 		
 		
-		/** @param chromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog GUI */
-		StartListener(ChromocentersAnalysisPipelineBatchDialog chromocentersAnalysisPipelineBatchDialog) {
-			this.chromocentersAnalysisPipelineBatchDialog = chromocentersAnalysisPipelineBatchDialog;
+		/** @param ccAnalysisDialog chromocentersAnalysisPipelineBatchDialog GUI */
+		StartListener(ChromocentersAnalysisPipelineBatchDialog ccAnalysisDialog) {
+			this.ccAnalysisDialog = ccAnalysisDialog;
 		}
 		
 		
@@ -796,7 +794,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 				                              JOptionPane.ERROR_MESSAGE);
 			} else {
 				start = true;
-				chromocentersAnalysisPipelineBatchDialog.dispose();
+				ccAnalysisDialog.dispose();
 				try {
 					dialogListener.onStart();
 				} catch (AccessException | ExecutionException | ServiceException e) {

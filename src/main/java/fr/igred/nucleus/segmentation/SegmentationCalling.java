@@ -271,16 +271,16 @@ public class SegmentationCalling {
 		}
 		processExecutor.shutdownNow();
 		
-		StringBuilder otsuInfoBuilder       = new StringBuilder();
-		StringBuilder convexHullInfoBuilder = new StringBuilder();
+		StringBuilder otsuInfoBuilder     = new StringBuilder();
+		StringBuilder convHullInfoBuilder = new StringBuilder();
 		for (File file : files) {
 			otsuInfoBuilder.append(otsuResults.get(file.getName()));
-			convexHullInfoBuilder.append(convexHullResults.get(file.getName()));
+			convHullInfoBuilder.append(convexHullResults.get(file.getName()));
 		}
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		outputCropGeneralInfoOTSU += otsuInfoBuilder.toString();
 		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
-		outputCropGeneralInfoConvexHull += convexHullInfoBuilder.toString();
+		outputCropGeneralInfoConvexHull += convHullInfoBuilder.toString();
 		
 		saveCropGeneralInfo();
 		
@@ -530,8 +530,8 @@ public class SegmentationCalling {
 		downloadExecutor.shutdownNow();
 		processExecutor.shutdownNow();
 		
-		StringBuilder otsuInfoBuilder       = new StringBuilder();
-		StringBuilder convexHullInfoBuilder = new StringBuilder();
+		StringBuilder otsuInfoBuilder     = new StringBuilder();
+		StringBuilder convHullInfoBuilder = new StringBuilder();
 		for (ImageWrapper img : images) {
 			/* create results file compatible with OMERO.Parade*/
 			imgDatasetName = client.getDataset(inputID).getName();
@@ -539,19 +539,19 @@ public class SegmentationCalling {
 			otsuInfoBuilder.append(img.getId()).append(",");
 			otsuInfoBuilder.append(imgDatasetName).append(",");
 			otsuInfoBuilder.append(otsuResults.get(img.getId()));
-			convexHullInfoBuilder.append(img.getId()).append(",");
-			convexHullInfoBuilder.append(imgDatasetName).append(",");
-			convexHullInfoBuilder.append(convexHullResults.get(img.getId()));
+			convHullInfoBuilder.append(img.getId()).append(",");
+			convHullInfoBuilder.append(imgDatasetName).append(",");
+			convHullInfoBuilder.append(convexHullResults.get(img.getId()));
 		}
 		
 		outputInfoParade += otsuInfoBuilder.toString();
-		outputInfoParadeGraham += convexHullInfoBuilder.toString();
+		outputInfoParadeGraham += convHullInfoBuilder.toString();
 		
 		this.outputCropGeneralInfoOTSU += "#Dataset:" + imgDatasetId + lineSeparator() + getResultsColumnNames();
 		
 		outputCropGeneralInfoOTSU += otsuInfoBuilder.toString();
 		this.outputCropGeneralInfoConvexHull += "#Dataset:" + imgDatasetId + lineSeparator() + getResultsColumnNames();
-		outputCropGeneralInfoConvexHull += convexHullInfoBuilder.toString();
+		outputCropGeneralInfoConvexHull += convHullInfoBuilder.toString();
 		saveCropGeneralInfoOmero(client, output);
 		return "";
 	}
