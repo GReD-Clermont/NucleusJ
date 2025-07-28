@@ -17,7 +17,7 @@
  */
 package fr.igred.nucleus.autocrop;
 
-import fr.igred.nucleus.imageprocessing.Thresholding;
+import fr.igred.nucleus.utils.Thresholding;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
 import fr.igred.nucleus.io.OutputTiff;
@@ -59,7 +59,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
-import static fr.igred.nucleus.imageprocessing.Thresholding.contrastAnd8bits;
+import static fr.igred.nucleus.utils.Thresholding.contrastAnd8bits;
 
 
 /**

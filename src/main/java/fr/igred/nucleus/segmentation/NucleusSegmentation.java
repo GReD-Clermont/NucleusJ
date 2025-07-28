@@ -31,7 +31,7 @@ import fr.igred.omero.roi.GenericShapeWrapper;
 import fr.igred.omero.roi.ROIWrapper;
 import fr.igred.omero.roi.RectangleWrapper;
 import fr.igred.nucleus.io.Directory;
-import fr.igred.nucleus.imageprocessing.Thresholding;
+import fr.igred.nucleus.utils.Thresholding;
 import fr.igred.nucleus.utils.Gradient;
 import fr.igred.nucleus.utils.Histogram;
 import ij.ImagePlus;
