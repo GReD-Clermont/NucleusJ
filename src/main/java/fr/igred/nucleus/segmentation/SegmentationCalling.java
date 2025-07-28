@@ -40,10 +40,7 @@ import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -54,6 +51,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import static java.time.LocalDateTime.now;
 
 
 /**
@@ -143,6 +142,28 @@ public class SegmentationCalling {
 	
 	
 	/**
+	 * Returns the current date and time formatted according to the specified pattern.
+	 *
+	 * @param pattern the date-time pattern to use
+	 *
+	 * @return a formatted string representing the current date and time
+	 */
+	static String currentDateTime(String pattern) {
+		return DateTimeFormatter.ofPattern(pattern, Locale.getDefault()).format(now());
+	}
+	
+	
+	/**
+	 * Returns the current date and time formatted as "yyyy-MM-dd:HH-mm-ss".
+	 *
+	 * @return a formatted string representing the current date and time
+	 */
+	static String currentDateTime() {
+		return currentDateTime("yyyy-MM-dd:HH-mm-ss");
+	}
+	
+	
+	/**
 	 * Setter for the number of threads used to process images
 	 *
 	 * @param threadNumber number of executors threads
@@ -212,7 +233,7 @@ public class SegmentationCalling {
 					FilesNames outputFilenames = new FilesNames(fileImg);
 					String     prefix          = outputFilenames.prefixNameFile();
 					
-					String start = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, start);
 					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, params);
 					
@@ -226,7 +247,7 @@ public class SegmentationCalling {
 					convexHullResults.put(file.getName(),
 					                      nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
 					
-					String end = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					String end = currentDateTime();
 					LOGGER.info("End: {} at {}", fileImg, end);
 					
 					latch.countDown();
@@ -275,7 +296,7 @@ public class SegmentationCalling {
 		String prefix = outPutFilesNames.prefixNameFile();
 		LOGGER.info("Current image in process: {}", currentFile);
 		
-		String start = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
 		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(currentFile, params);
 		nucleusSegmentation.preProcessImage();
@@ -288,27 +309,26 @@ public class SegmentationCalling {
 		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
 		this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
 		
-		String end = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+		String end = currentDateTime();
 		LOGGER.info("End: {}", end);
 		return log;
 	}
 	
 	
 	public void saveCropGeneralInfo() {
-		LocalDateTime     date      = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss", Locale.ROOT);
+		String date = currentDateTime("yyyy-MM-dd_HH-mm-ss");
 		LOGGER.info("Saving crop general info.");
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(params.getOutputFolder() +
 		                                                         "OTSU" +
 		                                                         File.separator +
-		                                                         formatter.format(date) +
+		                                                         date +
 		                                                         "-result_Segmentation_Analyse_OTSU.csv");
 		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU, true);
 		if (params.getConvexHullDetection()) {
 			OutputTextFile outputConvexHull = new OutputTextFile(params.getOutputFolder() +
 			                                                     ConvexHullDetection.CONVEX_HULL_ALGORITHM +
 			                                                     File.separator +
-			                                                     formatter.format(date) +
+			                                                     date +
 			                                                     "-result_Segmentation_Analyse_" +
 			                                                     ConvexHullDetection.CONVEX_HULL_ALGORITHM +
 			                                                     ".csv");
@@ -368,7 +388,7 @@ public class SegmentationCalling {
 		String fileImg = image.getName();
 		LOGGER.info("Current image in process: {}", fileImg);
 		
-		String start = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
 		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(image, params, client);
 		nucleusSegmentation.preProcessImage();
@@ -382,7 +402,7 @@ public class SegmentationCalling {
 		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
 		this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
 		
-		String end = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+		String end = currentDateTime();
 		LOGGER.info("End: {}", end);
 		
 		return log;
@@ -445,7 +465,7 @@ public class SegmentationCalling {
 				try {
 					String fileImg = img.getName();
 					
-					String start = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, start);
 					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(img, imp, params);
 					nucleusSegmentation.preProcessImage();
@@ -459,7 +479,7 @@ public class SegmentationCalling {
 					convexHullResults.put(img.getId(),
 					                      nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
 					
-					String end = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+					String end = currentDateTime();
 					LOGGER.info("End: {} at {}", fileImg, end);
 					
 					latch.countDown();
@@ -537,8 +557,7 @@ public class SegmentationCalling {
 	
 	public void saveCropGeneralInfoOmero(Client client, Long output)
 	throws ServiceException, AccessException, ExecutionException, InterruptedException {
-		LocalDateTime     date      = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss", Locale.ROOT);
+		String date = currentDateTime("yyyy-MM-dd_HH-mm-ss");
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		ProjectWrapper project = client.getProject(output);
@@ -547,22 +566,22 @@ public class SegmentationCalling {
 		/* Create paths for the files (Otsu,Graham.Parade)*/
 		String path = "." +
 		              File.separator +
-		              formatter.format(date) +
+		              date +
 		              "_" +
 		              imgDatasetName +
 		              "_" +
 		              "result_Segmentation_OTSU.csv";
 		String pathGraham = "." + File.separator +
-		                    formatter.format(date) + "_" +
+		                    date + "_" +
 		                    imgDatasetName + "_" +
 		                    "result_Segmentation_GRAHAM.csv";
 		String pathParade = "." +
 		                    File.separator +
-		                    formatter.format(date) + "_" +
+		                    date + "_" +
 		                    imgDatasetName + "_" +
 		                    "result_Segmentation_OTSU_parade.csv";
 		String pathParadeGraham = "." + File.separator +
-		                          formatter.format(date) + "_" +
+		                          date + "_" +
 		                          imgDatasetName + "_" +
 		                          "result_Segmentation_GRAHAM_parade.csv";
 		try {
@@ -633,7 +652,7 @@ public class SegmentationCalling {
 		String fileImg = image.getName();
 		LOGGER.info("Current image in process: {}", fileImg);
 		
-		String start = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
 		
 		int i = 0;
@@ -657,7 +676,7 @@ public class SegmentationCalling {
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += info.toString();
 		
-		String end = new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
+		String end = currentDateTime();
 		LOGGER.info("End: {}", end);
 		
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);

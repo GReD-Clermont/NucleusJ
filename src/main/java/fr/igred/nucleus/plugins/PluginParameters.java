@@ -29,9 +29,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandles;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Properties;
+
+import static java.time.LocalDateTime.now;
 
 
 public class PluginParameters {
@@ -121,6 +123,17 @@ public class PluginParameters {
 		dirOutput.checkAndCreateDir();
 		this.outputFolder = dirOutput.getDirPath();
 		addGeneralProperties(pathToConfigFile);
+	}
+	
+	
+	/**
+	 * get local time start analysisinformation yyyy-MM-dd:HH-mm-ss format
+	 *
+	 * @return time in yyyy-MM-dd:HH-mm-ss format
+	 */
+	public static String getLocalTime() {
+		return DateTimeFormatter.ofPattern("yyyy-MM-dd:HH-mm-ss", Locale.getDefault())
+		                        .format(now());
 	}
 	
 	
@@ -246,16 +259,6 @@ public class PluginParameters {
 		}
 		return parametersInfo;
 		
-	}
-	
-	
-	/**
-	 * get local time start analysisinformation yyyy-MM-dd:HH-mm-ss format
-	 *
-	 * @return time in yyyy-MM-dd:HH-mm-ss format
-	 */
-	public static String getLocalTime() {
-		return new SimpleDateFormat("yyyy-MM-dd:HH-mm-ss").format(Calendar.getInstance().getTime());
 	}
 	
 	
