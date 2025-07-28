@@ -103,7 +103,6 @@ public class NODeJ implements PlugIn, IDialogListener {
 		String dataTypeSegmented = gui.getDataTypeSegmented();
 		
 		ChromocenterParameters ccAnalyseParams = new ChromocenterParameters(".", ".", ".",
-		                                                                    client,
 		                                                                    gui.getGaussianX(), gui.getGaussianY(),
 		                                                                    gui.getGaussianZ(),
 		                                                                    gui.getFactor(), gui.getNeigh(),

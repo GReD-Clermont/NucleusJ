@@ -91,41 +91,41 @@ public class CLIRunAction {
 		                                                           cmd.getOptionValue("input2"),
 		                                                           cmd.getOptionValue("o"));
 		if (cmd.hasOption("isG")) {
-			params.gaussianOnRaw = true;
+			params.setGaussianOnRaw(true);
 		}
 		if (cmd.hasOption("isF")) {
-			params.sizeFilter = true;
+			params.setSizeFiltered(true);
 		}
 		if (cmd.hasOption("noC")) {
-			params.noChange = true;
+			params.setNoChange(true);
 		}
 		if (cmd.hasOption("gX")) {
-			params.xGaussianSigma = parseDouble(cmd.getOptionValue("gX"));
+			params.setXGaussianSigma(parseDouble(cmd.getOptionValue("gX")));
 		}
 		if (cmd.hasOption("gY")) {
-			params.yGaussianSigma = parseDouble(cmd.getOptionValue("gY"));
+			params.setYGaussianSigma(parseDouble(cmd.getOptionValue("gY")));
 		}
 		if (cmd.hasOption("gZ")) {
-			params.zGaussianSigma = parseDouble(cmd.getOptionValue("gZ"));
+			params.setZGaussianSigma(parseDouble(cmd.getOptionValue("gZ")));
 		}
 		if (cmd.hasOption("min")) {
-			params.minSize = parseDouble(cmd.getOptionValue("min"));
+			params.setMinSize(parseDouble(cmd.getOptionValue("min")));
 		}
 		if (cmd.hasOption("max")) {
-			params.maxSize = parseDouble(cmd.getOptionValue("max"));
+			params.setMaxSize(parseDouble(cmd.getOptionValue("max")));
 		}
 		if (cmd.hasOption("f")) {
-			params.factor = parseDouble(cmd.getOptionValue("f"));
+			params.setFactor(parseDouble(cmd.getOptionValue("f")));
 		}
 		if (cmd.hasOption("n")) {
-			params.neighbours = parseInt(cmd.getOptionValue("n"));
+			params.setNeighbours(parseInt(cmd.getOptionValue("n")));
 		}
 		
 		ChromocenterCalling ccCalling = new ChromocenterCalling(params);
 		try {
-			LOGGER.info("-input {} -input2 {} - {}",
+			LOGGER.info("-input {} -input2 {} -output {}",
 			            params.getInputFolder(),
-			            params.segInputFolder,
+			            params.getSegmentedInputFolder(),
 			            params.getOutputFolder());
 			ccCalling.runSeveralImages2();
 		} catch (IOException | FormatException e) {

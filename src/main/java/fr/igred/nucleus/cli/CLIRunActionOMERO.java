@@ -395,37 +395,37 @@ public class CLIRunActionOMERO {
 	private void runSegCC() {
 		ChromocenterParameters params = new ChromocenterParameters(".", ".", ".");
 		if (cmd.hasOption("isG")) {
-			params.gaussianOnRaw = true;
+			params.setGaussianOnRaw(true);
 		}
 		if (cmd.hasOption("isF")) {
-			params.sizeFilter = true;
+			params.setSizeFiltered(true);
 		}
 		if (cmd.hasOption("noC")) {
-			params.noChange = true;
+			params.setNoChange(true);
 		}
 		if (cmd.hasOption("gX")) {
-			params.xGaussianSigma = Double.parseDouble(cmd.getOptionValue("gX"));
+			params.setXGaussianSigma(Double.parseDouble(cmd.getOptionValue("gX")));
 		}
 		
 		if (cmd.hasOption("gY")) {
-			params.yGaussianSigma = Double.parseDouble(cmd.getOptionValue("gY"));
+			params.setYGaussianSigma(Double.parseDouble(cmd.getOptionValue("gY")));
 		}
 		
 		if (cmd.hasOption("gZ")) {
-			params.zGaussianSigma = Double.parseDouble(cmd.getOptionValue("gZ"));
+			params.setZGaussianSigma(Double.parseDouble(cmd.getOptionValue("gZ")));
 		}
 		
 		if (cmd.hasOption("min")) {
-			params.minSize = Double.parseDouble(cmd.getOptionValue("min"));
+			params.setMinSize(Double.parseDouble(cmd.getOptionValue("min")));
 		}
 		if (cmd.hasOption("max")) {
-			params.maxSize = Double.parseDouble(cmd.getOptionValue("max"));
+			params.setMaxSize(Double.parseDouble(cmd.getOptionValue("max")));
 		}
 		if (cmd.hasOption("f")) {
-			params.factor = Double.parseDouble(cmd.getOptionValue("f"));
+			params.setFactor(Double.parseDouble(cmd.getOptionValue("f")));
 		}
 		if (cmd.hasOption("n")) {
-			params.neighbours = Integer.parseInt(cmd.getOptionValue("n"));
+			params.setNeighbours(Integer.parseInt(cmd.getOptionValue("n")));
 		}
 		
 		ChromocenterCalling ccCalling = new ChromocenterCalling(params);

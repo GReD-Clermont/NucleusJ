@@ -73,14 +73,14 @@ public class ChromocenterSegmentation {
 		this.segNuc = segNuc;
 		this.output = outputFileName;
 		setNbPixelNuc3D();
-		int initialV = params.neighbours;
+		int initialV = params.getNeighbours();
 		LOGGER.info("\t{}", initialV);
-		if (!this.params.noChange && nbPixelNuc * getVoxelVolume3D() > 50) {
-			this.neigh = (int) (this.params.neighbours * 2.5);
-			this.factor = this.params.factor + 1;
+		if (!this.params.isNoChange() && nbPixelNuc * getVoxelVolume3D() > 50) {
+			this.neigh = (int) (this.params.getNeighbours() * 2.5);
+			this.factor = this.params.getFactor() + 1;
 		} else {
-			this.neigh = this.params.neighbours;
-			this.factor = this.params.factor;
+			this.neigh = this.params.getNeighbours();
+			this.factor = this.params.getFactor();
 		}
 		LOGGER.info("\t{} {}{}", neigh, factor, System.lineSeparator());
 	}
@@ -94,19 +94,19 @@ public class ChromocenterSegmentation {
 	 */
 	
 	public void runCC3D(String pathGradient) {
-		if (params.gaussianOnRaw) {
+		if (params.useGaussianOnRaw()) {
 			GaussianBlur3D.blur(raw[0],
-			                    params.xGaussianSigma,
-			                    params.yGaussianSigma,
-			                    params.zGaussianSigma);
+			                    params.getXGaussianSigma(),
+			                    params.getYGaussianSigma(),
+			                    params.getZGaussianSigma());
 		}
 		
 		ImagePlus   imageGradient = imgGradient3D();
 		Calibration cal           = raw[0].getCalibration();
 		GaussianBlur3D.blur(imageGradient,
-		                    params.xGaussianSigma,
-		                    params.yGaussianSigma,
-		                    params.zGaussianSigma);
+		                    params.getXGaussianSigma(),
+		                    params.getYGaussianSigma(),
+		                    params.getZGaussianSigma());
 		imageGradient.setCalibration(cal);
 		ImageSaver.saveFile(imageGradient, pathGradient);
 		computeAverage3D(imageGradient);
@@ -115,7 +115,7 @@ public class ChromocenterSegmentation {
 		LOGGER.info("{} {} avg {} std {}", output, threshold, avgNucIntensity, stdDevNucIntensity);
 		imageGradient = binarize3D(imageGradient);
 		imageGradient.setCalibration(cal);
-		if (params.sizeFilter) {
+		if (params.isSizeFiltered()) {
 			imageGradient = componentSizeFilter3D(imageGradient);
 			imageGradient.setCalibration(cal);
 		}
@@ -298,16 +298,14 @@ public class ChromocenterSegmentation {
 		for (Map.Entry<Double, Integer> entry : parcour.entrySet()) {
 			Double  cle    = entry.getKey();
 			Integer valeur = entry.getValue();
-			if ((valeur * getVoxelVolume3D() <
-			     params.minSize ||
-			     valeur * getVoxelVolume3D() >
-			     params.maxSize) && valeur > 1) {
+			if ((valeur * getVoxelVolume3D() < params.getMinSize() ||
+			     valeur * getVoxelVolume3D() > params.getMaxSize()) &&
+			    valeur > 1) {
 				for (int k = 0; k < raw[0].getNSlices(); ++k) {
 					for (int i = 0; i < raw[0].getWidth(); ++i) {
 						for (int j = 0; j < raw[0].getHeight(); ++j) {
 							if (is.getVoxel(i, j, k) == cle) {
 								is.setVoxel(i, j, k, 0);
-								
 							}
 						}
 					}

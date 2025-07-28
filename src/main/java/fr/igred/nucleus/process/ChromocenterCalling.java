@@ -107,7 +107,7 @@ public class ChromocenterCalling {
 			File       currentFile      = directoryInput.getFile(i);
 			String     fileImg          = currentFile.toString();
 			FilesNames outPutFilesNames = new FilesNames(fileImg);
-			FilesNames segCC = new FilesNames(params.segInputFolder +
+			FilesNames segCC = new FilesNames(params.getSegmentedInputFolder() +
 			                                  File.separator + currentFile.getName());
 			this.prefix = outPutFilesNames.prefixNameFile();
 			ImagePlus[] raw = BF.openImagePlus(currentFile.getAbsolutePath());
@@ -117,7 +117,7 @@ public class ChromocenterCalling {
 			String gradientFileName = diffDir + File.separator + currentFile.getName();
 			
 			if (segCC.fileExists()) {
-				ImagePlus[] segNuc = BF.openImagePlus(params.segInputFolder +
+				ImagePlus[] segNuc = BF.openImagePlus(params.getSegmentedInputFolder() +
 				                                      File.separator + currentFile.getName());
 				ChromocenterSegmentation segmentation = new ChromocenterSegmentation(raw,
 				                                                                     segNuc,
