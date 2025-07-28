@@ -61,7 +61,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 	
 	
 	public AutocropConfigDialog() {
-		super.setTitle("Autocrop - NucleusJ3");
+		super.setTitle("Autocrop - NucleusJ");
 		super.setSize(600, 350);
 		super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		Container     container     = super.getContentPane();

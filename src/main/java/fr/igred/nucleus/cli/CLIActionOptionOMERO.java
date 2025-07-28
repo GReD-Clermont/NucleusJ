@@ -159,7 +159,7 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	/**
 	 * Method to check action parameter
 	 *
-	 * @param action NucleusJ3 action to run
+	 * @param action NucleusJ action to run
 	 *
 	 * @return boolean existing action
 	 */

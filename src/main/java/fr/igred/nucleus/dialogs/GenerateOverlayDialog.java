@@ -17,6 +17,7 @@
  */
 package fr.igred.nucleus.dialogs;
 
+import fr.igred.nucleus.Version;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import ij.Prefs;
@@ -100,7 +101,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		JButton jButtonQuit = new JButton("Quit");
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
-		super.setTitle("Generate Overlay - NucleusJ3");
+		super.setTitle("Generate Overlay - NucleusJ - v" + Version.get());
 		super.setMinimumSize(new Dimension(500, 390));
 		
 		container = super.getContentPane();

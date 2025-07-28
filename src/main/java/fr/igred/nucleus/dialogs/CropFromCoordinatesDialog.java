@@ -17,6 +17,7 @@
  */
 package fr.igred.nucleus.dialogs;
 
+import fr.igred.nucleus.Version;
 import ij.Prefs;
 
 import javax.swing.BorderFactory;
@@ -93,7 +94,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		JButton jButtonQuit = new JButton("Quit");
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
-		super.setTitle("Crop From Coordinate - NucleusJ3");
+		super.setTitle("Crop From Coordinate - NucleusJ - v" + Version.get());
 		super.setMinimumSize(new Dimension(500, 410));
 		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		

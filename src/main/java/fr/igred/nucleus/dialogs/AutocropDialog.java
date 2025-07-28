@@ -17,6 +17,7 @@
  */
 package fr.igred.nucleus.dialogs;
 
+import fr.igred.nucleus.Version;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 
@@ -120,7 +121,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 		JButton jButtonStart = new JButton("Start");
 		JButton jButtonQuit  = new JButton("Quit");
-		super.setTitle("Autocrop - NucleusJ3");
+		super.setTitle("Autocrop - NucleusJ - v" + Version.get());
 		super.setMinimumSize(new Dimension(400, 500));
 		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		super.setLocationRelativeTo(null);

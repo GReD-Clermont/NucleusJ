@@ -18,6 +18,7 @@
 package fr.igred.nucleus.dialogs;
 
 
+import fr.igred.nucleus.Version;
 import fr.igred.nucleus.plugins.Autocrop_;
 import fr.igred.nucleus.plugins.ChromocentersAnalysisBatchPlugin_;
 import fr.igred.nucleus.plugins.ComputeParametersPlugin_;
@@ -50,7 +51,7 @@ public class MainGui extends JFrame {
 	
 	
 	public MainGui() {
-		super.setTitle("NucleusJ 3");
+		super.setTitle("NucleusJ - v" + Version.get());
 		super.setMinimumSize(new Dimension(300, 400));
 		super.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		super.setLocationRelativeTo(null);

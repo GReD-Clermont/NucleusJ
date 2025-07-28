@@ -58,7 +58,7 @@ public final class CLIHelper {
 		String[]               exampleCMD = exampleArgument.split(" ");
 		CLIActionOptionCmdLine command    = new CLIActionOptionCmdLine(exampleCMD);
 		HelpFormatter          formatter  = new HelpFormatter();
-		formatter.printHelp("NucleusJ3 cli : ", command.getOptions());
+		formatter.printHelp("NucleusJ cli : ", command.getOptions());
 		System.console().writer().println(eol + "Command line example :" + eol +
 		                                  exampleCommand + " " + exampleArgument + eol + eol);
 		
@@ -71,7 +71,7 @@ public final class CLIHelper {
 		                              "-group 000";
 		String[]             exampleOMEROCMD = exampleArgumentOMERO.split(" ");
 		CLIActionOptionOMERO commandOMERO    = new CLIActionOptionOMERO(exampleOMEROCMD);
-		formatter.printHelp("NucleusJ3 OMERO MODE: ", commandOMERO.getOptions());
+		formatter.printHelp("NucleusJ OMERO MODE: ", commandOMERO.getOptions());
 		System.console().writer().println(eol + "Command line example :" + eol + eol +
 		                                  exampleCommand + " " + exampleArgumentOMERO);
 		
@@ -99,7 +99,7 @@ public final class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ3 segmentation cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ segmentation cli : ", command.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol +
 				                                  exampleCommand + " " + exampleArgument + eol + eol);
 				
@@ -113,7 +113,7 @@ public final class CLIHelper {
 				
 				String[] exampleOMEROCMD = exampleArgumentOMERO.split(" ");
 				CLIActionOptionOMERO commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
-				formatter.printHelp("NucleusJ3 segmentation OMERO MODE: ", commandOMERO.getOptions());
+				formatter.printHelp("NucleusJ segmentation OMERO MODE: ", commandOMERO.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol + eol +
 				                                  exampleCommand + " " + exampleArgumentOMERO);
 				break;
@@ -125,7 +125,7 @@ public final class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ3 autocrop cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ autocrop cli : ", command.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol +
 				                                  exampleCommand + " " + exampleArgument + eol + eol);
 				
@@ -139,7 +139,7 @@ public final class CLIHelper {
 				                       "-group 000";
 				exampleOMEROCMD = exampleArgumentOMERO.split(" ");
 				commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
-				formatter.printHelp("NucleusJ3 autocrop OMERO MODE: ", commandOMERO.getOptions());
+				formatter.printHelp("NucleusJ autocrop OMERO MODE: ", commandOMERO.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol + eol +
 				                                  exampleCommand + " " + exampleArgumentOMERO);
 				break;
@@ -151,7 +151,7 @@ public final class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ3 computeParameters cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ computeParameters cli : ", command.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol +
 				                                  exampleCommand + " " + exampleArgument + eol + eol);
 				break;
@@ -163,7 +163,7 @@ public final class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ3 computeParametersDL cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ computeParametersDL cli : ", command.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol +
 				                                  exampleCommand + " " + exampleArgument + eol + eol);
 				break;
@@ -175,7 +175,7 @@ public final class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ3 generateProjection cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ generateProjection cli : ", command.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol +
 				                                  exampleCommand + exampleArgument + eol + eol);
 				break;
@@ -188,7 +188,7 @@ public final class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ3 generateProjectionFiltered cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ generateProjectionFiltered cli : ", command.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol +
 				                                  exampleCommand + exampleArgument + eol + eol);
 				break;
@@ -199,7 +199,7 @@ public final class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ3 CropFromCoordinate cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ CropFromCoordinate cli : ", command.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol +
 				                                  exampleCommand + exampleArgument + eol + eol);
 				break;
@@ -211,7 +211,7 @@ public final class CLIHelper {
 				exampleCMD = exampleArgument.split(" ");
 				command = new CLIActionOptionCmdLine(exampleCMD);
 				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ3 GenerateOverlay cli : ", command.getOptions());
+				formatter.printHelp("NucleusJ GenerateOverlay cli : ", command.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol +
 				                                  exampleCommand + exampleArgument + eol + eol);
 				
@@ -224,7 +224,7 @@ public final class CLIHelper {
 				                       "-group 000";
 				exampleOMEROCMD = exampleArgumentOMERO.split(" ");
 				commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
-				formatter.printHelp("NucleusJ3 GenerateOverlay OMERO MODE: ", commandOMERO.getOptions());
+				formatter.printHelp("NucleusJ GenerateOverlay OMERO MODE: ", commandOMERO.getOptions());
 				System.console().writer().println(eol + "Command line example :" + eol + eol +
 				                                  exampleCommand + exampleArgumentOMERO);
 				///
