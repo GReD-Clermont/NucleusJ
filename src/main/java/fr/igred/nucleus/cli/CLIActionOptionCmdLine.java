@@ -50,8 +50,8 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 				printHelpCommand();
 				super.setCmd(null);
 			}
-			if (cmd != null && !availableActionCMD(cmd.getOptionValue(ACTION_NAME))) {
-				print("Action option \"" + cmd.getOptionValue(ACTION_NAME) + "\" not available" + eol);
+			if (cmd != null && !availableActionCMD(cmd.getOptionValue(ACTION_OPTION))) {
+				print("Action option \"" + cmd.getOptionValue(ACTION_OPTION) + "\" not available" + eol);
 				printHelpCommand();
 				super.setCmd(null);
 			}
@@ -83,7 +83,7 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 	/** Method to check specific action parameters */
 	private void checkSpecificOptions() {
 		String eol = System.lineSeparator();
-		switch (cmd.getOptionValue(ACTION_NAME)) {
+		switch (cmd.getOptionValue(ACTION_OPTION)) {
 			case "autocrop":
 			case "segmentation":
 				inputFolder.setDescription("Path to input folder containing images to analyse" + eol);

@@ -60,6 +60,13 @@ public class CLIRunActionOMERO {
 	
 	private static final int DEFAULT_PORT = 4064;
 	
+	private static final String HOSTNAME_OPTION  = "hostname";
+	private static final String PORT_OPTION      = "port";
+	private static final String SESSIONID_OPTION = "sessionID";
+	private static final String USERNAME_OPTION  = "username";
+	private static final String PASSWORD_OPTION  = "password";
+	private static final String GROUP_OPTION     = "group";
+	
 	/** Command line */
 	private final CommandLine cmd;
 	
@@ -85,17 +92,17 @@ public class CLIRunActionOMERO {
 		if (this.cmd.hasOption("omeroConfig")) {
 			addLoginCredentials(this.cmd.getOptionValue("omeroConfig"));
 		} else {
-			this.hostname = this.cmd.getOptionValue("hostname");
-			if (cmd.hasOption("port")) {
-				this.port = Integer.parseInt(this.cmd.getOptionValue("port"));
+			this.hostname = this.cmd.getOptionValue(HOSTNAME_OPTION);
+			if (cmd.hasOption(PORT_OPTION)) {
+				this.port = Integer.parseInt(this.cmd.getOptionValue(PORT_OPTION));
 			}
-			if (this.cmd.hasOption("sessionID")) {
-				this.sessionID = this.cmd.getOptionValue("sessionID");
+			if (this.cmd.hasOption(SESSIONID_OPTION)) {
+				this.sessionID = this.cmd.getOptionValue(SESSIONID_OPTION);
 			} else {
-				this.username = this.cmd.getOptionValue("username");
+				this.username = this.cmd.getOptionValue(USERNAME_OPTION);
 				getOMEROPassword();
-				if (this.cmd.hasOption("group")) {
-					this.groupID = Long.parseLong(this.cmd.getOptionValue("group"));
+				if (this.cmd.hasOption(GROUP_OPTION)) {
+					this.groupID = Long.parseLong(this.cmd.getOptionValue(GROUP_OPTION));
 				}
 			}
 		}
@@ -266,23 +273,23 @@ public class CLIRunActionOMERO {
 		for (String idProp : properties) {
 			try {
 				switch (idProp) {
-					case "hostname":
-						this.hostname = prop.getProperty("hostname");
+					case HOSTNAME_OPTION:
+						this.hostname = prop.getProperty(HOSTNAME_OPTION);
 						break;
-					case "port":
-						this.port = Integer.parseInt(prop.getProperty("port"));
+					case PORT_OPTION:
+						this.port = Integer.parseInt(prop.getProperty(PORT_OPTION));
 						break;
-					case "username":
-						this.username = prop.getProperty("username");
+					case USERNAME_OPTION:
+						this.username = prop.getProperty(USERNAME_OPTION);
 						break;
-					case "password":
-						this.password = prop.getProperty("password").toCharArray();
+					case PASSWORD_OPTION:
+						this.password = prop.getProperty(PASSWORD_OPTION).toCharArray();
 						break;
-					case "group":
-						this.groupID = Long.parseLong(prop.getProperty("group"));
+					case GROUP_OPTION:
+						this.groupID = Long.parseLong(prop.getProperty(GROUP_OPTION));
 						break;
-					case "sessionID":
-						this.sessionID = prop.getProperty("sessionID");
+					case SESSIONID_OPTION:
+						this.sessionID = prop.getProperty(SESSIONID_OPTION);
 						break;
 					default:
 						LOGGER.warn("Unknown property in OMERO config file: {}", idProp);
@@ -296,8 +303,8 @@ public class CLIRunActionOMERO {
 	
 	
 	private void getOMEROPassword() {
-		if (cmd.hasOption("password")) {
-			this.password = cmd.getOptionValue("password").toCharArray();
+		if (cmd.hasOption(PASSWORD_OPTION)) {
+			this.password = cmd.getOptionValue(PASSWORD_OPTION).toCharArray();
 		} else {
 			this.password = readPassword();
 		}

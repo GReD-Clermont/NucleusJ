@@ -31,8 +31,8 @@ import static fr.igred.nucleus.cli.CLIUtil.print;
 /** Generic class to handle command line option */
 public class CLIActionOptions {
 	// TODO Store action and option String in constant
-	/** Action option name */
-	public static final String ACTION_NAME = "action";
+	/** Action option */
+	protected static final String ACTION_OPTION = "action";
 	
 	private static final String EOL = System.lineSeparator();
 	
@@ -67,8 +67,8 @@ public class CLIActionOptions {
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** List of available actions */
-	protected Option action       = Option.builder(ACTION_NAME.substring(0, 1))
-	                                      .longOpt(ACTION_NAME)
+	protected Option action       = Option.builder(ACTION_OPTION.substring(0, 1))
+	                                      .longOpt(ACTION_OPTION)
 	                                      .required()
 	                                      .type(String.class)
 	                                      .desc("Actions available:" + EOL +

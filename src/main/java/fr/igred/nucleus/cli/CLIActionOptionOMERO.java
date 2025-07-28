@@ -145,8 +145,8 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 				printHelpCommand();
 				super.setCmd(null);
 			}
-			if (cmd != null && !availableActionOMERO(cmd.getOptionValue(ACTION_NAME))) {
-				print("Action option \"" + cmd.getOptionValue(ACTION_NAME) + "\" not available" + eol);
+			if (cmd != null && !availableActionOMERO(cmd.getOptionValue(ACTION_OPTION))) {
+				print("Action option \"" + cmd.getOptionValue(ACTION_OPTION) + "\" not available" + eol);
 				printHelpCommand();
 				super.setCmd(null);
 			}
