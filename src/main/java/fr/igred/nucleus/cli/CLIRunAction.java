@@ -87,51 +87,51 @@ public class CLIRunAction {
 	
 	
 	private void runSegCC() {
-		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(cmd.getOptionValue("input"),
-		                                                                           cmd.getOptionValue("input2"),
-		                                                                           cmd.getOptionValue("o"));
+		ChromocenterParameters params = new ChromocenterParameters(cmd.getOptionValue("input"),
+		                                                           cmd.getOptionValue("input2"),
+		                                                           cmd.getOptionValue("o"));
 		if (cmd.hasOption("isG")) {
-			chromocenterParameters.gaussianOnRaw = true;
+			params.setGaussianOnRaw(true);
 		}
 		if (cmd.hasOption("isF")) {
-			chromocenterParameters.sizeFilterConnectedComponent = true;
+			params.setSizeFiltered(true);
 		}
 		if (cmd.hasOption("noC")) {
-			chromocenterParameters.noChange = true;
+			params.setNoChange(true);
 		}
 		if (cmd.hasOption("gX")) {
-			chromocenterParameters.gaussianBlurXsigma = parseDouble(cmd.getOptionValue("gX"));
+			params.setXGaussianSigma(parseDouble(cmd.getOptionValue("gX")));
 		}
 		if (cmd.hasOption("gY")) {
-			chromocenterParameters.gaussianBlurYsigma = parseDouble(cmd.getOptionValue("gY"));
+			params.setYGaussianSigma(parseDouble(cmd.getOptionValue("gY")));
 		}
 		if (cmd.hasOption("gZ")) {
-			chromocenterParameters.gaussianBlurZsigma = parseDouble(cmd.getOptionValue("gZ"));
+			params.setZGaussianSigma(parseDouble(cmd.getOptionValue("gZ")));
 		}
 		if (cmd.hasOption("min")) {
-			chromocenterParameters.minSizeConnectedComponent = parseDouble(cmd.getOptionValue("min"));
+			params.setMinSize(parseDouble(cmd.getOptionValue("min")));
 		}
 		if (cmd.hasOption("max")) {
-			chromocenterParameters.maxSizeConnectedComponent = parseDouble(cmd.getOptionValue("max"));
+			params.setMaxSize(parseDouble(cmd.getOptionValue("max")));
 		}
 		if (cmd.hasOption("f")) {
-			chromocenterParameters.factor = parseDouble(cmd.getOptionValue("f"));
+			params.setFactor(parseDouble(cmd.getOptionValue("f")));
 		}
 		if (cmd.hasOption("n")) {
-			chromocenterParameters.neighbours = parseInt(cmd.getOptionValue("n"));
+			params.setNeighbours(parseInt(cmd.getOptionValue("n")));
 		}
 		
-		ChromocenterCalling ccCalling = new ChromocenterCalling(chromocenterParameters);
+		ChromocenterCalling ccCalling = new ChromocenterCalling(params);
 		try {
-			LOGGER.info("-input {} -input2 {} - {}",
-			            chromocenterParameters.inputFolder,
-			            chromocenterParameters.segInputFolder,
-			            chromocenterParameters.outputFolder);
+			LOGGER.info("-input {} -input2 {} -output {}",
+			            params.getInputFolder(),
+			            params.getSegmentedInputFolder(),
+			            params.getOutputFolder());
 			ccCalling.runSeveralImages2();
 		} catch (IOException | FormatException e) {
 			LOGGER.error("An error occurred during chromocenter segmentation.", e);
 		}
-		LOGGER.info("End !!! Results available: {}", chromocenterParameters.outputFolder);
+		LOGGER.info("End !!! Results available: {}", params.getOutputFolder());
 	}
 	
 	
@@ -168,19 +168,19 @@ public class CLIRunAction {
 	
 	
 	private void runAutocrop() {
-		AutocropParameters autocropParameters = new AutocropParameters(cmd.getOptionValue("input"),
-		                                                               cmd.getOptionValue("output"));
+		AutocropParameters params = new AutocropParameters(cmd.getOptionValue("input"),
+		                                                   cmd.getOptionValue("output"));
 		if (cmd.hasOption("config")) {
-			autocropParameters.addGeneralProperties(cmd.getOptionValue("config"));
-			autocropParameters.addProperties(cmd.getOptionValue("config"));
+			params.addGeneralProperties(cmd.getOptionValue("config"));
+			params.addProperties(cmd.getOptionValue("config"));
 		}
 		File path = new File(cmd.getOptionValue("input"));
 		if (path.isFile()) {
-			AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+			AutoCropCalling autoCrop = new AutoCropCalling(params);
 			autoCrop.runFile(cmd.getOptionValue("input"));
 			autoCrop.saveGeneralInfo();
 		} else {
-			AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+			AutoCropCalling autoCrop = new AutoCropCalling(params);
 			if (cmd.hasOption("threads")) {
 				autoCrop.setExecutorThreads(parseInt(cmd.getOptionValue("threads")));
 			}
@@ -190,33 +190,33 @@ public class CLIRunAction {
 	
 	
 	private void runSegmentation() throws FormatException {
-		SegmentationParameters segmentationParameters = new SegmentationParameters(cmd.getOptionValue("input"),
+		SegmentationParameters params = new SegmentationParameters(cmd.getOptionValue("input"),
 		                                                                           cmd.getOptionValue("output"));
 		if (cmd.hasOption("config")) {
-			segmentationParameters.addGeneralProperties(cmd.getOptionValue("config"));
-			segmentationParameters.addProperties(cmd.getOptionValue("config"));
+			params.addGeneralProperties(cmd.getOptionValue("config"));
+			params.addProperties(cmd.getOptionValue("config"));
 		}
 		File path = new File(cmd.getOptionValue("input"));
 		if (path.isFile()) {
-			SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
+			SegmentationCalling otsuModified = new SegmentationCalling(params);
 			try {
 				String log = otsuModified.runOneImage(cmd.getOptionValue("input"));
 				otsuModified.saveCropGeneralInfo();
 				if (!log.isEmpty()) {
-					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+					LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 				}
 			} catch (IOException e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		} else {
-			SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
+			SegmentationCalling otsuModified = new SegmentationCalling(params);
 			try {
 				if (cmd.hasOption("threads")) {
 					otsuModified.setExecutorThreads(parseInt(cmd.getOptionValue("threads")));
 				}
 				String log = otsuModified.runSeveralImages();
 				if (!log.isEmpty()) {
-					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+					LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 				}
 			} catch (IOException e) {
 				LOGGER.error("An error occurred.", e);

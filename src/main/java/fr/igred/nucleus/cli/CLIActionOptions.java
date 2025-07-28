@@ -17,7 +17,6 @@
  */
 package fr.igred.nucleus.cli;
 
-import fr.igred.nucleus.Version;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -25,84 +24,87 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import static fr.igred.nucleus.cli.CLIUtil.COMMAND;
+import static fr.igred.nucleus.cli.CLIUtil.print;
+
 
 /** Generic class to handle command line option */
 public class CLIActionOptions {
 	// TODO Store action and option String in constant
-	/** NucleusJ version */
-	private static final String NJ_VERSION = Version.get();
+	/** Action option */
+	protected static final String ACTION_OPTION = "action";
+	
+	private static final String EOL = System.lineSeparator();
 	
 	/** Path to input folder */
-	public Option inputFolder = Option.builder("in")
-	                                  .longOpt("input")
-	                                  .required()
-	                                  .type(String.class)
-	                                  .numberOfArgs(1)
-	                                  .build();
+	protected Option inputFolder = Option.builder("in")
+	                                     .longOpt("input")
+	                                     .required()
+	                                     .type(String.class)
+	                                     .numberOfArgs(1)
+	                                     .build();
 	
 	/** Path to second input folder needed in specific action */
-	public Option inputFolder2 = Option.builder("in2")
-	                                   .longOpt("input2")
-	                                   .type(String.class)
-	                                   .numberOfArgs(1)
-	                                   .build();
+	protected Option inputFolder2 = Option.builder("in2")
+	                                      .longOpt("input2")
+	                                      .type(String.class)
+	                                      .numberOfArgs(1)
+	                                      .build();
 	
 	/** Path to second input folder Need in specific action */
-	public    Option inputFolder3 = Option.builder("in3")
+	protected Option inputFolder3 = Option.builder("in3")
 	                                      .longOpt("input3")
 	                                      .type(String.class)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** Path to config file */
-	public    Option configFile   = Option.builder("c")
+	protected Option configFile   = Option.builder("c")
 	                                      .longOpt("config")
 	                                      .type(String.class)
-	                                      .desc("Path to config file\n" +
-	                                            "To generate config file example in current folder:\n" +
-	                                            "java -jar nucleusj-" +
-	                                            NJ_VERSION +
-	                                            ".jar -h configFileExample")
+	                                      .desc("Path to config file" + EOL +
+	                                            "To generate config file example in current folder:" + EOL +
+	                                            COMMAND + " -h configFileExample")
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** List of available actions */
-	public    Option action       = Option.builder("a")
-	                                      .longOpt("action")
+	protected Option action       = Option.builder(ACTION_OPTION.substring(0, 1))
+	                                      .longOpt(ACTION_OPTION)
 	                                      .required()
 	                                      .type(String.class)
-	                                      .desc("Action available:\n" +
-	                                            "autocrop : crop wide field images\n" +
-	                                            "segmentation : nucleus segmentation\n")
+	                                      .desc("Actions available:" + EOL +
+	                                            "autocrop : crop wide field images" + EOL +
+	                                            "segmentation : nucleus segmentation" + EOL)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** Number of threads */
-	public    Option threads      = Option.builder("th")
+	protected Option threads      = Option.builder("th")
 	                                      .longOpt("threads")
 	                                      .type(String.class)
 	                                      .desc("Number of threads used to split image processing during autocrop or nucleus segmentation (do not exceed the number of available CPUs  (=" +
-	                                            Runtime.getRuntime().availableProcessors() + " CPUs))\n" +
+	                                            Runtime.getRuntime().availableProcessors() + " CPUs))" + EOL +
 	                                            "Default : 4 threads for several images (otherwise 1 thread for single image processing)")
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** OMERO activate */
-	public    Option omero        = Option.builder("ome")
+	protected Option omero        = Option.builder("ome")
 	                                      .longOpt("omero")
 	                                      .type(boolean.class)
-	                                      .desc("Use of NucleusJ3 in OMERO\n")
+	                                      .desc("Use NucleusJ with OMERO" + EOL)
 	                                      .build();
 	/** List of available actions */
-	public    Option thresholding = Option.builder("thresh")
+	protected Option thresholding = Option.builder("thresh")
 	                                      .longOpt("thresholding")
 	                                      .type(String.class)
-	                                      .desc("type of thresholding method to use:\n" +
-	                                            "Otsu \n" +
-	                                            "RenyiEntropy \n")
+	                                      .desc("type of thresholding method to use:" + EOL +
+	                                            "Otsu " + EOL +
+	                                            "RenyiEntropy " + EOL)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** Path to output folder */
 	protected Option outputFolder = Option.builder("out")
 	                                      .longOpt("output")
 	                                      .type(String.class)
-	                                      .desc("Path to output results\n")
+	                                      .desc("Path to output results" + EOL)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	
@@ -117,9 +119,9 @@ public class CLIActionOptions {
 	/**
 	 * Constructor with argument
 	 *
-	 * @param argument List of command line argument
+	 * @param args Command line arguments
 	 */
-	public CLIActionOptions(String[] argument) {
+	public CLIActionOptions(String[] args) {
 		options.addOption(inputFolder);
 		options.addOption(inputFolder2);
 		options.addOption(inputFolder3);
@@ -129,23 +131,26 @@ public class CLIActionOptions {
 		options.addOption(omero);
 		options.addOption(thresholding);
 		try {
-			this.cmd = parser.parse(options, argument, true);
+			this.cmd = parser.parse(options, args, true);
 		} catch (ParseException exp) {
-			System.console().writer().println(exp.getMessage() + "\n");
-			System.console().writer().println(getHelperInfo());
-			System.exit(1);
+			print(exp.getMessage() + System.lineSeparator());
+			printHelpCommand();
+			this.cmd = null; // Set command to null if parsing fails
 		}
 	}
 	
 	
-	/** @return : helper info */
-	public static String getHelperInfo() {
-		return "More details for available actions:\n" +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h \n" +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help \n\n" +
-		       "More details for a specific action:\n" +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h <action>\n" +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help <action>";
+	/** Print help command usage */
+	public static void printHelpCommand() {
+		String eol = System.lineSeparator();
+		String info = "More details for available actions:" + eol +
+		              COMMAND + " -h" + eol +
+		              COMMAND + " -help" + eol +
+		              eol +
+		              "More details for a specific action:" + eol +
+		              COMMAND + " -h <action>" + eol +
+		              COMMAND + " -help <action>";
+		print(info);
 	}
 	
 	
@@ -155,8 +160,23 @@ public class CLIActionOptions {
 	}
 	
 	
+	/**
+	 * Get command line
+	 *
+	 * @return CommandLine object containing parsed command line options
+	 */
 	public CommandLine getCmd() {
 		return cmd;
+	}
+	
+	
+	/**
+	 * Set command line
+	 *
+	 * @param cmd CommandLine object to set
+	 */
+	protected void setCmd(CommandLine cmd) {
+		this.cmd = cmd;
 	}
 	
 }

@@ -196,6 +196,7 @@ public class GenerateOverlay {
 		List<DatasetWrapper> datasets = outputProject.getDatasets("Overlay");
 		if (datasets.isEmpty()) {
 			outputDataset = outputProject.addDataset(client, "Overlay", "");
+			outputProject.reload(client);
 		} else {
 			outputDataset = datasets.get(0);
 		}

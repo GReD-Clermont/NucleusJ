@@ -17,15 +17,16 @@
  */
 package fr.igred.nucleus;
 
-import fr.igred.omero.exception.AccessException;
-import fr.igred.omero.exception.OMEROServerError;
-import fr.igred.omero.exception.ServiceException;
 import fr.igred.nucleus.cli.CLIActionOptionCmdLine;
 import fr.igred.nucleus.cli.CLIActionOptionOMERO;
 import fr.igred.nucleus.cli.CLIHelper;
 import fr.igred.nucleus.cli.CLIRunAction;
 import fr.igred.nucleus.cli.CLIRunActionOMERO;
 import fr.igred.nucleus.dialogs.MainGui;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
+import ij.util.ThreadUtil;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,34 +50,64 @@ public final class NucleusJ {
 	}
 	
 	
-	public static void main(String[] args)
-	throws AccessException, ServiceException, OMEROServerError,
-	       IOException, ExecutionException, InterruptedException, FormatException {
-		List<String> listArgs = Arrays.asList(args);
-		
-		/* Allow IJ threads from thread pool to timeout */
-		//ThreadUtil.threadPoolExecutor.allowCoreThreadTimeOut(true);
-		
-		if (listArgs.contains("-h") || listArgs.contains("-help")) {
-			CLIHelper.run(args);
-		} else if (listArgs.contains("-ome") || listArgs.contains("-omero")) {
-			CLIActionOptionOMERO command = new CLIActionOptionOMERO(args);
-			
+	public static void runOMEROCLI(String[] args) {
+		CLIActionOptionOMERO command = new CLIActionOptionOMERO(args);
+		if (command.getCmd() != null) {
 			CLIRunActionOMERO cliOMERO = new CLIRunActionOMERO(command.getCmd());
-			cliOMERO.run();
-		} else if (listArgs.contains("-nj") || listArgs.contains("-cli") || listArgs.contains("-CLI")) {
-			CLIActionOptionCmdLine command = new CLIActionOptionCmdLine(args);
-			
-			CLIRunAction cli = new CLIRunAction(command.getCmd());
-			cli.run();
-		} else {
-			LOGGER.info("Starting NucleusJ GUI...");
+			try {
+				cliOMERO.run();
+			} catch (AccessException | ServiceException | OMEROServerError | ExecutionException e) {
+				LOGGER.error("Error while running OMERO CLI command", e);
+			} catch (IOException | FormatException e) {
+				LOGGER.error("IO error while running OMERO CLI command", e);
+			} catch (InterruptedException e) {
+				LOGGER.error("Thread interrupted while running CLI command", e);
+				Thread.currentThread().interrupt(); // Restore interrupted status
+			}
+		}
+	}
+	
+	
+	public static void runCLI(String[] args) {
+		CLIActionOptionCmdLine command = new CLIActionOptionCmdLine(args);
+		
+		CLIRunAction cli = new CLIRunAction(command.getCmd());
+		if(command.getCmd() != null) {
+			try {
+				cli.run();
+			} catch (IOException | FormatException e) {
+				LOGGER.error("IO error while running CLI command", e);
+			}
+		}
+	}
+	
+	
+	public static void main(String[] args) {
+		List<String> listArgs = Arrays.asList(args);
+		LOGGER.info("Starting NucleusJ version: {}", Version.get());
+		
+		// Allow threads from thread pool to timeout
+		ThreadUtil.threadPoolExecutor.allowCoreThreadTimeOut(true);
+		
+		if (listArgs.isEmpty()) {
+			LOGGER.debug("Starting GUI...");
 			SwingUtilities.invokeLater(() -> {
 				MainGui gui = new MainGui();
 				gui.setVisible(true);
 			});
+		} else {
+			if (listArgs.contains("-h") || listArgs.contains("-help")) {
+				CLIHelper.run(args);
+			} else if (listArgs.contains("-ome") || listArgs.contains("-omero")) {
+				runOMEROCLI(args);
+			} else {
+				runCLI(args);
+			}
+			LOGGER.debug("Shutting down thread pool executor...");
+			// Shutdown the thread pool executor to clean up resources
+			ThreadUtil.threadPoolExecutor.shutdown();
+			LOGGER.info("NucleusJ is now closing.");
 		}
-		//ThreadUtil.threadPoolExecutor.shutdown();
 	}
 	
 }

@@ -83,8 +83,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	private final JPasswordField jPasswordField     = new JPasswordField();
 	private final JTextField     jTextFieldGroup    = new JTextField();
 	
-	private final JTextField jTextFieldRawID         = new JTextField();
-	private final JTextField jTextFieldSegmentedID   = new JTextField();
+	private final JTextField jTextFieldRawID       = new JTextField();
+	private final JTextField jTextFieldSegmentedID = new JTextField();
 	
 	private final Container container;
 	
@@ -114,6 +114,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		gridBagLayout.columnWidths = new int[]{236, 120, 72, 20};
 		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
 		
+		String eol = System.lineSeparator();
 		
 		// Use Omero ?
 		ButtonGroup bGroupOmeroMode = new ButtonGroup();
@@ -142,7 +143,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
-		
 		localPanel.add(jLabelWorkDirectory,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -150,9 +150,9 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                      new Insets(0, 10, 0, 0), 0, 0));
 		jLabelWorkDirectory.setText("Work directory and Raw data choice : ");
 		JTextPane jTextPane = new JTextPane();
-		jTextPane.setText("You must select 2 directories:\n" +
-		                  "1 containing raw nuclei images. \n" +
-		                  "2 containing segmented nuclei images.\n" +
+		jTextPane.setText("You must select 2 directories:" + eol +
+		                  "1 containing raw nuclei images. " + eol +
+		                  "2 containing segmented nuclei images." + eol +
 		                  "Images must have same file name.");
 		jTextPane.setEditable(false);
 		localPanel.add(jTextPane,
@@ -215,7 +215,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(0, 0, 0, 0), 0, 0));
 		
-		
 		Border padding2 = BorderFactory.createEmptyBorder(10, 120, 10, 120);
 		
 		JPanel startExit = new JPanel();
@@ -253,7 +252,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		localModeLayout.add(localPanel);
 		container.add(localModeLayout, 1);
 		
-		
 		// Omero mode layout
 		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
 		
@@ -262,9 +260,9 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		omeroLayout.columnWeights = new double[]{0.1, 0.1, 2};
 		omeroPanel.setLayout(omeroLayout);
 		JTextPane jTextPane2 = new JTextPane();
-		jTextPane2.setText("You must select 2 Datasets:\n" +
-		                   "1 containing raw nuclei images. \n" +
-		                   "2 containing segmented nuclei images.\n" +
+		jTextPane2.setText("You must select 2 Datasets:" + eol +
+		                   "1 containing raw nuclei images. " + eol +
+		                   "2 containing segmented nuclei images." + eol +
 		                   "Images must have same file name and the same calibration.");
 		jTextPane2.setEditable(false);
 		omeroModeLayout.add(jTextPane2, 0);
@@ -272,7 +270,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(5, 0, 5, 20);
-		
 		
 		c.gridy = 0;
 		JLabel jLabelHostname = new JLabel("Hostname:");
@@ -339,12 +336,11 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		omeroPanel.add(jTextFieldRawID, c);
 		jTextFieldRawID.setMaximumSize(new Dimension(10000, 20));
 		
-		
 		c.gridy = 6;
-		JLabel jLabelSegmentedDataset = new JLabel("Segmented:");
+		JLabel jLabelSegDataset = new JLabel("Segmented:");
 		c.gridx = 0;
 		c.gridwidth = 1;
-		omeroPanel.add(jLabelSegmentedDataset, c);
+		omeroPanel.add(jLabelSegDataset, c);
 		c.gridx = 1;
 		JComboBox<String> jComboBoxDataType2 = new JComboBox<>(dataTypes);
 		omeroPanel.add(jComboBoxDataType2, c);
@@ -352,10 +348,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		omeroPanel.add(jTextFieldSegmentedID, c);
 		jTextFieldSegmentedID.setMaximumSize(new Dimension(10000, 20));
 		
-		
 		omeroPanel.setBorder(padding);
 		omeroModeLayout.add(omeroPanel);
-		
 		
 		super.setVisible(true);
 		
@@ -377,9 +371,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	 * @param args arguments
 	 */
 	public static void main(String[] args) {
-		ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog =
-				new ChromocenterSegmentationPipelineBatchDialog();
-		chromocenterSegmentationPipelineBatchDialog.setLocationRelativeTo(null);
+		ChromocenterSegmentationPipelineBatchDialog ccSegDialog = new ChromocenterSegmentationPipelineBatchDialog();
+		ccSegDialog.setLocationRelativeTo(null);
 	}
 	
 	
@@ -551,12 +544,12 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	 *
 	 */
 	private static class QuitListener implements ActionListener {
-		private final ComputeParametersDialog computeParametersDialog;
+		private final ComputeParametersDialog computeParamsDialog;
 		
 		
-		/** @param computeParametersDialog Dialog parameters */
-		QuitListener(ComputeParametersDialog computeParametersDialog) {
-			this.computeParametersDialog = computeParametersDialog;
+		/** @param computeParamsDialog Dialog parameters */
+		QuitListener(ComputeParametersDialog computeParamsDialog) {
+			this.computeParamsDialog = computeParamsDialog;
 		}
 		
 		
@@ -564,18 +557,18 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		 *
 		 */
 		public void actionPerformed(ActionEvent actionEvent) {
-			computeParametersDialog.dispose();
+			computeParamsDialog.dispose();
 		}
 		
 	}
 	
 	private class StartListener implements ActionListener {
-		private final ComputeParametersDialog computeParametersDialog;
+		private final ComputeParametersDialog computeParamsDialog;
 		
 		
-		/** @param computeParametersDialog Dialog parameters */
-		StartListener(ComputeParametersDialog computeParametersDialog) {
-			this.computeParametersDialog = computeParametersDialog;
+		/** @param computeParamsDialog Dialog parameters */
+		StartListener(ComputeParametersDialog computeParamsDialog) {
+			this.computeParamsDialog = computeParamsDialog;
 		}
 		
 		
@@ -590,7 +583,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 					throw new RuntimeException(e);
 				}
 				start = true;
-				computeParametersDialog.dispose();
+				computeParamsDialog.dispose();
 			} else {
 				if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(null,
@@ -604,7 +597,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 					} catch (AccessException | ServiceException | ExecutionException e) {
 						throw new RuntimeException(e);
 					}
-					computeParametersDialog.dispose();
+					computeParamsDialog.dispose();
 				}
 			}
 		}

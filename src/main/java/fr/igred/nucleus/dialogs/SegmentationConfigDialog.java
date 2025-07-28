@@ -17,6 +17,7 @@
  */
 package fr.igred.nucleus.dialogs;
 
+import fr.igred.nucleus.Version;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 
 import javax.swing.BorderFactory;
@@ -55,7 +56,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	
 	
 	public SegmentationConfigDialog() {
-		super.setTitle("Segmentation - NucleusJ3");
+		super.setTitle("Segmentation - NucleusJ - v" + Version.get());
 		super.setSize(300, 340);
 		super.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		Container     container     = super.getContentPane();
@@ -201,7 +202,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() == convexHullDetection) {
-			boolean isConvexHullDetection = convexHullDetection.isSelected();
+			boolean isConvHullDetection = convexHullDetection.isSelected();
 		} else if (e.getSource() == addCalibrationBox) {
 			if (addCalibrationBox.isSelected()) {
 				xCalibrationPanel = new JPanel();

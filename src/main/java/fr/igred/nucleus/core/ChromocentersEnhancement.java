@@ -58,11 +58,11 @@ public final class ChromocentersEnhancement {
 	 * @return image of the contrasted region
 	 */
 	public static ImagePlus applyEnhanceChromocenters(ImagePlus imagePlusRaw, ImagePlus imagePlusSegmented) {
-		MyGradient            myGradient            = new MyGradient(imagePlusRaw, imagePlusSegmented);
-		ImagePlus             imagePlusGradient     = myGradient.run();
-		RegionalExtremaFilter regionalExtremaFilter = new RegionalExtremaFilter();
-		regionalExtremaFilter.setMask(imagePlusSegmented);
-		ImagePlus imagePlusExtrema   = regionalExtremaFilter.applyWithMask(imagePlusGradient);
+		MyGradient            myGradient        = new MyGradient(imagePlusRaw, imagePlusSegmented);
+		ImagePlus             imagePlusGradient = myGradient.run();
+		RegionalExtremaFilter regExtremaFilter  = new RegionalExtremaFilter();
+		regExtremaFilter.setMask(imagePlusSegmented);
+		ImagePlus imagePlusExtrema   = regExtremaFilter.applyWithMask(imagePlusGradient);
 		ImagePlus imagePlusLabels    = BinaryImages.componentsLabeling(imagePlusExtrema, 26, 32);
 		ImagePlus imagePlusWatershed = computeWatershed(imagePlusGradient,
 		                                                imagePlusLabels,
@@ -88,11 +88,11 @@ public final class ChromocentersEnhancement {
 		int             neighborVoxelValue;
 		ImageStatistics imageStatistics = new StackStatistics(imagePlusWatershed);
 		
-		double[][] tRegionAdjacencyGraph = new double[(int) imageStatistics.histMax + 1][(int) imageStatistics.histMax + 1];
+		double[][] regAdjacencyGraph = new double[(int) imageStatistics.histMax + 1][(int) imageStatistics.histMax + 1];
 		
-		Calibration calibration = imagePlusWatershed.getCalibration();
-		double volumeVoxel = calibration.pixelWidth * calibration.pixelHeight * calibration.pixelDepth;
-		ImageStack imageStackWatershed = imagePlusWatershed.getStack();
+		Calibration calibration         = imagePlusWatershed.getCalibration();
+		double      volumeVoxel         = calibration.pixelWidth * calibration.pixelHeight * calibration.pixelDepth;
+		ImageStack  imageStackWatershed = imagePlusWatershed.getStack();
 		for (int k = 1; k < imagePlusWatershed.getNSlices() - 1; ++k) {
 			for (int i = 1; i < imagePlusWatershed.getWidth() - 1; ++i) {
 				for (int j = 1; j < imagePlusWatershed.getHeight() - 1; ++j) {
@@ -101,25 +101,25 @@ public final class ChromocentersEnhancement {
 						neighborVoxelValue = (int) imageStackWatershed.getVoxel(i, j, kk);
 						
 						if (neighborVoxelValue > 0 && voxelValue != neighborVoxelValue) {
-							tRegionAdjacencyGraph[voxelValue][neighborVoxelValue] += volumeVoxel;
+							regAdjacencyGraph[voxelValue][neighborVoxelValue] += volumeVoxel;
 						}
 					}
 					for (int jj = j - 1; jj <= j + 1; jj += 2) {
 						neighborVoxelValue = (int) imageStackWatershed.getVoxel(i, jj, k);
 						if (neighborVoxelValue > 0 && voxelValue != neighborVoxelValue) {
-							tRegionAdjacencyGraph[voxelValue][neighborVoxelValue] += volumeVoxel;
+							regAdjacencyGraph[voxelValue][neighborVoxelValue] += volumeVoxel;
 						}
 					}
 					for (int ii = i - 1; ii <= i + 1; ii += 2) {
 						neighborVoxelValue = (int) imageStackWatershed.getVoxel(ii, j, k);
 						if (neighborVoxelValue > 0 && voxelValue != neighborVoxelValue) {
-							tRegionAdjacencyGraph[voxelValue][neighborVoxelValue] += volumeVoxel;
+							regAdjacencyGraph[voxelValue][neighborVoxelValue] += volumeVoxel;
 						}
 					}
 				}
 			}
 		}
-		return tRegionAdjacencyGraph;
+		return regAdjacencyGraph;
 	}
 	
 	
@@ -132,16 +132,16 @@ public final class ChromocentersEnhancement {
 	 * @return table of contrast
 	 */
 	private static double[] computeContrast(ImagePlus imagePlusRaw, ImagePlus imagePlusRegions) {
-		double[][] tRegionAdjacencyGraph = getRegionAdjacencyGraph(imagePlusRegions);
-		double[]   tMean                 = computeMeanIntensity(imagePlusRaw, imagePlusRegions);
-		double[]   tContrast             = new double[tRegionAdjacencyGraph.length + 1];
+		double[][] tRegAdjacencyGraph = getRegionAdjacencyGraph(imagePlusRegions);
+		double[]   tMean              = computeMeanIntensity(imagePlusRaw, imagePlusRegions);
+		double[]   tContrast          = new double[tRegAdjacencyGraph.length + 1];
 		double     neighborVolumeTotal;
-		for (int i = 1; i < tRegionAdjacencyGraph.length; ++i) {
+		for (int i = 1; i < tRegAdjacencyGraph.length; ++i) {
 			neighborVolumeTotal = 0;
-			for (int j = 1; j < tRegionAdjacencyGraph[i].length; ++j) {
-				if (tRegionAdjacencyGraph[i][j] > 0 && i != j) {
-					tContrast[i] += tRegionAdjacencyGraph[i][j] * (tMean[i] - tMean[j]);
-					neighborVolumeTotal += tRegionAdjacencyGraph[i][j];
+			for (int j = 1; j < tRegAdjacencyGraph[i].length; ++j) {
+				if (tRegAdjacencyGraph[i][j] > 0 && i != j) {
+					tContrast[i] += tRegAdjacencyGraph[i][j] * (tMean[i] - tMean[j]);
+					neighborVolumeTotal += tRegAdjacencyGraph[i][j];
 				}
 			}
 			if (tContrast[i] <= 0 || neighborVolumeTotal == 0) {

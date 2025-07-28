@@ -48,12 +48,12 @@ public class ComputeNucleiParametersML {
 	/**
 	 * Constructor
 	 *
-	 * @param rawImagesInputDirectory  path to raw images
-	 * @param segmentedImagesDirectory path to list of segmented images from machine learning associated to raw
+	 * @param rawInputDir  path to raw images
+	 * @param segmentedInputDir path to list of segmented images from machine learning associated to raw
 	 */
-	public ComputeNucleiParametersML(String rawImagesInputDirectory, String segmentedImagesDirectory) {
-		this.rawImagesInputDirectory = rawImagesInputDirectory;
-		this.segmentedImagesDirectory = segmentedImagesDirectory;
+	public ComputeNucleiParametersML(String rawInputDir, String segmentedInputDir) {
+		this.rawImagesInputDirectory = rawInputDir;
+		this.segmentedImagesDirectory = segmentedInputDir;
 	}
 	
 	
@@ -75,7 +75,7 @@ public class ComputeNucleiParametersML {
 			for (int i = 0; i < imagePlusInput.getWidth(); ++i) {
 				for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
 					double voxelValue = imageStackInput.getVoxel(i, j, k);
-					if (voxelValue >= 1) {
+					if (voxelValue >= threshold) {
 						imageStackSegmented.setVoxel(i, j, k, 255);
 					} else {
 						imageStackSegmented.setVoxel(i, j, k, 0);
@@ -96,14 +96,16 @@ public class ComputeNucleiParametersML {
 	public void run() throws IOException, FormatException {
 		PluginParameters pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
 		
+		String eol = System.lineSeparator();
+		
 		Directory directoryInput = new Directory(pluginParameters.getOutputFolder());
 		directoryInput.listImageFiles(pluginParameters.getOutputFolder());
 		directoryInput.checkIfEmpty();
 		
 		List<File> segImages = directoryInput.getFileList();
 		
-		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder(pluginParameters.getAnalysisParameters() +
-		                                                            getResultsColumnNames());
+		StringBuilder cropInfoOtsu = new StringBuilder(pluginParameters.getAnalysisParameters() +
+		                                               getResultsColumnNames());
 		for (File currentFile : segImages) {
 			LOGGER.info("Current File: {}", currentFile.getName());
 			ImagePlus raw = new ImagePlus(pluginParameters.getInputFolder() +
@@ -123,14 +125,14 @@ public class ComputeNucleiParametersML {
 				                                    pluginParameters.getXCalibration(raw),
 				                                    pluginParameters.getYCalibration(raw),
 				                                    pluginParameters.getZCalibration(raw));
-				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append("\n");
+				cropInfoOtsu.append(measure3D.nucleusParameter3D()).append(eol);
 			}
 		}
 		
 		OutputTextFile resultFileOutputOTSU = new OutputTextFile(pluginParameters.getOutputFolder()
 		                                                         + directoryInput.getSeparator()
 		                                                         + "result_Segmentation_Analyse.csv");
-		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU.toString(), true);
+		resultFileOutputOTSU.saveTextFile(cropInfoOtsu.toString(), true);
 	}
 	
 	
@@ -159,7 +161,8 @@ public class ComputeNucleiParametersML {
 		       "MedianIntensityNucleus\t" +
 		       "MedianIntensityBackground\t" +
 		       "ImageSize\t" +
-		       "OTSUThreshold\n";
+		       "OTSUThreshold\t" +
+		       System.lineSeparator();
 	}
 	
 }

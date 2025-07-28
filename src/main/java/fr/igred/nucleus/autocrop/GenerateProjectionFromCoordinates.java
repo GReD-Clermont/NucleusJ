@@ -145,13 +145,13 @@ public class GenerateProjectionFromCoordinates {
 		coordinates.listAllFiles(pathToCoordinates);
 		coordinates.checkIfEmpty();
 		for (short i = 0; i < coordinates.getNumberFiles(); ++i) {
-			File                coordinateFile        = coordinates.getFile(i);
-			Map<String, String> listOfBoxes           = readCoordinatesTXT(coordinateFile);
-			List<String>        boxListsNucleiNotPass = new ArrayList<>(listOfBoxes.size());
-			Map<String, String> sortedMap             = new TreeMap<>(listOfBoxes);
+			File                coordinateFile     = coordinates.getFile(i);
+			Map<String, String> listOfBoxes        = readCoordinatesTXT(coordinateFile);
+			List<String>        boxesNucNotPassing = new ArrayList<>(listOfBoxes.size());
+			Map<String, String> sortedMap          = new TreeMap<>(listOfBoxes);
 			for (Map.Entry<String, String> entry : sortedMap.entrySet()) {
 				if (!convexHullSegImages.checkIfFileExists(entry.getKey())) {
-					boxListsNucleiNotPass.add(entry.getValue());
+					boxesNucNotPassing.add(entry.getValue());
 					LOGGER.info("add {}", entry.getValue());
 				}
 			}
@@ -162,10 +162,10 @@ public class GenerateProjectionFromCoordinates {
 					                                                                                              .lastIndexOf(
 							                                                                                              '.')) +
 			                                                                     "_Zprojection");
-			AutocropParameters autocropParameters = new AutocropParameters(currentZProjection.getParent(),
-			                                                               currentZProjection.getParent() +
-			                                                               zProjection.getSeparator());
-			AnnotateAutoCrop annotateAutoCrop = new AnnotateAutoCrop(boxListsNucleiNotPass,
+			AutocropParameters params = new AutocropParameters(currentZProjection.getParent(),
+			                                                   currentZProjection.getParent() +
+			                                                   zProjection.getSeparator());
+			AnnotateAutoCrop annotateAutoCrop = new AnnotateAutoCrop(boxesNucNotPassing,
 			                                                         currentZProjection,
 			                                                         currentZProjection.getParent() +
 			                                                         zProjection.getSeparator() +
@@ -174,7 +174,7 @@ public class GenerateProjectionFromCoordinates {
 			                                                                                      currentZProjection.getName()
 			                                                                                                        .lastIndexOf(
 					                                                                                                        '.')),
-			                                                         autocropParameters);
+			                                                         params);
 			annotateAutoCrop.runAddBadCrop();
 		}
 	}
@@ -189,11 +189,11 @@ public class GenerateProjectionFromCoordinates {
 		coordinates.checkIfEmpty();
 		
 		for (short i = 0; i < coordinates.getNumberFiles(); ++i) {
-			File                coordinateFile        = coordinates.getFile(i);
-			Map<String, String> listOfBoxes           = readCoordinatesTXT(coordinateFile);
-			List<String>        boxListsNucleiNotPass = new ArrayList<>(listOfBoxes.size());
+			File                coordinateFile   = coordinates.getFile(i);
+			Map<String, String> listOfBoxes      = readCoordinatesTXT(coordinateFile);
+			List<String>        boxNucNotPassing = new ArrayList<>(listOfBoxes.size());
 			for (Map.Entry<String, String> entry : listOfBoxes.entrySet()) {
-				boxListsNucleiNotPass.add(entry.getValue());
+				boxNucNotPassing.add(entry.getValue());
 			}
 			LOGGER.info(coordinateFile.getName());
 			
@@ -205,14 +205,14 @@ public class GenerateProjectionFromCoordinates {
 			FilesNames outPutFilesNames = new FilesNames(currentRaw.toString());
 			String     prefix           = outPutFilesNames.prefixNameFile();
 			LOGGER.info("current raw: {}", currentRaw.getName());
-			AutocropParameters autocropParameters = new AutocropParameters(currentRaw.getParent(),
-			                                                               currentRaw.getParent() +
-			                                                               rawImage.getSeparator());
-			AnnotateAutoCrop annotateAutoCrop = new AnnotateAutoCrop(boxListsNucleiNotPass,
+			AutocropParameters params = new AutocropParameters(currentRaw.getParent(),
+			                                                   currentRaw.getParent() +
+			                                                   rawImage.getSeparator());
+			AnnotateAutoCrop annotateAutoCrop = new AnnotateAutoCrop(boxNucNotPassing,
 			                                                         currentRaw,
 			                                                         currentRaw.getParent() + rawImage.getSeparator(),
 			                                                         prefix,
-			                                                         autocropParameters);
+			                                                         params);
 			annotateAutoCrop.run();
 		}
 	}

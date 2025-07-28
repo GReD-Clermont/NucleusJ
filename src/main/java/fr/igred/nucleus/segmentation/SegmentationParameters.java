@@ -82,12 +82,11 @@ public class SegmentationParameters extends PluginParameters {
 	
 	public SegmentationParameters(String inputFolder, String outputFolder, String pathToConfigFile) {
 		super(inputFolder, outputFolder, pathToConfigFile);
-		addProperties(pathToConfigFile);
+		setSegmentationPropertiesFromFile(pathToConfigFile);
 	}
 	
 	
-	public void addProperties(String pathToConfigFile) {
-		
+	private void setSegmentationPropertiesFromFile(String pathToConfigFile) {
 		Properties prop = new Properties();
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
 			prop.load(is);
@@ -112,14 +111,21 @@ public class SegmentationParameters extends PluginParameters {
 	}
 	
 	
+	public void addProperties(String pathToConfigFile) {
+		setSegmentationPropertiesFromFile(pathToConfigFile);
+	}
+	
+	
 	@Override
 	public String getAnalysisParameters() {
 		super.getAnalysisParameters();
-		this.headerInfo += "#maxVolumeNucleus:" + maxVolumeNucleus + "\n"
-		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n"
-		                   + "#ConvexHullDetection (" + ConvexHullDetection.CONVEX_HULL_ALGORITHM + "): "
-		                   + convexHullDetection + "\n";
-		return headerInfo;
+		String eol = System.lineSeparator();
+		String newInfo = "#maxVolumeNucleus:" + maxVolumeNucleus + eol +
+		                 "#minVolumeNucleus: " + minVolumeNucleus + eol +
+		                 "#ConvexHullDetection (" + ConvexHullDetection.CONVEX_HULL_ALGORITHM + "): " +
+		                 convexHullDetection + eol;
+		setHeaderInfo(getHeaderInfo() + newInfo);
+		return getHeaderInfo();
 	}
 	
 	

@@ -202,10 +202,10 @@ public class Measure3D {
 		ImageStack imageStackTemp      = new ImageStack(imagePlusSegmented.getWidth(), imagePlusSegmented.getHeight());
 		imageStackTemp.addSlice(imageStackSegmented.getProcessor(indiceMaxArea));
 		imagePlusTemp.setStack(imageStackTemp);
-		Calibration calibrationImagePlusSegmented = imagePlusSegmented.getCalibration();
-		Calibration calibration                   = new Calibration();
-		calibration.pixelHeight = calibrationImagePlusSegmented.pixelHeight;
-		calibration.pixelWidth = calibrationImagePlusSegmented.pixelWidth;
+		Calibration segmentedCalibration = imagePlusSegmented.getCalibration();
+		Calibration calibration          = new Calibration();
+		calibration.pixelHeight = segmentedCalibration.pixelHeight;
+		calibration.pixelWidth = segmentedCalibration.pixelWidth;
 		imagePlusTemp.setCalibration(calibration);
 		ResultsTable resultTable = new ResultsTable();
 		ParticleAnalyzer particleAnalyser = new ParticleAnalyzer(ParticleAnalyzer.SHOW_NONE,
@@ -327,8 +327,8 @@ public class Measure3D {
 		                      {xz / counter, yz / counter, zz / counter}};
 		Matrix matrix = new Matrix(tValues);
 		
-		EigenvalueDecomposition eigenValueDecomposition = matrix.eig();
-		return eigenValueDecomposition.getRealEigenvalues();
+		EigenvalueDecomposition eigenValDecomp = matrix.eig();
+		return eigenValDecomp.getRealEigenvalues();
 	}
 	
 	
@@ -360,12 +360,12 @@ public class Measure3D {
 	public VoxelRecord computeBarycenter3D(boolean unit,
 	                                       ImagePlus imagePlusInput,
 	                                       double label) {
-		ImageStack  imageStackInput       = imagePlusInput.getImageStack();
-		VoxelRecord voxelRecordBarycenter = new VoxelRecord();
-		int         count                 = 0;
-		int         sx                    = 0;
-		int         sy                    = 0;
-		int         sz                    = 0;
+		ImageStack  imageStackInput = imagePlusInput.getImageStack();
+		VoxelRecord voxelRecordBary = new VoxelRecord();
+		int         count           = 0;
+		int         sx              = 0;
+		int         sy              = 0;
+		int         sz              = 0;
 		double      voxelValue;
 		for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
 			for (int i = 0; i < imagePlusInput.getWidth(); ++i) {
@@ -383,11 +383,11 @@ public class Measure3D {
 		sx /= count;
 		sy /= count;
 		sz /= count;
-		voxelRecordBarycenter.setLocation(sx, sy, sz);
+		voxelRecordBary.setLocation(sx, sy, sz);
 		if (unit) {
-			voxelRecordBarycenter.multiply(xCal, yCal, zCal);
+			voxelRecordBary.multiply(xCal, yCal, zCal);
 		}
-		return voxelRecordBarycenter;
+		return voxelRecordBary;
 	}
 	
 	
@@ -415,60 +415,60 @@ public class Measure3D {
 	/**
 	 * Intensity of chromocenters/ intensity of the nucleus
 	 *
-	 * @param imagePlusInput        ImagePlus raw image
-	 * @param imagePlusSegmented    binary ImagePlus
-	 * @param imagePlusChromocenter ImagePlus of the chromocemters
+	 * @param imagePlusInput     ImagePlus raw image
+	 * @param imagePlusSegmented binary ImagePlus
+	 * @param imagePlusCC        ImagePlus of the chromocemters
 	 *
 	 * @return double Relative Heterochromatin Fraction compute on the Intensity ratio
 	 */
 	public static double computeIntensityRHF(ImagePlus imagePlusInput,
 	                                         ImagePlus imagePlusSegmented,
-	                                         ImagePlus imagePlusChromocenter) {
-		double     chromocenterIntensity  = 0;
-		double     nucleusIntensity       = 0;
-		double     voxelValueChromocenter;
+	                                         ImagePlus imagePlusCC) {
+		double     ccIntensity         = 0;
+		double     nucleusIntensity    = 0;
+		double     voxelValueCC;
 		double     voxelValueInput;
 		double     voxelValueSegmented;
-		ImageStack imageStackChromocenter = imagePlusChromocenter.getStack();
-		ImageStack imageStackSegmented    = imagePlusSegmented.getStack();
-		ImageStack imageStackInput        = imagePlusInput.getStack();
+		ImageStack imageStackCC        = imagePlusCC.getStack();
+		ImageStack imageStackSegmented = imagePlusSegmented.getStack();
+		ImageStack imageStackInput     = imagePlusInput.getStack();
 		for (int z = 0; z < imagePlusInput.getNSlices(); ++z) {
 			for (int y = 0; y < imagePlusInput.getHeight(); ++y) {
 				for (int x = 0; x < imagePlusInput.getWidth(); ++x) {
 					voxelValueSegmented = imageStackSegmented.getVoxel(x, y, z);
 					voxelValueInput = imageStackInput.getVoxel(x, y, z);
-					voxelValueChromocenter = imageStackChromocenter.getVoxel(x, y, z);
+					voxelValueCC = imageStackCC.getVoxel(x, y, z);
 					
 					if (voxelValueSegmented > 0) {
-						if (voxelValueChromocenter > 0) {
-							chromocenterIntensity += voxelValueInput;
+						if (voxelValueCC > 0) {
+							ccIntensity += voxelValueInput;
 						}
 						nucleusIntensity += voxelValueInput;
 					}
 				}
 			}
 		}
-		return nucleusIntensity != 0 ? chromocenterIntensity / nucleusIntensity : 0;
+		return nucleusIntensity != 0 ? ccIntensity / nucleusIntensity : 0;
 	}
 	
 	
 	/**
 	 * Method which compute the RHF (total chromocenters volume/nucleus volume)
 	 *
-	 * @param imagePlusSegmented     binary ImagePlus
-	 * @param imagePlusChromocenters ImagePLus of the chromocenters
+	 * @param imagePlusSegmented binary ImagePlus
+	 * @param imagePlusCC        ImagePLus of the chromocenters
 	 *
 	 * @return double Relative Heterochromatin Fraction compute on the Volume ratio
 	 */
-	public double computeVolumeRHF(ImagePlus imagePlusSegmented, ImagePlus imagePlusChromocenters) {
-		double volumeCc = 0;
+	public double computeVolumeRHF(ImagePlus imagePlusSegmented, ImagePlus imagePlusCC) {
+		double volumeCC = 0;
 		
-		double[] tVolumeChromocenter = computeVolumeOfAllObjects(imagePlusChromocenters);
+		double[] tVolumeChromocenter = computeVolumeOfAllObjects(imagePlusCC);
 		for (double v : tVolumeChromocenter) {
-			volumeCc += v;
+			volumeCC += v;
 		}
 		double[] tVolumeSegmented = computeVolumeOfAllObjects(imagePlusSegmented);
-		return volumeCc / tVolumeSegmented[0];
+		return volumeCC / tVolumeSegmented[0];
 	}
 	
 	
@@ -479,7 +479,7 @@ public class Measure3D {
 	 *
 	 * @return int nb of object in the image
 	 */
-	public static int getNumberOfObject(ImagePlus imagePlusInput) {
+	public static int getNumberOfObjects(ImagePlus imagePlusInput) {
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusInput);
 		return histogram.getNbLabels();

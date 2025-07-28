@@ -306,18 +306,20 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 				rhfChoice = "Intensity";
 			}
 			
-			List<String> listImageChromocenter = fileList.fileSearchList(".+SegmentedDataCc.+", tFileRawImage);
+			List<String> ccImages = fileList.fileSearchList(".+SegmentedDataCc.+", tFileRawImage);
 			
-			String nameFileChromocenterAndNucleus = workDirectory + File.separator + "NucAndCcParameters.tab";
-			String nameFileChromocenter           = workDirectory + File.separator + "CcParameters.tab";
+			String nameFileCCAndNucleus = workDirectory + File.separator + "NucAndCcParameters.tab";
+			String nameFileChromocenter = workDirectory + File.separator + "CcParameters.tab";
 			
-			for (int i = 0; i < listImageChromocenter.size(); ++i) {
-				LOGGER.info("image {}/{}", i + 1, listImageChromocenter.size());
-				String pathImageChromocenter = listImageChromocenter.get(i);
+			String eol = System.lineSeparator();
+			
+			for (int i = 0; i < ccImages.size(); ++i) {
+				LOGGER.info("image {}/{}", i + 1, ccImages.size());
+				String pathImageCC = ccImages.get(i);
 				
-				String pathNucleusRaw = pathImageChromocenter.replace("SegmentedDataCc", "RawDataNucleus");
+				String pathNucleusRaw = pathImageCC.replace("SegmentedDataCc", "RawDataNucleus");
 				LOGGER.info(pathNucleusRaw);
-				String pathNucleusSegmented = pathImageChromocenter.replace("SegmentedDataCc", "SegmentedDataNucleus");
+				String pathNucleusSegmented = pathImageCC.replace("SegmentedDataCc", "SegmentedDataNucleus");
 				LOGGER.info(pathNucleusSegmented);
 				if (fileList.isDirectoryOrFileExist(pathNucleusRaw, tFileRawImage) &&
 				    fileList.isDirectoryOrFileExist(pathNucleusSegmented, tFileRawImage)) {
@@ -326,9 +328,9 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 						IJ.error("image format", "No images in gray scale 8bits in 3D");
 						return;
 					}
-					ImagePlus   imagePlusChromocenter = IJ.openImage(listImageChromocenter.get(i));
-					ImagePlus   imagePlusSegmented    = IJ.openImage(pathNucleusSegmented);
-					Calibration calibration           = new Calibration();
+					ImagePlus   imagePlusCC        = IJ.openImage(ccImages.get(i));
+					ImagePlus   imagePlusSegmented = IJ.openImage(pathNucleusSegmented);
+					Calibration calibration        = new Calibration();
 					if (chromocentersPipelineBatchDialog.getCalibrationStatus()) {
 						calibration.pixelWidth = chromocentersPipelineBatchDialog.getXCalibration();
 						calibration.pixelHeight = chromocentersPipelineBatchDialog.getYCalibration();
@@ -337,31 +339,31 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 					} else {
 						calibration = imagePlusInput.getCalibration();
 					}
-					imagePlusChromocenter.setCalibration(calibration);
+					imagePlusCC.setCalibration(calibration);
 					imagePlusSegmented.setCalibration(calibration);
 					imagePlusInput.setCalibration(calibration);
 					try {
 						if (chromocentersPipelineBatchDialog.isNucAndCcAnalysis()) {
 							ChromocenterAnalysis.computeParametersChromocenter(nameFileChromocenter,
 							                                                   imagePlusSegmented,
-							                                                   imagePlusChromocenter);
+							                                                   imagePlusCC);
 							LOGGER.info("chromocenterAnalysis is computing...");
 							LOGGER.info("nucleusChromocenterAnalysis is computing...");
-							NucleusChromocentersAnalysis.computeParameters(nameFileChromocenterAndNucleus,
+							NucleusChromocentersAnalysis.computeParameters(nameFileCCAndNucleus,
 							                                               rhfChoice,
 							                                               imagePlusInput,
 							                                               imagePlusSegmented,
-							                                               imagePlusChromocenter);
+							                                               imagePlusCC);
 						} else if (chromocentersPipelineBatchDialog.isCcAnalysis()) {
 							ChromocenterAnalysis.computeParametersChromocenter(nameFileChromocenter,
 							                                                   imagePlusSegmented,
-							                                                   imagePlusChromocenter);
+							                                                   imagePlusCC);
 						} else {
-							NucleusChromocentersAnalysis.computeParameters(nameFileChromocenterAndNucleus,
+							NucleusChromocentersAnalysis.computeParameters(nameFileCCAndNucleus,
 							                                               rhfChoice,
 							                                               imagePlusInput,
 							                                               imagePlusSegmented,
-							                                               imagePlusChromocenter);
+							                                               imagePlusCC);
 						}
 					} catch (IOException e) {
 						LOGGER.error("An error occurred.", e);
@@ -370,14 +372,14 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 					LOGGER.info("Image name problem: the image {} is not found " +
 					            "in the directory SegmentedDataNucleus or RawDataNucleus, " +
 					            "see nameProblem.txt in {}",
-					            pathImageChromocenter,
+					            pathImageCC,
 					            workDirectory);
-					try (BufferedWriter bufferedWriterLogFile = new BufferedWriter(new FileWriter(workDirectory +
-					                                                                              File.separator +
-					                                                                              "logNameProblem.log",
-					                                                                              true))) {
-						bufferedWriterLogFile.write(pathImageChromocenter + "\n");
-						bufferedWriterLogFile.flush();
+					try (BufferedWriter logWriter = new BufferedWriter(new FileWriter(workDirectory +
+					                                                                  File.separator +
+					                                                                  "logNameProblem.log",
+					                                                                  true))) {
+						logWriter.write(pathImageCC + eol);
+						logWriter.flush();
 					} catch (IOException e) {
 						LOGGER.error("An error occurred.", e);
 					}

@@ -17,6 +17,7 @@
  */
 package fr.igred.nucleus.dialogs;
 
+import fr.igred.nucleus.Version;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 
@@ -96,7 +97,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		
 		JButton jButtonStart = new JButton("Start");
 		JButton jButtonQuit  = new JButton("Quit");
-		super.setTitle("Segmentation - NucleusJ3");
+		super.setTitle("Segmentation - NucleusJ - v" + Version.get());
 		super.setMinimumSize(new Dimension(400, 500));
 		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		super.setLocationRelativeTo(null);

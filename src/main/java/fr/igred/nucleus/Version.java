@@ -36,7 +36,6 @@ public final class Version {
 	
 	
 	public static String get() {
-		
 		Properties properties = new Properties();
 		String     version    = "undefined";
 		try {
@@ -45,7 +44,6 @@ public final class Version {
 		} catch (IOException e) {
 			LOGGER.error("Could not retrieve NucleusJ version.", e);
 		}
-		
 		return version;
 	}
 	

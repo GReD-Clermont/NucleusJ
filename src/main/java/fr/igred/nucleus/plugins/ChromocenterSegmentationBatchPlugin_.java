@@ -45,9 +45,8 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 	
 	/* This method is used by plugins.config */
 	public void run(String arg) {
-		ChromocenterSegmentationPipelineBatchDialog chromocenterSegmentationPipelineBatchDialog =
-				new ChromocenterSegmentationPipelineBatchDialog();
-		while (chromocenterSegmentationPipelineBatchDialog.isShowing()) {
+		ChromocenterSegmentationPipelineBatchDialog ccSegDialog = new ChromocenterSegmentationPipelineBatchDialog();
+		while (ccSegDialog.isShowing()) {
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
@@ -55,21 +54,21 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 				Thread.currentThread().interrupt();
 			}
 		}
-		if (chromocenterSegmentationPipelineBatchDialog.isStart()) {
+		if (ccSegDialog.isStart()) {
 			FileList fileList     = new FileList();
-			File[]   tFileRawData = fileList.run(chromocenterSegmentationPipelineBatchDialog.getRawDataDirectory());
+			File[]   tFileRawData = fileList.run(ccSegDialog.getRawDataDirectory());
 			if (fileList.isDirectoryOrFileExist(".+RawDataNucleus.+", tFileRawData) &&
 			    fileList.isDirectoryOrFileExist(".+SegmentedDataNucleus.+", tFileRawData)) {
-				List<String> listImageSegmentedDataNucleus = fileList.fileSearchList(".+SegmentedDataNucleus.+", tFileRawData);
-				String workDirectory = chromocenterSegmentationPipelineBatchDialog.getWorkDirectory();
-				for (int i = 0; i < listImageSegmentedDataNucleus.size(); ++i) {
-					LOGGER.info("image {}/{}", i + 1, listImageSegmentedDataNucleus.size());
-					String pathImageSegmentedNucleus = listImageSegmentedDataNucleus.get(i);
+				List<String> segmentedNucImages = fileList.fileSearchList(".+SegmentedDataNucleus.+", tFileRawData);
+				String       workDirectory      = ccSegDialog.getWorkDirectory();
+				for (int i = 0; i < segmentedNucImages.size(); ++i) {
+					LOGGER.info("image {}/{}", i + 1, segmentedNucImages.size());
+					String pathImgSegmentedNuc = segmentedNucImages.get(i);
 					
-					String pathNucleusRaw = pathImageSegmentedNucleus.replace("SegmentedDataNucleus", "RawDataNucleus");
+					String pathNucleusRaw = pathImgSegmentedNuc.replace("SegmentedDataNucleus", "RawDataNucleus");
 					LOGGER.info(pathNucleusRaw);
 					if (fileList.isDirectoryOrFileExist(pathNucleusRaw, tFileRawData)) {
-						ImagePlus imagePlusSegmented = IJ.openImage(pathImageSegmentedNucleus);
+						ImagePlus imagePlusSegmented = IJ.openImage(pathImgSegmentedNuc);
 						ImagePlus imagePlusInput     = IJ.openImage(pathNucleusRaw);
 						GaussianBlur3D.blur(imagePlusInput, 0.25, 0.25, 1);
 						ImageStack imageStack = imagePlusInput.getStack();
@@ -86,11 +85,11 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 						IJ.setMinAndMax(imagePlusInput, 0, max);
 						IJ.run(imagePlusInput, "Apply LUT", "stack");
 						Calibration calibration = new Calibration();
-						if (chromocenterSegmentationPipelineBatchDialog.getCalibrationStatus()) {
-							calibration.pixelWidth = chromocenterSegmentationPipelineBatchDialog.getXCalibration();
-							calibration.pixelHeight = chromocenterSegmentationPipelineBatchDialog.getYCalibration();
-							calibration.pixelDepth = chromocenterSegmentationPipelineBatchDialog.getZCalibration();
-							calibration.setUnit(chromocenterSegmentationPipelineBatchDialog.getUnit());
+						if (ccSegDialog.getCalibrationStatus()) {
+							calibration.pixelWidth = ccSegDialog.getXCalibration();
+							calibration.pixelHeight = ccSegDialog.getYCalibration();
+							calibration.pixelDepth = ccSegDialog.getZCalibration();
+							calibration.setUnit(ccSegDialog.getUnit());
 						} else {
 							calibration = imagePlusInput.getCalibration();
 						}
@@ -101,7 +100,7 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
 					}
 				}
 				LOGGER.info("End of the chromocenter segmentation , the results are in {}",
-				            chromocenterSegmentationPipelineBatchDialog.getWorkDirectory());
+				            ccSegDialog.getWorkDirectory());
 			} else {
 				IJ.showMessage("There are no the two subdirectories (See the directory name) or subDirectories are empty");
 			}

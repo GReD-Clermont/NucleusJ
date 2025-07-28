@@ -36,9 +36,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import static fr.igred.nucleus.io.ImageSaver.saveFile;
@@ -57,11 +58,11 @@ public class ComputeNucleiParameters {
 	/**
 	 * Constructor with input and output files
 	 *
-	 * @param rawImagesInputDirectory  path to raw images
-	 * @param segmentedImagesDirectory path to segmented images associated
+	 * @param rawInputDir  path to raw images
+	 * @param segmentedInputDir path to segmented images associated
 	 */
-	public ComputeNucleiParameters(String rawImagesInputDirectory, String segmentedImagesDirectory) {
-		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
+	public ComputeNucleiParameters(String rawInputDir, String segmentedInputDir) {
+		this.pluginParameters = new PluginParameters(rawInputDir, segmentedInputDir);
 	}
 	
 	
@@ -81,13 +82,12 @@ public class ComputeNucleiParameters {
 	/**
 	 * Constructor with input, output files and calibration from dialog.
 	 *
-	 * @param rawImagesInputDirectory  path to raw images
-	 * @param segmentedImagesDirectory path to segmented images associated
+	 * @param rawInputDir  path to raw images
+	 * @param segmentedInputDir path to segmented images associated
 	 * @param cal                      calibration from dialog
 	 */
-	public ComputeNucleiParameters(String rawImagesInputDirectory, String segmentedImagesDirectory,
-	                               Calibration cal) {
-		this.pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory,
+	public ComputeNucleiParameters(String rawInputDir, String segmentedInputDir, Calibration cal) {
+		this.pluginParameters = new PluginParameters(rawInputDir, segmentedInputDir,
 		                                             cal.pixelWidth, cal.pixelHeight, cal.pixelDepth);
 	}
 	
@@ -97,16 +97,18 @@ public class ComputeNucleiParameters {
 	 * used to get results parameter in the same folder.
 	 */
 	public void run() {
-		Directory directoryRawInput = new Directory(pluginParameters.getInputFolder());
-		directoryRawInput.listImageFiles(pluginParameters.getInputFolder());
-		directoryRawInput.checkIfEmpty();
-		Directory directorySegmentedInput = new Directory(pluginParameters.getOutputFolder());
-		directorySegmentedInput.listImageFiles(pluginParameters.getOutputFolder());
-		directorySegmentedInput.checkIfEmpty();
-		List<File>    segmentedImages           = directorySegmentedInput.getFileList();
-		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder();
+		Directory rawInputDir = new Directory(pluginParameters.getInputFolder());
+		rawInputDir.listImageFiles(pluginParameters.getInputFolder());
+		rawInputDir.checkIfEmpty();
+		Directory segmentedInputDir = new Directory(pluginParameters.getOutputFolder());
+		segmentedInputDir.listImageFiles(pluginParameters.getOutputFolder());
+		segmentedInputDir.checkIfEmpty();
+		List<File>    segmentedImages = segmentedInputDir.getFileList();
+		StringBuilder cropInfoOTSU    = new StringBuilder();
 		
-		outputCropGeneralInfoOTSU.append(pluginParameters.getAnalysisParameters()).append(getColNameResult());
+		String eol = System.lineSeparator();
+		
+		cropInfoOTSU.append(pluginParameters.getAnalysisParameters()).append(getColNameResult());
 		
 		for (File f : segmentedImages) {
 			ImagePlus raw = new ImagePlus(pluginParameters.getInputFolder() + File.separator + f.getName());
@@ -118,19 +120,20 @@ public class ComputeNucleiParameters {
 				                                    pluginParameters.getXCalibration(raw),
 				                                    pluginParameters.getYCalibration(raw),
 				                                    pluginParameters.getZCalibration(raw));
-				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append("\n");
+				cropInfoOTSU.append(measure3D.nucleusParameter3D()).append(eol);
 			} catch (IOException | FormatException e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		}
-		LocalDate        date       = LocalDate.now();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("-yyyy-MM-dd-HH.mm.ss");
-		currentTime = dateFormat.format(date);
-		OutputTextFile resultFileOutputOTSU = new OutputTextFile(pluginParameters.getOutputFolder()
-		                                                         + directoryRawInput.getSeparator()
-		                                                         + segDatasetName + currentTime + "_.csv");
+		LocalDateTime     date      = LocalDateTime.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss", Locale.ROOT);
+		currentTime = formatter.format(date);
+		OutputTextFile resultFileOutputOTSU = new OutputTextFile(pluginParameters.getOutputFolder() +
+		                                                         rawInputDir.getSeparator() +
+		                                                         segDatasetName + "-" +
+		                                                         currentTime + "_.csv");
 		
-		resultFileOutputOTSU.saveTextFile(outputCropGeneralInfoOTSU.toString(), true);
+		resultFileOutputOTSU.saveTextFile(cropInfoOTSU.toString(), true);
 	}
 	
 	
@@ -153,7 +156,8 @@ public class ComputeNucleiParameters {
 		
 		segmentedDataset.addFile(client,
 		                         new File(pluginParameters.getOutputFolder() + File.separator +
-		                                  segDatasetName + currentTime + "_.csv"));
+		                                  segDatasetName + "-" +
+		                                  currentTime + "_.csv"));
 		
 		FileUtils.deleteDirectory(new File(pluginParameters.getInputFolder()));
 		FileUtils.deleteDirectory(new File(pluginParameters.getOutputFolder()));
@@ -188,7 +192,7 @@ public class ComputeNucleiParameters {
 		       "Moment 2\t" +
 		       "Moment 3\t" +
 		       "Aspect Ratio\t" +
-		       " Circularity \n";
+		       " Circularity" + System.lineSeparator();
 	}
 	
 }

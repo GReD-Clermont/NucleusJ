@@ -40,7 +40,6 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Console;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,12 +50,22 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import static fr.igred.nucleus.cli.CLIUtil.readPassword;
 import static java.lang.System.exit;
 
 
 public class CLIRunActionOMERO {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	private static final int DEFAULT_PORT = 4064;
+	
+	private static final String HOSTNAME_OPTION  = "hostname";
+	private static final String PORT_OPTION      = "port";
+	private static final String SESSIONID_OPTION = "sessionID";
+	private static final String USERNAME_OPTION  = "username";
+	private static final String PASSWORD_OPTION  = "password";
+	private static final String GROUP_OPTION     = "group";
 	
 	/** Command line */
 	private final CommandLine cmd;
@@ -65,17 +74,17 @@ public class CLIRunActionOMERO {
 	private final Client client = new Client();
 	
 	/** OMERO server hostname */
-	private String hostname;
+	private String hostname  = "localhost";
 	/** OMERO username */
-	private String username;
+	private String username  = "";
 	/** OMERO server port */
-	private int    port;
+	private int    port      = DEFAULT_PORT;
 	/** OMERO groupe ID */
-	private long   groupID;
+	private long   groupID   = -1L;
 	/** OMERO password connection */
-	private char[] password;
+	private char[] password  = "".toCharArray();
 	/** OMERO session ID */
-	private String sessionID;
+	private String sessionID = null;
 	
 	
 	public CLIRunActionOMERO(CommandLine cmd) {
@@ -83,11 +92,19 @@ public class CLIRunActionOMERO {
 		if (this.cmd.hasOption("omeroConfig")) {
 			addLoginCredentials(this.cmd.getOptionValue("omeroConfig"));
 		} else {
-			this.hostname = this.cmd.getOptionValue("hostname");
-			this.port = Integer.parseInt(this.cmd.getOptionValue("port"));
-			this.username = this.cmd.getOptionValue("username");
-			getOMEROPassword();
-			this.groupID = Long.parseLong(this.cmd.getOptionValue("group"));
+			this.hostname = this.cmd.getOptionValue(HOSTNAME_OPTION);
+			if (cmd.hasOption(PORT_OPTION)) {
+				this.port = Integer.parseInt(this.cmd.getOptionValue(PORT_OPTION));
+			}
+			if (this.cmd.hasOption(SESSIONID_OPTION)) {
+				this.sessionID = this.cmd.getOptionValue(SESSIONID_OPTION);
+			} else {
+				this.username = this.cmd.getOptionValue(USERNAME_OPTION);
+				getOMEROPassword();
+				if (this.cmd.hasOption(GROUP_OPTION)) {
+					this.groupID = Long.parseLong(this.cmd.getOptionValue(GROUP_OPTION));
+				}
+			}
 		}
 		checkOMEROConnection();
 	}
@@ -145,15 +162,16 @@ public class CLIRunActionOMERO {
 				
 				for (int i = 0; i < sizeC; i++) {
 					outputsDat[i] = project.addDataset(client, "raw_C" + i + "_" + name, "").getId();
+					project.reload(client);
 				}
-				
 				autoCrop.runSeveralImageOMERO(images, outputsDat, client);
 			}
 		} else {
-			throw new IllegalArgumentException("Wrong input parameter : "
-			                                   + inputDirectory + "\n\n\n"
-			                                   + "Example format expected:\n"
-			                                   + "dataset/OMERO_ID \n");
+			String eol = System.lineSeparator();
+			throw new IllegalArgumentException("Wrong input parameter : " +
+			                                   inputDirectory + eol + eol + eol +
+			                                   "Example format expected:" + eol +
+			                                   "dataset/OMERO_ID" + eol);
 		}
 	}
 	
@@ -179,7 +197,7 @@ public class CLIRunActionOMERO {
 					}
 					otsuModified.saveCropGeneralInfoOmero(client, Long.parseLong(outputDirectory));
 					if (!log.isEmpty()) {
-						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+						LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 					}
 				} catch (IOException | OMEROServerError e) {
 					LOGGER.error("An error occurred.", e);
@@ -225,7 +243,7 @@ public class CLIRunActionOMERO {
 						log = otsuModified.runSeveralImagesOMERO(images, Long.parseLong(outputDirectory), client, id);
 					}
 					if (!log.isEmpty()) {
-						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+						LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 					}
 				} catch (IOException e) {
 					LOGGER.error("An error occurred.", e);
@@ -240,7 +258,7 @@ public class CLIRunActionOMERO {
 	}
 	
 	
-	public void addLoginCredentials(String pathToConfigFile) {
+	private void addLoginCredentials(String pathToConfigFile) {
 		Properties prop = new Properties();
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
 			prop.load(is);
@@ -255,23 +273,23 @@ public class CLIRunActionOMERO {
 		for (String idProp : properties) {
 			try {
 				switch (idProp) {
-					case "hostname":
-						this.hostname = prop.getProperty("hostname");
+					case HOSTNAME_OPTION:
+						this.hostname = prop.getProperty(HOSTNAME_OPTION);
 						break;
-					case "port":
-						this.port = Integer.parseInt(prop.getProperty("port"));
+					case PORT_OPTION:
+						this.port = Integer.parseInt(prop.getProperty(PORT_OPTION));
 						break;
-					case "username":
-						this.username = prop.getProperty("username");
+					case USERNAME_OPTION:
+						this.username = prop.getProperty(USERNAME_OPTION);
 						break;
-					case "password":
-						this.password = prop.getProperty("password").toCharArray();
+					case PASSWORD_OPTION:
+						this.password = prop.getProperty(PASSWORD_OPTION).toCharArray();
 						break;
-					case "group":
-						this.groupID = Long.parseLong(prop.getProperty("group"));
+					case GROUP_OPTION:
+						this.groupID = Long.parseLong(prop.getProperty(GROUP_OPTION));
 						break;
-					case "sessionID":
-						this.sessionID = prop.getProperty("sessionID");
+					case SESSIONID_OPTION:
+						this.sessionID = prop.getProperty(SESSIONID_OPTION);
 						break;
 					default:
 						LOGGER.warn("Unknown property in OMERO config file: {}", idProp);
@@ -284,21 +302,21 @@ public class CLIRunActionOMERO {
 	}
 	
 	
-	public void getOMEROPassword() {
-		if (cmd.hasOption("password")) {
-			this.password = cmd.getOptionValue("password").toCharArray();
+	private void getOMEROPassword() {
+		if (cmd.hasOption(PASSWORD_OPTION)) {
+			this.password = cmd.getOptionValue(PASSWORD_OPTION).toCharArray();
 		} else {
-			System.console().writer().println("Enter password: ");
-			Console con = System.console();
-			this.password = con.readPassword();
+			this.password = readPassword();
 		}
 	}
 	
 	
-	public void checkOMEROConnection() {
+	private void checkOMEROConnection() {
 		try {
-			if (sessionID == null) {
+			if (sessionID == null && groupID != -1L) {
 				client.connect(hostname, port, username, password, groupID);
+			} else if (sessionID == null) {
+				client.connect(hostname, port, username, password);
 			} else {
 				client.connect(hostname, port, sessionID);
 			}
@@ -382,42 +400,42 @@ public class CLIRunActionOMERO {
 	
 	
 	private void runSegCC() {
-		ChromocenterParameters chromocenterParameters = new ChromocenterParameters(".", ".", ".");
+		ChromocenterParameters params = new ChromocenterParameters(".", ".", ".");
 		if (cmd.hasOption("isG")) {
-			chromocenterParameters.gaussianOnRaw = true;
+			params.setGaussianOnRaw(true);
 		}
 		if (cmd.hasOption("isF")) {
-			chromocenterParameters.sizeFilterConnectedComponent = true;
+			params.setSizeFiltered(true);
 		}
 		if (cmd.hasOption("noC")) {
-			chromocenterParameters.noChange = true;
+			params.setNoChange(true);
 		}
 		if (cmd.hasOption("gX")) {
-			chromocenterParameters.gaussianBlurXsigma = Double.parseDouble(cmd.getOptionValue("gX"));
+			params.setXGaussianSigma(Double.parseDouble(cmd.getOptionValue("gX")));
 		}
 		
 		if (cmd.hasOption("gY")) {
-			chromocenterParameters.gaussianBlurYsigma = Double.parseDouble(cmd.getOptionValue("gY"));
+			params.setYGaussianSigma(Double.parseDouble(cmd.getOptionValue("gY")));
 		}
 		
 		if (cmd.hasOption("gZ")) {
-			chromocenterParameters.gaussianBlurZsigma = Double.parseDouble(cmd.getOptionValue("gZ"));
+			params.setZGaussianSigma(Double.parseDouble(cmd.getOptionValue("gZ")));
 		}
 		
 		if (cmd.hasOption("min")) {
-			chromocenterParameters.minSizeConnectedComponent = Double.parseDouble(cmd.getOptionValue("min"));
+			params.setMinSize(Double.parseDouble(cmd.getOptionValue("min")));
 		}
 		if (cmd.hasOption("max")) {
-			chromocenterParameters.maxSizeConnectedComponent = Double.parseDouble(cmd.getOptionValue("max"));
+			params.setMaxSize(Double.parseDouble(cmd.getOptionValue("max")));
 		}
 		if (cmd.hasOption("f")) {
-			chromocenterParameters.factor = Double.parseDouble(cmd.getOptionValue("f"));
+			params.setFactor(Double.parseDouble(cmd.getOptionValue("f")));
 		}
 		if (cmd.hasOption("n")) {
-			chromocenterParameters.neighbours = Integer.parseInt(cmd.getOptionValue("n"));
+			params.setNeighbours(Integer.parseInt(cmd.getOptionValue("n")));
 		}
 		
-		ChromocenterCalling ccCalling = new ChromocenterCalling(chromocenterParameters);
+		ChromocenterCalling ccCalling = new ChromocenterCalling(params);
 		
 		String inputDirectory  = cmd.getOptionValue("input");
 		String segDirectory    = cmd.getOptionValue("input2");
@@ -433,20 +451,18 @@ public class CLIRunActionOMERO {
 			LOGGER.error("An interruption occurred during chromocenter segmentation.", e);
 			Thread.currentThread().interrupt();
 		}
-		LOGGER.info("End !!! Results available: {}", chromocenterParameters.outputFolder);
-		
-		
+		LOGGER.info("End !!! Results available: {}", params.getOutputFolder());
 	}
 	
 	
 	private void runAutoCropOMERO()
 	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
-		AutocropParameters autocropParameters = new AutocropParameters(".", ".");
+		AutocropParameters params = new AutocropParameters(".", ".");
 		if (cmd.hasOption("config")) {
-			autocropParameters.addGeneralProperties(cmd.getOptionValue("config"));
-			autocropParameters.addProperties(cmd.getOptionValue("config"));
+			params.addGeneralProperties(cmd.getOptionValue("config"));
+			params.addProperties(cmd.getOptionValue("config"));
 		}
-		AutoCropCalling autoCrop = new AutoCropCalling(autocropParameters);
+		AutoCropCalling autoCrop = new AutoCropCalling(params);
 		if (cmd.hasOption("thresholding")) {
 			autoCrop.setTypeThresholding(cmd.getOptionValue("thresholding"));
 		}
@@ -470,12 +486,12 @@ public class CLIRunActionOMERO {
 	
 	public void runSegmentationOMERO()
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError {
-		SegmentationParameters segmentationParameters = new SegmentationParameters(".", ".");
+		SegmentationParameters params = new SegmentationParameters(".", ".");
 		if (cmd.hasOption("config")) {
-			segmentationParameters.addGeneralProperties(cmd.getOptionValue("config"));
-			segmentationParameters.addProperties(cmd.getOptionValue("config"));
+			params.addGeneralProperties(cmd.getOptionValue("config"));
+			params.addProperties(cmd.getOptionValue("config"));
 		}
-		SegmentationCalling otsuModified = new SegmentationCalling(segmentationParameters);
+		SegmentationCalling otsuModified = new SegmentationCalling(params);
 		if (cmd.hasOption("threads")) {
 			otsuModified.setExecutorThreads(Integer.parseInt(cmd.getOptionValue("threads")));
 		}

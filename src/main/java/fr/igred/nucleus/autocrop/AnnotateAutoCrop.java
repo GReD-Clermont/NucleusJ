@@ -17,13 +17,13 @@
  */
 package fr.igred.nucleus.autocrop;
 
+import fr.igred.nucleus.io.Directory;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
-import fr.igred.nucleus.io.Directory;
 import ij.ImagePlus;
 import ij.gui.TextRoi;
 import ij.plugin.ContrastEnhancer;
@@ -70,7 +70,7 @@ public class AnnotateAutoCrop {
 	/** the path of the directory where image with boxes is saved */
 	private final String             outputDirPath;
 	/** Parameters for crop analysis */
-	private final AutocropParameters autocropParameters;
+	private final AutocropParameters params;
 	/** ImagePlus of the Z projection */
 	private       ImagePlus          zProjection;
 	/** The prefix of the names of the output cropped images, which are automatically numbered */
@@ -80,11 +80,11 @@ public class AnnotateAutoCrop {
 	/**
 	 * Constructor for autocrop
 	 *
-	 * @param boxesCoordinates   List of coordinates (coordinates of nuclei cropped)
-	 * @param imageFile          File of current image analysed
-	 * @param outputDirPath      Path to the output folder
-	 * @param autocropParameters Autocrop parameters used to crop nuclei
-	 * @param prefix             Name of raw image (use for z projection)
+	 * @param boxesCoordinates List of coordinates (coordinates of nuclei cropped)
+	 * @param imageFile        File of current image analysed
+	 * @param outputDirPath    Path to the output folder
+	 * @param params           Autocrop parameters used to crop nuclei
+	 * @param prefix           Name of raw image (use for z projection)
 	 *
 	 * @throws IOException     if imageFile cannot be opened
 	 * @throws FormatException if something goes wrong performing a file format operation
@@ -93,9 +93,9 @@ public class AnnotateAutoCrop {
 	                        File imageFile,
 	                        String outputDirPath,
 	                        String prefix,
-	                        AutocropParameters autocropParameters)
+	                        AutocropParameters params)
 	throws IOException, FormatException {
-		this(boxesCoordinates, imageFile, outputDirPath, autocropParameters);
+		this(boxesCoordinates, imageFile, outputDirPath, params);
 		this.outputFilesPrefix = prefix;
 		Directory dirOutput = new Directory(this.outputDirPath + ZPROJ_NAME);
 		dirOutput.checkAndCreateDir();
@@ -105,10 +105,10 @@ public class AnnotateAutoCrop {
 	/**
 	 * Constructor for re-generate projection after segmentation
 	 *
-	 * @param boxesCoordinates   List of coordinates (coordinates of nuclei cropped)
-	 * @param imageFile          File of current image analysed
-	 * @param outputDirPath      Path to the output folder
-	 * @param autocropParameters Autocrop parameters used to crop nuclei
+	 * @param boxesCoordinates List of coordinates (coordinates of nuclei cropped)
+	 * @param imageFile        File of current image analysed
+	 * @param outputDirPath    Path to the output folder
+	 * @param params           Autocrop parameters used to crop nuclei
 	 *
 	 * @throws IOException     If imageFile cannot be opened
 	 * @throws FormatException If something goes wrong performing a file format operation
@@ -116,10 +116,10 @@ public class AnnotateAutoCrop {
 	public AnnotateAutoCrop(List<String> boxesCoordinates,
 	                        File imageFile,
 	                        String outputDirPath,
-	                        AutocropParameters autocropParameters)
+	                        AutocropParameters params)
 	throws IOException, FormatException {
-		this.autocropParameters = autocropParameters;
-		this.zProjection = openImagePlus(imageFile.getAbsolutePath())[this.autocropParameters.getSlicesOTSUComputing()];
+		this.params = params;
+		this.zProjection = openImagePlus(imageFile.getAbsolutePath())[this.params.getSlicesOTSUComputing()];
 		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
 	}
@@ -129,8 +129,8 @@ public class AnnotateAutoCrop {
 	                        ImagePlus imp,
 	                        String outputDirPath,
 	                        String prefix,
-	                        AutocropParameters autocropParameters) {
-		this.autocropParameters = autocropParameters;
+	                        AutocropParameters params) {
+		this.params = params;
 		this.zProjection = imp;
 		this.boxCoordinates = new ArrayList<>(boxesCoordinates);
 		this.outputDirPath = outputDirPath;
@@ -202,6 +202,7 @@ public class AnnotateAutoCrop {
 		List<DatasetWrapper> datasets = project.getDatasets("Z-Projection");
 		if (datasets.isEmpty()) {
 			datasetID = project.addDataset(client, "Z-Projection", "").getId();
+			project.reload(client);
 		} else {
 			datasetID = datasets.get(0).getId();
 		}
@@ -251,7 +252,7 @@ public class AnnotateAutoCrop {
 		ip.setLineWidth(4);
 		ip.setAntialiasedText(false);
 		/* Font */
-		Font font = new Font("Arial", Font.PLAIN, autocropParameters.getNumberFontSize());
+		Font font = new Font("Arial", Font.PLAIN, params.getNumberFontSize());
 		ip.setFont(font);
 		/* Draw current box*/
 		ip.drawRect(Integer.parseInt(currentBox[1]),

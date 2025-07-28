@@ -18,6 +18,7 @@
 package fr.igred.nucleus.cli;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.ParseException;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static org.apache.commons.lang.Validate.isTrue;
+import static fr.igred.nucleus.cli.CLIUtil.print;
 
 
 /** Inherited class to handle OMERO command line option */
@@ -58,13 +59,22 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	                                      .desc("Password in OMERO")
 	                                      .numberOfArgs(1)
 	                                      .build();
+	
+	/** Session ID */
+	private final Option sessionID = Option.builder("s")
+	                                       .longOpt("sessionID")
+	                                       .type(String.class)
+	                                       .desc("Session ID in OMERO")
+	                                       .numberOfArgs(1)
+	                                       .build();
+	
 	/** Group user connection */
-	private final Option group    = Option.builder("g")
-	                                      .longOpt("group")
-	                                      .type(String.class)
-	                                      .desc("Group in OMERO")
-	                                      .numberOfArgs(1)
-	                                      .build();
+	private final Option group = Option.builder("g")
+	                                   .longOpt("group")
+	                                   .type(String.class)
+	                                   .desc("Group in OMERO")
+	                                   .numberOfArgs(1)
+	                                   .build();
 	
 	
 	/** Path to OMERO config file */
@@ -93,49 +103,53 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	/**
 	 * Constructor with argument
 	 *
-	 * @param argument List of command line argument
+	 * @param args List of command line argument
 	 */
-	public CLIActionOptionOMERO(String[] argument) {
-		super(argument);
-		List<String> listArgs = Arrays.asList(argument);
+	public CLIActionOptionOMERO(String[] args) {
+		super(args);
+		String eol = System.lineSeparator();
+		
+		List<String> listArgs = Arrays.asList(args);
 		if (!(listArgs.contains("-oc") || listArgs.contains("-omeroConfig"))) {
 			hostname.setRequired(true);
-			port.setRequired(true);
-			username.setRequired(true);
-			group.setRequired(true);
+			
+			OptionGroup authentication = new OptionGroup();
+			authentication.setRequired(true);
+			authentication.addOption(username);
+			authentication.addOption(sessionID);
+			options.addOptionGroup(authentication);
 		}
 		options.addOption(action);
 		options.addOption(outputFolder);
 		options.addOption(port);
 		options.addOption(hostname);
-		options.addOption(username);
 		options.addOption(password);
 		options.addOption(group);
 		options.addOption(obj);
 		options.addOption(rhf);
 		String inputDescription = "OMERO  inputs 2 information separated with slash separator :  " +
 		                          "Type input: dataset, project, image, tag " +
-		                          "Input id number" + "\n" +
-		                          "Example : " + "\n" +
+		                          "Input id number" + eol +
+		                          "Example : " + eol +
 		                          "          dataset/1622";
 		options.addOption(inputFolder);
 		inputFolder.setDescription(inputDescription);
 		options.addOption(inputFolder2);
 		
 		options.addOption(omeroConfigFile);
-		try {
-			this.cmd = parser.parse(options, argument);
-			isTrue(availableActionOMERO(cmd.getOptionValue("action")));
-		} catch (ParseException exp) {
-			System.console().writer().println(exp.getMessage() + "\n");
-			System.console().writer().println(getHelperInfo());
-			System.exit(1);
-		} catch (Exception exp) {
-			System.console().writer().println("Action option \"" +
-			                                  cmd.getOptionValue("action") +
-			                                  "\" not available" + "\n");
-			System.console().writer().println(getHelperInfo());
-			System.exit(1);
+		if (cmd != null) {
+			try {
+				super.setCmd(parser.parse(options, args));
+			} catch (ParseException exp) {
+				print(exp.getMessage() + eol);
+				printHelpCommand();
+				super.setCmd(null);
+			}
+			if (cmd != null && !availableActionOMERO(cmd.getOptionValue(ACTION_OPTION))) {
+				print("Action option \"" + cmd.getOptionValue(ACTION_OPTION) + "\" not available" + eol);
+				printHelpCommand();
+				super.setCmd(null);
+			}
 		}
 	}
 	
@@ -143,20 +157,20 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	/**
 	 * Method to check action parameter
 	 *
-	 * @param action NucleusJ3 action to run
+	 * @param action NucleusJ action to run
 	 *
 	 * @return boolean existing action
 	 */
 	private static boolean availableActionOMERO(String action) {
-		Collection<String> actionAvailableInOMERO = new ArrayList<>(7);
-		actionAvailableInOMERO.add("autocrop");
-		actionAvailableInOMERO.add("segmentation");
-		actionAvailableInOMERO.add("generateOverlay");
-		actionAvailableInOMERO.add("cropFromCoordinate");
-		actionAvailableInOMERO.add("computeParameters");
-		actionAvailableInOMERO.add("segCC");
-		actionAvailableInOMERO.add("computeCcParameters");
-		return actionAvailableInOMERO.contains(action);
+		Collection<String> omeroActions = new ArrayList<>(7);
+		omeroActions.add("autocrop");
+		omeroActions.add("segmentation");
+		omeroActions.add("generateOverlay");
+		omeroActions.add("cropFromCoordinate");
+		omeroActions.add("computeParameters");
+		omeroActions.add("segCC");
+		omeroActions.add("computeCcParameters");
+		return omeroActions.contains(action);
 	}
 	
 	
