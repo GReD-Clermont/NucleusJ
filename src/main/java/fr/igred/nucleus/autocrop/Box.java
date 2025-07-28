@@ -49,8 +49,7 @@ public class Box {
 	 * @param zMin: coordinate z min of the Box
 	 * @param zMax: coordinate z max of the Box
 	 */
-	public Box(short xMin, short xMax, short yMin, short yMax, short zMin,
-	           short zMax) {
+	public Box(short xMin, short xMax, short yMin, short yMax, short zMin, short zMax) {
 		this.xMin = xMin;
 		this.xMax = xMax;
 		this.yMin = yMin;
