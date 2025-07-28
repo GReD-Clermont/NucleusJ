@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static fr.igred.nucleus.cli.CLIHelper.printHelpCommand;
 import static fr.igred.nucleus.cli.CLIUtil.print;
 
 

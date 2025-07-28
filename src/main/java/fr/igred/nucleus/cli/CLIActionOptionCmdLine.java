@@ -22,7 +22,6 @@ import org.apache.commons.cli.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static fr.igred.nucleus.cli.CLIHelper.printHelpCommand;
 import static fr.igred.nucleus.cli.CLIUtil.print;
 
 
@@ -133,6 +132,9 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 				inputFolder2.setDescription("Path to input folder containing DIC images" + eol);
 				options.addOption(inputFolder2);
 				break;
+			
+			default:
+				// DO NOTHING
 		}
 	}
 	

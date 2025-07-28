@@ -90,7 +90,7 @@ public final class NucleusJ {
 		ThreadUtil.threadPoolExecutor.allowCoreThreadTimeOut(true);
 		
 		if (listArgs.isEmpty()) {
-			LOGGER.info("Starting GUI...");
+			LOGGER.debug("Starting GUI...");
 			SwingUtilities.invokeLater(() -> {
 				MainGui gui = new MainGui();
 				gui.setVisible(true);
@@ -103,7 +103,7 @@ public final class NucleusJ {
 			} else {
 				runCLI(args);
 			}
-			LOGGER.info("Shutting down thread pool executor...");
+			LOGGER.debug("Shutting down thread pool executor...");
 			// Shutdown the thread pool executor to clean up resources
 			ThreadUtil.threadPoolExecutor.shutdown();
 			LOGGER.info("NucleusJ is now closing.");

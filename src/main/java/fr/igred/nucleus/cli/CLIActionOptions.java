@@ -24,7 +24,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import static fr.igred.nucleus.cli.CLIHelper.printHelpCommand;
 import static fr.igred.nucleus.cli.CLIUtil.COMMAND;
 import static fr.igred.nucleus.cli.CLIUtil.print;
 
@@ -72,7 +71,7 @@ public class CLIActionOptions {
 	                                      .longOpt(ACTION_NAME)
 	                                      .required()
 	                                      .type(String.class)
-	                                      .desc("Action available:" + EOL +
+	                                      .desc("Actions available:" + EOL +
 	                                            "autocrop : crop wide field images" + EOL +
 	                                            "segmentation : nucleus segmentation" + EOL)
 	                                      .numberOfArgs(1)
@@ -138,6 +137,20 @@ public class CLIActionOptions {
 			printHelpCommand();
 			this.cmd = null; // Set command to null if parsing fails
 		}
+	}
+	
+	
+	/** Print help command usage */
+	public static void printHelpCommand() {
+		String eol = System.lineSeparator();
+		String info = "More details for available actions:" + eol +
+		              COMMAND + " -h" + eol +
+		              COMMAND + " -help" + eol +
+		              eol +
+		              "More details for a specific action:" + eol +
+		              COMMAND + " -h <action>" + eol +
+		              COMMAND + " -help <action>";
+		print(info);
 	}
 	
 	

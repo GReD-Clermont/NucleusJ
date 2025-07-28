@@ -48,41 +48,25 @@ public final class CLIHelper {
 	}
 	
 	
-	private static void printExampleCommand(String argument) {
-		String                 eol        = System.lineSeparator();
+	private static void printHelpCommand(String argument) {
 		String[]               exampleCMD = argument.split(" ");
 		CLIActionOptionCmdLine cmd        = new CLIActionOptionCmdLine(exampleCMD);
 		
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp("NucleusJ segmentation cli: ", cmd.getOptions());
-		print(eol + "Command line example:" + eol +
-		      COMMAND + " " + argument + eol + eol);
+		formatter.printHelp("NucleusJ CLI: ", cmd.getOptions());
+		print(System.lineSeparator());
+	}
+	
+	
+	private static void printExampleCommand(String argument) {
+		String eol = System.lineSeparator();
+		print("Command line example:" + eol + COMMAND + " " + argument + eol);
 	}
 	
 	
 	private static void printExampleCommandOMERO(String argument) {
-		String               eol        = System.lineSeparator();
-		String[]             exampleCMD = argument.split(" ");
-		CLIActionOptionOMERO cmd        = new CLIActionOptionOMERO(exampleCMD);
-		
-		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp("NucleusJ CLI: ", cmd.getOptions());
-		print(eol + "Command line example:" + eol +
-		      COMMAND + " " + argument + eol + eol);
-	}
-	
-	
-	/** Print help command usage */
-	public static void printHelpCommand() {
 		String eol = System.lineSeparator();
-		String info = "More details for available actions:" + eol +
-		              COMMAND + " -h" + eol +
-		              COMMAND + " -help" + eol +
-		              eol +
-		              "More details for a specific action:" + eol +
-		              COMMAND + " -h <action>" + eol +
-		              COMMAND + " -help <action>";
-		print(info);
+		print("Command line example (OMERO):" + eol + COMMAND + " " + argument + eol);
 	}
 	
 	
@@ -109,7 +93,6 @@ public final class CLIHelper {
 				exampleArgument = "-action segmentation " +
 				                  "-input path/to/input/folder/ " +
 				                  "-output path/to/output/folder/ ";
-				printExampleCommand(exampleArgument);
 				
 				exampleArgumentOMERO = "-omero " +
 				                       "-action segmentation " +
@@ -119,6 +102,9 @@ public final class CLIHelper {
 				                       "-port 0 " +
 				                       "-user username " +
 				                       "-group 000";
+				
+				printHelpCommand(exampleArgument);
+				printExampleCommand(exampleArgument);
 				printExampleCommandOMERO(exampleArgumentOMERO);
 				break;
 			
@@ -126,7 +112,6 @@ public final class CLIHelper {
 				exampleArgument = "-action autocrop " +
 				                  "-input path/to/input/folder/ " +
 				                  "-output path/to/output/folder/ ";
-				printExampleCommand(exampleArgument);
 				
 				exampleArgumentOMERO = "-omero " +
 				                       "-action autocrop " +
@@ -136,6 +121,9 @@ public final class CLIHelper {
 				                       "-port 0 " +
 				                       "-user username " +
 				                       "-group 000";
+				
+				printHelpCommand(exampleArgument);
+				printExampleCommand(exampleArgument);
 				printExampleCommandOMERO(exampleArgumentOMERO);
 				break;
 			
@@ -143,6 +131,7 @@ public final class CLIHelper {
 				exampleArgument = "-action computeParameters " +
 				                  "-input path/to/raw/image/folder/ " +
 				                  "-input2 path/to/segmented/image/folder/ ";
+				printHelpCommand(exampleArgument);
 				printExampleCommand(exampleArgument);
 				break;
 			
@@ -150,6 +139,7 @@ public final class CLIHelper {
 				exampleArgument = "-action computeParametersDL " +
 				                  "-input path/to/raw/image/folder/ " +
 				                  "-input2 path/to/segmented/image/folder/ ";
+				printHelpCommand(exampleArgument);
 				printExampleCommand(exampleArgument);
 				break;
 			
@@ -157,6 +147,7 @@ public final class CLIHelper {
 				exampleArgument = "-action generateProjection " +
 				                  "-input path/to/coordinate/file/folder/ " +
 				                  "-input2 path/to/raw/image/folder/ ";
+				printHelpCommand(exampleArgument);
 				printExampleCommand(exampleArgument);
 				break;
 			
@@ -165,12 +156,14 @@ public final class CLIHelper {
 				                  "-input path/to/coordinate/file/folder/ " +
 				                  "-input2 path/to/segmented/image/folder/ " +
 				                  "-input3 path/to/ZProjection/folder/";
+				printHelpCommand(exampleArgument);
 				printExampleCommand(exampleArgument);
 				break;
 			
 			case "CropFromCoordinate":
 				exampleArgument = "-action CropFromCoordinate " +
 				                  "-input path/to/coordinate/file/folder/ ";
+				printHelpCommand(exampleArgument);
 				printExampleCommand(exampleArgument);
 				break;
 			
@@ -178,7 +171,6 @@ public final class CLIHelper {
 				exampleArgument = "-action GenerateOverlay " +
 				                  "-input path/to/input/zprojection/ " +
 				                  "-input2 path/to/input/dic_images/";
-				printExampleCommand(exampleArgument);
 				
 				exampleArgumentOMERO = "-omero " +
 				                       "-action GenerateOverlay " +
@@ -188,6 +180,8 @@ public final class CLIHelper {
 				                       "-port 0 " +
 				                       "-user username " +
 				                       "-group 000";
+				printHelpCommand(exampleArgument);
+				printExampleCommand(exampleArgument);
 				printExampleCommandOMERO(exampleArgumentOMERO);
 				break;
 			
@@ -224,7 +218,7 @@ public final class CLIHelper {
 			
 			default:
 				print("Invalid action \"" + action + "\" :" + eol);
-				printHelpCommand();
+				printHelpFull();
 				break;
 		}
 	}
