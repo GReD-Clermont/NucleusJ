@@ -22,9 +22,14 @@ import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
 import org.apache.commons.cli.HelpFormatter;
 
+import static fr.igred.nucleus.cli.CLIUtil.print;
+
 
 /** Class to generate helper */
 public final class CLIHelper {
+	
+	private static final String EXAMPLE_COMMAND = "java -jar nucleusj-" + Version.get() + ".jar";
+	
 	
 	/** Private constructor to avoid instantiation */
 	private CLIHelper() {
@@ -46,21 +51,38 @@ public final class CLIHelper {
 	}
 	
 	
+	private static void printExampleCommand(String argument) {
+		String                 eol        = System.lineSeparator();
+		String[]               exampleCMD = argument.split(" ");
+		CLIActionOptionCmdLine cmd        = new CLIActionOptionCmdLine(exampleCMD);
+		
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("NucleusJ segmentation cli: ", cmd.getOptions());
+		print(eol + "Command line example:" + eol +
+		      EXAMPLE_COMMAND + " " + argument + eol + eol);
+	}
+	
+	
+	private static void printExampleCommandOMERO(String argument) {
+		String               eol        = System.lineSeparator();
+		String[]             exampleCMD = argument.split(" ");
+		CLIActionOptionOMERO cmd        = new CLIActionOptionOMERO(exampleCMD);
+		
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("NucleusJ segmentation cli: ", cmd.getOptions());
+		print(eol + "Command line example:" + eol +
+		      EXAMPLE_COMMAND + " " + argument + eol + eol);
+	}
+	
+	
 	/**
 	 * Method get help for command line with example command line
 	 */
 	private static void cmdHelpFull() {
-		String eol            = System.lineSeparator();
-		String exampleCommand = "java -jar nucleusj-" + Version.get() + ".jar ";
 		String exampleArgument = "-action segmentation " +
 		                         "-input path/to/input/folder/ " +
 		                         "-output path/to/output/folder/ ";
-		String[]               exampleCMD = exampleArgument.split(" ");
-		CLIActionOptionCmdLine command    = new CLIActionOptionCmdLine(exampleCMD);
-		HelpFormatter          formatter  = new HelpFormatter();
-		formatter.printHelp("NucleusJ cli : ", command.getOptions());
-		System.console().writer().println(eol + "Command line example :" + eol +
-		                                  exampleCommand + " " + exampleArgument + eol + eol);
+		printExampleCommand(exampleArgument);
 		
 		String exampleArgumentOMERO = "-omero " +
 		                              "-action segmentation " +
@@ -68,12 +90,9 @@ public final class CLIHelper {
 		                              "-output path/to/output/folder/ " +
 		                              "-hostname omero-server-address " +
 		                              "-port 0 " +
+		                              "-user username " +
 		                              "-group 000";
-		String[]             exampleOMEROCMD = exampleArgumentOMERO.split(" ");
-		CLIActionOptionOMERO commandOMERO    = new CLIActionOptionOMERO(exampleOMEROCMD);
-		formatter.printHelp("NucleusJ OMERO MODE: ", commandOMERO.getOptions());
-		System.console().writer().println(eol + "Command line example :" + eol + eol +
-		                                  exampleCommand + " " + exampleArgumentOMERO);
+		printExampleCommandOMERO(exampleArgumentOMERO);
 		
 		System.exit(1);
 	}
@@ -85,50 +104,32 @@ public final class CLIHelper {
 	 * @param action action
 	 */
 	private static void specificAction(String action) {
-		String                 eol            = System.lineSeparator();
-		String                 exampleCommand = "java -jar nucleusj-" + Version.get() + ".jar";
+		String                 eol       = System.lineSeparator();
 		String                 exampleArgument;
-		String[]               exampleCMD;
-		HelpFormatter          formatter;
-		CLIActionOptionCmdLine command;
+		String                 exampleArgumentOMERO;
 		switch (action) {
 			case "segmentation":
 				exampleArgument = "-action segmentation " +
 				                  "-input path/to/input/folder/ " +
 				                  "-output path/to/output/folder/ ";
-				exampleCMD = exampleArgument.split(" ");
-				command = new CLIActionOptionCmdLine(exampleCMD);
-				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ segmentation cli : ", command.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol +
-				                                  exampleCommand + " " + exampleArgument + eol + eol);
+				printExampleCommand(exampleArgument);
 				
-				String exampleArgumentOMERO = "-omero " +
-				                              "-action segmentation " +
-				                              "-input path/to/input/folder/ " +
-				                              "-output path/to/output/folder/ " +
-				                              "-hostname omero-server-address " +
-				                              "-port 0 " +
-				                              "-group 000";
-				
-				String[] exampleOMEROCMD = exampleArgumentOMERO.split(" ");
-				CLIActionOptionOMERO commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
-				formatter.printHelp("NucleusJ segmentation OMERO MODE: ", commandOMERO.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol + eol +
-				                                  exampleCommand + " " + exampleArgumentOMERO);
+				exampleArgumentOMERO = "-omero " +
+				                       "-action segmentation " +
+				                       "-input path/to/input/folder/ " +
+				                       "-output path/to/output/folder/ " +
+				                       "-hostname omero-server-address " +
+				                       "-port 0 " +
+				                       "-user username " +
+				                       "-group 000";
+				printExampleCommandOMERO(exampleArgumentOMERO);
 				break;
 			
 			case "autocrop":
 				exampleArgument = "-action autocrop " +
 				                  "-input path/to/input/folder/ " +
 				                  "-output path/to/output/folder/ ";
-				exampleCMD = exampleArgument.split(" ");
-				command = new CLIActionOptionCmdLine(exampleCMD);
-				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ autocrop cli : ", command.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol +
-				                                  exampleCommand + " " + exampleArgument + eol + eol);
-				
+				printExampleCommand(exampleArgument);
 				
 				exampleArgumentOMERO = "-omero " +
 				                       "-action autocrop " +
@@ -136,48 +137,30 @@ public final class CLIHelper {
 				                       "-output path/to/output/folder/ " +
 				                       "-hostname omero-server-address " +
 				                       "-port 0 " +
+				                       "-user username " +
 				                       "-group 000";
-				exampleOMEROCMD = exampleArgumentOMERO.split(" ");
-				commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
-				formatter.printHelp("NucleusJ autocrop OMERO MODE: ", commandOMERO.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol + eol +
-				                                  exampleCommand + " " + exampleArgumentOMERO);
+				printExampleCommandOMERO(exampleArgumentOMERO);
 				break;
 			
 			case "computeParameters":
 				exampleArgument = "-action computeParameters " +
 				                  "-input path/to/raw/image/folder/ " +
 				                  "-input2 path/to/segmented/image/folder/ ";
-				exampleCMD = exampleArgument.split(" ");
-				command = new CLIActionOptionCmdLine(exampleCMD);
-				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ computeParameters cli : ", command.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol +
-				                                  exampleCommand + " " + exampleArgument + eol + eol);
+				printExampleCommand(exampleArgument);
 				break;
 			
 			case "computeParametersDL":
 				exampleArgument = "-action computeParametersDL " +
 				                  "-input path/to/raw/image/folder/ " +
 				                  "-input2 path/to/segmented/image/folder/ ";
-				exampleCMD = exampleArgument.split(" ");
-				command = new CLIActionOptionCmdLine(exampleCMD);
-				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ computeParametersDL cli : ", command.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol +
-				                                  exampleCommand + " " + exampleArgument + eol + eol);
+				printExampleCommand(exampleArgument);
 				break;
 			
 			case "generateProjection":
 				exampleArgument = "-action generateProjection " +
 				                  "-input path/to/coordinate/file/folder/ " +
 				                  "-input2 path/to/raw/image/folder/ ";
-				exampleCMD = exampleArgument.split(" ");
-				command = new CLIActionOptionCmdLine(exampleCMD);
-				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ generateProjection cli : ", command.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol +
-				                                  exampleCommand + exampleArgument + eol + eol);
+				printExampleCommand(exampleArgument);
 				break;
 			
 			case "generateProjectionFiltered":
@@ -185,35 +168,20 @@ public final class CLIHelper {
 				                  "-input path/to/coordinate/file/folder/ " +
 				                  "-input2 path/to/segmented/image/folder/ " +
 				                  "-input3 path/to/ZProjection/folder/";
-				exampleCMD = exampleArgument.split(" ");
-				command = new CLIActionOptionCmdLine(exampleCMD);
-				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ generateProjectionFiltered cli : ", command.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol +
-				                                  exampleCommand + exampleArgument + eol + eol);
+				printExampleCommand(exampleArgument);
 				break;
 			
 			case "CropFromCoordinate":
 				exampleArgument = "-action CropFromCoordinate " +
 				                  "-input path/to/coordinate/file/folder/ ";
-				exampleCMD = exampleArgument.split(" ");
-				command = new CLIActionOptionCmdLine(exampleCMD);
-				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ CropFromCoordinate cli : ", command.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol +
-				                                  exampleCommand + exampleArgument + eol + eol);
+				printExampleCommand(exampleArgument);
 				break;
 			
 			case "GenerateOverlay":
 				exampleArgument = "-action GenerateOverlay " +
 				                  "-input path/to/input/zprojection/ " +
 				                  "-input2 path/to/input/dic_images/";
-				exampleCMD = exampleArgument.split(" ");
-				command = new CLIActionOptionCmdLine(exampleCMD);
-				formatter = new HelpFormatter();
-				formatter.printHelp("NucleusJ GenerateOverlay cli : ", command.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol +
-				                                  exampleCommand + exampleArgument + eol + eol);
+				printExampleCommand(exampleArgument);
 				
 				exampleArgumentOMERO = "-omero " +
 				                       "-action GenerateOverlay " +
@@ -221,13 +189,9 @@ public final class CLIHelper {
 				                       "-input2 DIC_dataset_ID " +
 				                       "-output output_project_ID " +
 				                       "-port 0 " +
+				                       "-user username " +
 				                       "-group 000";
-				exampleOMEROCMD = exampleArgumentOMERO.split(" ");
-				commandOMERO = new CLIActionOptionOMERO(exampleOMEROCMD);
-				formatter.printHelp("NucleusJ GenerateOverlay OMERO MODE: ", commandOMERO.getOptions());
-				System.console().writer().println(eol + "Command line example :" + eol + eol +
-				                                  exampleCommand + exampleArgumentOMERO);
-				///
+				printExampleCommandOMERO(exampleArgumentOMERO);
 				break;
 			
 			case "configFileExample":
@@ -250,19 +214,20 @@ public final class CLIHelper {
 				                         "xCal:1" + eol +
 				                         "yCal:1" + eol +
 				                         "zCal:1";
-				System.console().writer().println("Two config file with default parameters generate:" + eol);
+				print("Two config file with default parameters generate:" + eol);
 				
 				saveFile(autocropConfigOption, "autocropConfigListParameters");
 				saveFile(segConfigOption, "segmentationConfigListParameters");
-				System.console().writer().println("autocrop parameters details: " +
-				                                  "https://github.com/GReD-Clermont/NucleusJ/wiki/Autocrop#list-of-available-parameters " + eol +
-				                                  "segmentation parameters details: " +
-				                                  "https://github.com/GReD-Clermont/NucleusJ/wiki/Autocrop#list-of-available-parameters");
+				print("autocrop parameters details: " +
+				      "https://github.com/GReD-Clermont/NucleusJ/wiki/Autocrop#list-of-available-parameters " +
+				      eol +
+				      "segmentation parameters details: " +
+				      "https://github.com/GReD-Clermont/NucleusJ/wiki/Autocrop#list-of-available-parameters");
 				break;
 			
 			default:
-				System.console().writer().println("Invalid action \"" + action + "\" :" + eol);
-				System.console().writer().println(CLIActionOptions.getHelperInfo());
+				print("Invalid action \"" + action + "\" :" + eol);
+				print(CLIActionOptions.getHelperInfo());
 				break;
 		}
 	}

@@ -22,6 +22,7 @@ import org.apache.commons.cli.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static fr.igred.nucleus.cli.CLIUtil.print;
 import static org.apache.commons.lang3.Validate.isTrue;
 
 
@@ -46,14 +47,12 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 			this.cmd = parser.parse(options, args);
 			isTrue(availableActionCMD(cmd.getOptionValue("action")));
 		} catch (ParseException exp) {
-			System.console().writer().println(exp.getMessage() + eol);
-			System.console().writer().println(getHelperInfo());
+			print(exp.getMessage() + eol);
+			print(getHelperInfo());
 			System.exit(1);
-		} catch (Exception exp) {
-			System.console().writer().println("Action option \"" +
-			                                  cmd.getOptionValue("action") +
-			                                  "\" not available" + eol);
-			System.console().writer().println(getHelperInfo());
+		} catch (RuntimeException exp) {
+			print("Action option \"" + cmd.getOptionValue("action") + "\" not available" + eol);
+			print(getHelperInfo());
 			System.exit(1);
 		}
 	}
@@ -112,7 +111,8 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 			
 			case "generateProjectionFiltered":
 				inputFolder.setDescription("Path to input folder containing coordinates files" + eol);
-				inputFolder2.setDescription("Path to input folder containing kept images after segmentation filter" + eol);
+				inputFolder2.setDescription(
+						"Path to input folder containing kept images after segmentation filter" + eol);
 				inputFolder3.setDescription("Path to input folder containing initial Zprojection" + eol);
 				options.addOption(inputFolder2);
 				options.addOption(inputFolder3);

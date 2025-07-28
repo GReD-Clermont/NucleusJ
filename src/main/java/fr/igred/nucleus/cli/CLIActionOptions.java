@@ -25,6 +25,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import static fr.igred.nucleus.cli.CLIUtil.print;
+
 
 /** Generic class to handle command line option */
 public class CLIActionOptions {
@@ -32,79 +34,79 @@ public class CLIActionOptions {
 	/** NucleusJ version */
 	private static final String NJ_VERSION = Version.get();
 	
-	private static final String eol = System.lineSeparator();
+	private static final String EOL = System.lineSeparator();
 	
 	/** Path to input folder */
-	public Option inputFolder = Option.builder("in")
-	                                  .longOpt("input")
-	                                  .required()
-	                                  .type(String.class)
-	                                  .numberOfArgs(1)
-	                                  .build();
+	protected Option inputFolder = Option.builder("in")
+	                                     .longOpt("input")
+	                                     .required()
+	                                     .type(String.class)
+	                                     .numberOfArgs(1)
+	                                     .build();
 	
 	/** Path to second input folder needed in specific action */
-	public Option inputFolder2 = Option.builder("in2")
-	                                   .longOpt("input2")
-	                                   .type(String.class)
-	                                   .numberOfArgs(1)
-	                                   .build();
+	protected Option inputFolder2 = Option.builder("in2")
+	                                      .longOpt("input2")
+	                                      .type(String.class)
+	                                      .numberOfArgs(1)
+	                                      .build();
 	
 	/** Path to second input folder Need in specific action */
-	public    Option inputFolder3 = Option.builder("in3")
+	protected Option inputFolder3 = Option.builder("in3")
 	                                      .longOpt("input3")
 	                                      .type(String.class)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** Path to config file */
-	public    Option configFile   = Option.builder("c")
+	protected Option configFile   = Option.builder("c")
 	                                      .longOpt("config")
 	                                      .type(String.class)
-	                                      .desc("Path to config file" + eol +
-	                                            "To generate config file example in current folder:" + eol +
+	                                      .desc("Path to config file" + EOL +
+	                                            "To generate config file example in current folder:" + EOL +
 	                                            "java -jar nucleusj-" +
 	                                            NJ_VERSION +
 	                                            ".jar -h configFileExample")
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** List of available actions */
-	public    Option action       = Option.builder("a")
+	protected Option action       = Option.builder("a")
 	                                      .longOpt("action")
 	                                      .required()
 	                                      .type(String.class)
-	                                      .desc("Action available:" + eol +
-	                                            "autocrop : crop wide field images" + eol +
-	                                            "segmentation : nucleus segmentation" + eol)
+	                                      .desc("Action available:" + EOL +
+	                                            "autocrop : crop wide field images" + EOL +
+	                                            "segmentation : nucleus segmentation" + EOL)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** Number of threads */
-	public    Option threads      = Option.builder("th")
+	protected Option threads      = Option.builder("th")
 	                                      .longOpt("threads")
 	                                      .type(String.class)
 	                                      .desc("Number of threads used to split image processing during autocrop or nucleus segmentation (do not exceed the number of available CPUs  (=" +
-	                                            Runtime.getRuntime().availableProcessors() + " CPUs))" + eol +
+	                                            Runtime.getRuntime().availableProcessors() + " CPUs))" + EOL +
 	                                            "Default : 4 threads for several images (otherwise 1 thread for single image processing)")
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** OMERO activate */
-	public    Option omero        = Option.builder("ome")
+	protected Option omero        = Option.builder("ome")
 	                                      .longOpt("omero")
 	                                      .type(boolean.class)
-	                                      .desc("Use NucleusJ with OMERO" + eol)
+	                                      .desc("Use NucleusJ with OMERO" + EOL)
 	                                      .build();
 	/** List of available actions */
-	public    Option thresholding = Option.builder("thresh")
+	protected Option thresholding = Option.builder("thresh")
 	                                      .longOpt("thresholding")
 	                                      .type(String.class)
-	                                      .desc("type of thresholding method to use:" + eol +
-	                                            "Otsu " + eol +
-	                                            "RenyiEntropy " + eol)
+	                                      .desc("type of thresholding method to use:" + EOL +
+	                                            "Otsu " + EOL +
+	                                            "RenyiEntropy " + EOL)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** Path to output folder */
 	protected Option outputFolder = Option.builder("out")
 	                                      .longOpt("output")
 	                                      .type(String.class)
-	                                      .desc("Path to output results" + eol)
+	                                      .desc("Path to output results" + EOL)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	
@@ -133,8 +135,8 @@ public class CLIActionOptions {
 		try {
 			this.cmd = parser.parse(options, argument, true);
 		} catch (ParseException exp) {
-			System.console().writer().println(exp.getMessage() + System.lineSeparator());
-			System.console().writer().println(getHelperInfo());
+			print(exp.getMessage() + System.lineSeparator());
+			print(getHelperInfo());
 			System.exit(1);
 		}
 	}

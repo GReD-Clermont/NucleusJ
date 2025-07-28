@@ -40,7 +40,6 @@ import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Console;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -51,12 +50,15 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import static fr.igred.nucleus.cli.CLIUtil.readPassword;
 import static java.lang.System.exit;
 
 
 public class CLIRunActionOMERO {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+	
+	private static final int DEFAULT_PORT = 4064;
 	
 	/** Command line */
 	private final CommandLine cmd;
@@ -65,17 +67,17 @@ public class CLIRunActionOMERO {
 	private final Client client = new Client();
 	
 	/** OMERO server hostname */
-	private String hostname;
+	private String hostname  = "localhost";
 	/** OMERO username */
-	private String username;
+	private String username  = "";
 	/** OMERO server port */
-	private int    port;
+	private int    port      = DEFAULT_PORT;
 	/** OMERO groupe ID */
-	private long   groupID;
+	private long   groupID   = -1L;
 	/** OMERO password connection */
-	private char[] password;
+	private char[] password  = "".toCharArray();
 	/** OMERO session ID */
-	private String sessionID;
+	private String sessionID = null;
 	
 	
 	public CLIRunActionOMERO(CommandLine cmd) {
@@ -84,13 +86,17 @@ public class CLIRunActionOMERO {
 			addLoginCredentials(this.cmd.getOptionValue("omeroConfig"));
 		} else {
 			this.hostname = this.cmd.getOptionValue("hostname");
-			this.port = Integer.parseInt(this.cmd.getOptionValue("port"));
+			if (cmd.hasOption("port")) {
+				this.port = Integer.parseInt(this.cmd.getOptionValue("port"));
+			}
 			if (this.cmd.hasOption("sessionID")) {
 				this.sessionID = this.cmd.getOptionValue("sessionID");
 			} else {
 				this.username = this.cmd.getOptionValue("username");
 				getOMEROPassword();
-				this.groupID = Long.parseLong(this.cmd.getOptionValue("group"));
+				if (this.cmd.hasOption("group")) {
+					this.groupID = Long.parseLong(this.cmd.getOptionValue("group"));
+				}
 			}
 		}
 		checkOMEROConnection();
@@ -293,17 +299,17 @@ public class CLIRunActionOMERO {
 		if (cmd.hasOption("password")) {
 			this.password = cmd.getOptionValue("password").toCharArray();
 		} else {
-			System.console().writer().println("Enter password: ");
-			Console con = System.console();
-			this.password = con.readPassword();
+			this.password = readPassword();
 		}
 	}
 	
 	
 	private void checkOMEROConnection() {
 		try {
-			if (sessionID == null) {
+			if (sessionID == null && groupID != -1L) {
 				client.connect(hostname, port, username, password, groupID);
+			} else if (sessionID == null) {
+				client.connect(hostname, port, username, password);
 			} else {
 				client.connect(hostname, port, sessionID);
 			}

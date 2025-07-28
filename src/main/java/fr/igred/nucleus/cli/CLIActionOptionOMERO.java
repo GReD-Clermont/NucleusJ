@@ -18,6 +18,7 @@
 package fr.igred.nucleus.cli;
 
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.ParseException;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static fr.igred.nucleus.cli.CLIUtil.print;
 import static org.apache.commons.lang3.Validate.isTrue;
 
 
@@ -68,12 +70,12 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	                                       .build();
 	
 	/** Group user connection */
-	private final Option group    = Option.builder("g")
-	                                      .longOpt("group")
-	                                      .type(String.class)
-	                                      .desc("Group in OMERO")
-	                                      .numberOfArgs(1)
-	                                      .build();
+	private final Option group = Option.builder("g")
+	                                   .longOpt("group")
+	                                   .type(String.class)
+	                                   .desc("Group in OMERO")
+	                                   .numberOfArgs(1)
+	                                   .build();
 	
 	
 	/** Path to OMERO config file */
@@ -111,22 +113,19 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		List<String> listArgs = Arrays.asList(argument);
 		if (!(listArgs.contains("-oc") || listArgs.contains("-omeroConfig"))) {
 			hostname.setRequired(true);
-			port.setRequired(true);
-			if (listArgs.contains("-s")) {
-				sessionID.setRequired(true);
-			} else {
-				username.setRequired(true);
-				group.setRequired(true);
-			}
+			
+			OptionGroup authentication = new OptionGroup();
+			authentication.setRequired(true);
+			authentication.addOption(username);
+			authentication.addOption(sessionID);
+			options.addOptionGroup(authentication);
 		}
 		options.addOption(action);
 		options.addOption(outputFolder);
 		options.addOption(port);
 		options.addOption(hostname);
-		options.addOption(username);
 		options.addOption(password);
 		options.addOption(group);
-		options.addOption(sessionID);
 		options.addOption(obj);
 		options.addOption(rhf);
 		String inputDescription = "OMERO  inputs 2 information separated with slash separator :  " +
@@ -143,14 +142,12 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 			this.cmd = parser.parse(options, argument);
 			isTrue(availableActionOMERO(cmd.getOptionValue("action")));
 		} catch (ParseException exp) {
-			System.console().writer().println(exp.getMessage() + eol);
-			System.console().writer().println(getHelperInfo());
+			print(exp.getMessage() + eol);
+			print(getHelperInfo());
 			System.exit(1);
 		} catch (RuntimeException exp) {
-			System.console().writer().println("Action option \"" +
-			                                  cmd.getOptionValue("action") +
-			                                  "\" not available" + eol);
-			System.console().writer().println(getHelperInfo());
+			print("Action option \"" + cmd.getOptionValue("action") + "\" not available" + eol);
+			print(getHelperInfo());
 			System.exit(1);
 		}
 	}
