@@ -75,7 +75,7 @@ public class ComputeNucleiParametersML {
 			for (int i = 0; i < imagePlusInput.getWidth(); ++i) {
 				for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
 					double voxelValue = imageStackInput.getVoxel(i, j, k);
-					if (voxelValue >= 1) {
+					if (voxelValue >= threshold) {
 						imageStackSegmented.setVoxel(i, j, k, 255);
 					} else {
 						imageStackSegmented.setVoxel(i, j, k, 0);
