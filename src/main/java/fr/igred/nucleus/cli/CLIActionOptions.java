@@ -17,7 +17,6 @@
  */
 package fr.igred.nucleus.cli;
 
-import fr.igred.nucleus.Version;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -25,14 +24,16 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import static fr.igred.nucleus.cli.CLIHelper.printHelpCommand;
+import static fr.igred.nucleus.cli.CLIUtil.COMMAND;
 import static fr.igred.nucleus.cli.CLIUtil.print;
 
 
 /** Generic class to handle command line option */
 public class CLIActionOptions {
 	// TODO Store action and option String in constant
-	/** NucleusJ version */
-	private static final String NJ_VERSION = Version.get();
+	/** Action option name */
+	public static final String ACTION_NAME = "action";
 	
 	private static final String EOL = System.lineSeparator();
 	
@@ -63,14 +64,12 @@ public class CLIActionOptions {
 	                                      .type(String.class)
 	                                      .desc("Path to config file" + EOL +
 	                                            "To generate config file example in current folder:" + EOL +
-	                                            "java -jar nucleusj-" +
-	                                            NJ_VERSION +
-	                                            ".jar -h configFileExample")
+	                                            COMMAND + " -h configFileExample")
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** List of available actions */
-	protected Option action       = Option.builder("a")
-	                                      .longOpt("action")
+	protected Option action       = Option.builder(ACTION_NAME.substring(0, 1))
+	                                      .longOpt(ACTION_NAME)
 	                                      .required()
 	                                      .type(String.class)
 	                                      .desc("Action available:" + EOL +
@@ -121,9 +120,9 @@ public class CLIActionOptions {
 	/**
 	 * Constructor with argument
 	 *
-	 * @param argument List of command line argument
+	 * @param args Command line arguments
 	 */
-	public CLIActionOptions(String[] argument) {
+	public CLIActionOptions(String[] args) {
 		options.addOption(inputFolder);
 		options.addOption(inputFolder2);
 		options.addOption(inputFolder3);
@@ -133,25 +132,12 @@ public class CLIActionOptions {
 		options.addOption(omero);
 		options.addOption(thresholding);
 		try {
-			this.cmd = parser.parse(options, argument, true);
+			this.cmd = parser.parse(options, args, true);
 		} catch (ParseException exp) {
 			print(exp.getMessage() + System.lineSeparator());
-			print(getHelperInfo());
-			System.exit(1);
+			printHelpCommand();
+			this.cmd = null; // Set command to null if parsing fails
 		}
-	}
-	
-	
-	/** @return : helper info */
-	public static String getHelperInfo() {
-		String eol = System.lineSeparator();
-		return "More details for available actions:" + eol +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h" + eol +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help" + eol +
-		       eol +
-		       "More details for a specific action:" + eol +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h <action>" + eol +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help <action>";
 	}
 	
 	
@@ -161,8 +147,23 @@ public class CLIActionOptions {
 	}
 	
 	
+	/**
+	 * Get command line
+	 *
+	 * @return CommandLine object containing parsed command line options
+	 */
 	public CommandLine getCmd() {
 		return cmd;
+	}
+	
+	
+	/**
+	 * Set command line
+	 *
+	 * @param cmd CommandLine object to set
+	 */
+	protected void setCmd(CommandLine cmd) {
+		this.cmd = cmd;
 	}
 	
 }

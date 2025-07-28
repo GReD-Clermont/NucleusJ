@@ -52,17 +52,18 @@ public final class NucleusJ {
 	
 	public static void runOMEROCLI(String[] args) {
 		CLIActionOptionOMERO command = new CLIActionOptionOMERO(args);
-		
-		CLIRunActionOMERO cliOMERO = new CLIRunActionOMERO(command.getCmd());
-		try {
-			cliOMERO.run();
-		} catch (AccessException | ServiceException | OMEROServerError | ExecutionException e) {
-			LOGGER.error("Error while running OMERO CLI command", e);
-		} catch (IOException | FormatException e) {
-			LOGGER.error("IO error while running OMERO CLI command", e);
-		} catch (InterruptedException e) {
-			LOGGER.error("Thread interrupted while running CLI command", e);
-			Thread.currentThread().interrupt(); // Restore interrupted status
+		if (command.getCmd() != null) {
+			CLIRunActionOMERO cliOMERO = new CLIRunActionOMERO(command.getCmd());
+			try {
+				cliOMERO.run();
+			} catch (AccessException | ServiceException | OMEROServerError | ExecutionException e) {
+				LOGGER.error("Error while running OMERO CLI command", e);
+			} catch (IOException | FormatException e) {
+				LOGGER.error("IO error while running OMERO CLI command", e);
+			} catch (InterruptedException e) {
+				LOGGER.error("Thread interrupted while running CLI command", e);
+				Thread.currentThread().interrupt(); // Restore interrupted status
+			}
 		}
 	}
 	
@@ -71,10 +72,12 @@ public final class NucleusJ {
 		CLIActionOptionCmdLine command = new CLIActionOptionCmdLine(args);
 		
 		CLIRunAction cli = new CLIRunAction(command.getCmd());
-		try {
-			cli.run();
-		} catch (IOException | FormatException e) {
-			LOGGER.error("IO error while running CLI command", e);
+		if(command.getCmd() != null) {
+			try {
+				cli.run();
+			} catch (IOException | FormatException e) {
+				LOGGER.error("IO error while running CLI command", e);
+			}
 		}
 	}
 	

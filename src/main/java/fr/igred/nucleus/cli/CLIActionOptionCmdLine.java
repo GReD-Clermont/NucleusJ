@@ -22,8 +22,8 @@ import org.apache.commons.cli.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static fr.igred.nucleus.cli.CLIHelper.printHelpCommand;
 import static fr.igred.nucleus.cli.CLIUtil.print;
-import static org.apache.commons.lang3.Validate.isTrue;
 
 
 /** class to handle command line option */
@@ -42,18 +42,20 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 		                      "cropFromCoordinate : crop wide-field image from coordinate" + eol +
 		                      "generateOverlay : generate overlay from images" + eol);
 		
-		checkSpecificOptions();
-		try {
-			this.cmd = parser.parse(options, args);
-			isTrue(availableActionCMD(cmd.getOptionValue("action")));
-		} catch (ParseException exp) {
-			print(exp.getMessage() + eol);
-			print(getHelperInfo());
-			System.exit(1);
-		} catch (RuntimeException exp) {
-			print("Action option \"" + cmd.getOptionValue("action") + "\" not available" + eol);
-			print(getHelperInfo());
-			System.exit(1);
+		if (cmd != null) {
+			checkSpecificOptions();
+			try {
+				super.setCmd(parser.parse(options, args));
+			} catch (ParseException exp) {
+				print(exp.getMessage() + eol);
+				printHelpCommand();
+				super.setCmd(null);
+			}
+			if (cmd != null && !availableActionCMD(cmd.getOptionValue(ACTION_NAME))) {
+				print("Action option \"" + cmd.getOptionValue(ACTION_NAME) + "\" not available" + eol);
+				printHelpCommand();
+				super.setCmd(null);
+			}
 		}
 	}
 	
@@ -82,7 +84,7 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 	/** Method to check specific action parameters */
 	private void checkSpecificOptions() {
 		String eol = System.lineSeparator();
-		switch (cmd.getOptionValue("action")) {
+		switch (cmd.getOptionValue(ACTION_NAME)) {
 			case "autocrop":
 			case "segmentation":
 				inputFolder.setDescription("Path to input folder containing images to analyse" + eol);

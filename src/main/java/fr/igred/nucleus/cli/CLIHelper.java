@@ -17,19 +17,16 @@
  */
 package fr.igred.nucleus.cli;
 
-import fr.igred.nucleus.Version;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
 import org.apache.commons.cli.HelpFormatter;
 
+import static fr.igred.nucleus.cli.CLIUtil.COMMAND;
 import static fr.igred.nucleus.cli.CLIUtil.print;
 
 
 /** Class to generate helper */
 public final class CLIHelper {
-	
-	private static final String EXAMPLE_COMMAND = "java -jar nucleusj-" + Version.get() + ".jar";
-	
 	
 	/** Private constructor to avoid instantiation */
 	private CLIHelper() {
@@ -46,7 +43,7 @@ public final class CLIHelper {
 		if (args.length == 2) {
 			specificAction(args[1]);
 		} else {
-			cmdHelpFull();
+			printHelpFull();
 		}
 	}
 	
@@ -59,7 +56,7 @@ public final class CLIHelper {
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("NucleusJ segmentation cli: ", cmd.getOptions());
 		print(eol + "Command line example:" + eol +
-		      EXAMPLE_COMMAND + " " + argument + eol + eol);
+		      COMMAND + " " + argument + eol + eol);
 	}
 	
 	
@@ -69,32 +66,32 @@ public final class CLIHelper {
 		CLIActionOptionOMERO cmd        = new CLIActionOptionOMERO(exampleCMD);
 		
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp("NucleusJ segmentation cli: ", cmd.getOptions());
+		formatter.printHelp("NucleusJ CLI: ", cmd.getOptions());
 		print(eol + "Command line example:" + eol +
-		      EXAMPLE_COMMAND + " " + argument + eol + eol);
+		      COMMAND + " " + argument + eol + eol);
 	}
 	
 	
-	/**
-	 * Method get help for command line with example command line
-	 */
-	private static void cmdHelpFull() {
-		String exampleArgument = "-action segmentation " +
+	/** Print help command usage */
+	public static void printHelpCommand() {
+		String eol = System.lineSeparator();
+		String info = "More details for available actions:" + eol +
+		              COMMAND + " -h" + eol +
+		              COMMAND + " -help" + eol +
+		              eol +
+		              "More details for a specific action:" + eol +
+		              COMMAND + " -h <action>" + eol +
+		              COMMAND + " -help <action>";
+		print(info);
+	}
+	
+	
+	/** Print full help command usage */
+	private static void printHelpFull() {
+		String exampleArgument = "-action autocrop " +
 		                         "-input path/to/input/folder/ " +
 		                         "-output path/to/output/folder/ ";
 		printExampleCommand(exampleArgument);
-		
-		String exampleArgumentOMERO = "-omero " +
-		                              "-action segmentation " +
-		                              "-input path/to/input/folder/ " +
-		                              "-output path/to/output/folder/ " +
-		                              "-hostname omero-server-address " +
-		                              "-port 0 " +
-		                              "-user username " +
-		                              "-group 000";
-		printExampleCommandOMERO(exampleArgumentOMERO);
-		
-		System.exit(1);
 	}
 	
 	
@@ -104,9 +101,9 @@ public final class CLIHelper {
 	 * @param action action
 	 */
 	private static void specificAction(String action) {
-		String                 eol       = System.lineSeparator();
-		String                 exampleArgument;
-		String                 exampleArgumentOMERO;
+		String eol = System.lineSeparator();
+		String exampleArgument;
+		String exampleArgumentOMERO;
 		switch (action) {
 			case "segmentation":
 				exampleArgument = "-action segmentation " +
@@ -227,7 +224,7 @@ public final class CLIHelper {
 			
 			default:
 				print("Invalid action \"" + action + "\" :" + eol);
-				print(CLIActionOptions.getHelperInfo());
+				printHelpCommand();
 				break;
 		}
 	}
@@ -241,10 +238,10 @@ public final class CLIHelper {
 	 */
 	public static void saveFile(String text, String fileName) {
 		Directory dirOutput = new Directory(System.getProperty("user.dir"));
-		OutputTextFile resultFileOutputOTSU = new OutputTextFile(dirOutput.getDirPath() +
-		                                                         dirOutput.getSeparator() +
-		                                                         fileName);
-		resultFileOutputOTSU.saveTextFile(text, true);
+		OutputTextFile otsuOutput = new OutputTextFile(dirOutput.getDirPath() +
+		                                               dirOutput.getSeparator() +
+		                                               fileName);
+		otsuOutput.saveTextFile(text, true);
 	}
 	
 }

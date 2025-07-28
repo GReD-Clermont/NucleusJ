@@ -17,6 +17,7 @@
  */
 package fr.igred.nucleus.cli;
 
+import fr.igred.nucleus.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,18 +30,27 @@ public final class CLIUtil {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
+	/** NucleusJ version */
+	private static final String NJ_VERSION = Version.get();
+	
+	/** Command to run NucleusJ */
+	public static final String COMMAND = "java -jar nucleusj-" + NJ_VERSION + ".jar";
+	
+	/** Empty character array to avoid null checks */
 	private static final char[] EMPTY_CHAR_ARRAY = new char[0];
 	
+	/** Flag to indicate if a warning about console availability has been issued */
 	private static boolean warnedAboutConsole = false;
 	
 	
+	/** Private constructor to prevent instantiation */
 	private CLIUtil() {
-		// Prevent instantiation
+		// DO NOTHING
 	}
 	
 	
 	/**
-	 * Prints a message to the console.
+	 * Prints a message to the console or logs it if no console is available.
 	 *
 	 * @param message The message to print.
 	 */
@@ -59,6 +69,11 @@ public final class CLIUtil {
 	}
 	
 	
+	/**
+	 * Reads a password from the console.
+	 *
+	 * @return The password as a character array, or an empty array if no console is available.
+	 */
 	public static char[] readPassword() {
 		print("Enter password: ");
 		return System.console() != null ? System.console().readPassword() : EMPTY_CHAR_ARRAY;

@@ -26,8 +26,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import static fr.igred.nucleus.cli.CLIHelper.printHelpCommand;
 import static fr.igred.nucleus.cli.CLIUtil.print;
-import static org.apache.commons.lang3.Validate.isTrue;
 
 
 /** Inherited class to handle OMERO command line option */
@@ -104,13 +104,13 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	/**
 	 * Constructor with argument
 	 *
-	 * @param argument List of command line argument
+	 * @param args List of command line argument
 	 */
-	public CLIActionOptionOMERO(String[] argument) {
-		super(argument);
+	public CLIActionOptionOMERO(String[] args) {
+		super(args);
 		String eol = System.lineSeparator();
 		
-		List<String> listArgs = Arrays.asList(argument);
+		List<String> listArgs = Arrays.asList(args);
 		if (!(listArgs.contains("-oc") || listArgs.contains("-omeroConfig"))) {
 			hostname.setRequired(true);
 			
@@ -138,17 +138,19 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		options.addOption(inputFolder2);
 		
 		options.addOption(omeroConfigFile);
-		try {
-			this.cmd = parser.parse(options, argument);
-			isTrue(availableActionOMERO(cmd.getOptionValue("action")));
-		} catch (ParseException exp) {
-			print(exp.getMessage() + eol);
-			print(getHelperInfo());
-			System.exit(1);
-		} catch (RuntimeException exp) {
-			print("Action option \"" + cmd.getOptionValue("action") + "\" not available" + eol);
-			print(getHelperInfo());
-			System.exit(1);
+		if (cmd != null) {
+			try {
+				super.setCmd(parser.parse(options, args));
+			} catch (ParseException exp) {
+				print(exp.getMessage() + eol);
+				printHelpCommand();
+				super.setCmd(null);
+			}
+			if (cmd != null && !availableActionOMERO(cmd.getOptionValue(ACTION_NAME))) {
+				print("Action option \"" + cmd.getOptionValue(ACTION_NAME) + "\" not available" + eol);
+				printHelpCommand();
+				super.setCmd(null);
+			}
 		}
 	}
 	
