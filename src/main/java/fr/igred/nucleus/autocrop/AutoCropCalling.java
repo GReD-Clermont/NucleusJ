@@ -61,13 +61,14 @@ public class AutoCropCalling {
 	private static final int DOWNLOADER_THREADS = 1;
 	
 	/** Column names */
-	private static final String HEADERS = "FileName\tNumberOfCrop\tOTSUThreshold\tDefaultOTSUThreshold\n";
+	private static final String HEADERS = "FileName\tNumberOfCrop\tOTSUThreshold\tDefaultOTSUThreshold" +
+	                                      System.lineSeparator();
 	
 	/** Parameters for crop analysis */
 	private final AutocropParameters params;
 	
 	/** Get general information of cropping analysis */
-	private String outputCropGeneralInfo = "#HEADER\n";
+	private String outputCropGeneralInfo = "#HEADER" + System.lineSeparator();
 	
 	/** Number of threads to used process images */
 	private int executorThreads = 1;

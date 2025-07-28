@@ -100,8 +100,9 @@ public final class ChromocenterAnalysis {
 						imagePlusSegmented,
 						imagePlusSegmented);
 				if (!exist) {
-					bufferedWriterOutput.write(
-							"Titre\tVolume\tBorderToBorderDistance\tBarycenterToBorderDistance\tBarycenterToBorderDistanceNucleus\n");
+					bufferedWriterOutput.write("Titre\tVolume\tBorderToBorderDistance\t" +
+					                           "BarycenterToBorderDistance\tBarycenterToBorderDistanceNucleus" +
+					                           System.lineSeparator());
 				}
 				for (int i = 0; i < tBorderToBorderDistanceTable.length; ++i) {
 					bufferedWriterOutput.write(imagePlusChromocenter.getTitle() + "_" +
@@ -109,7 +110,7 @@ public final class ChromocenterAnalysis {
 					                           tVolume[i] + "\t" +
 					                           tBorderToBorderDistanceTable[i] + "\t" +
 					                           tBarycenterToBorderDistanceTableCc[i] + "\t" +
-					                           tBarycenterToBorderDistanceTableNucleus[0] + "\n");
+					                           tBarycenterToBorderDistanceTableNucleus[0] + System.lineSeparator());
 				}
 				bufferedWriterOutput.flush();
 			}
@@ -368,7 +369,7 @@ public final class ChromocenterAnalysis {
 					                                                                              File.separator +
 					                                                                              "logNameProblem.log",
 					                                                                              true))) {
-						bufferedWriterLogFile.write(pathImageChromocenter + "\n");
+						bufferedWriterLogFile.write(pathImageChromocenter + System.lineSeparator());
 						bufferedWriterLogFile.flush();
 					} catch (IOException e) {
 						LOGGER.error("An error occurred.", e);

@@ -106,6 +106,8 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 	 */
 	public CLIActionOptionOMERO(String[] argument) {
 		super(argument);
+		String eol = System.lineSeparator();
+		
 		List<String> listArgs = Arrays.asList(argument);
 		if (!(listArgs.contains("-oc") || listArgs.contains("-omeroConfig"))) {
 			hostname.setRequired(true);
@@ -129,8 +131,8 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 		options.addOption(rhf);
 		String inputDescription = "OMERO  inputs 2 information separated with slash separator :  " +
 		                          "Type input: dataset, project, image, tag " +
-		                          "Input id number" + "\n" +
-		                          "Example : " + "\n" +
+		                          "Input id number" + eol +
+		                          "Example : " + eol +
 		                          "          dataset/1622";
 		options.addOption(inputFolder);
 		inputFolder.setDescription(inputDescription);
@@ -141,13 +143,13 @@ public class CLIActionOptionOMERO extends CLIActionOptions {
 			this.cmd = parser.parse(options, argument);
 			isTrue(availableActionOMERO(cmd.getOptionValue("action")));
 		} catch (ParseException exp) {
-			System.console().writer().println(exp.getMessage() + "\n");
+			System.console().writer().println(exp.getMessage() + eol);
 			System.console().writer().println(getHelperInfo());
 			System.exit(1);
 		} catch (RuntimeException exp) {
 			System.console().writer().println("Action option \"" +
 			                                  cmd.getOptionValue("action") +
-			                                  "\" not available" + "\n");
+			                                  "\" not available" + eol);
 			System.console().writer().println(getHelperInfo());
 			System.exit(1);
 		}

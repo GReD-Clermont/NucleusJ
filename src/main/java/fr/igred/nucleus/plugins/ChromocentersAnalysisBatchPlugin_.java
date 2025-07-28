@@ -311,6 +311,8 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 			String nameFileChromocenterAndNucleus = workDirectory + File.separator + "NucAndCcParameters.tab";
 			String nameFileChromocenter           = workDirectory + File.separator + "CcParameters.tab";
 			
+			String eol = System.lineSeparator();
+			
 			for (int i = 0; i < listImageChromocenter.size(); ++i) {
 				LOGGER.info("image {}/{}", i + 1, listImageChromocenter.size());
 				String pathImageChromocenter = listImageChromocenter.get(i);
@@ -376,7 +378,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 					                                                                              File.separator +
 					                                                                              "logNameProblem.log",
 					                                                                              true))) {
-						bufferedWriterLogFile.write(pathImageChromocenter + "\n");
+						bufferedWriterLogFile.write(pathImageChromocenter + eol);
 						bufferedWriterLogFile.flush();
 					} catch (IOException e) {
 						LOGGER.error("An error occurred.", e);

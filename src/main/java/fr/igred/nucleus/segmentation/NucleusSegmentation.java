@@ -810,9 +810,9 @@ public class NucleusSegmentation {
 	 */
 	public String getImageCropInfoOTSU() {
 		if (!badCrop && bestThreshold != -1) {
-			return saveImageResult(imageSeg) + "\t" + bestThreshold + "\n";
+			return saveImageResult(imageSeg) + "\t" + bestThreshold + System.lineSeparator();
 		} else {
-			return imgRaw.getTitle() + "\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\n";
+			return imgRaw.getTitle() + "\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1" + System.lineSeparator();
 		}
 	}
 	
@@ -826,9 +826,9 @@ public class NucleusSegmentation {
 	 */
 	public String getImageCropInfoConvexHull() {
 		if (!badCrop && bestThreshold != -1) {
-			return saveImageResult(imageSeg) + "\t" + bestThreshold + "\n";
+			return saveImageResult(imageSeg) + "\t" + bestThreshold + System.lineSeparator();
 		} else {
-			return imgRaw.getTitle() + "\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\n";
+			return imgRaw.getTitle() + "\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1\t-1" + System.lineSeparator();
 		}
 	}
 	

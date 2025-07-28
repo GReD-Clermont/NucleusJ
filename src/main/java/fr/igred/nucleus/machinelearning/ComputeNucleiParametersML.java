@@ -96,6 +96,8 @@ public class ComputeNucleiParametersML {
 	public void run() throws IOException, FormatException {
 		PluginParameters pluginParameters = new PluginParameters(rawImagesInputDirectory, segmentedImagesDirectory);
 		
+		String eol = System.lineSeparator();
+		
 		Directory directoryInput = new Directory(pluginParameters.getOutputFolder());
 		directoryInput.listImageFiles(pluginParameters.getOutputFolder());
 		directoryInput.checkIfEmpty();
@@ -123,7 +125,7 @@ public class ComputeNucleiParametersML {
 				                                    pluginParameters.getXCalibration(raw),
 				                                    pluginParameters.getYCalibration(raw),
 				                                    pluginParameters.getZCalibration(raw));
-				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append("\n");
+				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append(eol);
 			}
 		}
 		
@@ -159,7 +161,8 @@ public class ComputeNucleiParametersML {
 		       "MedianIntensityNucleus\t" +
 		       "MedianIntensityBackground\t" +
 		       "ImageSize\t" +
-		       "OTSUThreshold\n";
+		       "OTSUThreshold\t" +
+		       System.lineSeparator();
 	}
 	
 }

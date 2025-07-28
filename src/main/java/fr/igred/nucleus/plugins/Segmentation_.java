@@ -187,7 +187,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 				log = segmentation.runSeveralImagesOMERO(images, outputID, client, inputID);
 			}
 			if (!log.isEmpty()) {
-				LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+				LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 			}
 			LOGGER.info("Segmentation process has ended successfully");
 			IJ.showMessage("Segmentation process ended successfully on " +
@@ -213,7 +213,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 		} else if (output == null || output.isEmpty()) {
 			IJ.error("Output directory is missing");
 		} else {
-			LOGGER.info("Begin Segmentation process ");
+			LOGGER.info("Begin Segmentation process");
 			SegmentationParameters params = setParametersFromDialog(input, output);
 			try {
 				SegmentationCalling otsuModified = new SegmentationCalling(params);
@@ -228,7 +228,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 					otsuModified.saveCropGeneralInfo();
 				}
 				if (!log.isEmpty()) {
-					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+					LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 				}
 				LOGGER.info("Segmentation process has ended successfully");
 				IJ.showMessage("Segmentation process ended successfully on " + file.getName());

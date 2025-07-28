@@ -90,11 +90,13 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		                                     new Insets(0, 10, 0, 0), 0, 0));
 		jLabelWorkDirectory.setText("Work directory and Raw data choice : ");
 		
+		String eol = System.lineSeparator();
+		
 		JTextPane jTextPane = new JTextPane();
-		jTextPane.setText("The Raw Data directory must contain 2 subdirectories:"
-		                  + "\n1.for raw nuclei images, named RawDataNucleus. "
-		                  + "\n2.for segmented nuclei images, named SegmentedDataNucleus."
-		                  + "\nPlease keep the same file name during the image processing.");
+		jTextPane.setText("The Raw Data directory must contain 2 subdirectories:" + eol +
+		                  "1.for raw nuclei images, named RawDataNucleus. " + eol +
+		                  "2.for segmented nuclei images, named SegmentedDataNucleus." + eol +
+		                  "Please keep the same file name during the image processing.");
 		jTextPane.setEditable(false);
 		container.add(jTextPane,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,

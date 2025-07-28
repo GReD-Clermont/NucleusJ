@@ -82,7 +82,7 @@ public class ChromocenterSegmentation {
 			this.neigh = chromocenterParams.neighbours;
 			this.factor = chromocenterParams.factor;
 		}
-		LOGGER.info("\t{} {}\n", neigh, factor);
+		LOGGER.info("\t{} {}{}", neigh, factor, System.lineSeparator());
 	}
 	
 	

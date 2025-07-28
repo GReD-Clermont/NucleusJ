@@ -33,25 +33,26 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 	 */
 	public CLIActionOptionCmdLine(String[] args) {
 		super(args);
-		action.setDescription(action.getDescription() + "\n" +
-		                      "computeParameters : compute parameters \n" +
-		                      "computeParametersDL : compute parameters for machine leaning\n" +
-		                      "generateProjection : generate projection from coordinates\n" +
-		                      "cropFromCoordinate : crop wide-field image from coordinate\n" +
-		                      "generateOverlay : generate overlay from images \n");
+		String eol = System.lineSeparator();
+		action.setDescription(action.getDescription() + eol +
+		                      "computeParameters : compute parameters" + eol +
+		                      "computeParametersDL : compute parameters for machine leaning" + eol +
+		                      "generateProjection : generate projection from coordinates" + eol +
+		                      "cropFromCoordinate : crop wide-field image from coordinate" + eol +
+		                      "generateOverlay : generate overlay from images" + eol);
 		
 		checkSpecificOptions();
 		try {
 			this.cmd = parser.parse(options, args);
 			isTrue(availableActionCMD(cmd.getOptionValue("action")));
 		} catch (ParseException exp) {
-			System.console().writer().println(exp.getMessage() + "\n");
+			System.console().writer().println(exp.getMessage() + eol);
 			System.console().writer().println(getHelperInfo());
 			System.exit(1);
 		} catch (Exception exp) {
 			System.console().writer().println("Action option \"" +
 			                                  cmd.getOptionValue("action") +
-			                                  "\" not available" + "\n");
+			                                  "\" not available" + eol);
 			System.console().writer().println(getHelperInfo());
 			System.exit(1);
 		}
@@ -81,52 +82,53 @@ public class CLIActionOptionCmdLine extends CLIActionOptions {
 	
 	/** Method to check specific action parameters */
 	private void checkSpecificOptions() {
+		String eol = System.lineSeparator();
 		switch (cmd.getOptionValue("action")) {
 			case "autocrop":
 			case "segmentation":
-				inputFolder.setDescription("Path to input folder containing images to analyse\n");
+				inputFolder.setDescription("Path to input folder containing images to analyse" + eol);
 				options.addOption(outputFolder);
 				break;
 			
 			case "computeParameters":
-				inputFolder.setDescription("Path to input folder containing RAW images\n");
-				inputFolder2.setDescription("Path to input folder containing SEGMENTED images\n");
+				inputFolder.setDescription("Path to input folder containing RAW images" + eol);
+				inputFolder2.setDescription("Path to input folder containing SEGMENTED images" + eol);
 				options.addOption(inputFolder2);
 				omero.setDescription("NOT AVAILABLE");
 				break;
 			
 			case "computeParametersDL":
-				inputFolder.setDescription("Path to input folder containing RAW images\n");
-				inputFolder2.setDescription("Path to input folder containing machine leaning SEGMENTED images\n");
+				inputFolder.setDescription("Path to input folder containing RAW images" + eol);
+				inputFolder2.setDescription("Path to input folder containing machine leaning SEGMENTED images" + eol);
 				options.addOption(inputFolder2);
 				omero.setDescription("NOT AVAILABLE");
 				break;
 			
 			case "generateProjection":
-				inputFolder.setDescription("Path to input folder containing coordinates files\n");
-				inputFolder2.setDescription("Path to input folder containing raw data\n");
+				inputFolder.setDescription("Path to input folder containing coordinates files" + eol);
+				inputFolder2.setDescription("Path to input folder containing raw data" + eol);
 				options.addOption(inputFolder2);
 				break;
 			
 			case "generateProjectionFiltered":
-				inputFolder.setDescription("Path to input folder containing coordinates files\n");
-				inputFolder2.setDescription("Path to input folder containing kept images after segmentation filter\n");
-				inputFolder3.setDescription("Path to input folder containing initial Zprojection\n");
+				inputFolder.setDescription("Path to input folder containing coordinates files" + eol);
+				inputFolder2.setDescription("Path to input folder containing kept images after segmentation filter" + eol);
+				inputFolder3.setDescription("Path to input folder containing initial Zprojection" + eol);
 				options.addOption(inputFolder2);
 				options.addOption(inputFolder3);
 				omero.setDescription("NOT AVAILABLE");
 				break;
 			
 			case "cropFromCoordinate":
-				inputFolder.setDescription("Path to tabulated file containing 2 columns :\n" +
-				                           "pathToCoordinateFile   pathToRawImageAssociate\n");
+				inputFolder.setDescription("Path to tabulated file containing 2 columns :" + eol +
+				                           "pathToCoordinateFile   pathToRawImageAssociate" + eol);
 				options.addOption(inputFolder2);
 				options.addOption(outputFolder);
 				break;
 			
 			case "generateOverlay":
-				inputFolder.setDescription("Path to input folder containing Z-Projections\n");
-				inputFolder2.setDescription("Path to input folder containing DIC images\n");
+				inputFolder.setDescription("Path to input folder containing Z-Projections" + eol);
+				inputFolder2.setDescription("Path to input folder containing DIC images" + eol);
 				options.addOption(inputFolder2);
 				break;
 		}

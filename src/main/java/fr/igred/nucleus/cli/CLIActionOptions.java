@@ -32,6 +32,8 @@ public class CLIActionOptions {
 	/** NucleusJ version */
 	private static final String NJ_VERSION = Version.get();
 	
+	private static final String eol = System.lineSeparator();
+	
 	/** Path to input folder */
 	public Option inputFolder = Option.builder("in")
 	                                  .longOpt("input")
@@ -57,8 +59,8 @@ public class CLIActionOptions {
 	public    Option configFile   = Option.builder("c")
 	                                      .longOpt("config")
 	                                      .type(String.class)
-	                                      .desc("Path to config file\n" +
-	                                            "To generate config file example in current folder:\n" +
+	                                      .desc("Path to config file" + eol +
+	                                            "To generate config file example in current folder:" + eol +
 	                                            "java -jar nucleusj-" +
 	                                            NJ_VERSION +
 	                                            ".jar -h configFileExample")
@@ -69,9 +71,9 @@ public class CLIActionOptions {
 	                                      .longOpt("action")
 	                                      .required()
 	                                      .type(String.class)
-	                                      .desc("Action available:\n" +
-	                                            "autocrop : crop wide field images\n" +
-	                                            "segmentation : nucleus segmentation\n")
+	                                      .desc("Action available:" + eol +
+	                                            "autocrop : crop wide field images" + eol +
+	                                            "segmentation : nucleus segmentation" + eol)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** Number of threads */
@@ -79,7 +81,7 @@ public class CLIActionOptions {
 	                                      .longOpt("threads")
 	                                      .type(String.class)
 	                                      .desc("Number of threads used to split image processing during autocrop or nucleus segmentation (do not exceed the number of available CPUs  (=" +
-	                                            Runtime.getRuntime().availableProcessors() + " CPUs))\n" +
+	                                            Runtime.getRuntime().availableProcessors() + " CPUs))" + eol +
 	                                            "Default : 4 threads for several images (otherwise 1 thread for single image processing)")
 	                                      .numberOfArgs(1)
 	                                      .build();
@@ -87,22 +89,22 @@ public class CLIActionOptions {
 	public    Option omero        = Option.builder("ome")
 	                                      .longOpt("omero")
 	                                      .type(boolean.class)
-	                                      .desc("Use of NucleusJ3 in OMERO\n")
+	                                      .desc("Use of NucleusJ3 in OMERO" + eol)
 	                                      .build();
 	/** List of available actions */
 	public    Option thresholding = Option.builder("thresh")
 	                                      .longOpt("thresholding")
 	                                      .type(String.class)
-	                                      .desc("type of thresholding method to use:\n" +
-	                                            "Otsu \n" +
-	                                            "RenyiEntropy \n")
+	                                      .desc("type of thresholding method to use:" + eol +
+	                                            "Otsu " + eol +
+	                                            "RenyiEntropy " + eol)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	/** Path to output folder */
 	protected Option outputFolder = Option.builder("out")
 	                                      .longOpt("output")
 	                                      .type(String.class)
-	                                      .desc("Path to output results\n")
+	                                      .desc("Path to output results" + eol)
 	                                      .numberOfArgs(1)
 	                                      .build();
 	
@@ -131,7 +133,7 @@ public class CLIActionOptions {
 		try {
 			this.cmd = parser.parse(options, argument, true);
 		} catch (ParseException exp) {
-			System.console().writer().println(exp.getMessage() + "\n");
+			System.console().writer().println(exp.getMessage() + System.lineSeparator());
 			System.console().writer().println(getHelperInfo());
 			System.exit(1);
 		}
@@ -140,11 +142,13 @@ public class CLIActionOptions {
 	
 	/** @return : helper info */
 	public static String getHelperInfo() {
-		return "More details for available actions:\n" +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h \n" +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help \n\n" +
-		       "More details for a specific action:\n" +
-		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h <action>\n" +
+		String eol = System.lineSeparator();
+		return "More details for available actions:" + eol +
+		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h" + eol +
+		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help" + eol +
+		       eol +
+		       "More details for a specific action:" + eol +
+		       "java -jar nucleusj-" + NJ_VERSION + ".jar -h <action>" + eol +
 		       "java -jar nucleusj-" + NJ_VERSION + ".jar -help <action>";
 	}
 	

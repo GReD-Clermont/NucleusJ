@@ -80,7 +80,7 @@ public class AutoCrop {
 	
 	/** Column names */
 	private static final String HEADERS = "FileName\tChannelNumber\tCropNumber\t" +
-	                                      "XStart\tYStart\tZStart\twidth\theight\tdepth\n";
+	                                      "XStart\tYStart\tZStart\twidth\theight\tdepth" + System.lineSeparator();
 	
 	/** the path of the directory where are saved the crop of the object */
 	private final String             outputDirPath;
@@ -651,13 +651,10 @@ public class AutoCrop {
 	
 	/** @return Header current image info analysis */
 	public String getSpecificImageInfo() {
-		return "#Image: " +
-		       imageFilePath +
-		       "\n#OTSU threshold: " +
-		       otsuThreshold +
-		       "\n#Slice used for OTSU threshold: " +
-		       sliceUsedForOTSU +
-		       "\n";
+		String eol = System.lineSeparator();
+		return "#Image: " + imageFilePath + eol +
+		       "#OTSU threshold: " + otsuThreshold + eol +
+		       "#Slice used for OTSU threshold: " + sliceUsedForOTSU + eol;
 	}
 	
 	
@@ -708,7 +705,7 @@ public class AutoCrop {
 		return imageFilePath + "\t" +
 		       getNbOfNuc() + "\t" +
 		       otsuThreshold + "\t" +
-		       defaultThreshold + "\n";
+		       defaultThreshold + System.lineSeparator();
 	}
 	
 	
@@ -716,7 +713,7 @@ public class AutoCrop {
 		return imageName + "\t" +
 		       getNbOfNuc() + "\t" +
 		       otsuThreshold + "\t" +
-		       defaultThreshold + "\n";
+		       defaultThreshold + System.lineSeparator();
 	}
 	
 	

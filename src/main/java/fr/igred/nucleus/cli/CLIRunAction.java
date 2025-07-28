@@ -203,7 +203,7 @@ public class CLIRunAction {
 				String log = otsuModified.runOneImage(cmd.getOptionValue("input"));
 				otsuModified.saveCropGeneralInfo();
 				if (!log.isEmpty()) {
-					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+					LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 				}
 			} catch (IOException e) {
 				LOGGER.error("An error occurred.", e);
@@ -216,7 +216,7 @@ public class CLIRunAction {
 				}
 				String log = otsuModified.runSeveralImages();
 				if (!log.isEmpty()) {
-					LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+					LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 				}
 			} catch (IOException e) {
 				LOGGER.error("An error occurred.", e);

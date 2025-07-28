@@ -154,10 +154,11 @@ public class CLIRunActionOMERO {
 				autoCrop.runSeveralImageOMERO(images, outputsDat, client);
 			}
 		} else {
-			throw new IllegalArgumentException("Wrong input parameter : "
-			                                   + inputDirectory + "\n\n\n"
-			                                   + "Example format expected:\n"
-			                                   + "dataset/OMERO_ID \n");
+			String eol = System.lineSeparator();
+			throw new IllegalArgumentException("Wrong input parameter : " +
+			                                   inputDirectory + eol + eol + eol +
+			                                   "Example format expected:" + eol +
+			                                   "dataset/OMERO_ID" + eol);
 		}
 	}
 	
@@ -183,7 +184,7 @@ public class CLIRunActionOMERO {
 					}
 					otsuModified.saveCropGeneralInfoOmero(client, Long.parseLong(outputDirectory));
 					if (!log.isEmpty()) {
-						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+						LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 					}
 				} catch (IOException | OMEROServerError e) {
 					LOGGER.error("An error occurred.", e);
@@ -229,7 +230,7 @@ public class CLIRunActionOMERO {
 						log = otsuModified.runSeveralImagesOMERO(images, Long.parseLong(outputDirectory), client, id);
 					}
 					if (!log.isEmpty()) {
-						LOGGER.error("Nuclei which didn't pass the segmentation\n{}", log);
+						LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 					}
 				} catch (IOException e) {
 					LOGGER.error("An error occurred.", e);

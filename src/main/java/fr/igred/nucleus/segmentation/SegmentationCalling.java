@@ -52,6 +52,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.System.lineSeparator;
 import static java.time.LocalDateTime.now;
 
 
@@ -137,7 +138,8 @@ public class SegmentationCalling {
 		       "Moment 3," +
 		       "AspectRatio," +
 		       "Circularity," +
-		       "OTSUThreshold," + "\n";
+		       "OTSUThreshold," +
+		       lineSeparator();
 	}
 	
 	
@@ -234,7 +236,7 @@ public class SegmentationCalling {
 					String     prefix          = outputFilenames.prefixNameFile();
 					
 					String start = currentDateTime();
-					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, start);
+					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
 					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, params);
 					
 					nucleusSegmentation.preProcessImage();
@@ -466,7 +468,7 @@ public class SegmentationCalling {
 					String fileImg = img.getName();
 					
 					String start = currentDateTime();
-					LOGGER.info("Current image in process: {} \n Start : {}", fileImg, start);
+					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
 					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(img, imp, params);
 					nucleusSegmentation.preProcessImage();
 					nucleusSegmentation.findOTSUMaximisingSphericity();
@@ -545,10 +547,10 @@ public class SegmentationCalling {
 		outputInfoParade += otsuInfoBuilder.toString();
 		outputInfoParadeGraham += convexHullInfoBuilder.toString();
 		
-		this.outputCropGeneralInfoOTSU += "#Dataset:" + imgDatasetId + "\n" + getResultsColumnNames();
+		this.outputCropGeneralInfoOTSU += "#Dataset:" + imgDatasetId + lineSeparator() + getResultsColumnNames();
 		
 		outputCropGeneralInfoOTSU += otsuInfoBuilder.toString();
-		this.outputCropGeneralInfoConvexHull += "#Dataset:" + imgDatasetId + "\n" + getResultsColumnNames();
+		this.outputCropGeneralInfoConvexHull += "#Dataset:" + imgDatasetId + lineSeparator() + getResultsColumnNames();
 		outputCropGeneralInfoConvexHull += convexHullInfoBuilder.toString();
 		saveCropGeneralInfoOmero(client, output);
 		return "";

@@ -147,6 +147,8 @@ public final class NucleusChromocentersAnalysis {
 	                                     ImagePlus imagePlusInput,
 	                                     ImagePlus imagePlusSegmented,
 	                                     ImagePlus imagePlusChromocenter) throws IOException {
+		String eol = System.lineSeparator();
+		
 		Histogram histogram = new Histogram();
 		histogram.run(imagePlusChromocenter);
 		Calibration calibration = imagePlusInput.getCalibration();
@@ -168,15 +170,15 @@ public final class NucleusChromocentersAnalysis {
 				if ("Volume and intensity".equals(rhfChoice)) {
 					text = "ImageTitle\tVolume\tESR\tSurfaceArea\tMoment 1\tMoment 2\tMoment 3\tFlatness\t" +
 					       "Elongation\tSphericity\tIntensityRHF\tVolumeRHF\tNbCc\tVCcMean\tVCcTotal\t" +
-					       "DistanceBorderToBorderMean\tDistanceBarycenterToBorderMean\tVoxelVolume\n";
+					       "DistanceBorderToBorderMean\tDistanceBarycenterToBorderMean\tVoxelVolume" + eol;
 				} else if ("Volume".equals(rhfChoice)) {
 					text = "ImageTitle\tVolume\tESR\tSurfaceArea\tMoment 1\tMoment 2\tMoment 3\tFlatness\t" +
 					       "Elongation\tSphericity\tVolumeRHF\tNbCc\tVCcMean\tVCcTotal\t" +
-					       "DistanceBorderToBorderMean\tDistanceBarycenterToBorderMean\tVoxelVolume\n";
+					       "DistanceBorderToBorderMean\tDistanceBarycenterToBorderMean\tVoxelVolume" + eol;
 				} else {
 					text = "ImageTitle\tVolume\tESR\tSurfaceArea\tMoment 1\tMoment 2\tMoment 3\tFlatness" +
 					       "\tElongation\tSphericity\tIntensityRHF\tNbCc\tVCcMean\tVCcTotal\t" +
-					       "DistanceBorderToBorderMean\tDistanceBarycenterToBorderMean\tVoxelVolume\n";
+					       "DistanceBorderToBorderMean\tDistanceBarycenterToBorderMean\tVoxelVolume" + eol;
 				}
 			}
 			text += imagePlusSegmented.getTitle() + "\t" +
@@ -214,7 +216,7 @@ public final class NucleusChromocentersAnalysis {
 				text += "0\t0\t0\tNaN\tNaN\t";
 			}
 			
-			text += voxelVolume + "\n";
+			text += voxelVolume + eol;
 			bufferedWriterOutput.write(text);
 			bufferedWriterOutput.flush();
 		}

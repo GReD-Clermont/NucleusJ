@@ -129,6 +129,8 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		gridBagLayout.columnWidths = new int[]{236, 120, 72, 20};
 		container.setLayout(gridBagLayout);
 		
+		String eol = System.lineSeparator();
+		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 		
 		// Use Omero ?
@@ -166,10 +168,10 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		                                      new Insets(10, 10, 0, 10), 0, 0));
 		
 		JTextPane jTextPane = new JTextPane();
-		jTextPane.setText("The Raw Data directory must contain 3 subdirectories:\n" +
-		                  "1. for raw nuclei images, named RawDataNucleus. \n" +
-		                  "2. for segmented nuclei images, named SegmentedDataNucleus.\n" +
-		                  "3. for segmented images of chromocenters, named SegmentedDataCc.\n" +
+		jTextPane.setText("The Raw Data directory must contain 3 subdirectories:" + eol +
+		                  "1. for raw nuclei images, named RawDataNucleus. " + eol +
+		                  "2. for segmented nuclei images, named SegmentedDataNucleus." + eol +
+		                  "3. for segmented images of chromocenters, named SegmentedDataCc." + eol +
 		                  "Please keep the same file name during the image processing.");
 		jTextPane.setEditable(false);
 		localPanel.add(jTextPane,

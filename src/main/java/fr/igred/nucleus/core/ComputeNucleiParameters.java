@@ -107,6 +107,8 @@ public class ComputeNucleiParameters {
 		List<File>    segmentedImages           = directorySegmentedInput.getFileList();
 		StringBuilder outputCropGeneralInfoOTSU = new StringBuilder();
 		
+		String eol = System.lineSeparator();
+		
 		outputCropGeneralInfoOTSU.append(pluginParameters.getAnalysisParameters()).append(getColNameResult());
 		
 		for (File f : segmentedImages) {
@@ -119,7 +121,7 @@ public class ComputeNucleiParameters {
 				                                    pluginParameters.getXCalibration(raw),
 				                                    pluginParameters.getYCalibration(raw),
 				                                    pluginParameters.getZCalibration(raw));
-				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append("\n");
+				outputCropGeneralInfoOTSU.append(measure3D.nucleusParameter3D()).append(eol);
 			} catch (IOException | FormatException e) {
 				LOGGER.error("An error occurred.", e);
 			}
@@ -189,7 +191,7 @@ public class ComputeNucleiParameters {
 		       "Moment 2\t" +
 		       "Moment 3\t" +
 		       "Aspect Ratio\t" +
-		       " Circularity \n";
+		       " Circularity" + System.lineSeparator();
 	}
 	
 }

@@ -133,7 +133,7 @@ public final class NucleusChromocentersAnalysis {
 			text += "0\t0\t0\tNaN\tNaN\t";
 		}
 		
-		text += voxelVolume + "\n";
+		text += voxelVolume + System.lineSeparator();
 		
 		try (BufferedWriter output = new BufferedWriter(new FileWriter(fileResults, true))) {
 			output.write(text);
@@ -182,6 +182,8 @@ public final class NucleusChromocentersAnalysis {
 		File    fileResultsCC       = new File(chromocenterParameters.getOutputFolder() + "CcParameters3D.csv");
 		File    fileResultsCCParade = new File(chromocenterParameters.getOutputFolder() + "CcParameters3D_Parade.csv");
 		boolean exist               = fileResults.exists();
+		
+		String eol = System.lineSeparator();
 		
 		String text         = "";
 		String textCC       = "";
@@ -233,21 +235,21 @@ public final class NucleusChromocentersAnalysis {
 				          tIntensity[i] + "," +
 				          tBarycenterToBorderDistance[i] + "," +
 				          tBorderToBorderDistance[i] + "," +
-				          tBarycenterToBorderDistanceTableNucleus[0] + "\n";
+				          tBarycenterToBorderDistanceTableNucleus[0] + eol;
 				
 				textCCParade += imageId + "," + datasetName + "," + imagePlusInput.getTitle() + "_" + i + "," +
 				                tVolumesObjects[i] + "," +
 				                tIntensity[i] + "," +
 				                tBarycenterToBorderDistance[i] + "," +
 				                tBorderToBorderDistance[i] + "," +
-				                tBarycenterToBorderDistanceTableNucleus[0] + "\n";
+				                tBarycenterToBorderDistanceTableNucleus[0] + eol;
 			}
 		} else {
-			text += "0\t0\t0\tNaN\tNaN\t\n";  // Default values if no labels
+			text += "0\t0\t0\tNaN\tNaN\t" + eol;  // Default values if no labels
 		}
 		
-		text += voxelVolume + "\n";  // Append voxelVolume at the end of the row
-		textParade += voxelVolume + "\n";  // Same for Parade
+		text += voxelVolume + eol;  // Append voxelVolume at the end of the row
+		textParade += voxelVolume + eol;  // Same for Parade
 		
 		try (BufferedWriter output = new BufferedWriter(new FileWriter(fileResults, true))) {
 			output.write(text);
@@ -314,7 +316,7 @@ public final class NucleusChromocentersAnalysis {
 		       "normIntensityMean," +
 		       "DistanceBorderToBorderMean," +
 		       "DistanceBarycenterToBorderMean," +
-		       "VoxelVolume\n";
+		       "VoxelVolume" + System.lineSeparator();
 	}
 	
 	
@@ -324,7 +326,7 @@ public final class NucleusChromocentersAnalysis {
 		       "NormIntensity," +
 		       "BorderToBorderDistance," +
 		       "BarycenterToBorderDistance," +
-		       "BarycenterToBorderDistanceNucleus\n";
+		       "BarycenterToBorderDistanceNucleus" + System.lineSeparator();
 	}
 	
 }
