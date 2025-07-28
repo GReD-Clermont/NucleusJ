@@ -40,22 +40,22 @@ public class PluginParameters {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	/** Activation of manual calibration parameter */
-	public    boolean manualParameter;
-	/** X calibration plugin parameter */
-	public    double  xCal = 1;
-	/** y calibration plugin parameter */
-	public    double  yCal = 1;
-	/** z calibration plugin parameter */
-	public    double  zCal = 1;
-	/** Input folder */
-	public    String  inputFolder;
-	/** Output folder */
-	public    String  outputFolder;
-	/** Autocrop parameters information */
-	public    String  headerInfo;
 	/** Activation of Gaussian Filter */
 	protected boolean gaussianIsOn;
+	/** Activation of manual calibration parameter */
+	private   boolean manualParameter;
+	/** X calibration plugin parameter */
+	private   double  xCal = 1;
+	/** y calibration plugin parameter */
+	private   double  yCal = 1;
+	/** z calibration plugin parameter */
+	private   double  zCal = 1;
+	/** Input folder */
+	private   String  inputFolder;
+	/** Output folder */
+	private   String  outputFolder;
+	/** Autocrop parameters information */
+	private   String  headerInfo;
 	
 	
 	/**
@@ -65,12 +65,8 @@ public class PluginParameters {
 	 * @param outputFolder Path folder output analyse
 	 */
 	public PluginParameters(String inputFolder, String outputFolder) {
-		checkInputPaths(inputFolder, outputFolder);
-		Directory dirOutput = new Directory(outputFolder);
-		dirOutput.checkAndCreateDir();
-		this.outputFolder = dirOutput.getDirPath();
-		
-		
+		setInputFolder(inputFolder);
+		setOutputFolder(outputFolder);
 	}
 	
 	
@@ -84,24 +80,19 @@ public class PluginParameters {
 	 * @param zCal         Z calibration voxel
 	 */
 	public PluginParameters(String inputFolder, String outputFolder, double xCal, double yCal, double zCal) {
-		checkInputPaths(inputFolder, outputFolder);
-		Directory dirOutput = new Directory(outputFolder);
-		dirOutput.checkAndCreateDir();
-		this.outputFolder = dirOutput.getDirPath();
+		setInputFolder(inputFolder);
+		setOutputFolder(outputFolder);
 		this.manualParameter = true;
 		this.xCal = xCal;
 		this.yCal = yCal;
 		this.zCal = zCal;
-		
 	}
 	
 	
 	public PluginParameters(String inputFolder, String outputFolder, double xCal, double yCal, double zCal,
 	                        boolean gaussian) {
-		checkInputPaths(inputFolder, outputFolder);
-		Directory dirOutput = new Directory(outputFolder);
-		dirOutput.checkAndCreateDir();
-		this.outputFolder = dirOutput.getDirPath();
+		setInputFolder(inputFolder);
+		setOutputFolder(outputFolder);
 		this.manualParameter = true;
 		this.gaussianIsOn = gaussian;
 		this.xCal = xCal;
@@ -118,11 +109,9 @@ public class PluginParameters {
 	 * @param pathToConfigFile Path to the config file
 	 */
 	public PluginParameters(String inputFolder, String outputFolder, String pathToConfigFile) {
-		checkInputPaths(inputFolder, outputFolder);
-		Directory dirOutput = new Directory(outputFolder);
-		dirOutput.checkAndCreateDir();
-		this.outputFolder = dirOutput.getDirPath();
-		addGeneralProperties(pathToConfigFile);
+		setInputFolder(inputFolder);
+		setOutputFolder(outputFolder);
+		setPropertiesFromFile(pathToConfigFile);
 	}
 	
 	
@@ -137,7 +126,7 @@ public class PluginParameters {
 	}
 	
 	
-	public void addGeneralProperties(String pathToConfigFile) {
+	private void setPropertiesFromFile(String pathToConfigFile) {
 		Properties prop = new Properties();
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
 			prop.load(is);
@@ -166,22 +155,8 @@ public class PluginParameters {
 	}
 	
 	
-	private void checkInputPaths(String inputFolder, String outputFolder) {
-		
-		File input = new File(inputFolder);
-		if (input.isDirectory()) {
-			this.inputFolder = inputFolder;
-		} else if (input.isFile()) {
-			this.inputFolder = input.getParent();
-			
-		} else {
-			LOGGER.error("{}: can't find the input folder/file !", inputFolder);
-			IJ.error(inputFolder + " : can't find the input folder/file !");
-		}
-		if (outputFolder == null) {
-			LOGGER.error("Output directory is missing");
-			System.exit(-1);
-		}
+	public void addGeneralProperties(String pathToConfigFile) {
+		setPropertiesFromFile(pathToConfigFile);
 	}
 	
 	
@@ -195,6 +170,19 @@ public class PluginParameters {
 	}
 	
 	
+	private void setInputFolder(String inputFolder) {
+		File input = new File(inputFolder);
+		if (input.isDirectory()) {
+			this.inputFolder = inputFolder;
+		} else if (input.isFile()) {
+			this.inputFolder = input.getParent();
+		} else {
+			LOGGER.error("{}: can't find the input folder/file !", inputFolder);
+			IJ.error(inputFolder + " : can't find the input folder/file !");
+		}
+	}
+	
+	
 	/**
 	 * Getter : output path
 	 *
@@ -205,6 +193,18 @@ public class PluginParameters {
 	}
 	
 	
+	private void setOutputFolder(String outputFolder) {
+		if (outputFolder == null) {
+			LOGGER.error("Output directory is missing");
+			System.exit(-1);
+		} else {
+			Directory dirOutput = new Directory(outputFolder);
+			dirOutput.checkAndCreateDir();
+			this.outputFolder = dirOutput.getDirPath();
+		}
+	}
+	
+	
 	/**
 	 * Getter : HEADER parameter of the analysis containing path input output folder and x y z calibration on parameter
 	 * per line
@@ -212,22 +212,24 @@ public class PluginParameters {
 	 * @return output path folder
 	 */
 	public String getAnalysisParameters() {
-		this.headerInfo = "#Header \n"
-		                  + "#Start time analysis: " + getLocalTime() + "\n"
-		                  + "#Input folder: " + inputFolder + "\n"
-		                  + "#Output folder: " + outputFolder + "\n"
-		                  + "#Calibration:" + getInfoCalibration() + "\n";
+		String eol = System.lineSeparator();
+		this.headerInfo = "#Header" + eol +
+		                  "#Start time analysis: " + getLocalTime() + eol +
+		                  "#Input folder: " + inputFolder + eol +
+		                  "#Output folder: " + outputFolder + eol +
+		                  "#Calibration:" + getInfoCalibration() + eol;
 		return headerInfo;
 		
 	}
 	
 	
 	public String getAnalysisParametersNodeJ() {
-		this.headerInfo = "#Header \n"
-		                  + "#Start time analysis: " + getLocalTime() + "\n"
-		                  + "#Input folder: " + inputFolder + "\n"
-		                  + "#Output folder: " + outputFolder + "\n"
-		                  + "#Gaussian Blur:" + getInfoGaussianBlur() + "\n";
+		String eol = System.lineSeparator();
+		this.headerInfo = "#Header" + eol +
+		                  "#Start time analysis: " + getLocalTime() + eol +
+		                  "#Input folder: " + inputFolder + eol +
+		                  "#Output folder: " + outputFolder + eol +
+		                  "#Gaussian Blur:" + getInfoGaussianBlur() + eol;
 		return headerInfo;
 		
 	}
@@ -301,7 +303,7 @@ public class PluginParameters {
 	}
 	
 	
-	public boolean getManualParameter() {
+	public boolean isManualParameter() {
 		return manualParameter;
 	}
 	
@@ -336,6 +338,17 @@ public class PluginParameters {
 			zCalibration = raw.getCalibration().pixelDepth;
 		}
 		return zCalibration;
+	}
+	
+	
+	/** Autocrop parameters information */
+	public String getHeaderInfo() {
+		return headerInfo;
+	}
+	
+	
+	public void setHeaderInfo(String headerInfo) {
+		this.headerInfo = headerInfo;
 	}
 	
 }

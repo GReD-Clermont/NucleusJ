@@ -437,9 +437,7 @@ public class CLIRunActionOMERO {
 			LOGGER.error("An interruption occurred during chromocenter segmentation.", e);
 			Thread.currentThread().interrupt();
 		}
-		LOGGER.info("End !!! Results available: {}", chromocenterParameters.outputFolder);
-		
-		
+		LOGGER.info("End !!! Results available: {}", chromocenterParameters.getOutputFolder());
 	}
 	
 	

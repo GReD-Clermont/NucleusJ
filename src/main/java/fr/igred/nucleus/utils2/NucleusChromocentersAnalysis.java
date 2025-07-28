@@ -17,12 +17,12 @@
  */
 package fr.igred.nucleus.utils2;
 
+import fr.igred.nucleus.plugins.ChromocenterParameters;
+import fr.igred.nucleus.utils.Histogram;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.ImageWrapper;
-import fr.igred.nucleus.plugins.ChromocenterParameters;
-import fr.igred.nucleus.utils.Histogram;
 import ij.ImagePlus;
 import ij.measure.Calibration;
 import org.slf4j.Logger;
@@ -65,6 +65,7 @@ public final class NucleusChromocentersAnalysis {
 	 * @param imagePlusSegmented
 	 * @param imagePlusChromocenter
 	 * @param chromocenterParameters
+	 *
 	 * @return File[] with the results of the analysis
 	 *
 	 * @throws IOException
@@ -83,8 +84,8 @@ public final class NucleusChromocentersAnalysis {
 		                                    imagePlusInput.getCalibration().pixelWidth,
 		                                    imagePlusInput.getCalibration().pixelHeight,
 		                                    imagePlusInput.getCalibration().pixelDepth);
-		File    fileResults   = new File(chromocenterParameters.outputFolder + "NucAndCcParameters3D.tab");
-		File    fileResultsCC = new File(chromocenterParameters.outputFolder + "CcParameters3D.tab");
+		File    fileResults   = new File(chromocenterParameters.getOutputFolder() + "NucAndCcParameters3D.tab");
+		File    fileResultsCC = new File(chromocenterParameters.getOutputFolder() + "CcParameters3D.tab");
 		boolean exist         = fileResults.exists();
 		
 		
@@ -174,12 +175,12 @@ public final class NucleusChromocentersAnalysis {
 		                                    imagePlusInput.getCalibration().pixelHeight,
 		                                    imagePlusInput.getCalibration().pixelDepth);
 		
-		File fileResults = new File(chromocenterParameters.outputFolder + "NucAndCcParameters3D.csv");
+		File fileResults = new File(chromocenterParameters.getOutputFolder() + "NucAndCcParameters3D.csv");
 		
-		File fileResultsParade = new File(chromocenterParameters.outputFolder + "NucAndCcParameters3D_Parade.csv");
+		File fileResultsParade = new File(chromocenterParameters.getOutputFolder() + "NucAndCcParameters3D_Parade.csv");
 		
-		File    fileResultsCC       = new File(chromocenterParameters.outputFolder + "CcParameters3D.csv");
-		File    fileResultsCCParade = new File(chromocenterParameters.outputFolder + "CcParameters3D_Parade.csv");
+		File    fileResultsCC       = new File(chromocenterParameters.getOutputFolder() + "CcParameters3D.csv");
+		File    fileResultsCCParade = new File(chromocenterParameters.getOutputFolder() + "CcParameters3D_Parade.csv");
 		boolean exist               = fileResults.exists();
 		
 		String text         = "";

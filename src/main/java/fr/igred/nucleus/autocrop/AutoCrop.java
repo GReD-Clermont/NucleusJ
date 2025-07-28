@@ -406,7 +406,7 @@ public class AutoCrop {
 	 */
 	public void cropKernels() {
 		LOGGER.info("Cropping kernels.");
-		String eol = String.format("%n");
+		String eol = System.lineSeparator();
 		
 		StringBuilder info      = new StringBuilder();
 		Directory     dirOutput = new Directory(outputDirPath + File.separator + "nuclei");
@@ -474,7 +474,7 @@ public class AutoCrop {
 	public void cropKernelsOMERO(ImageWrapper image, Long[] outputsDat, Client client)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		LOGGER.info("Cropping kernels (OMERO).");
-		String eol = String.format("%n");
+		String eol = System.lineSeparator();
 		
 		StringBuilder info = new StringBuilder();
 		info.append(getSpecificImageInfo()).append(HEADERS);
@@ -727,7 +727,7 @@ public class AutoCrop {
 	 */
 	public double getVoxelVolume() {
 		double calibration;
-		if (autocropParameters.manualParameter) {
+		if (autocropParameters.isManualParameter()) {
 			calibration = autocropParameters.getVoxelVolume();
 		} else {
 			Calibration cal = rawImg.getCalibration();

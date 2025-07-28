@@ -124,14 +124,14 @@ public class CLIRunAction {
 		ChromocenterCalling ccCalling = new ChromocenterCalling(chromocenterParameters);
 		try {
 			LOGGER.info("-input {} -input2 {} - {}",
-			            chromocenterParameters.inputFolder,
+			            chromocenterParameters.getInputFolder(),
 			            chromocenterParameters.segInputFolder,
-			            chromocenterParameters.outputFolder);
+			            chromocenterParameters.getOutputFolder());
 			ccCalling.runSeveralImages2();
 		} catch (IOException | FormatException e) {
 			LOGGER.error("An error occurred during chromocenter segmentation.", e);
 		}
-		LOGGER.info("End !!! Results available: {}", chromocenterParameters.outputFolder);
+		LOGGER.info("End !!! Results available: {}", chromocenterParameters.getOutputFolder());
 	}
 	
 	

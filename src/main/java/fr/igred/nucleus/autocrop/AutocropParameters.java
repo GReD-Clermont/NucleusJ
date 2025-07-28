@@ -178,11 +178,11 @@ public class AutocropParameters extends PluginParameters {
 	public AutocropParameters(String inputFolder, String outputFolder,
 	                          String pathToConfigFile) {
 		super(inputFolder, outputFolder, pathToConfigFile);
-		addProperties(pathToConfigFile);
+		setAutocropPropertiesFromFile(pathToConfigFile);
 	}
 	
 	
-	public void addProperties(String pathToConfigFile) {
+	private void setAutocropPropertiesFromFile(String pathToConfigFile) {
 		Properties prop = new Properties();
 		try (InputStream is = new FileInputStream(pathToConfigFile)) {
 			prop.load(is);
@@ -235,6 +235,11 @@ public class AutocropParameters extends PluginParameters {
 	}
 	
 	
+	public void addProperties(String pathToConfigFile) {
+		setAutocropPropertiesFromFile(pathToConfigFile);
+	}
+	
+	
 	/**
 	 * Method to get parameters of the analysis
 	 *
@@ -243,18 +248,20 @@ public class AutocropParameters extends PluginParameters {
 	@Override
 	public String getAnalysisParameters() {
 		super.getAnalysisParameters();
-		this.headerInfo += "#X box size: " + xCropBoxSize + "\n"
-		                   + "#Y box size: " + yCropBoxSize + "\n"
-		                   + "#Z box size: " + zCropBoxSize + "\n"
-		                   + "#thresholdOTSUComputing: " + thresholdOTSUComputing + "\n"
-		                   + "#slicesOTSUComputing: " + slicesOTSUComputing + "\n"
-		                   + "#channelToComputeThreshold: " + channelToComputeThreshold + "\n"
-		                   + "#maxVolumeNucleus:" + maxVolumeNucleus + "\n"
-		                   + "#minVolumeNucleus: " + minVolumeNucleus + "\n"
-		                   + "#boxesRegrouping: " + boxesRegrouping + "\n"
-		                   + "#boxesPercentSurfaceToFilter: " + boxesPercentSurfaceToFilter + "\n";
+		String eol = System.lineSeparator();
+		String newInfo = "#X box size: " + xCropBoxSize + eol +
+		                 "#Y box size: " + yCropBoxSize + eol +
+		                 "#Z box size: " + zCropBoxSize + eol +
+		                 "#thresholdOTSUComputing: " + thresholdOTSUComputing + eol +
+		                 "#slicesOTSUComputing: " + slicesOTSUComputing + eol +
+		                 "#channelToComputeThreshold: " + channelToComputeThreshold + eol +
+		                 "#maxVolumeNucleus:" + maxVolumeNucleus + eol +
+		                 "#minVolumeNucleus: " + minVolumeNucleus + eol +
+		                 "#boxesRegrouping: " + boxesRegrouping + eol +
+		                 "#boxesPercentSurfaceToFilter: " + boxesPercentSurfaceToFilter + eol;
+		setHeaderInfo(getHeaderInfo() + newInfo);
 		
-		return headerInfo;
+		return getHeaderInfo();
 	}
 	
 	

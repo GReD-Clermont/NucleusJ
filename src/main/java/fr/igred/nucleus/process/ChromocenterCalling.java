@@ -85,13 +85,13 @@ public class ChromocenterCalling {
 		Directory directoryInput = new Directory(chromocenterParameters.getInputFolder());
 		directoryInput.listImageFiles(chromocenterParameters.getInputFolder());
 		directoryInput.checkIfEmpty();
-		String diffDir   = chromocenterParameters.outputFolder + "gradientImage";
+		String diffDir   = chromocenterParameters.getOutputFolder() + "gradientImage";
 		File   file      = new File(diffDir);
 		if (!file.exists()) {
 			file.mkdir();
 		}
 		
-		String segCcDir = chromocenterParameters.outputFolder + "SegCC";
+		String segCcDir = chromocenterParameters.getOutputFolder() + "SegCC";
 		file = new File(segCcDir);
 		if (!file.exists()) {
 			file.mkdir();
@@ -232,7 +232,7 @@ public class ChromocenterCalling {
 		ImagePlus[] rawImage = {image.toImagePlus(client)};
 		ImagePlus[] segImage = {mask.toImagePlus(client)};
 		
-		String diffDir = chromocenterParameters.outputFolder + "gradientImage";
+		String diffDir = chromocenterParameters.getOutputFolder() + "gradientImage";
 		
 		FilesNames outPutFilesNames = new FilesNames(imageName);
 		this.prefix = outPutFilesNames.prefixNameFile();
@@ -293,7 +293,7 @@ public class ChromocenterCalling {
 		ImagePlus[] rawImage = {image.toImagePlus(client)};
 		ImagePlus[] segImage = {mask.toImagePlus(client)};
 		
-		String diffDir = chromocenterParameters.outputFolder + "gradientImage";
+		String diffDir = chromocenterParameters.getOutputFolder() + "gradientImage";
 		
 		FilesNames outPutFilesNames = new FilesNames(imageName);
 		

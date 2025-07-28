@@ -237,7 +237,7 @@ public class NucleusSegmentation {
 			
 			tempSeg = BinaryImages.componentsLabeling(tempSeg, 26, 32);
 			Calibration cal = imgRaw.getCalibration();
-			if (segmentationParameters.getManualParameter()) {
+			if (segmentationParameters.isManualParameter()) {
 				//TODO ADD UNITS
 				cal.setXUnit("µm");
 				cal.pixelWidth = segmentationParameters.getXCal();
@@ -577,7 +577,7 @@ public class NucleusSegmentation {
 	 */
 	public double getXCalibration() {
 		double xCal;
-		if (segmentationParameters.manualParameter) {
+		if (segmentationParameters.isManualParameter()) {
 			xCal = segmentationParameters.getXCal();
 		} else {
 			xCal = imgRawTransformed.getCalibration().pixelWidth;
@@ -594,7 +594,7 @@ public class NucleusSegmentation {
 	 */
 	public double getYCalibration() {
 		double yCal;
-		if (segmentationParameters.manualParameter) {
+		if (segmentationParameters.isManualParameter()) {
 			yCal = segmentationParameters.getYCal();
 		} else {
 			yCal = imgRawTransformed.getCalibration().pixelHeight;
@@ -611,7 +611,7 @@ public class NucleusSegmentation {
 	 */
 	public double getZCalibration() {
 		double zCal;
-		if (segmentationParameters.getManualParameter()) {
+		if (segmentationParameters.isManualParameter()) {
 			zCal = segmentationParameters.getZCal();
 		} else {
 			zCal = imgRawTransformed.getCalibration().pixelDepth;
@@ -628,7 +628,7 @@ public class NucleusSegmentation {
 	 */
 	public double getVoxelVolume() {
 		double calibration;
-		if (segmentationParameters.manualParameter) {
+		if (segmentationParameters.isManualParameter()) {
 			calibration = segmentationParameters.getVoxelVolume();
 		} else {
 			Calibration cal = imgRawTransformed.getCalibration();

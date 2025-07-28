@@ -239,7 +239,7 @@ public class SegmentationCalling {
 					
 					nucleusSegmentation.preProcessImage();
 					nucleusSegmentation.findOTSUMaximisingSphericity();
-					nucleusSegmentation.checkBadCrop(params.inputFolder);
+					nucleusSegmentation.checkBadCrop(params.getInputFolder());
 					nucleusSegmentation.saveOTSUSegmented();
 					otsuResults.put(file.getName(),
 					                nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
@@ -301,7 +301,7 @@ public class SegmentationCalling {
 		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(currentFile, params);
 		nucleusSegmentation.preProcessImage();
 		nucleusSegmentation.findOTSUMaximisingSphericity();
-		nucleusSegmentation.checkBadCrop(params.inputFolder);
+		nucleusSegmentation.checkBadCrop(params.getInputFolder());
 		nucleusSegmentation.saveOTSUSegmented();
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
