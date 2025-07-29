@@ -290,7 +290,7 @@ public class SegmentationCalling {
 		
 		String fileImg = currentFile.toString();
 		LOGGER.info("Current image in process: {}", currentFile);
-		if(currentFile.exists()) {
+		if (currentFile.exists()) {
 			String start = currentDateTime();
 			LOGGER.info("Start: {}", start);
 			NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(currentFile, params);

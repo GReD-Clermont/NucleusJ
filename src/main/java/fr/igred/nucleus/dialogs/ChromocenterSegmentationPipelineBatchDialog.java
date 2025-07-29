@@ -327,7 +327,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 
 	private void chooseDirectory(JTextField textField) {
 		String pref = textField.getName();
-		if (pref.isEmpty()) {
+		if (pref == null || pref.isEmpty()) {
 			pref = "nj.ccseg." + Prefs.DIR_IMAGE;
 		}
 		String previousDir = textField.getText();

@@ -765,7 +765,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 	
 	private void chooseDirectory(JTextField textField) {
 		String pref = textField.getName();
-		if (pref.isEmpty()) {
+		if (pref == null || pref.isEmpty()) {
 			pref = "nj.nodej." + Prefs.DIR_IMAGE;
 		}
 		String previousDir = textField.getText();

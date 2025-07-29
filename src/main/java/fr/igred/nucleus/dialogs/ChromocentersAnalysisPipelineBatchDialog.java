@@ -711,7 +711,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	
 	private void chooseDirectory(JTextField textField) {
 		String pref = textField.getName();
-		if (pref.isEmpty()) {
+		if (pref == null || pref.isEmpty()) {
 			pref = "nj.ccparams." + Prefs.DIR_IMAGE;
 		}
 		String previousDir = textField.getText();
