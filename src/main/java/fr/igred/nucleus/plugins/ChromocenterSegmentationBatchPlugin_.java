@@ -71,40 +71,52 @@ public class ChromocenterSegmentationBatchPlugin_ implements PlugIn, IDialogList
 				if (fileList.isDirectoryOrFileExist(pathNucleusRaw, tFileRawData)) {
 					ImagePlus imagePlusSegmented = IJ.openImage(pathImgSegmentedNuc);
 					ImagePlus imagePlusInput     = IJ.openImage(pathNucleusRaw);
-					GaussianBlur3D.blur(imagePlusInput, 0.25, 0.25, 1);
-					ImageStack imageStack = imagePlusInput.getStack();
-					int        max        = 0;
-					for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
-						for (int b = 0; b < imagePlusInput.getWidth(); ++b) {
-							for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
-								if (max < imageStack.getVoxel(b, j, k)) {
-									max = (int) imageStack.getVoxel(b, j, k);
-								}
-							}
-						}
-					}
-					IJ.setMinAndMax(imagePlusInput, 0, max);
-					IJ.run(imagePlusInput, "Apply LUT", "stack");
-					Calibration calibration = new Calibration();
-					if (ccSegDialog.getCalibrationStatus()) {
-						calibration.pixelWidth = ccSegDialog.getXCalibration();
-						calibration.pixelHeight = ccSegDialog.getYCalibration();
-						calibration.pixelDepth = ccSegDialog.getZCalibration();
-						calibration.setUnit(ccSegDialog.getUnit());
-					} else {
-						calibration = imagePlusInput.getCalibration();
-					}
-					ImagePlus imagePlusContrast = ChromocentersEnhancement.applyEnhanceChromocenters(imagePlusInput, imagePlusSegmented);
-					imagePlusContrast.setTitle(imagePlusInput.getTitle());
-					imagePlusContrast.setCalibration(calibration);
-					saveFile(imagePlusContrast, workDirectory + File.separator + "ContrastDataNucleus");
+					processOneNucleus(imagePlusInput, imagePlusSegmented, workDirectory);
 				}
 			}
-			LOGGER.info("End of the chromocenter segmentation , the results are in {}",
-			            ccSegDialog.getWorkDirectory());
+			LOGGER.info("End of the chromocenter segmentation , the results are in {}", workDirectory);
 		} else {
 			IJ.showMessage("There are no the two subdirectories (See the directory name) or subDirectories are empty");
 		}
+	}
+	
+	
+	/**
+	 * Process one nucleus image and save the contrast data.
+	 *
+	 * @param imagePlusInput     The input image of the nucleus.
+	 * @param imagePlusSegmented The segmented image of the nucleus.
+	 * @param workDirectory      The directory where to save the results.
+	 */
+	private void processOneNucleus(ImagePlus imagePlusInput, ImagePlus imagePlusSegmented, String workDirectory) {
+		GaussianBlur3D.blur(imagePlusInput, 0.25, 0.25, 1);
+		ImageStack imageStack = imagePlusInput.getStack();
+		int        max        = 0;
+		for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
+			for (int b = 0; b < imagePlusInput.getWidth(); ++b) {
+				for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
+					if (max < imageStack.getVoxel(b, j, k)) {
+						max = (int) imageStack.getVoxel(b, j, k);
+					}
+				}
+			}
+		}
+		IJ.setMinAndMax(imagePlusInput, 0, max);
+		IJ.run(imagePlusInput, "Apply LUT", "stack");
+		Calibration calibration = new Calibration();
+		if (ccSegDialog.getCalibrationStatus()) {
+			calibration.pixelWidth = ccSegDialog.getXCalibration();
+			calibration.pixelHeight = ccSegDialog.getYCalibration();
+			calibration.pixelDepth = ccSegDialog.getZCalibration();
+			calibration.setUnit(ccSegDialog.getUnit());
+		} else {
+			calibration = imagePlusInput.getCalibration();
+		}
+		ImagePlus imagePlusContrast = ChromocentersEnhancement.applyEnhanceChromocenters(imagePlusInput,
+		                                                                                 imagePlusSegmented);
+		imagePlusContrast.setTitle(imagePlusInput.getTitle());
+		imagePlusContrast.setCalibration(calibration);
+		saveFile(imagePlusContrast, workDirectory + File.separator + "ContrastDataNucleus");
 	}
 	
 	
