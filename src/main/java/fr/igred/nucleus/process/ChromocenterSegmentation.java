@@ -72,7 +72,6 @@ public class ChromocenterSegmentation {
 		this.raw = raw;
 		this.segNuc = segNuc;
 		this.output = outputFileName;
-		this.nbPixelNuc = 0;
 		setNbPixelNuc3D();
 		int initialV = params.getNeighbours();
 		LOGGER.info("\t{}", initialV);
@@ -229,6 +228,7 @@ public class ChromocenterSegmentation {
 	 *
 	 */
 	private void setNbPixelNuc3D() {
+		this.nbPixelNuc = 0;
 		ImageStack isSeg = segNuc[0].getStack();
 		for (int k = 0; k < raw[0].getNSlices(); ++k) {
 			for (int i = 0; i < raw[0].getWidth(); ++i) {

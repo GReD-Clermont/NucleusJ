@@ -96,7 +96,6 @@ public final class Thresholding {
 	public static ImagePlus createMask(ImagePlus input, double threshold) {
 		ImagePlus mask = input.duplicate();
 		mask.setTitle(input.getTitle());
-		mask.getProcessor().createMask();
 		binarize(mask, threshold);
 		return mask;
 	}

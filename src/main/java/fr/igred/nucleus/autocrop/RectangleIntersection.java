@@ -114,13 +114,13 @@ public class RectangleIntersection {
 	 */
 	public void runRectangleRecompilation() {
 		this.newBoxesAdded = true;
-		int tours = 0;
+		int i = 0;
 		while (newBoxesAdded) {
 			computeIntersection();
 			rectangleRegroup();
 			recompileRectangle();
-			tours++;
-			LOGGER.trace("Tour {} : {} boxes detected", tours, listRectangle.size());
+			i++;
+			LOGGER.trace("Iteration {}: {} boxes detected", i, listRectangle.size());
 		}
 	}
 	
