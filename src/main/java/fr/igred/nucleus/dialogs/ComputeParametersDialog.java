@@ -19,6 +19,7 @@ package fr.igred.nucleus.dialogs;
 
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
+import ij.IJ;
 import ij.Prefs;
 
 import javax.swing.BorderFactory;
@@ -540,7 +541,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 			try {
 				dialogListener.onStart();
 			} catch (AccessException | ServiceException | ExecutionException e) {
-				throw new RuntimeException(e);
+				IJ.error("Error starting the process", e.getMessage());
 			}
 			start = true;
 			dispose();
@@ -555,7 +556,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 				try {
 					dialogListener.onStart();
 				} catch (AccessException | ServiceException | ExecutionException e) {
-					throw new RuntimeException(e);
+					IJ.error("Error starting the process", e.getMessage());
 				}
 				dispose();
 			}

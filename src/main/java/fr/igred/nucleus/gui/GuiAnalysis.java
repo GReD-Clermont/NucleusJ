@@ -21,6 +21,7 @@ package fr.igred.nucleus.gui;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.nucleus.dialogs.IDialogListener;
+import ij.IJ;
 import ij.Prefs;
 
 import javax.swing.BorderFactory;
@@ -755,7 +756,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		try {
 			dialogListener.onStart();
 		} catch (AccessException | ServiceException | ExecutionException e) {
-			throw new RuntimeException(e);
+			IJ.error("Error starting the process", e.getMessage());
 		}
 		
 	}

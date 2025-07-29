@@ -69,8 +69,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 				    try {
 					    Files.delete(path);  // Delete each file/folder
 				    } catch (IOException e) {
-					    throw new RuntimeException("Failed to delete " + path,
-					                               e);  // Handle any exceptions during deletion
+						LOGGER.error("Failed to delete {}", path, e);
 				    }
 			    });
 		}

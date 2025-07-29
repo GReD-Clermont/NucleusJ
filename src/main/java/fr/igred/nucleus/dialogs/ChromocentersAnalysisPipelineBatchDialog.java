@@ -19,6 +19,7 @@ package fr.igred.nucleus.dialogs;
 
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
+import ij.IJ;
 import ij.Prefs;
 
 import javax.swing.BorderFactory;
@@ -702,7 +703,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 			try {
 				dialogListener.onStart();
 			} catch (AccessException | ExecutionException | ServiceException e) {
-				throw new RuntimeException(e);
+				IJ.error("Error starting the process", e.getMessage());
 			}
 		}
 	}

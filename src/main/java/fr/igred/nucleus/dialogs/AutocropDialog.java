@@ -20,6 +20,7 @@ package fr.igred.nucleus.dialogs;
 import fr.igred.nucleus.Version;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
+import ij.IJ;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -522,7 +523,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		try {
 			dialogListener.onStart();
 		} catch (AccessException | ServiceException | ExecutionException e) {
-			throw new RuntimeException(e);
+			IJ.error("Error starting the process", e.getMessage());
 		}
 	}
 	
