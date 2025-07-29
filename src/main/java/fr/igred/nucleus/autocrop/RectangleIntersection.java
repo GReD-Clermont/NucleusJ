@@ -284,7 +284,7 @@ public class RectangleIntersection {
 			short    yMin   = (short) listRectangle.get(i).y;
 			short    zMin   = Short.parseShort(zSliceTMP[0]);
 			short    xMax   = (short) (xMin + listRectangle.get(i).width);
-			short    yMax   = (short) (yMin + listRectangle.get(i).width);
+			short    yMax   = (short) (yMin + listRectangle.get(i).height);
 			short    zMax   = (short) (zMin + Short.parseShort(zSliceTMP[1]));
 			if (zMax == 0) {
 				zMax = 1;
