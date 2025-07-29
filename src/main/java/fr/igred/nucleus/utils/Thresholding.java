@@ -132,7 +132,8 @@ public final class Thresholding {
 				}
 			}
 		}
-		stack.setBitDepth(8); // Ensure mask is 8-bit
+		ImageConverter converter = new ImageConverter(input);
+		converter.convertToGray8(); // Ensure mask is 8-bit
 	}
 	
 }
