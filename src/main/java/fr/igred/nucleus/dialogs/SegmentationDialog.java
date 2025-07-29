@@ -87,7 +87,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	private final JTextField                    jTextFieldOutputProject = new JTextField();
 	private final JButton                       confButton              = new JButton("...");
 	private final JSpinner                      jSpinnerThreads;
-	private       boolean                       useOMERO;
+	private       boolean                       omeroUsed;
 	private       SegmentationDialog.ConfigMode configMode;
 	
 	
@@ -303,12 +303,9 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		startQuitPanel.setBorder(padding);
 		container.add(startQuitPanel, 5);
 		
-		ActionListener quitListener = new QuitListener(this);
-		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new StartListener(this);
-		jButtonStart.addActionListener(startListener);
-		ActionListener configListener = new ConfigListener(this);
-		jButtonConfig.addActionListener(configListener);
+		jButtonQuit.addActionListener(this::quit);
+		jButtonStart.addActionListener(this::start);
+		jButtonConfig.addActionListener(e -> segmentationConfigFileDialog.setVisible(true));
 		
 		super.setVisible(true);
 		
@@ -336,8 +333,8 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	}
 	
 	
-	public boolean isOmeroEnabled() {
-		return useOMERO;
+	public boolean isOMEROUsed() {
+		return omeroUsed;
 	}
 	
 	
@@ -442,11 +439,11 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		if (source == omeroNoButton) {
 			container.remove(1);
 			container.add(localModeLayout, 1);
-			useOMERO = false;
+			omeroUsed = false;
 		} else if (source == omeroYesButton) {
 			container.remove(1);
 			container.add(omeroModeLayout, 1);
-			useOMERO = true;
+			omeroUsed = true;
 		} else {
 			container.remove(3);
 			if (segmentationConfigFileDialog.isVisible()) {
@@ -486,60 +483,20 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		INPUT
 	}
 	
-	/** Classes listener to interact with the several elements of the window */
 	
-	private static class QuitListener implements ActionListener {
-		private final SegmentationDialog segmentationDialog;
-		
-		
-		/** @param segmentationDialog  */
-		QuitListener(SegmentationDialog segmentationDialog) {
-			this.segmentationDialog = segmentationDialog;
-		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			segmentationDialog.dispose();
-		}
-		
+	public void quit(ActionEvent actionEvent) {
+		dispose();
 	}
 	
-	private class StartListener implements ActionListener {
-		private final SegmentationDialog segmentationDialog;
-		
-		
-		/** @param autocropDialog  */
-		StartListener(SegmentationDialog autocropDialog) {
-			segmentationDialog = autocropDialog;
-		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			segmentationDialog.dispose();
-			segmentationConfigFileDialog.dispose();
-			try {
-				dialogListener.onStart();
-			} catch (AccessException | ServiceException | ExecutionException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		
-	}
 	
-	private class ConfigListener implements ActionListener {
-		private final SegmentationDialog segmentationDialog;
-		
-		
-		/** @param segmentationDialog  */
-		ConfigListener(SegmentationDialog segmentationDialog) {
-			this.segmentationDialog = segmentationDialog;
+	private void start(ActionEvent actionEvent) {
+		dispose();
+		segmentationConfigFileDialog.dispose();
+		try {
+			dialogListener.onStart();
+		} catch (AccessException | ServiceException | ExecutionException e) {
+			throw new RuntimeException(e);
 		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			segmentationConfigFileDialog.setVisible(true);
-		}
-		
 	}
 	
 }

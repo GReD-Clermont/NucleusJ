@@ -336,7 +336,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		}
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		JFileChooser jFileChooser = new JFileChooser(previousDir);
-		jFileChooser.setDialogTitle("Select the Work Directory");
+		jFileChooser.setDialogTitle("Select a directory");
 		
 		jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		int returnValue = jFileChooser.showOpenDialog(getParent());

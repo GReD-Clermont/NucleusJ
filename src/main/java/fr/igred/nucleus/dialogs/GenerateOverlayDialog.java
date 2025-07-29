@@ -295,10 +295,8 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		container.add(startQuitPanel, 2);
 		
 		
-		ActionListener quitListener = new QuitListener(this);
-		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new GenerateOverlayDialog.StartListener(this);
-		jButtonStart.addActionListener(startListener);
+		jButtonQuit.addActionListener(this::quit);
+		jButtonStart.addActionListener(this::start);
 		super.setVisible(true);
 		
 		
@@ -435,45 +433,21 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		validate();
 		repaint();
 	}
-	
-	
-	private static class QuitListener implements ActionListener {
-		private final GenerateOverlayDialog dialog;
 		
 		
-		/** @param dialog  */
-		QuitListener(GenerateOverlayDialog dialog) {
-			this.dialog = dialog;
+	private void quit(ActionEvent actionEvent) {
+			dispose();
 		}
 		
 		
-		public void actionPerformed(ActionEvent actionEvent) {
-			dialog.dispose();
+	private void start(ActionEvent actionEvent) {
+		start = true;
+		dispose();
+		try {
+			dialogListener.onStart();
+		} catch (AccessException | ServiceException | ExecutionException e) {
+			throw new RuntimeException(e);
 		}
-		
-	}
-	
-	/** Classes listener to interact with the several elements of the window */
-	private class StartListener implements ActionListener {
-		private final GenerateOverlayDialog dialog;
-		
-		
-		/** @param dialog  */
-		StartListener(GenerateOverlayDialog dialog) {
-			this.dialog = dialog;
-		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			start = true;
-			dialog.dispose();
-			try {
-				dialogListener.onStart();
-			} catch (AccessException | ServiceException | ExecutionException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		
 	}
 	
 	

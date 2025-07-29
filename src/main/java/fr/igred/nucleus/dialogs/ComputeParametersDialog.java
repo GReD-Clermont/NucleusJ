@@ -19,6 +19,7 @@ package fr.igred.nucleus.dialogs;
 
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
+import ij.Prefs;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -46,7 +47,6 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.concurrent.ExecutionException;
@@ -174,6 +174,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                      new Insets(100, 160, 0, 0), 0, 0));
 		jTextFieldRawData.setPreferredSize(new java.awt.Dimension(280, 21));
 		jTextFieldRawData.setFont(new java.awt.Font(font, Font.ITALIC, 10));
+		jTextFieldRawData.setName("nj.segparams.rawdata");
+		
 		localPanel.add(jButtonWorkDirectory,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -188,6 +190,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                      new Insets(140, 160, 0, 0), 0, 0));
 		jTextFieldWorkDirectory.setPreferredSize(new java.awt.Dimension(280, 21));
 		jTextFieldWorkDirectory.setFont(new java.awt.Font(font, Font.ITALIC, 10));
+		jTextFieldWorkDirectory.setName("nj.segparams.workdir");
+		
 		localPanel.add(jLabelCalibration,
 		               new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -237,14 +241,10 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                     new Insets(20, 10, 0, 0), 0, 0));
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
 		super.setVisible(true);
-		ActionListener wdListener = new ComputeParametersDialog.WorkDirectoryListener();
-		jButtonWorkDirectory.addActionListener(wdListener);
-		ActionListener ddListener = new ComputeParametersDialog.RawDataDirectoryListener();
-		jButtonRawData.addActionListener(ddListener);
-		ActionListener quitListener = new QuitListener(this);
-		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new StartListener(this);
-		jButtonStart.addActionListener(startListener);
+		jButtonWorkDirectory.addActionListener(e -> chooseDirectory(jTextFieldWorkDirectory));
+		jButtonRawData.addActionListener(e -> chooseDirectory(jTextFieldRawData));
+		jButtonQuit.addActionListener(this::quit);
+		jButtonStart.addActionListener(this::start);
 		
 		
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -529,111 +529,61 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	}
 	
 	
-	/**
-	 *
-	 */
-	private static class QuitListener implements ActionListener {
-		private final ComputeParametersDialog computeParamsDialog;
-		
-		
-		/** @param computeParamsDialog Dialog parameters */
-		QuitListener(ComputeParametersDialog computeParamsDialog) {
-			this.computeParamsDialog = computeParamsDialog;
-		}
-		
-		
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			computeParamsDialog.dispose();
-		}
-		
+	
+	private void quit(ActionEvent actionEvent) {
+		dispose();
 	}
 	
-	private class StartListener implements ActionListener {
-		private final ComputeParametersDialog computeParamsDialog;
-		
-		
-		/** @param computeParamsDialog Dialog parameters */
-		StartListener(ComputeParametersDialog computeParamsDialog) {
-			this.computeParamsDialog = computeParamsDialog;
-		}
-		
-		
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			if (useOMERO) {
+
+	private void start(ActionEvent actionEvent) {
+		if (useOMERO) {
+			try {
+				dialogListener.onStart();
+			} catch (AccessException | ServiceException | ExecutionException e) {
+				throw new RuntimeException(e);
+			}
+			start = true;
+			dispose();
+		} else {
+			if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(null,
+				                              "You did not choose a work directory or the raw data",
+				                              "Error",
+				                              JOptionPane.ERROR_MESSAGE);
+			} else {
+				start = true;
 				try {
 					dialogListener.onStart();
 				} catch (AccessException | ServiceException | ExecutionException e) {
 					throw new RuntimeException(e);
 				}
-				start = true;
-				computeParamsDialog.dispose();
-			} else {
-				if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(null,
-					                              "You did not choose a work directory or the raw data",
-					                              "Error",
-					                              JOptionPane.ERROR_MESSAGE);
-				} else {
-					start = true;
-					try {
-						dialogListener.onStart();
-					} catch (AccessException | ServiceException | ExecutionException e) {
-						throw new RuntimeException(e);
-					}
-					computeParamsDialog.dispose();
-				}
+				dispose();
 			}
 		}
-		
-	}
-	
-	/**
-	 *
-	 */
-	class WorkDirectoryListener implements ActionListener {
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			JFileChooser jFileChooser = new JFileChooser();
-			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int returnValue = jFileChooser.showOpenDialog(getParent());
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
-				jTextFieldWorkDirectory.setText(workDirectory);
-			}
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
-		
 	}
 	
 	
-	/**
-	 *
-	 */
-	class RawDataDirectoryListener implements ActionListener {
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			JFileChooser jFileChooser = new JFileChooser();
-			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int returnValue = jFileChooser.showOpenDialog(getParent());
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
-				jTextFieldRawData.setText(rawDataDirectory);
-			}
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	
+	private void chooseDirectory(JTextField textField) {
+		String pref = textField.getName();
+		if (pref.isEmpty()) {
+			pref = "nj.segparams." + Prefs.DIR_IMAGE;
 		}
+		String previousDir = textField.getText();
+		if (previousDir.isEmpty()) {
+			previousDir = Prefs.get(pref, previousDir);
+		}
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		JFileChooser jFileChooser = new JFileChooser(previousDir);
+		jFileChooser.setDialogTitle("Select the Work Directory");
 		
+		jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnValue = jFileChooser.showOpenDialog(getParent());
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			String directory = jFileChooser.getSelectedFile().getAbsolutePath();
+			textField.setText(directory);
+		}
+		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 	
 }

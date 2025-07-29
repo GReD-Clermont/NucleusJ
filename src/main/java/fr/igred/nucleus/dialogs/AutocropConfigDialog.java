@@ -31,30 +31,28 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 
 public class AutocropConfigDialog extends JFrame implements ItemListener {
-	private final JTextField xCropBoxSize                = new JTextField();
-	private final JTextField yCropBoxSize                = new JTextField();
-	private final JTextField zCropBoxSize                = new JTextField();
-	private final JTextField boxNumberFontSize           = new JTextField();
-	private final JTextField xCalibration                = new JTextField();
-	private final JTextField yCalibration                = new JTextField();
-	private final JTextField zCalibration                = new JTextField();
-	private final JTextField minVolume                   = new JTextField();
-	private final JTextField maxVolume                   = new JTextField();
-	private final JTextField thresholdOTSUComputing      = new JTextField();
-	private final JTextField channelToComputeThreshold   = new JTextField();
-	private final JTextField slicesOTSUComputing = new JTextField();
-	private final JTextField boxesSurfacePercent = new JTextField();
-	private final JCheckBox  regroupBoxes        = new JCheckBox();
-	private final JCheckBox  addCalibrationBox           = new JCheckBox();
+	private final JTextField xCropBoxSize              = new JTextField();
+	private final JTextField yCropBoxSize              = new JTextField();
+	private final JTextField zCropBoxSize              = new JTextField();
+	private final JTextField boxNumberFontSize         = new JTextField();
+	private final JTextField xCalibration              = new JTextField();
+	private final JTextField yCalibration              = new JTextField();
+	private final JTextField zCalibration              = new JTextField();
+	private final JTextField minVolume                 = new JTextField();
+	private final JTextField maxVolume                 = new JTextField();
+	private final JTextField thresholdOTSUComputing    = new JTextField();
+	private final JTextField channelToComputeThreshold = new JTextField();
+	private final JTextField slicesOTSUComputing       = new JTextField();
+	private final JTextField boxesSurfacePercent       = new JTextField();
+	private final JCheckBox  regroupBoxes              = new JCheckBox();
+	private final JCheckBox  addCalibrationBox         = new JCheckBox();
 	private final JPanel     cropBoxPane;
-	private       Boolean    isRegroupBoxesSelected      = true;
+	private       Boolean    isRegroupBoxesSelected    = true;
 	private       JPanel     xCalibrationPanel;
 	private       JPanel     yCalibrationPanel;
 	private       JPanel     zCalibrationPanel;
@@ -266,8 +264,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		
 		super.setVisible(false);
 		
-		ActionListener startListener = new StartListener(this);
-		buttonOK.addActionListener(startListener);
+		buttonOK.addActionListener(e -> setVisible(false));
 	}
 	
 	
@@ -397,23 +394,6 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
 		}
 		validate();
 		repaint();
-	}
-	
-	
-	private static class StartListener implements ActionListener {
-		AutocropConfigDialog autocropDialog;
-		
-		
-		/** @param autocropDialog  */
-		StartListener(AutocropConfigDialog autocropDialog) {
-			this.autocropDialog = autocropDialog;
-		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			autocropDialog.setVisible(false);
-		}
-		
 	}
 	
 }

@@ -72,7 +72,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		if (IJ.versionLessThan("1.32c")) {
 			return;
 		}
-		cropFromCoordinatesDialog = new CropFromCoordinatesDialog();
+		cropFromCoordinatesDialog = new CropFromCoordinatesDialog(this);
 	}
 	
 	
@@ -126,10 +126,10 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		List<ROIWrapper>     rois   = image.getROIs(client);
 		List<ChannelWrapper> canaux = imageToCrop.getChannels(client);
 		if (c > canaux.size() - 1) {
-			System.out.println("Channel doesn't exists, there are only " + canaux.size() +
-			                   " channels, first channel index is 0 !");
+			LOGGER.debug("Channel doesn't exists, there are only {} channels, first channel index is 0 !",
+			             canaux.size());
 		} else {
-			System.out.println("Number of channels detected : " + canaux.size());
+			LOGGER.debug("Number of channels detected : {}", canaux.size());
 			for (ROIWrapper roi : rois) {
 				// Get the roi names
 				String roiName = roi.getName();

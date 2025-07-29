@@ -18,6 +18,8 @@
 package fr.igred.nucleus.dialogs;
 
 import fr.igred.nucleus.Version;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
 import ij.Prefs;
 
 import javax.swing.BorderFactory;
@@ -46,10 +48,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 
 public class CropFromCoordinatesDialog extends JFrame implements ActionListener, ItemListener {
 	private static final long serialVersionUID = -1113846613817254789L;
+	
+	private final transient IDialogListener listener;
 	
 	private static final String INPUT_CHOOSER  = "inputChooser";
 	private static final String OUTPUT_CHOOSER = "outputChooser";
@@ -79,14 +84,15 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	
 	private final Container container;
 	
-	private boolean start;
 	private boolean useOMERO;
 	
 	
-	public CropFromCoordinatesDialog() {
+	public CropFromCoordinatesDialog(IDialogListener listener) {
 		String host     = Prefs.get("omero.host", "omero.gred-clermont.fr");
 		long   port     = Prefs.getInt("omero.port", 4);
 		String username = Prefs.get("omero.user", "");
+		
+		this.listener = listener;
 		
 		JButton jButtonStart = new JButton("Start");
 		jButtonStart.setBackground(new Color(0x2dce98));
@@ -327,10 +333,8 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		startQuitPanel.setBorder(padding2);
 		container.add(startQuitPanel, 2);
 		
-		ActionListener quitListener = new QuitListener(this);
-		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new StartListener(this);
-		jButtonStart.addActionListener(startListener);
+		jButtonQuit.addActionListener(e -> dispose());
+		jButtonStart.addActionListener(e -> start());
 		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
@@ -345,11 +349,6 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		jTextFieldSourceID.setText("");
 		jTextFieldToCropID.setText("");
 		jTextFieldOutputProject.setText("");
-	}
-	
-	
-	public boolean isStart() {
-		return start;
 	}
 	
 	
@@ -476,39 +475,16 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		repaint();
 	}
 	
-	
-	private static class QuitListener implements ActionListener {
-		private final CropFromCoordinatesDialog autocropDialog;
-		
-		
-		/** @param autocropDialog  */
-		QuitListener(CropFromCoordinatesDialog autocropDialog) {
-			this.autocropDialog = autocropDialog;
+	/**
+	 * Disposes the dialog and starts the process.
+	 */
+	private void start() {
+		dispose();
+		try {
+			listener.onStart();
+		} catch (AccessException | ServiceException | ExecutionException e) {
+			throw new RuntimeException(e);
 		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			autocropDialog.dispose();
-		}
-		
-	}
-	
-	/** Classes listener to interact with the several elements of the window */
-	private class StartListener implements ActionListener {
-		private final CropFromCoordinatesDialog autocropDialog;
-		
-		
-		/** @param autocropDialog  */
-		StartListener(CropFromCoordinatesDialog autocropDialog) {
-			this.autocropDialog = autocropDialog;
-		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			start = true;
-			autocropDialog.dispose();
-		}
-		
 	}
 	
 	
