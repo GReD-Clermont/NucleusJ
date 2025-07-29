@@ -20,6 +20,7 @@ package fr.igred.nucleus.dialogs;
 
 import fr.igred.nucleus.Version;
 import fr.igred.nucleus.plugins.Autocrop_;
+import fr.igred.nucleus.plugins.ChromocenterSegmentationBatchPlugin_;
 import fr.igred.nucleus.plugins.ChromocentersAnalysisBatchPlugin_;
 import fr.igred.nucleus.plugins.ComputeParametersPlugin_;
 import fr.igred.nucleus.plugins.CropFromCoordinates_;
@@ -30,7 +31,6 @@ import ij.plugin.PlugIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -38,9 +38,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.lang.invoke.MethodHandles;
 
@@ -52,78 +51,52 @@ public class MainGui extends JFrame {
 	
 	public MainGui() {
 		super.setTitle("NucleusJ - v" + Version.get());
-		super.setMinimumSize(new Dimension(300, 400));
 		super.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		super.setLocationRelativeTo(null);
 		
+		int gap = 10;
+		
 		Container container = super.getContentPane();
 		
-		LayoutManager mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
+		LayoutManager mainBoxLayout = new FlowLayout();
 		container.setLayout(mainBoxLayout);
 		
 		JPanel localPanel = new JPanel();
-		localPanel.setLayout(new GridBagLayout());
+		localPanel.setLayout(new GridLayout(0, 1, 0, gap));
+		localPanel.setAlignmentX(CENTER_ALIGNMENT);
+		localPanel.setAlignmentY(CENTER_ALIGNMENT);
 		
 		JLabel welcomeLabel = new JLabel("Welcome to NJ!");
 		welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		
-		localPanel.add(welcomeLabel,
-		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                      GridBagConstraints.FIRST_LINE_START,
-		                                      GridBagConstraints.HORIZONTAL,
-		                                      new Insets(0, 0, 0, 0), 0, 0));
+		localPanel.add(welcomeLabel);
 		
 		JButton autocropButton = new JButton("Autocrop");
-		localPanel.add(autocropButton,
-		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                      GridBagConstraints.FIRST_LINE_START,
-		                                      GridBagConstraints.HORIZONTAL,
-		                                      new Insets(40, 0, 0, 0), 120, 0));
+		localPanel.add(autocropButton);
 		
 		JButton segmentationButton = new JButton("Segmentation");
-		localPanel.add(segmentationButton,
-		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                      GridBagConstraints.FIRST_LINE_START,
-		                                      GridBagConstraints.HORIZONTAL,
-		                                      new Insets(80, 0, 0, 0), 85, 0));
+		localPanel.add(segmentationButton);
 		
 		JButton coordsCropButton = new JButton("Crop From Coordinates");
-		localPanel.add(coordsCropButton,
-		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                      GridBagConstraints.FIRST_LINE_START,
-		                                      GridBagConstraints.HORIZONTAL,
-		                                      new Insets(120, 0, 0, 0), 20, 0));
+		localPanel.add(coordsCropButton);
 		
 		JButton overlayButton = new JButton("Overlay");
-		localPanel.add(overlayButton,
-		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                      GridBagConstraints.FIRST_LINE_START,
-		                                      GridBagConstraints.HORIZONTAL,
-		                                      new Insets(160, 0, 0, 0), 130, 0));
+		localPanel.add(overlayButton);
 		
 		JButton computeParamsButton = new JButton("Compute Parameters Nuc");
-		localPanel.add(computeParamsButton,
-		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                      GridBagConstraints.FIRST_LINE_START,
-		                                      GridBagConstraints.HORIZONTAL,
-		                                      new Insets(200, 0, 0, 0), 35, 0));
+		localPanel.add(computeParamsButton);
 		
 		JButton nodeJButton = new JButton("NODeJ");
-		localPanel.add(nodeJButton,
-		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                      GridBagConstraints.FIRST_LINE_START,
-		                                      GridBagConstraints.HORIZONTAL,
-		                                      new Insets(240, 0, 0, 0), 140, 0));
+		localPanel.add(nodeJButton);
+		
+		JButton ccSegmentButton = new JButton("Chromocenter Segmentation");
+		localPanel.add(ccSegmentButton);
 		
 		JButton computeCCParamsBtn = new JButton("Compute Parameters Spots");
-		localPanel.add(computeCCParamsBtn,
-		               new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-		                                      GridBagConstraints.FIRST_LINE_START,
-		                                      GridBagConstraints.HORIZONTAL,
-		                                      new Insets(280, 0, 0, 0), 12, 0));
+		localPanel.add(computeCCParamsBtn);
 		
-		container.add(localPanel, 0);
+		container.add(localPanel);
 		
+		// Action listeners for buttons
 		autocropButton.addActionListener(e -> {
 			PlugIn autocrop = new Autocrop_();
 			autocrop.run("");
@@ -154,10 +127,27 @@ public class MainGui extends JFrame {
 			nodej.run("");
 		});
 		
+		ccSegmentButton.addActionListener(e -> {
+			PlugIn ccSegmentation = new ChromocenterSegmentationBatchPlugin_();
+			ccSegmentation.run("");
+		});
+		
 		computeCCParamsBtn.addActionListener(e -> {
 			PlugIn computeCcParameters = new ChromocentersAnalysisBatchPlugin_();
 			computeCcParameters.run("");
 		});
+		
+		// Repack GUI to ensure all components are laid out correctly
+		super.pack();
+		
+		// Set the minimum size of the GUI
+		int width  = localPanel.getPreferredSize().width + 10 * gap;
+		int height = localPanel.getPreferredSize().height + 5 * gap;
+		super.setMinimumSize(new Dimension(width, height));
+		super.setMaximumSize(super.getMinimumSize());
+		super.setPreferredSize(super.getMinimumSize());
+		super.setResizable(false);
+		
 		LOGGER.info("Main GUI initialized");
 	}
 	

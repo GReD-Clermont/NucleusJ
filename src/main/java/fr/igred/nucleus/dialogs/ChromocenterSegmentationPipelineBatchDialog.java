@@ -17,6 +17,10 @@
  */
 package fr.igred.nucleus.dialogs;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+import ij.Prefs;
+
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -33,10 +37,9 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -46,6 +49,8 @@ import java.awt.event.ItemListener;
  */
 public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implements ItemListener {
 	private static final long serialVersionUID = -1605324416480852307L;
+	
+	private final transient IDialogListener dialogListener;
 	
 	private final JTextField jTextFieldWorkDirectory = new JTextField();
 	private final JTextField jTextFieldRawData       = new JTextField();
@@ -59,11 +64,11 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 	private final JTextPane  readZCalibration        = new JTextPane();
 	private final JCheckBox  addCalibrationBox       = new JCheckBox();
 	private final JPanel     calibration;
-	private       boolean    start;
 	
 	
 	/** Architecture of the graphical windows */
-	public ChromocenterSegmentationPipelineBatchDialog() {
+	public ChromocenterSegmentationPipelineBatchDialog(IDialogListener dialogListener) {
+		this.dialogListener = dialogListener;
 		Container container;
 		JLabel    jLabelWorkDirectory;
 		JLabel    jLabelCalibration;
@@ -74,6 +79,9 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		super.setTitle("Chromocenters segmentation pipeline (Batch)");
 		super.setSize(500, 500);
 		super.setLocationRelativeTo(null);
+		
+		Font italic = new java.awt.Font("Albertus", Font.ITALIC, 10);
+		
 		container = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		// 	gridBagLayout.rowWeights = new double[] {0.0, 0.0, 0.0, 0.0};
@@ -110,7 +118,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(100, 10, 0, 0), 0, 0));
 		jButtonRawData.setPreferredSize(new java.awt.Dimension(120, 21));
-		jButtonRawData.setFont(new java.awt.Font("Albertus", Font.ITALIC, 10));
+		jButtonRawData.setFont(italic);
 		
 		container.add(jTextFieldRawData,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
@@ -118,7 +126,8 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(100, 160, 0, 0), 0, 0));
 		jTextFieldRawData.setPreferredSize(new java.awt.Dimension(280, 21));
-		jTextFieldRawData.setFont(new java.awt.Font("Albertus", Font.ITALIC, 10));
+		jTextFieldRawData.setFont(italic);
+		jTextFieldRawData.setName("nj.ccseg.rawdata");
 		
 		container.add(jButtonWorkDirectory,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
@@ -126,7 +135,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(140, 10, 0, 0), 0, 0));
 		jButtonWorkDirectory.setPreferredSize(new java.awt.Dimension(120, 21));
-		jButtonWorkDirectory.setFont(new java.awt.Font("Albertus", Font.ITALIC, 10));
+		jButtonWorkDirectory.setFont(italic);
 		
 		container.add(jTextFieldWorkDirectory,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
@@ -134,7 +143,8 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(140, 160, 0, 0), 0, 0));
 		jTextFieldWorkDirectory.setPreferredSize(new java.awt.Dimension(280, 21));
-		jTextFieldWorkDirectory.setFont(new java.awt.Font("Albertus", Font.ITALIC, 10));
+		jTextFieldWorkDirectory.setFont(italic);
+		jTextFieldWorkDirectory.setName("nj.ccseg.workdirectory");
 		
 		jLabelCalibration = new JLabel();
 		container.add(jLabelCalibration,
@@ -143,7 +153,6 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(20, 10, 0, 0), 0, 0));
 		
-		//jLabelCalibration.setText("Voxel Calibration:");
 		calibration = new JPanel();
 		calibration.setLayout(new GridBagLayout());
 		
@@ -185,21 +194,10 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
 		super.setVisible(true);
 		
-		ActionListener wdListener = new WorkDirectoryListener();
-		jButtonWorkDirectory.addActionListener(wdListener);
-		ActionListener ddListener = new RawDataDirectoryListener();
-		jButtonRawData.addActionListener(ddListener);
-		ActionListener quitListener = new QuitListener(this);
-		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new StartListener(this);
-		jButtonStart.addActionListener(startListener);
-	}
-	
-	
-	/** @param args arguments */
-	public static void main(String[] args) {
-		ChromocenterSegmentationPipelineBatchDialog ccSegDialog = new ChromocenterSegmentationPipelineBatchDialog();
-		ccSegDialog.setLocationRelativeTo(null);
+		jButtonWorkDirectory.addActionListener(e -> chooseDirectory(jTextFieldWorkDirectory));
+		jButtonRawData.addActionListener(e -> chooseDirectory(jTextFieldRawData));
+		jButtonQuit.addActionListener(e -> dispose());
+		jButtonStart.addActionListener(e -> start());
 	}
 	
 	
@@ -238,11 +236,6 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 	
 	public String getRawDataDirectory() {
 		return jTextFieldRawData.getText();
-	}
-	
-	
-	public boolean isStart() {
-		return start;
 	}
 	
 	
@@ -299,8 +292,6 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 				calibration.add(readZCalibration, gc);
 				jLabelZCalibration.setVisible(true);
 				readZCalibration.setVisible(true);
-				
-				//pack();
 			} else {
 				jLabelXCalibration.setVisible(false);
 				jLabelYCalibration.setVisible(false);
@@ -319,96 +310,41 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 	
 	
 	/**
-	 *
+	 * Starts the segmentation process.
 	 */
-	private static class QuitListener implements ActionListener {
-		final ChromocenterSegmentationPipelineBatchDialog ccSegDialog;
-		
-		
-		/** @param ccSegDialog chromocenterSegmentationPipelineBatchDialog GUI */
-		QuitListener(ChromocenterSegmentationPipelineBatchDialog ccSegDialog) {
-			this.ccSegDialog = ccSegDialog;
+	private void start() {
+		try {
+			dialogListener.onStart();
+		} catch (AccessException | ExecutionException | ServiceException e) {
+			JOptionPane.showMessageDialog(this,
+			                              "An error occurred while starting the process: " + e.getMessage(),
+			                              "Error",
+			                              JOptionPane.ERROR_MESSAGE);
 		}
-		
-		
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			ccSegDialog.dispose();
-		}
-		
-	}
-	
-	/** Classes listener to interact with the several elements of the window */
-	private class StartListener implements ActionListener {
-		final ChromocenterSegmentationPipelineBatchDialog ccSegDialog;
-		
-		
-		/** @param ccSegDialog chromocenterSegmentationPipelineBatchDialog GUI */
-		StartListener(ChromocenterSegmentationPipelineBatchDialog ccSegDialog) {
-			this.ccSegDialog = ccSegDialog;
-		}
-		
-		
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			if (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(null,
-				                              "You did not choose a work directory or the raw data",
-				                              "Error",
-				                              JOptionPane.ERROR_MESSAGE);
-			} else {
-				start = true;
-				ccSegDialog.dispose();
-			}
-		}
-		
-	}
-	
-	/**
-	 *
-	 */
-	class WorkDirectoryListener implements ActionListener {
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			JFileChooser jFileChooser = new JFileChooser();
-			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int returnValue = jFileChooser.showOpenDialog(getParent());
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
-				jTextFieldWorkDirectory.setText(workDirectory);
-			}
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
-		
 	}
 	
 	
-	/**
-	 *
-	 */
-	class RawDataDirectoryListener implements ActionListener {
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			JFileChooser jFileChooser = new JFileChooser();
-			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int returnValue = jFileChooser.showOpenDialog(getParent());
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
-				jTextFieldRawData.setText(rawDataDirectory);
-			}
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+	private void chooseDirectory(JTextField textField) {
+		String pref = textField.getName();
+		if (pref.isEmpty()) {
+			pref = "nj.ccseg." + Prefs.DIR_IMAGE;
 		}
+		String previousDir = textField.getText();
+		if (previousDir.isEmpty()) {
+			previousDir = Prefs.get(pref, previousDir);
+		}
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		JFileChooser jFileChooser = new JFileChooser(previousDir);
+		jFileChooser.setDialogTitle("Select the Work Directory");
 		
+		jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnValue = jFileChooser.showOpenDialog(getParent());
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			String directory = jFileChooser.getSelectedFile().getAbsolutePath();
+			textField.setText(directory);
+		}
+		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 	
 }

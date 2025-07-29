@@ -19,7 +19,10 @@ package fr.igred.nucleus.plugins;
 
 import fr.igred.nucleus.core.ChromocentersEnhancement;
 import fr.igred.nucleus.dialogs.ChromocenterSegmentationPipelineBatchDialog;
+import fr.igred.nucleus.dialogs.IDialogListener;
 import fr.igred.nucleus.io.FileList;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.ImageStack;
@@ -33,77 +36,74 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 /**
  * @author Tristan Dubos and Axel Poulet
  */
-public class ChromocenterSegmentationBatchPlugin_ implements PlugIn {
+public class ChromocenterSegmentationBatchPlugin_ implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
+	private ChromocenterSegmentationPipelineBatchDialog ccSegDialog;
 	
 	/* This method is used by plugins.config */
 	public void run(String arg) {
-		ChromocenterSegmentationPipelineBatchDialog ccSegDialog = new ChromocenterSegmentationPipelineBatchDialog();
-		while (ccSegDialog.isShowing()) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				LOGGER.error("Interruption exception.", e);
-				Thread.currentThread().interrupt();
-			}
-		}
-		if (ccSegDialog.isStart()) {
-			FileList fileList     = new FileList();
-			File[]   tFileRawData = fileList.run(ccSegDialog.getRawDataDirectory());
-			if (fileList.isDirectoryOrFileExist(".+RawDataNucleus.+", tFileRawData) &&
-			    fileList.isDirectoryOrFileExist(".+SegmentedDataNucleus.+", tFileRawData)) {
-				List<String> segmentedNucImages = fileList.fileSearchList(".+SegmentedDataNucleus.+", tFileRawData);
-				String       workDirectory      = ccSegDialog.getWorkDirectory();
-				for (int i = 0; i < segmentedNucImages.size(); ++i) {
-					LOGGER.info("image {}/{}", i + 1, segmentedNucImages.size());
-					String pathImgSegmentedNuc = segmentedNucImages.get(i);
-					
-					String pathNucleusRaw = pathImgSegmentedNuc.replace("SegmentedDataNucleus", "RawDataNucleus");
-					LOGGER.info(pathNucleusRaw);
-					if (fileList.isDirectoryOrFileExist(pathNucleusRaw, tFileRawData)) {
-						ImagePlus imagePlusSegmented = IJ.openImage(pathImgSegmentedNuc);
-						ImagePlus imagePlusInput     = IJ.openImage(pathNucleusRaw);
-						GaussianBlur3D.blur(imagePlusInput, 0.25, 0.25, 1);
-						ImageStack imageStack = imagePlusInput.getStack();
-						int        max        = 0;
-						for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
-							for (int b = 0; b < imagePlusInput.getWidth(); ++b) {
-								for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
-									if (max < imageStack.getVoxel(b, j, k)) {
-										max = (int) imageStack.getVoxel(b, j, k);
-									}
+		ccSegDialog = new ChromocenterSegmentationPipelineBatchDialog(this);
+	}
+	
+	
+	@Override
+	public void onStart() throws AccessException, ServiceException, ExecutionException {
+		FileList fileList     = new FileList();
+		File[]   tFileRawData = fileList.run(ccSegDialog.getRawDataDirectory());
+		if (fileList.isDirectoryOrFileExist(".+RawDataNucleus.+", tFileRawData) &&
+		    fileList.isDirectoryOrFileExist(".+SegmentedDataNucleus.+", tFileRawData)) {
+			List<String> segmentedNucImages = fileList.fileSearchList(".+SegmentedDataNucleus.+", tFileRawData);
+			String       workDirectory      = ccSegDialog.getWorkDirectory();
+			for (int i = 0; i < segmentedNucImages.size(); ++i) {
+				LOGGER.info("image {}/{}", i + 1, segmentedNucImages.size());
+				String pathImgSegmentedNuc = segmentedNucImages.get(i);
+				
+				String pathNucleusRaw = pathImgSegmentedNuc.replace("SegmentedDataNucleus", "RawDataNucleus");
+				LOGGER.info(pathNucleusRaw);
+				if (fileList.isDirectoryOrFileExist(pathNucleusRaw, tFileRawData)) {
+					ImagePlus imagePlusSegmented = IJ.openImage(pathImgSegmentedNuc);
+					ImagePlus imagePlusInput     = IJ.openImage(pathNucleusRaw);
+					GaussianBlur3D.blur(imagePlusInput, 0.25, 0.25, 1);
+					ImageStack imageStack = imagePlusInput.getStack();
+					int        max        = 0;
+					for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
+						for (int b = 0; b < imagePlusInput.getWidth(); ++b) {
+							for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
+								if (max < imageStack.getVoxel(b, j, k)) {
+									max = (int) imageStack.getVoxel(b, j, k);
 								}
 							}
 						}
-						IJ.setMinAndMax(imagePlusInput, 0, max);
-						IJ.run(imagePlusInput, "Apply LUT", "stack");
-						Calibration calibration = new Calibration();
-						if (ccSegDialog.getCalibrationStatus()) {
-							calibration.pixelWidth = ccSegDialog.getXCalibration();
-							calibration.pixelHeight = ccSegDialog.getYCalibration();
-							calibration.pixelDepth = ccSegDialog.getZCalibration();
-							calibration.setUnit(ccSegDialog.getUnit());
-						} else {
-							calibration = imagePlusInput.getCalibration();
-						}
-						ImagePlus imagePlusContrast = ChromocentersEnhancement.applyEnhanceChromocenters(imagePlusInput, imagePlusSegmented);
-						imagePlusContrast.setTitle(imagePlusInput.getTitle());
-						imagePlusContrast.setCalibration(calibration);
-						saveFile(imagePlusContrast, workDirectory + File.separator + "ContrastDataNucleus");
 					}
+					IJ.setMinAndMax(imagePlusInput, 0, max);
+					IJ.run(imagePlusInput, "Apply LUT", "stack");
+					Calibration calibration = new Calibration();
+					if (ccSegDialog.getCalibrationStatus()) {
+						calibration.pixelWidth = ccSegDialog.getXCalibration();
+						calibration.pixelHeight = ccSegDialog.getYCalibration();
+						calibration.pixelDepth = ccSegDialog.getZCalibration();
+						calibration.setUnit(ccSegDialog.getUnit());
+					} else {
+						calibration = imagePlusInput.getCalibration();
+					}
+					ImagePlus imagePlusContrast = ChromocentersEnhancement.applyEnhanceChromocenters(imagePlusInput, imagePlusSegmented);
+					imagePlusContrast.setTitle(imagePlusInput.getTitle());
+					imagePlusContrast.setCalibration(calibration);
+					saveFile(imagePlusContrast, workDirectory + File.separator + "ContrastDataNucleus");
 				}
-				LOGGER.info("End of the chromocenter segmentation , the results are in {}",
-				            ccSegDialog.getWorkDirectory());
-			} else {
-				IJ.showMessage("There are no the two subdirectories (See the directory name) or subDirectories are empty");
 			}
+			LOGGER.info("End of the chromocenter segmentation , the results are in {}",
+			            ccSegDialog.getWorkDirectory());
+		} else {
+			IJ.showMessage("There are no the two subdirectories (See the directory name) or subDirectories are empty");
 		}
 	}
 	

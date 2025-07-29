@@ -365,17 +365,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	}
 	
 	
-	/**
-	 * Constructor for segmentation dialog
-	 *
-	 * @param args arguments
-	 */
-	public static void main(String[] args) {
-		ChromocenterSegmentationPipelineBatchDialog ccSegDialog = new ChromocenterSegmentationPipelineBatchDialog();
-		ccSegDialog.setLocationRelativeTo(null);
-	}
-	
-	
 	public boolean isOmeroEnabled() {
 		return useOMERO;
 	}
