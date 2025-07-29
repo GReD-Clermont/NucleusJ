@@ -46,7 +46,7 @@ public class OutputTextFile extends FilesNames {
 			int i = 0;
 			while (fileExists()) {
 				setFullPathFile(prefixNameFile() + "-" + i + "." + FilenameUtils.getExtension(fileName));
-				checkFileExists();
+				fileExists = checkFileExists(fullPathFile);
 				i++;
 			}
 		}

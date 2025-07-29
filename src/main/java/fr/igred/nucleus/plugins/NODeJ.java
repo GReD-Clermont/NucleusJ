@@ -144,7 +144,7 @@ public class NODeJ implements PlugIn, IDialogListener {
 		
 		ChromocenterCalling ccAnalyse = new ChromocenterCalling(ccAnalyseParams);
 		try {
-			ccAnalyse.runSeveralImages2();
+			ccAnalyse.runSeveralImages();
 		} catch (IOException | FormatException e) {
 			LOGGER.error("Error during chromocenter segmentation", e);
 		}

@@ -25,7 +25,6 @@ import ij.ImageStack;
 import ij.measure.Calibration;
 import ij.plugin.GaussianBlur3D;
 import ij.process.FloatProcessor;
-import ij.process.ImageProcessor;
 import inra.ijpb.binary.BinaryImages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,22 +228,6 @@ public class ChromocenterSegmentation {
 	/**
 	 *
 	 */
-	private void setNbPixelNuc2D() {
-		ImageProcessor ip = segNuc[0].getProcessor();
-		for (int i = 0; i < raw[0].getWidth(); ++i) {
-			for (int j = 0; j < raw[0].getHeight(); ++j) {
-				if (ip.get(i, j) > 1) {
-					this.nbPixelNuc++;
-				}
-			}
-			
-		}
-	}
-	
-	
-	/**
-	 *
-	 */
 	private void setNbPixelNuc3D() {
 		ImageStack isSeg = segNuc[0].getStack();
 		for (int k = 0; k < raw[0].getNSlices(); ++k) {
@@ -302,17 +285,6 @@ public class ChromocenterSegmentation {
 		return raw[0].getCalibration().pixelWidth *
 		       raw[0].getCalibration().pixelHeight *
 		       raw[0].getCalibration().pixelDepth;
-	}
-	
-	
-	/**
-	 * Compute volume voxel of current image analysed
-	 *
-	 * @return voxel volume
-	 */
-	public double getPixelSurface2D() {
-		return raw[0].getCalibration().pixelWidth *
-		       raw[0].getCalibration().pixelHeight;
 	}
 	
 }

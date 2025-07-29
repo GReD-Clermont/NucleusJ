@@ -30,16 +30,16 @@ public class FilesNames {
 	protected String  fullPathFile = "";
 	/** Path file input */
 	private   String  pathFile     = "";
-	private   boolean fileExists   = true;
+	protected boolean fileExists;
 	
 	
 	/** Constructor to create file object */
 	public FilesNames(String filePath) {
 		this.fullPathFile = filePath;
 		File file = new File(filePath);
-		this.pathFile = file.getParent() + File.separator;
-		this.fileName = file.getName();
-		checkFileExists();
+		pathFile = file.getParent() + File.separator;
+		fileName = file.getName();
+		fileExists = checkFileExists(fullPathFile);
 	}
 	
 	
@@ -48,12 +48,14 @@ public class FilesNames {
 	}
 	
 	
-	/** Method to check if file exists */
-	public void checkFileExists() {
+	/**
+	 * Method to check if file exists
+	 *
+	 * @return Whether the given file exists.
+	 */
+	public static boolean checkFileExists(String fullPathFile) {
 		File file = new File(fullPathFile);
-		if (!file.exists()) {
-			this.fileExists = false;
-		}
+		return file.exists();
 	}
 	
 	

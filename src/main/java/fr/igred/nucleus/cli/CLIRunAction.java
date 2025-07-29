@@ -127,7 +127,7 @@ public class CLIRunAction {
 			            params.getInputFolder(),
 			            params.getSegmentedInputFolder(),
 			            params.getOutputFolder());
-			ccCalling.runSeveralImages2();
+			ccCalling.runSeveralImages();
 		} catch (IOException | FormatException e) {
 			LOGGER.error("An error occurred during chromocenter segmentation.", e);
 		}
