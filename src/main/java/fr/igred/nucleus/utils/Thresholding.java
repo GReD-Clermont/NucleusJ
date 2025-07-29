@@ -18,6 +18,7 @@
 package fr.igred.nucleus.utils;
 
 import ij.ImagePlus;
+import ij.ImageStack;
 import ij.plugin.ContrastEnhancer;
 import ij.process.AutoThresholder;
 import ij.process.ImageConverter;
@@ -40,7 +41,6 @@ public final class Thresholding {
 	 * @param imagePlusInput raw image
 	 *
 	 * @return OTSU threshold
-	 * <p> TODO STRUCTURES PROBABLY NEEDED
 	 */
 	public static int computeOTSUThreshold(ImagePlus imagePlusInput) {
 		AutoThresholder autoThresholder = new AutoThresholder();
@@ -59,11 +59,11 @@ public final class Thresholding {
 	
 	
 	/**
-	 * TODO COMMENT !!!! 2D 3D
+	 * Enhances the contrast of an image and converts it to 8-bit grayscale.
 	 *
-	 * @param imagePlusInput
+	 * @param imagePlusInput the input image to be processed
 	 *
-	 * @return
+	 * @return the processed ImagePlus object with enhanced contrast and converted to 8-bit grayscale
 	 */
 	public static ImagePlus contrastAnd8bits(ImagePlus imagePlusInput) {
 		ContrastEnhancer enh = new ContrastEnhancer();
@@ -82,6 +82,59 @@ public final class Thresholding {
 			imageConverter.convertToGray8();
 		}
 		return imagePlusInput;
+	}
+	
+	
+	/**
+	 * Creates a segmented image (mask) from a given threshold.
+	 *
+	 * @param input     raw image
+	 * @param threshold threshold value for the segmentation
+	 *
+	 * @return segmented image
+	 */
+	public static ImagePlus createMask(ImagePlus input, double threshold) {
+		ImagePlus mask = input.duplicate();
+		mask.setTitle(input.getTitle());
+		mask.getProcessor().createMask();
+		binarize(mask, threshold);
+		return mask;
+	}
+	
+	
+	/**
+	 * Converts an image to a mask using a given threshold.
+	 *
+	 * @param input     raw image
+	 * @param threshold threshold value for the segmentation
+	 */
+	public static void binarize(ImagePlus input, double threshold) {
+		convertToMask(input, threshold, Double.MAX_VALUE);
+	}
+	
+	
+	/**
+	 * Converts an image to a mask using a given threshold.
+	 *
+	 * @param input          raw image
+	 * @param lowerThreshold lower threshold value
+	 * @param upperThreshold upper threshold value
+	 */
+	public static void convertToMask(ImagePlus input, double lowerThreshold, double upperThreshold) {
+		ImageStack stack = input.getStack();
+		for (int z = 0; z < input.getStackSize(); ++z) {
+			for (int x = 0; x < input.getWidth(); ++x) {
+				for (int y = 0; y < input.getHeight(); ++y) {
+					double voxelValue = stack.getVoxel(x, y, z);
+					if (voxelValue >= lowerThreshold && voxelValue <= upperThreshold) {
+						stack.setVoxel(x, y, z, 255);
+					} else {
+						stack.setVoxel(x, y, z, 0);
+					}
+				}
+			}
+		}
+		stack.setBitDepth(8); // Ensure mask is 8-bit
 	}
 	
 }

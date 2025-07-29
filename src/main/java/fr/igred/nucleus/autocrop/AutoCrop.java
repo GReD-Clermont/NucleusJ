@@ -59,6 +59,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
+import static fr.igred.nucleus.utils.Thresholding.binarize;
 import static fr.igred.nucleus.utils.Thresholding.contrastAnd8bits;
 
 
@@ -270,7 +271,7 @@ public class AutoCrop {
 			}
 		}
 		this.otsuThreshold = thresh;
-		this.imageSeg = generateSegmentedImage(imageSeg, thresh);
+		binarize(imageSeg, thresh);
 	}
 	
 	
@@ -563,34 +564,6 @@ public class AutoCrop {
 	 */
 	public List<String> getFileCoordinates() {
 		return new ArrayList<>(boxCoordinates);
-	}
-	
-	
-	/**
-	 * Create binary image with the threshold value gave in input
-	 *
-	 * @param imagePlusInput ImagePlus raw image to binarize
-	 * @param threshold      integer threshold value
-	 *
-	 * @return The segmented binary image.
-	 */
-	private static ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
-		ImageStack imageStackInput     = imagePlusInput.getStack();
-		ImagePlus  imagePlusSegmented  = imagePlusInput.duplicate();
-		ImageStack imageStackSegmented = imagePlusSegmented.getStack();
-		for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
-			for (int i = 0; i < imagePlusInput.getWidth(); ++i) {
-				for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
-					double voxelValue = imageStackInput.getVoxel(i, j, k);
-					if (voxelValue >= threshold) {
-						imageStackSegmented.setVoxel(i, j, k, 255);
-					} else {
-						imageStackSegmented.setVoxel(i, j, k, 0);
-					}
-				}
-			}
-		}
-		return imagePlusSegmented;
 	}
 	
 	

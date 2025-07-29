@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.Map;
 
+import static fr.igred.nucleus.utils.Thresholding.binarize;
+
 
 /**
  * Parent class for chromocenter  segmentation
@@ -55,7 +57,6 @@ public class ChromocenterSegmentation {
 	
 	private double avgNucIntensity;
 	private double stdDevNucIntensity;
-	private double threshold;
 	
 	
 	/**
@@ -72,6 +73,7 @@ public class ChromocenterSegmentation {
 		this.raw = raw;
 		this.segNuc = segNuc;
 		this.output = outputFileName;
+		this.nbPixelNuc = 0;
 		setNbPixelNuc3D();
 		int initialV = params.getNeighbours();
 		LOGGER.info("\t{}", initialV);
@@ -111,9 +113,10 @@ public class ChromocenterSegmentation {
 		ImageSaver.saveFile(imageGradient, pathGradient);
 		computeAverage3D(imageGradient);
 		computeStdDev3D(imageGradient);
-		this.threshold = avgNucIntensity + factor * stdDevNucIntensity;
+		double threshold = avgNucIntensity + factor * stdDevNucIntensity;
 		LOGGER.info("{} {} avg {} std {}", output, threshold, avgNucIntensity, stdDevNucIntensity);
-		imageGradient = binarize3D(imageGradient);
+		binarize(imageGradient, threshold);
+		imageGradient = BinaryImages.componentsLabeling(imageGradient, 26, 16);
 		imageGradient.setCalibration(cal);
 		if (params.isSizeFiltered()) {
 			imageGradient = componentSizeFilter3D(imageGradient);
@@ -250,36 +253,9 @@ public class ChromocenterSegmentation {
 					if (isSeg.getVoxel(i, j, k) > 1) {
 						this.nbPixelNuc++;
 					}
-					
 				}
 			}
 		}
-	}
-	
-	
-	/**
-	 * Method to binarize image with threshold
-	 *
-	 * @param img : image gradient
-	 *
-	 * @return binarized image
-	 */
-	private ImagePlus binarize3D(ImagePlus img) {
-		ImagePlus  imgCc = img.duplicate();
-		ImageStack is    = imgCc.getStack();
-		for (int k = 0; k < raw[0].getNSlices(); ++k) {
-			for (int i = 0; i < raw[0].getWidth(); ++i) {
-				for (int j = 0; j < raw[0].getHeight(); ++j) {
-					if (is.getVoxel(i, j, k) > threshold) {
-						is.setVoxel(i, j, k, 255);
-					} else {
-						is.setVoxel(i, j, k, 0);
-					}
-				}
-			}
-		}
-		imgCc = BinaryImages.componentsLabeling(imgCc, 26, 16);
-		return imgCc;
 	}
 	
 	
@@ -322,7 +298,7 @@ public class ChromocenterSegmentation {
 	 *
 	 * @return voxel volume
 	 */
-	public double getVoxelVolume3D() {
+	private double getVoxelVolume3D() {
 		return raw[0].getCalibration().pixelWidth *
 		       raw[0].getCalibration().pixelHeight *
 		       raw[0].getCalibration().pixelDepth;
