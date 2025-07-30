@@ -23,7 +23,6 @@ import ij.plugin.ContrastEnhancer;
 import ij.process.AutoThresholder;
 import ij.process.ImageConverter;
 import ij.process.ImageStatistics;
-import ij.process.StackConverter;
 import ij.process.StackStatistics;
 
 
@@ -74,13 +73,8 @@ public final class Thresholding {
 		StackStatistics statistics = new StackStatistics(imagePlusInput);
 		imagePlusInput.setDisplayRange(statistics.min, statistics.max);
 		
-		if (imagePlusInput.getNSlices() > 1) { // 3D
-			StackConverter stackConverter = new StackConverter(imagePlusInput);
-			stackConverter.convertToGray8();
-		} else { // 2D
-			ImageConverter imageConverter = new ImageConverter(imagePlusInput);
-			imageConverter.convertToGray8();
-		}
+		ImageConverter imageConverter = new ImageConverter(imagePlusInput);
+		imageConverter.convertToGray8();
 		return imagePlusInput;
 	}
 	
