@@ -20,7 +20,6 @@ package fr.igred.nucleus.gui;
 
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
-import fr.igred.nucleus.dialogs.IDialogListener;
 import ij.IJ;
 import ij.Prefs;
 

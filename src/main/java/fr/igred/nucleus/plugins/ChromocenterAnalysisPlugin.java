@@ -24,8 +24,8 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.nucleus.core.ChromocenterAnalysis;
 import fr.igred.nucleus.core.NucleusChromocentersAnalysis;
-import fr.igred.nucleus.dialogs.ChromocentersAnalysisPipelineBatchDialog;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.gui.ChromocenterAnalysisDialog;
+import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.nucleus.io.FileList;
 import ij.IJ;
 import ij.ImagePlus;
@@ -52,11 +52,11 @@ import java.util.stream.Stream;
 /**
  * @author Tristan Dubos and Axel Poulet
  */
-public class ChromocentersAnalysisBatchPlugin implements PlugIn, IDialogListener {
+public class ChromocenterAnalysisPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private ChromocentersAnalysisPipelineBatchDialog chromocentersPipelineBatchDialog;
+	private ChromocenterAnalysisDialog chromocentersPipelineBatchDialog;
 	
 	
 	public static void deleteFolder(String folderPathString) throws IOException {
@@ -83,7 +83,7 @@ public class ChromocentersAnalysisBatchPlugin implements PlugIn, IDialogListener
 		if (IJ.versionLessThan("1.32c")) {
 			return;
 		}
-		chromocentersPipelineBatchDialog = new ChromocentersAnalysisPipelineBatchDialog(this);
+		chromocentersPipelineBatchDialog = new ChromocenterAnalysisDialog(this);
 	}
 	
 	

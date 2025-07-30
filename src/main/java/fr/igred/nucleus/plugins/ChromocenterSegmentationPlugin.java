@@ -17,9 +17,9 @@
  */
 package fr.igred.nucleus.plugins;
 
-import fr.igred.nucleus.core.ChromocentersEnhancement;
-import fr.igred.nucleus.dialogs.ChromocenterSegmentationPipelineBatchDialog;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.core.ChromocenterEnhancement;
+import fr.igred.nucleus.gui.ChromocenterSegmentationDialog;
+import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.nucleus.io.FileList;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
@@ -42,15 +42,15 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Tristan Dubos and Axel Poulet
  */
-public class ChromocenterSegmentationBatchPlugin implements PlugIn, IDialogListener {
+public class ChromocenterSegmentationPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private ChromocenterSegmentationPipelineBatchDialog ccSegDialog;
+	private ChromocenterSegmentationDialog ccSegDialog;
 	
 	/* This method is used by plugins.config */
 	public void run(String arg) {
-		ccSegDialog = new ChromocenterSegmentationPipelineBatchDialog(this);
+		ccSegDialog = new ChromocenterSegmentationDialog(this);
 	}
 	
 	
@@ -112,8 +112,8 @@ public class ChromocenterSegmentationBatchPlugin implements PlugIn, IDialogListe
 		} else {
 			calibration = imagePlusInput.getCalibration();
 		}
-		ImagePlus imagePlusContrast = ChromocentersEnhancement.applyEnhanceChromocenters(imagePlusInput,
-		                                                                                 imagePlusSegmented);
+		ImagePlus imagePlusContrast = ChromocenterEnhancement.applyEnhanceChromocenters(imagePlusInput,
+		                                                                                imagePlusSegmented);
 		imagePlusContrast.setTitle(imagePlusInput.getTitle());
 		imagePlusContrast.setCalibration(calibration);
 		saveFile(imagePlusContrast, workDirectory + File.separator + "ContrastDataNucleus");

@@ -1,6 +1,6 @@
 /*
  * NucleusJ
- * Copyright (C) 2025 iGReD
+ * Copyright (C) 2014-2025 iGReD
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package fr.igred.nucleus.gui;
 
-/** This package contains GUI classes to create dialogs and windows. */
-package fr.igred.nucleus.dialogs;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.ServiceException;
+
+import java.util.concurrent.ExecutionException;
+
+
+@FunctionalInterface
+public interface IDialogListener {
+	void onStart() throws AccessException, ServiceException, ExecutionException;
+	
+}

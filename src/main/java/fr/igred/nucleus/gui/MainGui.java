@@ -15,13 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.dialogs;
+package fr.igred.nucleus.gui;
 
 
 import fr.igred.nucleus.Version;
 import fr.igred.nucleus.plugins.AutocropPlugin;
-import fr.igred.nucleus.plugins.ChromocenterSegmentationBatchPlugin;
-import fr.igred.nucleus.plugins.ChromocentersAnalysisBatchPlugin;
+import fr.igred.nucleus.plugins.ChromocenterSegmentationPlugin;
+import fr.igred.nucleus.plugins.ChromocenterAnalysisPlugin;
 import fr.igred.nucleus.plugins.ComputeParametersPlugin;
 import fr.igred.nucleus.plugins.CropFromCoordinatesPlugin;
 import fr.igred.nucleus.plugins.GenerateOverlayPlugin;
@@ -101,8 +101,8 @@ public class MainGui extends JFrame {
 		OVERLAY("Overlay", new GenerateOverlayPlugin()),
 		COMPUTE_PARAMS("Compute Parameters Nuc", new ComputeParametersPlugin()),
 		NODEJ("NODeJ", new NODeJ()),
-		CC_SEGMENT("Chromocenter Segmentation", new ChromocenterSegmentationBatchPlugin()),
-		COMPUTE_CC_PARAMS("Compute Parameters Spots", new ChromocentersAnalysisBatchPlugin());
+		CC_SEGMENT("Chromocenter Segmentation", new ChromocenterSegmentationPlugin()),
+		COMPUTE_CC_PARAMS("Compute Parameters Spots", new ChromocenterAnalysisPlugin());
 		
 		private final String label;
 		private final PlugIn plugin;

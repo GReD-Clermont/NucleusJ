@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.dialogs;
+package fr.igred.nucleus.gui;
 
 import fr.igred.nucleus.Version;
 import fr.igred.omero.exception.AccessException;
@@ -37,7 +37,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -53,48 +52,48 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 
-public class GenerateOverlayDialog extends JFrame implements ActionListener, ItemListener {
-	private static final long serialVersionUID = 4963585921321275469L;
+public class CropFromCoordinatesDialog extends JFrame implements ActionListener, ItemListener {
+	private static final long serialVersionUID = -1113846613817254789L;
+	
+	private final transient IDialogListener listener;
 	
 	private static final String INPUT_CHOOSER  = "inputChooser";
-	private static final String INPUT_CHOOSER2 = "inputChooser2";
 	private static final String OUTPUT_CHOOSER = "outputChooser";
 	
-	private final JFileChooser fc = new JFileChooser();
-	
-	private final transient IDialogListener dialogListener;
-	
-	private final JRadioButton    omeroYesButton     = new JRadioButton("Yes");
-	private final JRadioButton    omeroNoButton      = new JRadioButton("No");
-	private final JPanel          omeroModeLayout    = new JPanel();
-	private final JPanel          localModeLayout    = new JPanel();
-	private final JTextField      jTextFieldHostname = new JTextField();
-	private final JTextField      jTextFieldPort     = new JTextField();
-	private final JTextField      jTextFieldUsername = new JTextField();
-	private final JPasswordField  jPasswordField     = new JPasswordField();
-	private final JTextField      jTextFieldGroup    = new JTextField();
-	
-	private final String[] dataTypes = {"Dataset"};
+	private final JTextField     jImageChooser      = new JTextField();
+	private final JTextField     jCoordFileChooser  = new JTextField();
+	private final JFileChooser   fc                 = new JFileChooser();
+	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
+	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
+	private final JPanel         omeroModeLayout    = new JPanel();
+	private final JPanel         localModeLayout    = new JPanel();
+	private final JTextField     jTextFieldHostname = new JTextField();
+	private final JTextField     jTextFieldPort     = new JTextField();
+	private final JTextField     jTextFieldUsername = new JTextField();
+	private final JPasswordField jPasswordField     = new JPasswordField();
+	private final JTextField     jTextFieldGroup    = new JTextField();
+	private final String[]       dataTypes          = {"Project", "Dataset", "Tag", "Image"};
 	
 	private final JComboBox<String> jComboBoxDataType       = new JComboBox<>(dataTypes);
 	private final JComboBox<String> jComboBoxDataTypeToCrop = new JComboBox<>(dataTypes);
 	
 	private final JTextField jTextFieldSourceID      = new JTextField();
-	private final JTextField zProjectionTextField    = new JTextField();
+	private final JTextField jTextFieldToCropID      = new JTextField();
 	private final JTextField jTextFieldOutputProject = new JTextField();
-	private final JTextField dicFileChooser         = new JTextField();
-	private final JTextField zProjectionFileChooser = new JTextField();
-	private final Container  container;
+	private final JTextField jTextFieldChannelToCrop = new JTextField();
+	private final JTextField jInputFileChooser       = new JTextField();
 	
-	private boolean start;
+	private final Container container;
+	
 	private boolean useOMERO;
 	
 	
-	public GenerateOverlayDialog(IDialogListener dialogListener) {
-		this.dialogListener = dialogListener;
-		String host     = Prefs.get("omero.host", "omero.igred.fr");
-		long   port     = Prefs.getInt("omero.port", 4064);
+	public CropFromCoordinatesDialog(IDialogListener listener) {
+		String host     = Prefs.get("omero.host", "omero.gred-clermont.fr");
+		long   port     = Prefs.getInt("omero.port", 4);
 		String username = Prefs.get("omero.user", "");
+		
+		this.listener = listener;
 		
 		JButton jButtonStart = new JButton("Start");
 		jButtonStart.setBackground(new Color(0x2dce98));
@@ -102,8 +101,9 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		JButton jButtonQuit = new JButton("Quit");
 		jButtonQuit.setBackground(Color.red);
 		jButtonQuit.setForeground(Color.white);
-		super.setTitle("Generate Overlay - NucleusJ - v" + Version.get());
-		super.setMinimumSize(new Dimension(500, 390));
+		super.setTitle("Crop From Coordinate - NucleusJ - v" + Version.get());
+		super.setMinimumSize(new Dimension(500, 410));
+		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		container = super.getContentPane();
 		LayoutManager mainBoxLayout = new BoxLayout(super.getContentPane(), BoxLayout.PAGE_AXIS);
@@ -126,6 +126,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		radioOmeroPanel.add(jLabelOmero);
 		radioOmeroPanel.add(omeroYesButton);
 		radioOmeroPanel.add(omeroNoButton);
+		//radioOmeroPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		container.add(radioOmeroPanel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                                      GridBagConstraints.FIRST_LINE_START,
 		                                                      GridBagConstraints.NONE,
@@ -141,46 +142,24 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		
-		JLabel jLabelInput = new JLabel("Path to DIC file:");
+		JLabel jLabelInput = new JLabel("Path to coordinate file:");
 		localPanel.add(jLabelInput, c);
 		c.gridx = 1;
 		c.insets = new Insets(0, 0, 0, 20);
 		
-		localPanel.add(dicFileChooser, c);
-		dicFileChooser.setMaximumSize(new Dimension(10000, 20));
-		dicFileChooser.setSize(new Dimension(180, 20));
-		dicFileChooser.setText("path\\DIC Folder\\");
+		localPanel.add(jInputFileChooser, c);
+		jInputFileChooser.setMaximumSize(new Dimension(10000, 20));
+		jInputFileChooser.setSize(new Dimension(180, 20));
+		jInputFileChooser.setText("path\\coordinate file_tab_path\\image");
 		
-		JButton sourceButton = new JButton("....");
-		sourceButton.setSize(new Dimension(20, 18));
+		JButton sourceButton = new JButton("...");
+		sourceButton.setSize(new Dimension(20, 20));
 		sourceButton.addActionListener(this);
 		sourceButton.setName(INPUT_CHOOSER);
 		c.insets = new Insets(0, 0, 0, 0);
 		c.gridx = 2;
 		
 		localPanel.add(sourceButton, c);
-		
-		JLabel jLabelInput2 = new JLabel("Path to Z projection file:");
-		c.gridx = 0;
-		c.gridy = 3;
-		c.insets = new Insets(0, 0, 0, 20);
-		localPanel.add(jLabelInput2, c);
-		c.gridx = 1;
-		c.gridy = 3;
-		localPanel.add(zProjectionFileChooser, c);
-		zProjectionFileChooser.setMaximumSize(new Dimension(10000, 20));
-		zProjectionFileChooser.setSize(new Dimension(180, 20));
-		zProjectionFileChooser.setText("path\\Z projection Folder\\");
-		
-		JButton sourceButton2 = new JButton("...");
-		sourceButton2.setSize(new Dimension(20, 20));
-		sourceButton2.addActionListener(this);
-		sourceButton2.setName(INPUT_CHOOSER2);
-		c.insets = new Insets(0, 0, 0, 0);
-		c.gridx = 2;
-		c.gridy = 3;
-		
-		localPanel.add(sourceButton2, c);
 		
 		localPanel.setBorder(padding);
 		localModeLayout.add(localPanel);
@@ -248,7 +227,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Z Projection:");
+		JLabel jLabelSource = new JLabel("Image Source:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
@@ -259,19 +238,26 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 6;
-		JLabel jLabelToCrop = new JLabel("DIC:");
+		JLabel jLabelToCrop = new JLabel("Image To Crop:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelToCrop, c);
 		c.gridx = 1;
 		omeroPanel.add(jComboBoxDataTypeToCrop, c);
 		c.gridx = 2;
-		omeroPanel.add(zProjectionTextField, c);
-		zProjectionTextField.setMaximumSize(new Dimension(20000, 20));
-		
+		omeroPanel.add(jTextFieldToCropID, c);
+		jTextFieldToCropID.setMaximumSize(new Dimension(20000, 20));
 		
 		c.gridy = 7;
-		JLabel jLabelOutputProject = new JLabel("Output Project:");
+		JLabel channelToCrop = new JLabel("Channel To Crop:");
+		c.gridx = 0;
+		omeroPanel.add(channelToCrop, c);
+		c.gridx = 1;
+		jTextFieldToCropID.setMaximumSize(new Dimension(20, 20));
+		omeroPanel.add(jTextFieldChannelToCrop, c);
+		
+		c.gridy = 8;
+		JLabel jLabelOutputProject = new JLabel("Output Dataset:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelOutputProject, c);
@@ -282,7 +268,60 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		
 		omeroPanel.setBorder(padding);
 		omeroModeLayout.add(omeroPanel);
-		
+
+
+        /*/\*\
+        ------------------------------ Coordinate file -----------------------------------------
+        \*\/*/
+
+        /*/\*\
+        ------------------------------ Image + coordinates -----------------------------------------
+        \*\/*/
+
+
+        /*
+        JLabel imageFileLabel = new JLabel();
+        container.add(imageFileLabel, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+                new Insets(10, 10, 0, 0), 0, 0));
+        imageFileLabel.setText("Path to image:");
+
+        container.add(jImageChooser, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+                new Insets(30, 10, 0, 0), 0, 0));
+        jImageChooser.setPreferredSize(new java.awt.Dimension(300, 20));
+        jImageChooser.setMinimumSize(new java.awt.Dimension(300, 20));
+
+        imageButton = new JButton("...");
+        container.add(linkFileButton, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+                new Insets(30, 330, 0, 0), 0, 0));
+        imageButton.addActionListener(this);
+        imageButton.setName(imageChooserName);
+
+        jLabelCoord = new JLabel();
+        container.add(jLabelCoord, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+                new Insets(10, 10, 0, 0), 0, 0));
+        jLabelCoord.setText("Path to coordinates:");
+
+        container.add(jCoordFileChooser, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+                new Insets(30, 10, 0, 0), 0, 0));
+        jCoordFileChooser.setPreferredSize(new java.awt.Dimension(300, 20));
+        jCoordFileChooser.setMinimumSize(new java.awt.Dimension(300, 20));
+
+        coordButton = new JButton("...");
+        container.add(coordButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
+                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
+                new Insets(30, 330, 0, 0), 0, 0));
+        coordButton.addActionListener(this);
+        coordButton.setName(coordChooserName);
+        */
+
+        /*/\*\
+        ------------------------------ Buttons -----------------------------------------
+        \*\/*/
 		
 		// Start/Quit buttons
 		
@@ -295,36 +334,42 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		startQuitPanel.setBorder(padding2);
 		container.add(startQuitPanel, 2);
 		
-		
-		jButtonQuit.addActionListener(this::quit);
-		jButtonStart.addActionListener(this::start);
+		jButtonQuit.addActionListener(e -> dispose());
+		jButtonStart.addActionListener(e -> start());
 		super.setVisible(true);
-		
 		
 		// DEFAULT VALUES FOR TESTING :
 		jTextFieldHostname.setText(host);
 		jTextFieldPort.setText(String.valueOf(port));
+		
 		jTextFieldUsername.setText(username);
 		jTextFieldGroup.setText("553");
 		jPasswordField.setText("");
-		jTextFieldSourceID.setText(""); //dic
-		zProjectionTextField.setText("");
+		jComboBoxDataType.setSelectedIndex(3);
+		jComboBoxDataTypeToCrop.setSelectedIndex(3);
+		jTextFieldSourceID.setText("");
+		jTextFieldToCropID.setText("");
 		jTextFieldOutputProject.setText("");
 	}
 	
 	
-	public boolean isStart() {
-		return start;
+	public String getLink() {
+		return jInputFileChooser.getText();
 	}
 	
 	
-	public String getDICInput() {
-		return dicFileChooser.getText();
+	public String getImage() {
+		return jImageChooser.getText();
 	}
 	
 	
-	public String getZprojectionInput() {
-		return zProjectionFileChooser.getText();
+	public String getCoord() {
+		return jCoordFileChooser.getText();
+	}
+	
+	
+	public String getInput() {
+		return jInputFileChooser.getText();
 	}
 	
 	
@@ -348,17 +393,22 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	}
 	
 	
-	public String getzProjectionID() {
-		return zProjectionTextField.getText();
+	public String getToCropID() {
+		return jTextFieldToCropID.getText();
 	}
 	
 	
-	public String getDICDataType() {
+	public String getChannelToCrop() {
+		return jTextFieldChannelToCrop.getText();
+	}
+	
+	
+	public String getDataType() {
 		return (String) jComboBoxDataType.getSelectedItem();
 	}
 	
 	
-	public String getZprojectionDataType() {
+	public String getDataTypeToCrop() {
 		return (String) jComboBoxDataTypeToCrop.getSelectedItem();
 	}
 	
@@ -385,30 +435,21 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	
 	public void actionPerformed(ActionEvent e) {
 		
-		if (((Component) e.getSource()).getName().equals(INPUT_CHOOSER)) {
-			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-		}
-		if (((Component) e.getSource()).getName().equals(INPUT_CHOOSER2)) {
+		if (((JButton) e.getSource()).getName().equals(INPUT_CHOOSER)) {
 			fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		}
 		fc.setAcceptAllFileFilterUsed(false);
 		
 		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			switch (((Component) e.getSource()).getName()) {
+			switch (((JButton) e.getSource()).getName()) {
 				case INPUT_CHOOSER:
 					File selectedInput = fc.getSelectedFile();
-					dicFileChooser.setText(selectedInput.getPath());
-					break;
-				case INPUT_CHOOSER2:
-					File selectedInput2 = fc.getSelectedFile();
-					zProjectionFileChooser.setText(selectedInput2.getPath());
+					jInputFileChooser.setText(selectedInput.getPath());
 					break;
 				case OUTPUT_CHOOSER:
 					File selectedOutput = fc.getSelectedFile();
 					jTextFieldOutputProject.setText(selectedOutput.getPath());
 					break;
-				default:
-					throw new IllegalArgumentException("Unknown action source: " + e.getSource());
 			}
 		}
 		fc.setSelectedFile(null);
@@ -434,18 +475,14 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		validate();
 		repaint();
 	}
-		
-		
-	private void quit(ActionEvent actionEvent) {
-			dispose();
-		}
-		
-		
-	private void start(ActionEvent actionEvent) {
-		start = true;
+	
+	/**
+	 * Disposes the dialog and starts the process.
+	 */
+	private void start() {
 		dispose();
 		try {
-			dialogListener.onStart();
+			listener.onStart();
 		} catch (AccessException | ServiceException | ExecutionException e) {
 			IJ.error("Error starting the process", e.getMessage());
 		}

@@ -22,7 +22,7 @@ import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.nucleus.gui.GuiAnalysis;
 import fr.igred.nucleus.process.ChromocenterCalling;
 import ij.IJ;

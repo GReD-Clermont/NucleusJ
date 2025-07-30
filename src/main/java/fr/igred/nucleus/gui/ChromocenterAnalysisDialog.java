@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.dialogs;
+package fr.igred.nucleus.gui;
 
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
@@ -57,7 +57,7 @@ import java.util.concurrent.ExecutionException;
  *
  * @author pouletaxel
  */
-public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements ItemListener {
+public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 	private static final long         serialVersionUID        = 896147828956284745L;
 	private final        JTextField   jTextFieldWorkDirectory = new JTextField();
 	private final        JTextField   jTextFieldRawData       = new JTextField();
@@ -106,7 +106,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	
 	
 	/** Architecture of the graphical windows */
-	public ChromocentersAnalysisPipelineBatchDialog(IDialogListener dialogListener) {
+	public ChromocenterAnalysisDialog(IDialogListener dialogListener) {
 		final String font = "Albertus";
 		container = super.getContentPane();
 		JLabel      jLabelWorkDirectory  = new JLabel("Work directory and data directory choice:");

@@ -19,9 +19,9 @@ package fr.igred.nucleus.plugins;
 
 import fr.igred.nucleus.autocrop.AutoCropCalling;
 import fr.igred.nucleus.autocrop.AutocropParameters;
-import fr.igred.nucleus.dialogs.AutocropConfigDialog;
-import fr.igred.nucleus.dialogs.AutocropDialog;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.gui.AutocropConfigDialog;
+import fr.igred.nucleus.gui.AutocropDialog;
+import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.omero.Client;
 import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;

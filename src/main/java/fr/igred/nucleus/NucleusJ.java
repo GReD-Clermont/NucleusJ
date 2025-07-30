@@ -22,7 +22,7 @@ import fr.igred.nucleus.cli.CLIActionOptionOMERO;
 import fr.igred.nucleus.cli.CLIHelper;
 import fr.igred.nucleus.cli.CLIRunAction;
 import fr.igred.nucleus.cli.CLIRunActionOMERO;
-import fr.igred.nucleus.dialogs.MainGui;
+import fr.igred.nucleus.gui.MainGui;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
