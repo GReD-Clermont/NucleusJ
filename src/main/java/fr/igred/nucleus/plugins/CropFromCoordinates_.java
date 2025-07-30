@@ -120,16 +120,17 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	}
 	
 	
-	private static void cropImageFromOMERO2(Client client, ImageWrapper image, ImageWrapper imageToCrop,
-	                                        DatasetWrapper outputDataset, int c)
+	private static void cropImageFromOMERO(Client client, ImageWrapper image,
+	                                       ImageWrapper imageToCrop,
+	                                       DatasetWrapper outputDataset, int c)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
-		List<ROIWrapper>     rois   = image.getROIs(client);
-		List<ChannelWrapper> canaux = imageToCrop.getChannels(client);
-		if (c > canaux.size() - 1) {
+		List<ROIWrapper>     rois     = image.getROIs(client);
+		List<ChannelWrapper> channels = imageToCrop.getChannels(client);
+		if (c > channels.size() - 1) {
 			LOGGER.debug("Channel doesn't exists, there are only {} channels, first channel index is 0 !",
-			             canaux.size());
+			             channels.size());
 		} else {
-			LOGGER.debug("Number of channels detected : {}", canaux.size());
+			LOGGER.debug("Number of channels detected : {}", channels.size());
 			for (ROIWrapper roi : rois) {
 				// Get the roi names
 				String roiName = roi.getName();
@@ -141,30 +142,32 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 				// Get the image to crop
 				ImagePlus imp = imageToCrop.toImagePlus(client, roi);
 				// Save Crop File
-				FileSaver fileSaver = new FileSaver(imp);
-				String    sortie    = fileSaver.toString();
+				FileSaver fileSaver  = new FileSaver(imp);
+				String    resultPath = fileSaver.toString();
 				// Save the crop as TIF
-				fileSaver.saveAsTiff(sortie);
+				fileSaver.saveAsTiff(resultPath);
 				// generate a temporary file
-				String resultPath = sortie;
-				File   resultFile = new File(resultPath);
+				File resultFile = new File(resultPath);
 				// Remove file extension
 				FilesNames outPutFilesNames = new FilesNames(imageToCropName);
 				String     prefix           = outPutFilesNames.prefixNameFile();
 				// Rename the temporary file same as toCrop Image name
 				File toCropNewName = new File(prefix + "_" + roiName + "_C" + c);
-				resultFile.renameTo(toCropNewName);
-				String toCropFile = toCropNewName.toString();
-				// Import Cropped Image to the Dataset
-				outputDataset.importImages(client, toCropFile);
-				// Delete temp file
-				Files.deleteIfExists(toCropNewName.toPath());
+				if (resultFile.renameTo(toCropNewName)) {
+					String toCropFile = toCropNewName.toString();
+					// Import Cropped Image to the Dataset
+					outputDataset.importImages(client, toCropFile);
+					// Delete temp file
+					Files.deleteIfExists(toCropNewName.toPath());
+				}
 			}
 		}
 	}
 	
 	
-	private static void cropImageFromOMERO(Client client, ImageWrapper image, ImageWrapper imageToCrop,
+	private static void cropImageFromOMERO(Client client,
+	                                       ImageWrapper image,
+	                                       ImageWrapper imageToCrop,
 	                                       DatasetWrapper outputDataset)
 	throws AccessException, ServiceException, ExecutionException, IOException, OMEROServerError {
 		List<ROIWrapper> rois = image.getROIs(client);
@@ -176,24 +179,24 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 			// Get the image to crop
 			ImagePlus imp = imageToCrop.toImagePlus(client, roi);
 			// Save Crop File
-			FileSaver fileSaver = new FileSaver(imp);
-			String    sortie    = fileSaver.toString();
+			FileSaver fileSaver  = new FileSaver(imp);
+			String    resultPath = fileSaver.toString();
 			// Save the crop as TIF
-			fileSaver.saveAsTiff(sortie);
+			fileSaver.saveAsTiff(resultPath);
 			// generate a temporary file
-			String resultPath = sortie;
-			File   resultFile = new File(resultPath);
+			File resultFile = new File(resultPath);
 			// Remove file extension
 			FilesNames outPutFilesNames = new FilesNames(imageToCropName);
 			String     prefix           = outPutFilesNames.prefixNameFile();
 			// Rename the temporary file same as toCrop Image name
 			File toCropNewName = new File(prefix + "_" + roiName);
-			resultFile.renameTo(toCropNewName);
-			String toCropFile = toCropNewName.toString();
-			// Import Cropped Image to the Dataset
-			outputDataset.importImages(client, toCropFile);
-			// Delete temp file
-			Files.deleteIfExists(toCropNewName.toPath());
+			if (resultFile.renameTo(toCropNewName)) {
+				String toCropFile = toCropNewName.toString();
+				// Import Cropped Image to the Dataset
+				outputDataset.importImages(client, toCropFile);
+				// Delete temp file
+				Files.deleteIfExists(toCropNewName.toPath());
+			}
 		}
 	}
 	
@@ -228,7 +231,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 				
 				try {
 					LOGGER.info("Begin Autocrop from coordinate process ");
-					cropImageFromOMERO2(client, image, imageToCrop, outputds, channel); // Ru
+					cropImageFromOMERO(client, image, imageToCrop, outputds, channel); // Ru
 				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
 					LOGGER.info("Autocrop from coordinate process has failed");
 					LOGGER.error("An error occurred.", e);
