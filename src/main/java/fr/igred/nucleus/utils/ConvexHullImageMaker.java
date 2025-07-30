@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 /**
@@ -41,7 +42,21 @@ public class ConvexHullImageMaker {
 	
 	private List<Double> listLabel;
 	
-	private String axesName = "";
+	// Axes name used to determine the order of axes, default is "xy"
+	private String axesName = "xy";
+	
+	
+	/**
+	 * Throws an exception (used when the axis name is not valid)
+	 *
+	 * @param axes axes name
+	 *
+	 * @throws IllegalArgumentException if axes name is not valid
+	 */
+	private static void wrongAxesName(String axes) {
+		LOGGER.error("Invalid axes name: {}", axes);
+		throw new IllegalArgumentException("Invalid axes name: " + axes);
+	}
 	
 	
 	/**
@@ -53,6 +68,7 @@ public class ConvexHullImageMaker {
 	 *
 	 * @see ConvexHullSegmentation
 	 */
+	@SuppressWarnings("HardcodedFileSeparator") // ratio, not file separator
 	public ImagePlus runConvexHullDetection(ImagePlus imagePlusBinary) {
 		LOGGER.debug("Computing convex hull algorithm for axes {}.", axesName);
 		ImagePlus imagePlusCorrected = new ImagePlus();
@@ -80,8 +96,8 @@ public class ConvexHullImageMaker {
 		ImageStack imageStackOutput = new ImageStack(width, height);
 		for (int k = 0; k < depth; ++k) {
 			ImagePlus ip = imagePlusBlack.duplicate();
-			double[][] image = giveTable(imagePlusBinary, width, height,
-			                             k); // Return image with labelled components (& initialize listLabel)
+			// Return image with labelled components (& initialize listLabel)
+			double[][] image = giveTable(imagePlusBinary, width, height, k);
 			LOGGER.trace("Processing slice {}/{} of plan \"{}\"", k, depth, axesName);
 			
 			// Calculate boundaries
@@ -130,26 +146,47 @@ public class ConvexHullImageMaker {
 	 *
 	 * @param image  image used
 	 * @param label  current label
-	 * @param indice slice indice
+	 * @param index slice index
 	 *
-	 * @return list of the voxels of the boundaries
+	 * @return list of boundary voxels
 	 */
-	List<VoxelRecord> detectVoxelBoundary(double[][] image, double label, int indice) {
+	List<VoxelRecord> detectVoxelBoundary(double[][] image, double label, int index) {
 		LOGGER.trace("Detecting voxel boundary.");
 		List<VoxelRecord> lVoxelBoundary = new ArrayList<>();
+		
+		// Use axesName to determine the order of axes
+		// 0: x, 1: y, 2: z
+		int[] axeIndex;
+		if ("yz".equals(axesName)) {
+			//y, z, x
+			axeIndex = new int[]{2, 0, 1};
+		} else if ("xz".equals(axesName)) {
+			//x, z, y
+			axeIndex = new int[]{0, 2, 1};
+		} else {
+			// Default is xy: x, y, z
+			axeIndex = new int[]{0, 1, 2};
+		}
+		
 		// Browse through the pixels of the 2D image
+		int[] xyz = {1, 1, index};
 		for (int i = 1; i < image.length; ++i) {
 			for (int j = 1; j < image[i].length; ++j) {
 				if (image[i][j] == label) {
-					if (image[i - 1][j] == 0 || image[i + 1][j] == 0 || image[i][j - 1] == 0 || image[i][j + 1] == 0) {
+					// Check if the current pixel is a boundary pixel
+					boolean isBoundary = image[i - 1][j] == 0 ||
+					                     image[i + 1][j] == 0 ||
+					                     image[i][j - 1] == 0 ||
+					                     image[i][j + 1] == 0;
+					if (isBoundary) {
+						xyz[0] = i;
+						xyz[1] = j;
+						int x = xyz[axeIndex[0]];
+						int y = xyz[axeIndex[1]];
+						int z = xyz[axeIndex[2]];
+						
 						VoxelRecord voxelTest = new VoxelRecord();
-						if ("xy".equals(axesName)) {
-							voxelTest.setLocation(i, j, indice);
-						} else if ("xz".equals(axesName)) {
-							voxelTest.setLocation(i, indice, j);
-						} else {
-							voxelTest.setLocation(indice, i, j);
-						}
+						voxelTest.setLocation(x, y, z);
 						lVoxelBoundary.add(voxelTest);
 					}
 				}
@@ -205,8 +242,7 @@ public class ConvexHullImageMaker {
 					tableHeight[i] = (int) convexHull.get(i).getK();
 					break;
 				default:
-					LOGGER.error("Invalid axes name: {}", axesName);
-					throw new IllegalArgumentException("Invalid axes name: " + axesName);
+					wrongAxesName(axesName);
 			}
 		}
 		
@@ -224,8 +260,7 @@ public class ConvexHullImageMaker {
 				tableHeight[convexHull.size()] = (int) convexHull.get(0).getK();
 				break;
 			default:
-				LOGGER.error("Invalid axes name: {}", axesName);
-				throw new IllegalArgumentException("Invalid axes name: " + axesName);
+				wrongAxesName(axesName);
 		}
 		
 		ip.setImage(bufferedImage);
@@ -261,16 +296,17 @@ public class ConvexHullImageMaker {
 		}
 		ConnectedComponents connectedComponents = new ConnectedComponents();
 		connectedComponents.setImageTable(image);
-		listLabel = connectedComponents.getListLabel(255); // One label per connected components
-		image = connectedComponents.getImageTable(); // Return the image where all connected components have a different label (value)
-		return image;
+		// One label per connected components
+		listLabel = connectedComponents.getListLabel(255);
+		// Return the image where all connected components have a different label (value)
+		return connectedComponents.getImageTable();
 	}
 	
 	
 	/**
 	 * Return current combined axis analysing
 	 *
-	 * @return current combined axis  analysing
+	 * @return current combined axis analysing
 	 */
 	public String getAxes() {
 		return axesName;
@@ -283,6 +319,10 @@ public class ConvexHullImageMaker {
 	 * @param axes Current combined axis analysing
 	 */
 	public void setAxes(String axes) {
+		if (!Pattern.compile("^[xyz]{2,3}$").matcher(axes).matches() ||
+		    axes.chars().distinct().count() != axes.length()) {
+			wrongAxesName(axes);
+		}
 		axesName = axes;
 	}
 	
