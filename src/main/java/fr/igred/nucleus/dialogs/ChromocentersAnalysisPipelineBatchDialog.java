@@ -19,6 +19,8 @@ package fr.igred.nucleus.dialogs;
 
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
+import ij.IJ;
+import ij.Prefs;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -45,7 +47,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.concurrent.ExecutionException;
@@ -193,6 +194,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		                                      new Insets(10, 5, 0, 10), 0, 0));
 		jTextFieldRawData.setPreferredSize(new Dimension(280, 21));
 		jTextFieldRawData.setFont(new Font(font, Font.ITALIC, 10));
+		jTextFieldRawData.setName("nucleusj.ccparams.rawdata");
 		
 		localPanel.add(jButtonWorkDirectory,
 		               new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
@@ -209,6 +211,7 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		                                      new Insets(10, 5, 0, 10), 0, 0));
 		jTextFieldWorkDirectory.setPreferredSize(new Dimension(280, 21));
 		jTextFieldWorkDirectory.setFont(new Font(font, Font.ITALIC, 10));
+		jTextFieldWorkDirectory.setName("nucleusj.ccparams.workdirectory");
 		
 		calibration = new JPanel();
 		calibration.setLayout(new GridBagLayout());
@@ -412,14 +415,10 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 		
 		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
 		jButtonStart.setPreferredSize(new java.awt.Dimension(120, 21));
-		ActionListener wdListener = new WorkDirectoryListener();
-		jButtonWorkDirectory.addActionListener(wdListener);
-		ActionListener ddListener = new RawDataDirectoryListener();
-		jButtonRawData.addActionListener(ddListener);
-		ActionListener quitListener = new QuitListener(this);
-		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new StartListener(this);
-		jButtonStart.addActionListener(startListener);
+		jButtonWorkDirectory.addActionListener(e -> chooseDirectory(jTextFieldWorkDirectory));
+		jButtonRawData.addActionListener(e -> chooseDirectory(jTextFieldRawData));
+		jButtonQuit.addActionListener(this::quit);
+		jButtonStart.addActionListener(this::start);
 		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
@@ -677,175 +676,59 @@ public class ChromocentersAnalysisPipelineBatchDialog extends JFrame implements 
 	}
 	
 	
-	public void itemStateChanged2(ItemEvent e) {
-		if (e.getSource() == addCalibrationBox) {
-			if (addCalibrationBox.isSelected()) {
-				GridBagConstraints gc = new GridBagConstraints();
-				gc.insets = new Insets(0, 0, 5, 0);
-				
-				jLabelUnit.setText("Unit :");
-				gc.gridx = 0;
-				gc.gridy = 1;
-				calibration.add(jLabelUnit, gc);
-				readUnit.setPreferredSize(new Dimension(100, 20));
-				readUnit.setText("µm");
-				gc.gridx = 1;
-				gc.gridy = 1;
-				calibration.add(readUnit, gc);
-				jLabelUnit.setVisible(true);
-				readUnit.setVisible(true);
-				
-				jLabelXCalibration.setText("X :");
-				gc.gridx = 0;
-				gc.gridy = 2;
-				calibration.add(jLabelXCalibration, gc);
-				readXCalibration.setPreferredSize(new Dimension(100, 20));
-				readXCalibration.setText("1");
-				gc.gridx = 1;
-				gc.gridy = 2;
-				calibration.add(readXCalibration, gc);
-				jLabelXCalibration.setVisible(true);
-				readXCalibration.setVisible(true);
-				
-				jLabelYCalibration.setText("Y :");
-				gc.gridx = 0;
-				gc.gridy = 3;
-				calibration.add(jLabelYCalibration, gc);
-				readYCalibration.setPreferredSize(new Dimension(100, 20));
-				readYCalibration.setText("1");
-				gc.gridx = 1;
-				gc.gridy = 3;
-				calibration.add(readYCalibration, gc);
-				jLabelYCalibration.setVisible(true);
-				readYCalibration.setVisible(true);
-				
-				jLabelZCalibration.setText("Z :");
-				gc.gridx = 0;
-				gc.gridy = 4;
-				calibration.add(jLabelZCalibration, gc);
-				readZCalibration.setPreferredSize(new Dimension(100, 20));
-				readZCalibration.setText("1");
-				gc.gridx = 1;
-				gc.gridy = 4;
-				calibration.add(readZCalibration, gc);
-				jLabelZCalibration.setVisible(true);
-				readZCalibration.setVisible(true);
-				
-				//pack();
-			} else {
-				jLabelXCalibration.setVisible(false);
-				jLabelYCalibration.setVisible(false);
-				jLabelZCalibration.setVisible(false);
-				jLabelUnit.setVisible(false);
-				
-				readXCalibration.setVisible(false);
-				readYCalibration.setVisible(false);
-				readZCalibration.setVisible(false);
-				readUnit.setVisible(false);
-			}
-			validate();
-			repaint();
-		}
+	/**
+	 * Closes the dialog.
+	 *
+	 * @param actionEvent the action event
+	 */
+	private void quit(ActionEvent actionEvent) {
+		dispose();
 	}
 	
 	
 	/**
+	 * Starts the analysis pipeline.
 	 *
+	 * @param actionEvent the action event
 	 */
-	private static class QuitListener implements ActionListener {
-		private final ChromocentersAnalysisPipelineBatchDialog ccAnalysisDialog;
-		
-		
-		/** @param ccAnalysisDialog chromocentersAnalysisPipelineBatchDialog GUI */
-		QuitListener(ChromocentersAnalysisPipelineBatchDialog ccAnalysisDialog) {
-			this.ccAnalysisDialog = ccAnalysisDialog;
-		}
-		
-		
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			ccAnalysisDialog.dispose();
-		}
-		
-	}
-	
-	/** Classes listener to interact with the several elements of the window */
-	private class StartListener implements ActionListener {
-		
-		final ChromocentersAnalysisPipelineBatchDialog ccAnalysisDialog;
-		
-		
-		/** @param ccAnalysisDialog chromocentersAnalysisPipelineBatchDialog GUI */
-		StartListener(ChromocentersAnalysisPipelineBatchDialog ccAnalysisDialog) {
-			this.ccAnalysisDialog = ccAnalysisDialog;
-		}
-		
-		
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			if (!useOMERO && (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty())) {
-				JOptionPane.showMessageDialog(null,
-				                              "You did not choose a work directory or the raw data",
-				                              "Error",
-				                              JOptionPane.ERROR_MESSAGE);
-			} else {
-				start = true;
-				ccAnalysisDialog.dispose();
-				try {
-					dialogListener.onStart();
-				} catch (AccessException | ExecutionException | ServiceException e) {
-					throw new RuntimeException(e);
-				}
+	private void start(ActionEvent actionEvent) {
+		if (!useOMERO && (jTextFieldWorkDirectory.getText().isEmpty() || jTextFieldRawData.getText().isEmpty())) {
+			JOptionPane.showMessageDialog(null,
+			                              "You did not choose a work directory or the raw data",
+			                              "Error",
+			                              JOptionPane.ERROR_MESSAGE);
+		} else {
+			start = true;
+			dispose();
+			try {
+				dialogListener.onStart();
+			} catch (AccessException | ExecutionException | ServiceException e) {
+				IJ.error("Error starting the process", e.getMessage());
 			}
 		}
-		
-	}
-	
-	/**
-	 *
-	 */
-	class WorkDirectoryListener implements ActionListener {
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			JFileChooser jFileChooser = new JFileChooser();
-			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int returnValue = jFileChooser.showOpenDialog(getParent());
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String workDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
-				jTextFieldWorkDirectory.setText(workDirectory);
-			}
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
-		
 	}
 	
 	
-	/**
-	 *
-	 */
-	class RawDataDirectoryListener implements ActionListener {
-		/**
-		 *
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			JFileChooser jFileChooser = new JFileChooser();
-			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			int returnValue = jFileChooser.showOpenDialog(getParent());
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String rawDataDirectory = jFileChooser.getSelectedFile().getAbsolutePath();
-				jTextFieldRawData.setText(rawDataDirectory);
-			}
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	private void chooseDirectory(JTextField textField) {
+		String pref = textField.getName();
+		if (pref == null || pref.isEmpty()) {
+			pref = "nj.ccparams." + Prefs.DIR_IMAGE;
 		}
+		String previousDir = textField.getText();
+		if (previousDir.isEmpty()) {
+			previousDir = Prefs.get(pref, previousDir);
+		}
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		JFileChooser jFileChooser = new JFileChooser(previousDir);
+		jFileChooser.setDialogTitle("Select a directory");
 		
+		jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnValue = jFileChooser.showOpenDialog(getParent());
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			String directory = jFileChooser.getSelectedFile().getAbsolutePath();
+			textField.setText(directory);
+		}
+		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 	
 }

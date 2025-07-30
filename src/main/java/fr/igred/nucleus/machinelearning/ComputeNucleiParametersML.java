@@ -23,7 +23,6 @@ import fr.igred.nucleus.io.OutputTextFile;
 import fr.igred.nucleus.plugins.PluginParameters;
 import fr.igred.nucleus.utils.Histogram;
 import ij.ImagePlus;
-import ij.ImageStack;
 import inra.ijpb.binary.BinaryImages;
 import inra.ijpb.label.LabelImages;
 import loci.formats.FormatException;
@@ -35,6 +34,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
+
+import static fr.igred.nucleus.utils.Thresholding.binarize;
 
 
 public class ComputeNucleiParametersML {
@@ -54,36 +55,6 @@ public class ComputeNucleiParametersML {
 	public ComputeNucleiParametersML(String rawInputDir, String segmentedInputDir) {
 		this.rawImagesInputDirectory = rawInputDir;
 		this.segmentedImagesDirectory = segmentedInputDir;
-	}
-	
-	
-	/**
-	 * Filter connected connected component if more then 1 nuclei
-	 *
-	 * @param imagePlusInput
-	 * @param threshold
-	 *
-	 * @return
-	 */
-	public static ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
-		ImageStack imageStackInput    = imagePlusInput.getStack();
-		ImagePlus  imagePlusSegmented = imagePlusInput.duplicate();
-		
-		imagePlusSegmented.setTitle(imagePlusInput.getTitle());
-		ImageStack imageStackSegmented = imagePlusSegmented.getStack();
-		for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
-			for (int i = 0; i < imagePlusInput.getWidth(); ++i) {
-				for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
-					double voxelValue = imageStackInput.getVoxel(i, j, k);
-					if (voxelValue >= threshold) {
-						imageStackSegmented.setVoxel(i, j, k, 255);
-					} else {
-						imageStackSegmented.setVoxel(i, j, k, 0);
-					}
-				}
-			}
-		}
-		return imagePlusSegmented;
 	}
 	
 	
@@ -113,10 +84,10 @@ public class ComputeNucleiParametersML {
 			                              currentFile.getName());
 			ImagePlus[] segmented = BF.openImagePlus(pluginParameters.getOutputFolder() + currentFile.getName());
 			// TODO TRANSFORMATION FACTORISABLE AVEC METHODE DU DESSUS !!!!!
-			segmented[0] = generateSegmentedImage(segmented[0], 1);
+			binarize(segmented[0], 1);
 			segmented[0] = BinaryImages.componentsLabeling(segmented[0], 26, 32);
 			LabelImages.removeBorderLabels(segmented[0]);
-			segmented[0] = generateSegmentedImage(segmented[0], 1);
+			binarize(segmented[0], 1);
 			Histogram histogram = new Histogram();
 			histogram.run(segmented[0]);
 			if (histogram.getNbLabels() > 0) {

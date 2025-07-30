@@ -21,6 +21,8 @@ package fr.igred.nucleus.gui;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.nucleus.dialogs.IDialogListener;
+import ij.IJ;
+import ij.Prefs;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -47,7 +49,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.concurrent.ExecutionException;
@@ -59,7 +60,7 @@ import java.util.regex.Pattern;
  *
  * @author poulet axel
  */
-public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener {
+public class GuiAnalysis extends JFrame implements ItemListener {
 	/**  */
 	private static final long serialVersionUID = 7560518666194907298L;
 	
@@ -108,14 +109,8 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	/**  */
 	private final Container container;
 	
-	private boolean useOMERO;
+	private boolean omeroUsed;
 	private boolean start;
-	
-	
-	/** Default constructor */
-	public GuiAnalysis() {
-		this(null);
-	}
 	
 	
 	/**
@@ -131,7 +126,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		super.setBackground(Color.LIGHT_GRAY);
 		super.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
-		this.dialogListener = dialogListener != null ? dialogListener : this;
+		this.dialogListener = dialogListener;
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.1};
@@ -191,6 +186,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		
 		jtfRawData.setPreferredSize(new java.awt.Dimension(280, 21));
 		jtfRawData.setFont(new java.awt.Font("arial", 2, 10));
+		jtfRawData.setName("nj.nodej.rawdata");
 		mainPanel.add(jtfRawData,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -208,6 +204,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		
 		jtfRawSeg.setPreferredSize(new java.awt.Dimension(280, 21));
 		jtfRawSeg.setFont(new java.awt.Font("arial", 2, 10));
+		jtfRawSeg.setName("nj.nodej.rawseg");
 		mainPanel.add(jtfRawSeg,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -225,6 +222,7 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		
 		jtfWorkDir.setPreferredSize(new java.awt.Dimension(280, 21));
 		jtfWorkDir.setFont(new java.awt.Font("arial", 2, 10));
+		jtfWorkDir.setName("nj.nodej.workdir");
 		mainPanel.add(jtfWorkDir,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -517,21 +515,15 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		
 		//////////////////////////////////////////////////////////
 		
-		ActionListener analysis = new RBDeconvListener(this);
-		jCbIs2D.addActionListener(analysis);
-		jCbIsFilter.addActionListener(analysis);
+		jCbIs2D.addActionListener(this::updateRadioButtons);
+		jCbIsFilter.addActionListener(this::updateRadioButtons);
 		
-		ActionListener wdListener = new Listener(jtfWorkDir, false);
-		jbOutputDir.addActionListener(wdListener);
-		ActionListener rawListener = new Listener(jtfRawData, false);
-		jbInputDir.addActionListener(rawListener);
-		ActionListener segListener = new Listener(jtfRawSeg, false);
-		jbInputSeg.addActionListener(segListener);
+		jbOutputDir.addActionListener(e -> chooseDirectory(jtfWorkDir));
+		jbInputDir.addActionListener(e -> chooseDirectory(jtfRawData));
+		jbInputSeg.addActionListener(e -> chooseDirectory(jtfRawSeg));
 		
-		ActionListener quitListener = new QuitListener(this);
-		jbQuit.addActionListener(quitListener);
-		ActionListener startListener = new StartListener(this);
-		jbStart.addActionListener(startListener);
+		jbQuit.addActionListener(this::quit);
+		jbStart.addActionListener(this::start);
 		super.setVisible(true);
 		
 		// DEFAULT VALUES FOR TESTING :
@@ -546,17 +538,6 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		segmentedNucleiTextField.setText("31511");
 		
 		jTextFieldOutputProject.setText("14855");
-	}
-	
-	
-	/**
-	 * java.trax.gui main2DAnalysis
-	 *
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		GuiAnalysis gui = new GuiAnalysis();
-		gui.setLocationRelativeTo(null);
 	}
 	
 	
@@ -645,8 +626,8 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	}
 	
 	
-	public boolean isOmeroEnabled() {
-		return useOMERO;
+	public boolean isOMEROUsed() {
+		return omeroUsed;
 	}
 	
 	
@@ -707,11 +688,11 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 		if (source == omeroNoButton) {
 			container.remove(1);
 			container.add(localModeLayout, 1);
-			useOMERO = false;
+			omeroUsed = false;
 		} else if (source == omeroYesButton) {
 			container.remove(1);
 			container.add(omeroModeLayout, 1);
-			useOMERO = true;
+			omeroUsed = true;
 		} else {
 			container.remove(3);
 		}
@@ -722,164 +703,86 @@ public class GuiAnalysis extends JFrame implements ItemListener, IDialogListener
 	}
 	
 	
-	@Override
-	public void onStart() {
-		// DO NOTHING
+	/**
+	 * dipose the java.trax.gui and quit the program
+	 */
+	private void quit(ActionEvent actionEvent) {
+		dispose();
+		//System.exit(0);
 	}
 	
 	
-	/* Listener classes to interact with the several element of the window */
-	
 	/**
-	 * Quit button listener
-	 *
-	 * @author axel poulet
+	 * Manages the access of the different java.trax.gui element depending on the chosen parameter
 	 */
-	private static class QuitListener implements ActionListener {
-		/**  */
-		private final GuiAnalysis gui;
-		
-		
-		/**
-		 * @param gui
-		 */
-		QuitListener(GuiAnalysis gui) {
-			this.gui = gui;
+	private void updateRadioButtons(ActionEvent actionEvent) {
+		if (is2D()) {
+			jtfGY.setEnabled(false);
+			jtfGZ.setEnabled(false);
+		} else if (!is2D()) {
+			jtfGY.setEnabled(true);
+			jtfGZ.setEnabled(true);
 		}
 		
-		
-		/**
-		 * dipose the java.trax.gui and quit the program
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			gui.dispose();
-			//System.exit(0);
+		if (isFilter()) {
+			jtfMax.setEnabled(true);
+			jtfMin.setEnabled(true);
+		} else if (!isFilter()) {
+			jtfMax.setEnabled(false);
+			jtfMin.setEnabled(false);
 		}
-		
 	}
-	
+		
+		
 	/**
-	 * Radio button listener, manage teh access of the different button box etc on function of the parameters choose
-	 *
-	 * @author axel poulet
+	 * Test all the box, condition etc before to allow the program to run and dispose the java.trax.gui
 	 */
-	private class RBDeconvListener implements ActionListener {
-		/**  */
-		private final GuiAnalysis gui;
-		
-		
-		/**
-		 * @param gui
-		 */
-		RBDeconvListener(GuiAnalysis gui) {
-			this.gui = gui;
-		}
-		
-		
-		/**
-		 * Manages the access of the different java.trax.gui element depending on the chosen parameter
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			if (gui.is2D()) {
-				jtfGY.setEnabled(false);
-				jtfGZ.setEnabled(false);
-			} else if (!gui.is2D()) {
-				jtfGY.setEnabled(true);
-				jtfGZ.setEnabled(true);
-			}
+	private void start(ActionEvent actionEvent) {
+		if (omeroUsed) {
+			start = true;
+			dispose();
 			
-			if (gui.isFilter()) {
-				jtfMax.setEnabled(true);
-				jtfMin.setEnabled(true);
-			} else if (!gui.isFilter()) {
-				jtfMax.setEnabled(false);
-				jtfMin.setEnabled(false);
-			}
-		}
-		
-	}
-	
-	/**
-	 * @author axel poulet Listerner for the start button
-	 */
-	private class StartListener implements ActionListener {
-		/**  */
-		private final GuiAnalysis gui;
-		
-		
-		/**
-		 * @param gui
-		 */
-		StartListener(GuiAnalysis gui) {
-			this.gui = gui;
-		}
-		
-		
-		/**
-		 * Test all the box, condition etc before to allow the program to run and dispose the java.trax.gui
-		 */
-		public void actionPerformed(ActionEvent actionEvent) {
-			if (useOMERO) {
-				start = true;
-				gui.dispose();
-				
+		} else {
+			if (jtfWorkDir.getText().isEmpty() ||
+			    jtfRawData.getText().isEmpty() ||
+			    jtfRawSeg.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(null, "You did not choose an input/output directory",
+				                              "Error", JOptionPane.ERROR_MESSAGE);
 			} else {
-				if (jtfWorkDir.getText().isEmpty() ||
-				    jtfRawData.getText().isEmpty() ||
-				    jtfRawSeg.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(null, "You did not choose an input/output directory",
-					                              "Error", JOptionPane.ERROR_MESSAGE);
-				} else {
-					start = true;
-					gui.dispose();
-				}
+				start = true;
+				dispose();
 			}
-			try {
-				dialogListener.onStart();
-			} catch (AccessException | ServiceException | ExecutionException e) {
-				throw new RuntimeException(e);
-			}
-			
+		}
+		try {
+			dialogListener.onStart();
+		} catch (AccessException | ServiceException | ExecutionException e) {
+			IJ.error("Error starting the process", e.getMessage());
 		}
 		
 	}
 	
-	/**
-	 *
-	 */
-	private class Listener implements ActionListener {
-		/**  */
-		private final JTextField jtf;
-		/**  */
-		private final boolean    file;
-		
-		
-		/**
-		 * @param jtf
-		 * @param file
-		 */
-		Listener(JTextField jtf, boolean file) {
-			this.jtf = jtf;
-			this.file = file;
+	
+	
+	private void chooseDirectory(JTextField textField) {
+		String pref = textField.getName();
+		if (pref == null || pref.isEmpty()) {
+			pref = "nj.nodej." + Prefs.DIR_IMAGE;
 		}
-		
-		
-		/**  */
-		public void actionPerformed(ActionEvent actionEvent) {
-			setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-			JFileChooser jFileChooser = new JFileChooser();
-			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			if (file) {
-				jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-			}
-			int returnValue = jFileChooser.showOpenDialog(getParent());
-			if (returnValue == JFileChooser.APPROVE_OPTION) {
-				String text = jFileChooser.getSelectedFile().getAbsolutePath();
-				jtf.setText(text);
-			}
-			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		String previousDir = textField.getText();
+		if (previousDir.isEmpty()) {
+			previousDir = Prefs.get(pref, previousDir);
 		}
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		JFileChooser jFileChooser = new JFileChooser(previousDir);
+		jFileChooser.setDialogTitle("Select the Work Directory");
 		
+		jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnValue = jFileChooser.showOpenDialog(getParent());
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			String directory = jFileChooser.getSelectedFile().getAbsolutePath();
+			textField.setText(directory);
+		}
+		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 	
 }

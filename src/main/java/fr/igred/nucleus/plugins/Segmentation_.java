@@ -67,7 +67,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() {
-		if (segmentationDialog.isOmeroEnabled()) {
+		if (segmentationDialog.isOMEROUsed()) {
 			runOmeroSegmentation();
 		} else {
 			runLocalSegmentation();

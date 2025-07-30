@@ -78,7 +78,7 @@ public class NODeJ implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() {
-		if (gui.isOmeroEnabled()) {
+		if (gui.isOMEROUsed()) {
 			runOmero();
 		} else {
 			runLocal();
@@ -144,7 +144,7 @@ public class NODeJ implements PlugIn, IDialogListener {
 		
 		ChromocenterCalling ccAnalyse = new ChromocenterCalling(ccAnalyseParams);
 		try {
-			ccAnalyse.runSeveralImages2();
+			ccAnalyse.runSeveralImages();
 		} catch (IOException | FormatException e) {
 			LOGGER.error("Error during chromocenter segmentation", e);
 		}

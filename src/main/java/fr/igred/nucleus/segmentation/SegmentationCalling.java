@@ -19,7 +19,6 @@ package fr.igred.nucleus.segmentation;
 
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.io.Directory;
-import fr.igred.nucleus.io.FilesNames;
 import fr.igred.nucleus.io.OutputTextFile;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
@@ -231,9 +230,7 @@ public class SegmentationCalling {
 			@Override
 			public void run() {
 				try {
-					String     fileImg         = file.toString();
-					FilesNames outputFilenames = new FilesNames(fileImg);
-					String     prefix          = outputFilenames.prefixNameFile();
+					String fileImg = file.toString();
 					
 					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
@@ -251,7 +248,6 @@ public class SegmentationCalling {
 					
 					String end = currentDateTime();
 					LOGGER.info("End: {} at {}", fileImg, end);
-					
 					latch.countDown();
 				} catch (IOException | FormatException e) {
 					LOGGER.error("Error processing image: {}", file.getName(), e);
@@ -289,30 +285,31 @@ public class SegmentationCalling {
 	
 	
 	public String runOneImage(String filePath) throws IOException, FormatException {
-		String     log              = "";
-		File       currentFile      = new File(filePath);
+		String log         = "";
+		File   currentFile = new File(filePath);
 		
-		String     fileImg          = currentFile.toString();
-		FilesNames outPutFilesNames = new FilesNames(fileImg);
-		
-		String prefix = outPutFilesNames.prefixNameFile();
+		String fileImg = currentFile.toString();
 		LOGGER.info("Current image in process: {}", currentFile);
-		
-		String start = currentDateTime();
-		LOGGER.info("Start: {}", start);
-		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(currentFile, params);
-		nucleusSegmentation.preProcessImage();
-		nucleusSegmentation.findOTSUMaximisingSphericity();
-		nucleusSegmentation.checkBadCrop(params.getInputFolder());
-		nucleusSegmentation.saveOTSUSegmented();
-		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
-		this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
-		nucleusSegmentation.saveConvexHullSeg();
-		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
-		this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
-		
-		String end = currentDateTime();
-		LOGGER.info("End: {}", end);
+		if (currentFile.exists()) {
+			String start = currentDateTime();
+			LOGGER.info("Start: {}", start);
+			NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(currentFile, params);
+			nucleusSegmentation.preProcessImage();
+			nucleusSegmentation.findOTSUMaximisingSphericity();
+			nucleusSegmentation.checkBadCrop(params.getInputFolder());
+			nucleusSegmentation.saveOTSUSegmented();
+			this.outputCropGeneralInfoOTSU += getResultsColumnNames();
+			this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
+			nucleusSegmentation.saveConvexHullSeg();
+			this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
+			this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
+			
+			String end = currentDateTime();
+			LOGGER.info("End: {}", end);
+		} else {
+			log = "File " + fileImg + " does not exist.";
+			LOGGER.error(log);
+		}
 		return log;
 	}
 	

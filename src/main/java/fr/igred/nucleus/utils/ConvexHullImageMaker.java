@@ -105,9 +105,8 @@ public class ConvexHullImageMaker {
 						// Create temporary image of the component using the convex hull detection algorithm
 						ImageStack imageTempStack = imageMaker(lVoxelBoundary, width, height).getStack();
 						
-						for (int l = 0;
-						     l < width;
-						     ++l) { // For each labelled voxels of the component put a corresponding white voxel on the result
+						for (int l = 0; l < width; ++l) {
+							// For each labelled voxels of the component put a corresponding white voxel on the result
 							for (int m = 0; m < height; ++m) {
 								if (imageTempStack.getVoxel(l, m, 0) > 0) {
 									imageStackIp.setVoxel(l, m, 0, 255);

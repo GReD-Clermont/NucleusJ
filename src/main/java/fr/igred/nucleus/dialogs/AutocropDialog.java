@@ -20,6 +20,7 @@ package fr.igred.nucleus.dialogs;
 import fr.igred.nucleus.Version;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
+import ij.IJ;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -336,12 +337,9 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		startQuitPanel.setBorder(padding);
 		container.add(startQuitPanel, 6);
 		
-		ActionListener quitListener = new QuitListener(this);
-		jButtonQuit.addActionListener(quitListener);
-		ActionListener startListener = new StartListener(this);
-		jButtonStart.addActionListener(startListener);
-		ActionListener configListener = new ConfigListener(this);
-		jButtonConfig.addActionListener(configListener);
+		jButtonQuit.addActionListener(e -> quit());
+		jButtonStart.addActionListener(e -> start());
+		jButtonConfig.addActionListener(e -> autocropConfigFileDialog.setVisible(true));
 		
 		super.setVisible(true);
 		
@@ -518,67 +516,30 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	}
 	
 	
+	/** Starts the autocrop process */
+	private void start() {
+		dispose();
+		autocropConfigFileDialog.dispose();
+		try {
+			dialogListener.onStart();
+		} catch (AccessException | ServiceException | ExecutionException e) {
+			IJ.error("Error starting the process", e.getMessage());
+		}
+	}
+	
+	
+	/** Closes the dialogs */
+	private void quit() {
+		dispose();
+		autocropConfigFileDialog.dispose();
+	}
+	
+	
+	/** Enum to define the configuration mode */
 	public enum ConfigMode {
 		DEFAULT,
 		FILE,
 		INPUT
-	}
-	
-	/** Classes listener to interact with the several elements of the window */
-	
-	private class StartListener implements ActionListener {
-		private final AutocropDialog autocropDialog;
-		
-		
-		/** @param autocropDialog  */
-		StartListener(AutocropDialog autocropDialog) {
-			this.autocropDialog = autocropDialog;
-		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			autocropDialog.dispose();
-			autocropConfigFileDialog.dispose();
-			try {
-				dialogListener.onStart();
-			} catch (AccessException | ServiceException | ExecutionException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		
-	}
-	
-	private class QuitListener implements ActionListener {
-		final AutocropDialog autocropDialog;
-		
-		
-		/** @param autocropDialog  */
-		QuitListener(AutocropDialog autocropDialog) {
-			this.autocropDialog = autocropDialog;
-		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			autocropDialog.dispose();
-			autocropConfigFileDialog.dispose();
-		}
-		
-	}
-	
-	private class ConfigListener implements ActionListener {
-		final AutocropDialog autocropDialog;
-		
-		
-		/** @param autocropDialog  */
-		ConfigListener(AutocropDialog autocropDialog) {
-			this.autocropDialog = autocropDialog;
-		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			autocropConfigFileDialog.setVisible(true);
-		}
-		
 	}
 	
 	

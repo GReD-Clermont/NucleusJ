@@ -51,7 +51,6 @@ public class ChromocenterCalling {
 	private final ChromocenterParameters params;
 	
 	private String         prefix;
-	private boolean        is2DImg;
 	private boolean        isGui;
 	private Progress       progress;
 	private File[]         tab;
@@ -81,7 +80,7 @@ public class ChromocenterCalling {
 	 * @throws IOException
 	 * @throws FormatException
 	 */
-	public void runSeveralImages2() throws IOException, FormatException {
+	public void runSeveralImages() throws IOException, FormatException {
 		Directory directoryInput = new Directory(params.getInputFolder());
 		directoryInput.listImageFiles(params.getInputFolder());
 		directoryInput.checkIfEmpty();
@@ -111,8 +110,7 @@ public class ChromocenterCalling {
 			                                  File.separator + currentFile.getName());
 			this.prefix = outPutFilesNames.prefixNameFile();
 			ImagePlus[] raw = BF.openImagePlus(currentFile.getAbsolutePath());
-			//is2D => change
-			imageType(raw[0]);
+			
 			String outputFileName   = segCcDir + File.separator + currentFile.getName();
 			String gradientFileName = diffDir + File.separator + currentFile.getName();
 			
@@ -237,23 +235,18 @@ public class ChromocenterCalling {
 		FilesNames outPutFilesNames = new FilesNames(imageName);
 		this.prefix = outPutFilesNames.prefixNameFile();
 		
-		String outputFileName   = imageName;
 		String gradientFileName = diffDir + imageName;
 		
-		/* Test if Raw image is 2D*/
-		//is2D => change
-		ImagePlus imp = segImage[0];
-		imageType(imp);
 		/* Processing */
 		ChromocenterSegmentation ccSegmentation = new ChromocenterSegmentation(rawImage,
 		                                                                       segImage,
-		                                                                       outputFileName,
+		                                                                       imageName,
 		                                                                       params);
 		
 		ccSegmentation.runCC3D(gradientFileName);
 		
 		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParameters(rawImage[0], segImage[0],
-		                                                                          IJ.openImage(outputFileName),
+		                                                                          IJ.openImage(imageName),
 		                                                                          params);
 		
 		/* Import Segmented image to OMERO */
@@ -262,14 +255,14 @@ public class ChromocenterCalling {
 		outDataset = project.addDataset(client, "NODeJ_" + prefix, "");
 		project.reload(client);
 		/*Import images and tabs to OMERO */
-		outDataset.importImages(client, outputFileName);
+		outDataset.importImages(client, imageName);
 		outDataset.importImages(client, gradientFileName);
 		outDataset.addFile(client, parameters3DTab[0]);
 		outDataset.addFile(client, parameters3DTab[1]);
 		project.addFile(client, parameters3DTab[2]);
 		project.addFile(client, parameters3DTab[3]);
 		
-		File segImgDelete  = new File(outputFileName);
+		File segImgDelete  = new File(imageName);
 		File gradImgDelete = new File(gradientFileName);
 		try {
 			Files.deleteIfExists(segImgDelete.toPath());
@@ -298,42 +291,24 @@ public class ChromocenterCalling {
 		FilesNames outPutFilesNames = new FilesNames(imageName);
 		
 		this.prefix = outPutFilesNames.prefixNameFile();
-		String outputFileName   = imageName;
 		String gradientFileName = diffDir + imageName;
 		
-		/* Test if Raw image is 2D*/
-		//is2D => change
-		ImagePlus imp = rawImage[0];
-		imageType(imp);
 		/* Processing */
 		ChromocenterSegmentation ccSegmentation = new ChromocenterSegmentation(rawImage,
 		                                                                       segImage,
-		                                                                       outputFileName,
+		                                                                       imageName,
 		                                                                       params);
 		
 		ccSegmentation.runCC3D(gradientFileName);
 		
-		File[] parameters3DTab = NucleusChromocentersAnalysis.compute3DParametersOmero(image,
-		                                                                               mask,
-		                                                                               IJ.openImage(outputFileName),
-		                                                                               params,
-		                                                                               datasetName,
-		                                                                               client);
-		
-		tab = parameters3DTab;
-		segImg = outputFileName;
+		tab = NucleusChromocentersAnalysis.compute3DParametersOmero(image,
+		                                                            mask,
+		                                                            IJ.openImage(imageName),
+		                                                            params,
+		                                                            datasetName,
+		                                                            client);
+		segImg = imageName;
 		gradImg = gradientFileName;
-	}
-	
-	
-	/**
-	 * @param img
-	 */
-	public void imageType(ImagePlus img) {
-		img.getDimensions();
-		if (img.getStackSize() == 1) {
-			is2DImg = true;
-		}
 	}
 	
 }

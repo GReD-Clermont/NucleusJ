@@ -70,7 +70,7 @@ public class RectangleIntersection {
 	 * Constructor getting list of boxes computed in autocrop class. Initialisation of a list of 2D rectangles and a
 	 * list of Z stack associated (zMin-zMax).
 	 *
-	 * @param boxes              List of boxes
+	 * @param boxes  List of boxes
 	 * @param params Autocrop parameters
 	 */
 	public RectangleIntersection(Map<Double, Box> boxes, AutocropParameters params) {
@@ -114,12 +114,13 @@ public class RectangleIntersection {
 	 */
 	public void runRectangleRecompilation() {
 		this.newBoxesAdded = true;
-		int tours = 0;
+		int i = 0;
 		while (newBoxesAdded) {
-			tours++;
 			computeIntersection();
 			rectangleRegroup();
 			recompileRectangle();
+			i++;
+			LOGGER.trace("Iteration {}: {} boxes detected", i, listRectangle.size());
 		}
 	}
 	
@@ -133,9 +134,7 @@ public class RectangleIntersection {
 				if (i != y &&
 				    !rectangleIntersect.contains(i + "-" + y) &&
 				    !rectangleIntersect.contains(y + "-" + i)) {
-					
 					if (listRectangle.get(i).intersects(listRectangle.get(y))) {
-						
 						if (percentOf2Rectangles(listRectangle.get(i), listRectangle.get(y)) >
 						    autocropParameters.getBoxesSurfacePercent() ||
 						    percentOf2Rectangles(listRectangle.get(y), listRectangle.get(i)) >
@@ -211,28 +210,28 @@ public class RectangleIntersection {
 		List<Rectangle> rectanglesToRemove   = new ArrayList<>();
 		for (String value : finalListRectangle) {
 			String[] splitList2       = value.split("-");
-			double   xMixNewRectangle = 0;
-			double   yMinNewRectangle = 0;
-			double   maxWidth         = 0;
-			double   maxHeight        = 0;
+			int      xMixNewRectangle = 0;
+			int      yMinNewRectangle = 0;
+			int      maxWidth         = 0;
+			int      maxHeight        = 0;
 			int      minZSlice        = 0;
 			int      maxZSlice        = 0;
 			if (splitList2.length > 1) {
 				for (String s : splitList2) {
 					int tmp = Integer.parseInt(s);
 					if (listRectangle.get(tmp).getX() < xMixNewRectangle || xMixNewRectangle == 0) {
-						xMixNewRectangle = listRectangle.get(tmp).getX();
+						xMixNewRectangle = listRectangle.get(tmp).x;
 					}
 					if (listRectangle.get(tmp).getY() < yMinNewRectangle || yMinNewRectangle == 0) {
-						yMinNewRectangle = listRectangle.get(tmp).getY();
+						yMinNewRectangle = listRectangle.get(tmp).y;
 					}
 					if (listRectangle.get(tmp).getX() + listRectangle.get(tmp).getWidth() > maxWidth ||
 					    maxWidth == 0) {
-						maxWidth = listRectangle.get(tmp).getX() + listRectangle.get(tmp).getWidth();
+						maxWidth = listRectangle.get(tmp).x + listRectangle.get(tmp).width;
 					}
 					if (listRectangle.get(tmp).getY() + listRectangle.get(tmp).getHeight() > maxHeight ||
 					    maxHeight == 0) {
-						maxHeight = listRectangle.get(tmp).getY() + listRectangle.get(tmp).getHeight();
+						maxHeight = listRectangle.get(tmp).y + listRectangle.get(tmp).height;
 					}
 					
 					String[] zSliceTMP = zSlices.get(tmp).split("-");
@@ -242,20 +241,14 @@ public class RectangleIntersection {
 					if (Integer.parseInt(zSliceTMP[0] + Integer.valueOf(zSliceTMP[1])) > maxZSlice || maxZSlice == 0) {
 						maxZSlice = Integer.parseInt(zSliceTMP[0]) + Integer.parseInt(zSliceTMP[1]);
 					}
-					rectanglesToRemove.add(new Rectangle((int) listRectangle.get(tmp).getX(),
-					                                     (int) listRectangle.get(tmp).getY(),
-					                                     (int) listRectangle.get(tmp).getWidth(),
-					                                     (int) listRectangle.get(tmp).getHeight()));
+					rectanglesToRemove.add(new Rectangle(listRectangle.get(tmp)));
 				}
 				
 				maxZSlice -= minZSlice;
 				rectangleZSliceToAdd.add(minZSlice + "-" + maxZSlice);
-				maxWidth = (int) maxWidth - (int) xMixNewRectangle;
-				maxHeight = (int) maxHeight - (int) yMinNewRectangle;
-				rectanglesToAdd.add(new Rectangle((int) xMixNewRectangle,
-				                                  (int) yMinNewRectangle,
-				                                  (int) maxWidth,
-				                                  (int) maxHeight));
+				maxWidth -= xMixNewRectangle;
+				maxHeight -= yMinNewRectangle;
+				rectanglesToAdd.add(new Rectangle(xMixNewRectangle, yMinNewRectangle, maxWidth, maxHeight));
 			}
 		}
 		LOGGER.debug("{} boxes will be merged in {} new boxes",
@@ -287,18 +280,16 @@ public class RectangleIntersection {
 		
 		for (int i = 0; i < listRectangle.size(); i++) {
 			String[] zSliceTMP = zSlices.get(i).split("-");
-			short    tmpXMax   = (short) (listRectangle.get(i).getX() + listRectangle.get(i).getWidth());
-			short    tmpYMax   = (short) (listRectangle.get(i).getY() + listRectangle.get(i).getHeight());
-			short    tmpZMax   = (short) (Short.parseShort(zSliceTMP[0]) + Short.parseShort(zSliceTMP[1]));
-			if (tmpZMax == 0) {
-				tmpZMax = 1;
+			short    xMin   = (short) listRectangle.get(i).x;
+			short    yMin   = (short) listRectangle.get(i).y;
+			short    zMin   = Short.parseShort(zSliceTMP[0]);
+			short    xMax   = (short) (xMin + listRectangle.get(i).width);
+			short    yMax   = (short) (yMin + listRectangle.get(i).height);
+			short    zMax   = (short) (zMin + Short.parseShort(zSliceTMP[1]));
+			if (zMax == 0) {
+				zMax = 1;
 			}
-			Box box = new Box((short) listRectangle.get(i).getX(),
-			                  tmpXMax,
-			                  (short) listRectangle.get(i).getY(),
-			                  tmpYMax,
-			                  Short.parseShort(zSliceTMP[0]),
-			                  tmpZMax);
+			Box box = new Box(xMin, xMax, yMin, yMax, zMin, zMax);
 			boxes.put((double) i, box);
 		}
 		return boxes;

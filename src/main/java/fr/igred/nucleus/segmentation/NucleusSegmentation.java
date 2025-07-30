@@ -62,6 +62,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import static fr.igred.nucleus.io.ImageSaver.saveFile;
+import static fr.igred.nucleus.utils.Thresholding.convertToMask;
+import static fr.igred.nucleus.utils.Thresholding.createMask;
 
 
 /**
@@ -233,7 +235,7 @@ public class NucleusSegmentation {
 		List<Integer> arrayListThreshold = computeMinMaxThreshold(imgRawTransformed);  // methode OTSU
 		for (int t = arrayListThreshold.get(0); t <= arrayListThreshold.get(1); ++t) {
 			ImagePlus tempSeg;
-			tempSeg = generateSegmentedImage(imgRawTransformed, t);
+			tempSeg = createMask(imgRawTransformed, t);
 			
 			tempSeg = BinaryImages.componentsLabeling(tempSeg, 26, 32);
 			Calibration cal = imgRaw.getCalibration();
@@ -321,36 +323,6 @@ public class NucleusSegmentation {
 			StackConverter stackConverter = new StackConverter(imgRawTransformed);
 			stackConverter.convertToGray8();
 		}
-	}
-	
-	
-	/**
-	 * Creation of the nucleus segmented image from a OTSU threshold.
-	 *
-	 * @param imagePlusInput raw image
-	 * @param threshold      threshold value for the segmentation
-	 *
-	 * @return segmented image of the nucleus
-	 */
-	public static ImagePlus generateSegmentedImage(ImagePlus imagePlusInput, int threshold) {
-		ImageStack imageStackInput    = imagePlusInput.getStack();
-		ImagePlus  imagePlusSegmented = imagePlusInput.duplicate();
-		imagePlusSegmented.setTitle(imagePlusInput.getTitle());
-		ImageStack imageStackSegmented = imagePlusSegmented.getStack();
-		for (int k = 0; k < imagePlusInput.getStackSize(); ++k) {
-			for (int i = 0; i < imagePlusInput.getWidth(); ++i) {
-				for (int j = 0; j < imagePlusInput.getHeight(); ++j) {
-					double voxelValue = imageStackInput.getVoxel(i, j, k);
-					if (voxelValue >= threshold) {
-						imageStackSegmented.setVoxel(i, j, k, 255);
-					} else {
-						imageStackSegmented.setVoxel(i, j, k, 0);
-					}
-				}
-			}
-		}
-		
-		return imagePlusSegmented;
 	}
 	
 	
@@ -527,21 +499,8 @@ public class NucleusSegmentation {
 	 * @param imgSeg ImagePlus of the segmented image
 	 */
 	private static void deleteArtefact(ImagePlus imgSeg) {
-		double     voxelValue;
-		double     mode            = getLabelOfLargestObject(imgSeg);
-		ImageStack imageStackInput = imgSeg.getStack();
-		for (int k = 0; k < imgSeg.getNSlices(); ++k) {
-			for (int i = 0; i < imgSeg.getWidth(); ++i) {
-				for (int j = 0; j < imgSeg.getHeight(); ++j) {
-					voxelValue = imageStackInput.getVoxel(i, j, k);
-					if (voxelValue == mode) {
-						imageStackInput.setVoxel(i, j, k, 255);
-					} else {
-						imageStackInput.setVoxel(i, j, k, 0);
-					}
-				}
-			}
-		}
+		double mode = getLabelOfLargestObject(imgSeg);
+		convertToMask(imgSeg, mode, mode);
 	}
 	
 	

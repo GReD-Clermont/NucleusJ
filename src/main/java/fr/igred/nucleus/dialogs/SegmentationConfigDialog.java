@@ -35,7 +35,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -159,8 +158,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		
 		super.setVisible(false);
 		
-		ActionListener startListener = new StartListener(this);
-		buttonOK.addActionListener(startListener);
+		buttonOK.addActionListener(this::start);
 	}
 	
 	
@@ -255,22 +253,10 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 		validate();
 		repaint();
 	}
-	
-	
-	private static class StartListener implements ActionListener {
-		private final SegmentationConfigDialog segmentationDialog;
 		
 		
-		/** @param segmentationDialog  */
-		StartListener(SegmentationConfigDialog segmentationDialog) {
-			this.segmentationDialog = segmentationDialog;
-		}
-		
-		
-		public void actionPerformed(ActionEvent actionEvent) {
-			segmentationDialog.setVisible(false);
-		}
-		
+	private void start(ActionEvent actionEvent) {
+		setVisible(false);
 	}
 	
 }
