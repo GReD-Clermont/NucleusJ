@@ -70,72 +70,13 @@ public class MainGui extends JFrame {
 		welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		localPanel.add(welcomeLabel);
 		
-		JButton autocropButton = new JButton("Autocrop");
-		localPanel.add(autocropButton);
-		
-		JButton segmentationButton = new JButton("Segmentation");
-		localPanel.add(segmentationButton);
-		
-		JButton coordsCropButton = new JButton("Crop From Coordinates");
-		localPanel.add(coordsCropButton);
-		
-		JButton overlayButton = new JButton("Overlay");
-		localPanel.add(overlayButton);
-		
-		JButton computeParamsButton = new JButton("Compute Parameters Nuc");
-		localPanel.add(computeParamsButton);
-		
-		JButton nodeJButton = new JButton("NODeJ");
-		localPanel.add(nodeJButton);
-		
-		JButton ccSegmentButton = new JButton("Chromocenter Segmentation");
-		localPanel.add(ccSegmentButton);
-		
-		JButton computeCCParamsBtn = new JButton("Compute Parameters Spots");
-		localPanel.add(computeCCParamsBtn);
+		for (PluginButton button : PluginButton.values()) {
+			JButton jButton = new JButton(button.getLabel());
+			jButton.addActionListener(e -> button.getPlugin().run(""));
+			localPanel.add(jButton);
+		}
 		
 		container.add(localPanel);
-		
-		// Action listeners for buttons
-		autocropButton.addActionListener(e -> {
-			PlugIn autocrop = new Autocrop_();
-			autocrop.run("");
-		});
-		
-		segmentationButton.addActionListener(e -> {
-			PlugIn segmentation = new Segmentation_();
-			segmentation.run("");
-		});
-		
-		coordsCropButton.addActionListener(e -> {
-			PlugIn cropFromCoordinates = new CropFromCoordinates_();
-			cropFromCoordinates.run("");
-		});
-		
-		overlayButton.addActionListener(e -> {
-			PlugIn overlay = new GenerateOverlay_();
-			overlay.run("");
-		});
-		
-		computeParamsButton.addActionListener(e -> {
-			PlugIn computeParameters = new ComputeParametersPlugin_();
-			computeParameters.run("");
-		});
-		
-		nodeJButton.addActionListener(e -> {
-			PlugIn nodej = new NODeJ();
-			nodej.run("");
-		});
-		
-		ccSegmentButton.addActionListener(e -> {
-			PlugIn ccSegmentation = new ChromocenterSegmentationBatchPlugin_();
-			ccSegmentation.run("");
-		});
-		
-		computeCCParamsBtn.addActionListener(e -> {
-			PlugIn computeCcParameters = new ChromocentersAnalysisBatchPlugin_();
-			computeCcParameters.run("");
-		});
 		
 		// Repack GUI to ensure all components are laid out correctly
 		super.pack();
@@ -149,6 +90,51 @@ public class MainGui extends JFrame {
 		super.setResizable(false);
 		
 		LOGGER.info("Main GUI initialized");
+	}
+	
+	
+	/** Enumeration of plugin buttons with their labels and associated plugins. */
+	private enum PluginButton {
+		AUTOCROP("Autocrop", new Autocrop_()),
+		SEGMENTATION("Segmentation", new Segmentation_()),
+		CROP_COORDS("Crop From Coordinates", new CropFromCoordinates_()),
+		OVERLAY("Overlay", new GenerateOverlay_()),
+		COMPUTE_PARAMS("Compute Parameters Nuc", new ComputeParametersPlugin_()),
+		NODEJ("NODeJ", new NODeJ()),
+		CC_SEGMENT("Chromocenter Segmentation", new ChromocenterSegmentationBatchPlugin_()),
+		COMPUTE_CC_PARAMS("Compute Parameters Spots", new ChromocentersAnalysisBatchPlugin_());
+		
+		private final String label;
+		private final PlugIn plugin;
+		
+		/**
+		 * Constructor for PluginButton.
+		 *
+		 * @param label  the label of the button
+		 * @param plugin the plugin instance to be executed when the button is clicked
+		 */
+		PluginButton(String label, PlugIn plugin) {
+			this.label = label;
+			this.plugin = plugin;
+		}
+		
+		/**
+		 * Returns the label of the action button.
+		 *
+		 * @return the label of the button
+		 */
+		public String getLabel() {
+			return label;
+		}
+		
+		/**
+		 * Returns the plugin associated with this action button.
+		 *
+		 * @return the plugin instance
+		 */
+		public PlugIn getPlugin() {
+			return plugin;
+		}
 	}
 	
 }

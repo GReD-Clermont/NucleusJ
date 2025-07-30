@@ -518,7 +518,9 @@ public class SegmentationCalling {
 		}
 		
 		for (ImageWrapper img : images) {
-			uploadLatch.await(3, TimeUnit.SECONDS);
+			if(!uploadLatch.await(1, TimeUnit.MINUTES)) {
+				LOGGER.warn("Timeout while waiting for image download to start for: {}", img.getName());
+			}
 			downloadExecutor.submit(new ImageDownloaderOMERO(img));
 		}
 		

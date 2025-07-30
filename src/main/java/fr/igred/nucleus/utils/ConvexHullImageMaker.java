@@ -21,13 +21,16 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
+import ij.process.BinaryProcessor;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.image.BufferedImage;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 /**
@@ -39,9 +42,25 @@ public class ConvexHullImageMaker {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private List<Double> listLabel;
+	private static final int BINARY_WHITE = 255;
 	
-	private String axesName = "";
+	private List<Double> listLabel = new ArrayList<>(0);
+	
+	// Axes name used to determine the order of axes, default is "xy"
+	private String axesName = "xy";
+	
+	
+	/**
+	 * Throws an exception (used when the axis name is not valid)
+	 *
+	 * @param axes axes name
+	 *
+	 * @throws IllegalArgumentException if axes name is not valid
+	 */
+	private static void wrongAxesName(String axes) {
+		LOGGER.error("Invalid axes name: {}", axes);
+		throw new IllegalArgumentException("Invalid axes name: " + axes);
+	}
 	
 	
 	/**
@@ -55,12 +74,10 @@ public class ConvexHullImageMaker {
 	 */
 	public ImagePlus runConvexHullDetection(ImagePlus imagePlusBinary) {
 		LOGGER.debug("Computing convex hull algorithm for axes {}.", axesName);
-		ImagePlus imagePlusCorrected = new ImagePlus();
-		ImagePlus imagePlusBlack     = new ImagePlus();
-		int       depth;
-		int       width;
-		int       height;
-		// Defining plan
+		int depth;
+		int width;
+		int height;
+		// Defining plane
 		if ("xy".equals(axesName)) {
 			width = imagePlusBinary.getWidth();
 			height = imagePlusBinary.getHeight();
@@ -74,82 +91,141 @@ public class ConvexHullImageMaker {
 			height = imagePlusBinary.getNSlices();
 			depth = imagePlusBinary.getWidth();
 		}
-		// Create 2D image used to create each slice (depth) of a plan
-		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-		imagePlusBlack.setImage(bufferedImage);
+		// Create a new image stack to store the result
 		ImageStack imageStackOutput = new ImageStack(width, height);
 		for (int k = 0; k < depth; ++k) {
-			ImagePlus ip = imagePlusBlack.duplicate();
-			double[][] image = giveTable(imagePlusBinary, width, height,
-			                             k); // Return image with labelled components (& initialize listLabel)
-			LOGGER.trace("Processing slice {}/{} of plan \"{}\"", k, depth, axesName);
-			
-			// Calculate boundaries
-			if (listLabel.size() == 1) {  // If 1 single connected component
-				LOGGER.trace("Processing the only label {} on slice {}/{}",
-				             listLabel.get(0), k, depth);
-				List<VoxelRecord> lVoxelBoundary = detectVoxelBoundary(image, listLabel.get(0), k); // List the voxels of boundary of the component
-				if (lVoxelBoundary.size() > 5) { // When component is big enough
-					// Create temporary image of the component using the convex hull detection algorithm
-					ip = imageMaker(lVoxelBoundary, width, height);
-				} else {
-					ip = imagePlusBlack.duplicate();
-				}
-			} else if (listLabel.size() > 1) { // If several connected components
-				ImageStack imageStackIp = ip.getImageStack();
-				for (Double label : listLabel) {
-					LOGGER.trace("Processing label {} ({}/{}) on slice: {}/{}",
-					             label, listLabel.indexOf(label)+1, listLabel.size() , k, depth);
-					List<VoxelRecord> lVoxelBoundary = detectVoxelBoundary(image, label, k); // List the voxels of boundary of the component
-					if (lVoxelBoundary.size() > 5) { // When the component is big enough make image
-						// Create temporary image of the component using the convex hull detection algorithm
-						ImageStack imageTempStack = imageMaker(lVoxelBoundary, width, height).getStack();
-						
-						for (int l = 0; l < width; ++l) {
-							// For each labelled voxels of the component put a corresponding white voxel on the result
-							for (int m = 0; m < height; ++m) {
-								if (imageTempStack.getVoxel(l, m, 0) > 0) {
-									imageStackIp.setVoxel(l, m, 0, 255);
-								}
-							}
-						}
-					}
-				}
-			} else { // In case nothing is found return black image
-				ip = imagePlusBlack.duplicate();
-			}
-			imageStackOutput.addSlice(ip.getProcessor()); // Add the image to the result
+			ImageProcessor ip = convexHullSlice(imagePlusBinary, k, depth, width, height);
+			// Add the image to the result
+			imageStackOutput.addSlice(ip);
 		}
+		ImagePlus imagePlusCorrected = new ImagePlus();
 		imagePlusCorrected.setStack(imageStackOutput);
 		return imagePlusCorrected;
 	}
 	
 	
 	/**
+	 * Process one slice of the image and return the convex hull result
+	 *
+	 * @param imagePlusBinary the binary image to process
+	 * @param k               index of the slice to process
+	 * @param depth           total number of slices in the image
+	 * @param width           width of the slice
+	 * @param height          height of the slice
+	 *
+	 * @return ImageProcessor containing the convex hull of the slice
+	 */
+	@SuppressWarnings("HardcodedFileSeparator") // ratio, not file separator
+	private ImageProcessor convexHullSlice(ImagePlus imagePlusBinary, int k, int depth, int width, int height) {
+		LOGGER.trace("Processing slice {}/{} of plane \"{}\"", k, depth, axesName);
+		
+		// Return image with labelled components (& initialize listLabel)
+		double[][] image = giveTable(imagePlusBinary, width, height, k);
+		
+		ImageProcessor ip;
+		// Calculate boundaries
+		if (listLabel.size() == 1) {  // If 1 single connected component
+			LOGGER.trace("Processing the only label {} on slice {}/{}",
+			             listLabel.get(0), k, depth);
+			// List the voxels of boundary of the component
+			List<VoxelRecord> lVoxelBoundary = detectVoxelBoundary(image, listLabel.get(0), k);
+			// If component is big enough
+			if (lVoxelBoundary.size() > 5) {
+				// Create temporary image of the component using the convex hull detection algorithm
+				ip = imageMaker(lVoxelBoundary, width, height);
+			} else {
+				ip = new ByteProcessor(width, height);
+			}
+		} else if (listLabel.size() > 1) { // If several connected components
+			ip = new ByteProcessor(width, height);
+			for (Double label : listLabel) {
+				LOGGER.trace("Processing label {} ({}/{}) on slice: {}/{}",
+				             label, listLabel.indexOf(label) + 1, listLabel.size(), k, depth);
+				convexHullSliceLabel(k, width, height, label, image, ip);
+			}
+		} else { // In case nothing is found return black image
+			ip = new ByteProcessor(width, height);
+		}
+		return ip;
+	}
+	
+	
+	/**
+	 * Compute the convex hull for the given slice and label
+	 *
+	 * @param k      index of the slice
+	 * @param width  width of the slice
+	 * @param height height of the slice
+	 * @param label  label of the component
+	 * @param image  image used
+	 * @param ip     image processor to fill with the convex hull
+	 */
+	private void convexHullSliceLabel(int k, int width, int height, Double label, double[][] image, ImageProcessor ip) {
+		// List the voxels of boundary of the component
+		List<VoxelRecord> lVoxelBoundary = detectVoxelBoundary(image, label, k);
+		// When the component is big enough make image
+		if (lVoxelBoundary.size() > 5) {
+			// Create temporary image of the component using the convex hull detection algorithm
+			ImageProcessor tmpProcessor = imageMaker(lVoxelBoundary, width, height);
+			
+			for (int i = 0; i < width; ++i) {
+				// For each labelled voxels of the component put a corresponding white voxel on the result
+				for (int j = 0; j < height; ++j) {
+					if (tmpProcessor.get(i, j) > 0) {
+						ip.set(i, j, BINARY_WHITE);
+					}
+				}
+			}
+		}
+	}
+	
+	
+	/**
 	 * Find all the voxels of the boundaries (near black pixels)
 	 *
-	 * @param image  image used
-	 * @param label  current label
-	 * @param indice slice indice
+	 * @param image image used
+	 * @param label current label
+	 * @param index slice index
 	 *
-	 * @return list of the voxels of the boundaries
+	 * @return list of boundary voxels
 	 */
-	List<VoxelRecord> detectVoxelBoundary(double[][] image, double label, int indice) {
+	List<VoxelRecord> detectVoxelBoundary(double[][] image, double label, int index) {
 		LOGGER.trace("Detecting voxel boundary.");
 		List<VoxelRecord> lVoxelBoundary = new ArrayList<>();
+		
+		// Use axesName to determine the order of axes
+		// 0: x, 1: y, 2: z
+		int[] axeIndex;
+		if ("yz".equals(axesName)) {
+			//y, z, x
+			axeIndex = new int[]{2, 0, 1};
+		} else if ("xz".equals(axesName)) {
+			//x, z, y
+			axeIndex = new int[]{0, 2, 1};
+		} else {
+			// Default is xy: x, y, z
+			axeIndex = new int[]{0, 1, 2};
+		}
+		
 		// Browse through the pixels of the 2D image
+		int[] xyz = {1, 1, index};
 		for (int i = 1; i < image.length; ++i) {
 			for (int j = 1; j < image[i].length; ++j) {
 				if (image[i][j] == label) {
-					if (image[i - 1][j] == 0 || image[i + 1][j] == 0 || image[i][j - 1] == 0 || image[i][j + 1] == 0) {
+					// Check if the current pixel is a boundary pixel
+					boolean isBoundary = image[i - 1][j] == 0 ||
+					                     image[i + 1][j] == 0 ||
+					                     image[i][j - 1] == 0 ||
+					                     image[i][j + 1] == 0;
+					if (isBoundary) {
+						xyz[0] = i;
+						xyz[1] = j;
+						int x = xyz[axeIndex[0]];
+						int y = xyz[axeIndex[1]];
+						int z = xyz[axeIndex[2]];
+						
 						VoxelRecord voxelTest = new VoxelRecord();
-						if ("xy".equals(axesName)) {
-							voxelTest.setLocation(i, j, indice);
-						} else if ("xz".equals(axesName)) {
-							voxelTest.setLocation(i, indice, j);
-						} else {
-							voxelTest.setLocation(indice, i, j);
-						}
+						voxelTest.setLocation(x, y, z);
 						lVoxelBoundary.add(voxelTest);
 					}
 				}
@@ -160,15 +236,15 @@ public class ConvexHullImageMaker {
 	
 	
 	/**
-	 * Make image plus of the convex hull detection result
+	 * Make binary image processor of the convex hull detection result
 	 *
 	 * @param lVoxelBoundary voxels of the boundaries
 	 * @param width          slice width
 	 * @param height         slice height
 	 *
-	 * @return ImagePlus result
+	 * @return See above.
 	 */
-	public ImagePlus imageMaker(List<? extends VoxelRecord> lVoxelBoundary, int width, int height) {
+	public ImageProcessor imageMaker(List<? extends VoxelRecord> lVoxelBoundary, int width, int height) {
 		LOGGER.trace("Making image.");
 		
 		List<VoxelRecord> convexHull = ConvexHullDetection.runGrahamScan(axesName, lVoxelBoundary); // For testing
@@ -185,11 +261,11 @@ public class ConvexHullImageMaker {
 	 *
 	 * @return ImagePlus result
 	 */
-	public ImagePlus makePolygon(List<? extends VoxelRecord> convexHull, int width, int height) {
-		ImagePlus     ip            = new ImagePlus();
-		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
-		int[]         tableWidth    = new int[convexHull.size() + 1];
-		int[]         tableHeight   = new int[convexHull.size() + 1];
+	public ImageProcessor makePolygon(List<? extends VoxelRecord> convexHull, int width, int height) {
+		ImageProcessor ip = new BinaryProcessor(new ByteProcessor(width, height));
+		
+		int[] tableWidth  = new int[convexHull.size() + 1];
+		int[] tableHeight = new int[convexHull.size() + 1];
 		for (int i = 0; i < convexHull.size(); ++i) {
 			switch (axesName) {
 				case "xy":
@@ -205,8 +281,7 @@ public class ConvexHullImageMaker {
 					tableHeight[i] = (int) convexHull.get(i).getK();
 					break;
 				default:
-					LOGGER.error("Invalid axes name: {}", axesName);
-					throw new IllegalArgumentException("Invalid axes name: " + axesName);
+					wrongAxesName(axesName);
 			}
 		}
 		
@@ -224,13 +299,11 @@ public class ConvexHullImageMaker {
 				tableHeight[convexHull.size()] = (int) convexHull.get(0).getK();
 				break;
 			default:
-				LOGGER.error("Invalid axes name: {}", axesName);
-				throw new IllegalArgumentException("Invalid axes name: " + axesName);
+				wrongAxesName(axesName);
 		}
 		
-		ip.setImage(bufferedImage);
-		ip.getProcessor().setValue(255);
-		ip.getProcessor().fill(new PolygonRoi(tableWidth, tableHeight, tableWidth.length, Roi.POLYGON));
+		ip.setValue(BINARY_WHITE);
+		ip.fill(new PolygonRoi(tableWidth, tableHeight, tableWidth.length, Roi.POLYGON));
 		return ip;
 	}
 	
@@ -261,16 +334,17 @@ public class ConvexHullImageMaker {
 		}
 		ConnectedComponents connectedComponents = new ConnectedComponents();
 		connectedComponents.setImageTable(image);
-		listLabel = connectedComponents.getListLabel(255); // One label per connected components
-		image = connectedComponents.getImageTable(); // Return the image where all connected components have a different label (value)
-		return image;
+		// One label per connected components
+		listLabel = connectedComponents.getListLabel(BINARY_WHITE);
+		// Return the image where all connected components have a different label (value)
+		return connectedComponents.getImageTable();
 	}
 	
 	
 	/**
 	 * Return current combined axis analysing
 	 *
-	 * @return current combined axis  analysing
+	 * @return current combined axis analysing
 	 */
 	public String getAxes() {
 		return axesName;
@@ -283,6 +357,10 @@ public class ConvexHullImageMaker {
 	 * @param axes Current combined axis analysing
 	 */
 	public void setAxes(String axes) {
+		if (!Pattern.compile("^[xyz]{2,3}$").matcher(axes).matches() ||
+		    axes.chars().distinct().count() != axes.length()) {
+			wrongAxesName(axes);
+		}
 		axesName = axes;
 	}
 	
