@@ -23,7 +23,7 @@ import fr.igred.nucleus.autocrop.CropFromCoordinates;
 import fr.igred.nucleus.autocrop.GenerateOverlay;
 import fr.igred.nucleus.core.ChromocenterAnalysis;
 import fr.igred.nucleus.core.ComputeNucleiParameters;
-import fr.igred.nucleus.plugins.ChromocenterParameters;
+import fr.igred.nucleus.process.ChromocenterParameters;
 import fr.igred.nucleus.process.ChromocenterCalling;
 import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.nucleus.segmentation.SegmentationParameters;

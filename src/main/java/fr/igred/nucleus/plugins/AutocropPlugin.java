@@ -44,7 +44,7 @@ import java.util.concurrent.ExecutionException;
 import static java.lang.Integer.parseInt;
 
 
-public class Autocrop_ implements PlugIn, IDialogListener {
+public class AutocropPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	

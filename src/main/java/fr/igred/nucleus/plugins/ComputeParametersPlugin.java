@@ -35,7 +35,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ExecutionException;
 
 
-public class ComputeParametersPlugin_ implements PlugIn, IDialogListener {
+public class ComputeParametersPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	

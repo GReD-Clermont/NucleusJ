@@ -199,9 +199,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if (e.getSource() == convexHullDetection) {
-			boolean isConvHullDetection = convexHullDetection.isSelected();
-		} else if (e.getSource() == addCalibrationBox) {
+		if (e.getSource() == addCalibrationBox) {
 			if (addCalibrationBox.isSelected()) {
 				xCalibrationPanel = new JPanel();
 				xCalibrationPanel.setLayout(new BoxLayout(xCalibrationPanel, BoxLayout.LINE_AXIS));

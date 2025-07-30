@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class CropFromCoordinates_ implements PlugIn, IDialogListener {
+public class CropFromCoordinatesPlugin implements PlugIn, IDialogListener {
 	/**
 	 * Logger
 	 */

@@ -17,6 +17,7 @@
  */
 package fr.igred.nucleus.plugins;
 
+import fr.igred.nucleus.process.ChromocenterParameters;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;

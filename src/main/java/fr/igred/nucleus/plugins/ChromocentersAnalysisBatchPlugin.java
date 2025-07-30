@@ -52,7 +52,7 @@ import java.util.stream.Stream;
 /**
  * @author Tristan Dubos and Axel Poulet
  */
-public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListener {
+public class ChromocentersAnalysisBatchPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	

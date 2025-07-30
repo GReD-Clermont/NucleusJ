@@ -17,7 +17,7 @@
  */
 package fr.igred.nucleus;
 
-import fr.igred.nucleus.plugins.ComputeParametersPlugin_;
+import fr.igred.nucleus.plugins.ComputeParametersPlugin;
 import ij.IJ;
 
 
@@ -30,7 +30,7 @@ public final class PluginTester {
 	
 	
 	public static void main(String[] args) {
-		Class<?> clazz = ComputeParametersPlugin_.class;
+		Class<?> clazz = ComputeParametersPlugin.class;
 		String   name  = clazz.getName();
 		String url = clazz.getResource("/" +
 		                               name.replace('.', '/') +

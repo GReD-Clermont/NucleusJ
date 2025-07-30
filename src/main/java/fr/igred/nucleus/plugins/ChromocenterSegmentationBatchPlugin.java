@@ -42,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Tristan Dubos and Axel Poulet
  */
-public class ChromocenterSegmentationBatchPlugin_ implements PlugIn, IDialogListener {
+public class ChromocenterSegmentationBatchPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	

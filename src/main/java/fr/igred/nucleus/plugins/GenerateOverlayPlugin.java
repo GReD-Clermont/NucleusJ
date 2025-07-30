@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class GenerateOverlay_ implements PlugIn, IDialogListener {
+public class GenerateOverlayPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	

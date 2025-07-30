@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class Segmentation_ implements PlugIn, IDialogListener {
+public class SegmentationPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	

@@ -19,14 +19,14 @@ package fr.igred.nucleus.dialogs;
 
 
 import fr.igred.nucleus.Version;
-import fr.igred.nucleus.plugins.Autocrop_;
-import fr.igred.nucleus.plugins.ChromocenterSegmentationBatchPlugin_;
-import fr.igred.nucleus.plugins.ChromocentersAnalysisBatchPlugin_;
-import fr.igred.nucleus.plugins.ComputeParametersPlugin_;
-import fr.igred.nucleus.plugins.CropFromCoordinates_;
-import fr.igred.nucleus.plugins.GenerateOverlay_;
+import fr.igred.nucleus.plugins.AutocropPlugin;
+import fr.igred.nucleus.plugins.ChromocenterSegmentationBatchPlugin;
+import fr.igred.nucleus.plugins.ChromocentersAnalysisBatchPlugin;
+import fr.igred.nucleus.plugins.ComputeParametersPlugin;
+import fr.igred.nucleus.plugins.CropFromCoordinatesPlugin;
+import fr.igred.nucleus.plugins.GenerateOverlayPlugin;
 import fr.igred.nucleus.plugins.NODeJ;
-import fr.igred.nucleus.plugins.Segmentation_;
+import fr.igred.nucleus.plugins.SegmentationPlugin;
 import ij.plugin.PlugIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,14 +95,14 @@ public class MainGui extends JFrame {
 	
 	/** Enumeration of plugin buttons with their labels and associated plugins. */
 	private enum PluginButton {
-		AUTOCROP("Autocrop", new Autocrop_()),
-		SEGMENTATION("Segmentation", new Segmentation_()),
-		CROP_COORDS("Crop From Coordinates", new CropFromCoordinates_()),
-		OVERLAY("Overlay", new GenerateOverlay_()),
-		COMPUTE_PARAMS("Compute Parameters Nuc", new ComputeParametersPlugin_()),
+		AUTOCROP("Autocrop", new AutocropPlugin()),
+		SEGMENTATION("Segmentation", new SegmentationPlugin()),
+		CROP_COORDS("Crop From Coordinates", new CropFromCoordinatesPlugin()),
+		OVERLAY("Overlay", new GenerateOverlayPlugin()),
+		COMPUTE_PARAMS("Compute Parameters Nuc", new ComputeParametersPlugin()),
 		NODEJ("NODeJ", new NODeJ()),
-		CC_SEGMENT("Chromocenter Segmentation", new ChromocenterSegmentationBatchPlugin_()),
-		COMPUTE_CC_PARAMS("Compute Parameters Spots", new ChromocentersAnalysisBatchPlugin_());
+		CC_SEGMENT("Chromocenter Segmentation", new ChromocenterSegmentationBatchPlugin()),
+		COMPUTE_CC_PARAMS("Compute Parameters Spots", new ChromocentersAnalysisBatchPlugin());
 		
 		private final String label;
 		private final PlugIn plugin;

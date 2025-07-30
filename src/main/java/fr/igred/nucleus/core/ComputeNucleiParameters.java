@@ -24,7 +24,6 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
-import fr.igred.nucleus.plugins.PluginParameters;
 import ij.ImagePlus;
 import ij.measure.Calibration;
 import loci.formats.FormatException;
