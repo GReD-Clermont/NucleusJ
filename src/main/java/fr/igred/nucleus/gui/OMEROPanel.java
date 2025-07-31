@@ -157,7 +157,7 @@ public class OMEROPanel extends JPanel {
 		omeroPanel.add(jComboBoxDataType3, c);
 		c.gridx = 2;
 		omeroPanel.add(jTextFieldSourceID3, c);
-		jTextFieldSourceID2.setMaximumSize(new Dimension(20000, 20));
+		jTextFieldSourceID3.setMaximumSize(new Dimension(20000, 20));
 		
 		c.gridy = 8;
 		JLabel jLabelOutputProject = new JLabel("Output project:");
@@ -186,7 +186,6 @@ public class OMEROPanel extends JPanel {
 		jTextFieldPort.setText(String.valueOf(port));
 		jTextFieldUsername.setText(username);
 		
-		jTextFieldUsername.setText("");
 		jPasswordField.setText("");
 		jTextFieldGroup.setText("");
 	}

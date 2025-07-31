@@ -83,7 +83,7 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 	private final OMEROPanel   omeroModeLayout = new OMEROPanel(dataTypes);
 	private final JPanel       localModeLayout = new JPanel();
 	
-	private final Container  container;
+	private final Container container;
 	
 	private boolean start;
 	private boolean useOMERO;
@@ -98,6 +98,7 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 		JButton     jButtonStart         = new JButton("Start");
 		JButton     jButtonQuit          = new JButton("Quit");
 		JButton     jButtonRawData       = new JButton("Raw Data");
+		ButtonGroup buttonGroupAnalysis  = new ButtonGroup();
 		ButtonGroup buttonGroupChoiceRhf = new ButtonGroup();
 		JLabel      jLabelAnalysis;
 		JLabel      jLabelAnalysis2;
@@ -211,13 +212,7 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 		addCalibrationBox.setSelected(false);
 		addCalibrationBox.addItemListener(this);
 		calibration.add(addCalibrationBox, gc);
-/*
-		localPanel.add(calibration,
-				new GridBagConstraints(0, 4, 3, 1, 1.0, 0.0,
-						GridBagConstraints.NORTHWEST,
-						GridBagConstraints.HORIZONTAL,
-						new Insets(10, 10, 0, 10), 0, 0));
-*/
+		
 		jLabelAnalysis = new JLabel("Results file of interest:");
 		container.add(jLabelAnalysis,
 		              new GridBagConstraints(0, 3, 5, 1, 0.0, 0.0,
@@ -225,9 +220,9 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(10, 10, 0, 10), 0, 0));
 		
-		//buttonGroupChoiceAnalysis.add(jRadioButtonNucCc);
-		//buttonGroupChoiceAnalysis.add(jRadioButtonCc);
-		//buttonGroupChoiceAnalysis.add(jRadioButtonNuc);
+		buttonGroupAnalysis.add(jRadioButtonNucCc);
+		buttonGroupAnalysis.add(jRadioButtonCc);
+		buttonGroupAnalysis.add(jRadioButtonNuc);
 		
 		JPanel analysisPanel = new JPanel();
 		analysisPanel.setLayout(new BoxLayout(analysisPanel, BoxLayout.LINE_AXIS));
@@ -272,7 +267,7 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 		// Omero mode layout
 		omeroModeLayout.setSourceLabel("Image Source:");
 		omeroModeLayout.setSourceLabel2("Nucleus segmentation:");
-		omeroModeLayout.setSourceLabel2("Chromocenter segmentation:");
+		omeroModeLayout.setSourceLabel3("Chromocenter segmentation:");
 		
 		// Buttons at the bottom
 		JPanel buttonPanel = new JPanel();
@@ -511,8 +506,6 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 				calibration.add(readZCalibration, gc);
 				jLabelZCalibration.setVisible(true);
 				readZCalibration.setVisible(true);
-				
-				//pack();
 			} else {
 				jLabelXCalibration.setVisible(false);
 				jLabelYCalibration.setVisible(false);
