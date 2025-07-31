@@ -72,7 +72,7 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	private final Container  container;
 	
 	private boolean start;
-	private boolean omeroUsed;
+	private boolean useOMERO;
 	
 	
 	public GenerateOverlayDialog(IDialogListener dialogListener) {
@@ -206,8 +206,8 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	}
 	
 	
-	public boolean isOMEROUsed() {
-		return omeroUsed;
+	public boolean useOMERO() {
+		return useOMERO;
 	}
 	
 	
@@ -296,11 +296,11 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		if (source == omeroNoButton) {
 			container.remove(1);
 			container.add(localModeLayout, 1);
-			omeroUsed = false;
+			useOMERO = false;
 		} else if (source == omeroYesButton) {
 			container.remove(1);
 			container.add(omeroModeLayout, 1);
-			omeroUsed = true;
+			useOMERO = true;
 		} else {
 			container.remove(3);
 		}

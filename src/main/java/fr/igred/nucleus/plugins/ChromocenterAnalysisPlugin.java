@@ -90,7 +90,7 @@ public class ChromocenterAnalysisPlugin implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() throws AccessException, ServiceException, ExecutionException {
-		if (chromocentersPipelineBatchDialog.isOmeroEnabled()) {
+		if (chromocentersPipelineBatchDialog.useOMERO()) {
 			runOMERO();
 		} else {
 			String file = chromocentersPipelineBatchDialog.getRawDataDirectory();

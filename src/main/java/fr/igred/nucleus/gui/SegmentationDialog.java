@@ -78,7 +78,7 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	private final OMEROPanel                    omeroModeLayout    = new OMEROPanel();
 	private final JButton                       confButton         = new JButton("...");
 	private final JSpinner                      jSpinnerThreads;
-	private       boolean                       omeroUsed;
+	private       boolean                       useOMERO;
 	private       SegmentationDialog.ConfigMode configMode;
 	
 	
@@ -227,8 +227,8 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	}
 	
 	
-	public boolean isOMEROUsed() {
-		return omeroUsed;
+	public boolean useOMERO() {
+		return useOMERO;
 	}
 	
 	
@@ -333,11 +333,11 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		if (source == omeroNoButton) {
 			container.remove(1);
 			container.add(localModeLayout, 1);
-			omeroUsed = false;
+			useOMERO = false;
 		} else if (source == omeroYesButton) {
 			container.remove(1);
 			container.add(omeroModeLayout, 1);
-			omeroUsed = true;
+			useOMERO = true;
 		} else {
 			container.remove(3);
 			if (segmentationConfigFileDialog.isVisible()) {

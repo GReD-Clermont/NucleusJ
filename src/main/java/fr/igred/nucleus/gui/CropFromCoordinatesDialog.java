@@ -70,7 +70,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	
 	private final Container container;
 	
-	private boolean omeroUsed;
+	private boolean useOMERO;
 	
 	
 	public CropFromCoordinatesDialog(IDialogListener listener) {
@@ -107,7 +107,6 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		radioOmeroPanel.add(jLabelOmero);
 		radioOmeroPanel.add(omeroYesButton);
 		radioOmeroPanel.add(omeroNoButton);
-		//radioOmeroPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		container.add(radioOmeroPanel, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
 		                                                      GridBagConstraints.FIRST_LINE_START,
 		                                                      GridBagConstraints.NONE,
@@ -149,54 +148,6 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		// Omero mode layout
 		omeroModeLayout.setSourceLabel2("Image to crop:");
 		omeroModeLayout.setSourceLabel3("");
-		
-        /*/\*\
-        ------------------------------ Coordinate file -----------------------------------------
-        \*\/*/
-
-        /*/\*\
-        ------------------------------ Image + coordinates -----------------------------------------
-        \*\/*/
-
-        /*
-        JLabel imageFileLabel = new JLabel();
-        container.add(imageFileLabel, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-                new Insets(10, 10, 0, 0), 0, 0));
-        imageFileLabel.setText("Path to image:");
-
-        container.add(jImageChooser, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-                new Insets(30, 10, 0, 0), 0, 0));
-        jImageChooser.setPreferredSize(new java.awt.Dimension(300, 20));
-        jImageChooser.setMinimumSize(new java.awt.Dimension(300, 20));
-
-        imageButton = new JButton("...");
-        container.add(linkFileButton, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
-                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-                new Insets(30, 330, 0, 0), 0, 0));
-        imageButton.addActionListener(this);
-        imageButton.setName(imageChooserName);
-
-        jLabelCoord = new JLabel();
-        container.add(jLabelCoord, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-                new Insets(10, 10, 0, 0), 0, 0));
-        jLabelCoord.setText("Path to coordinates:");
-
-        container.add(jCoordFileChooser, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-                new Insets(30, 10, 0, 0), 0, 0));
-        jCoordFileChooser.setPreferredSize(new java.awt.Dimension(300, 20));
-        jCoordFileChooser.setMinimumSize(new java.awt.Dimension(300, 20));
-
-        coordButton = new JButton("...");
-        container.add(coordButton, new GridBagConstraints(0, 0, 0, 0, 0.0, 0.0,
-                GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
-                new Insets(30, 330, 0, 0), 0, 0));
-        coordButton.addActionListener(this);
-        coordButton.setName(coordChooserName);
-        */
 
         /*/\*\
         ------------------------------ Buttons -----------------------------------------
@@ -239,8 +190,8 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	}
 	
 	
-	public boolean isOMEROUsed() {
-		return omeroUsed;
+	public boolean useOMERO() {
+		return useOMERO;
 	}
 	
 	
@@ -323,11 +274,11 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		if (source == omeroNoButton) {
 			container.remove(1);
 			container.add(localModeLayout, 1);
-			omeroUsed = false;
+			useOMERO = false;
 		} else if (source == omeroYesButton) {
 			container.remove(1);
 			container.add(omeroModeLayout, 1);
-			omeroUsed = true;
+			useOMERO = true;
 		} else {
 			container.remove(3);
 		}

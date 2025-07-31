@@ -69,7 +69,7 @@ public class AutocropPlugin implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() {
-		if (autocropDialog.isOMEROUsed()) {
+		if (autocropDialog.useOMERO()) {
 			runOmeroAutocrop();
 		} else {
 			runLocalAutocrop();

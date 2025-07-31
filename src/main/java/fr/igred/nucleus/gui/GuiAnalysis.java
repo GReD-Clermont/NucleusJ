@@ -92,7 +92,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 	/**  */
 	private final Container container;
 	
-	private boolean omeroUsed;
+	private boolean useOMERO;
 	private boolean start;
 	
 	
@@ -503,8 +503,8 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 	}
 	
 	
-	public boolean isOMEROUsed() {
-		return omeroUsed;
+	public boolean useOMERO() {
+		return useOMERO;
 	}
 	
 	
@@ -565,11 +565,11 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		if (source == omeroNoButton) {
 			container.remove(1);
 			container.add(localModeLayout, 1);
-			omeroUsed = false;
+			useOMERO = false;
 		} else if (source == omeroYesButton) {
 			container.remove(1);
 			container.add(omeroModeLayout, 1);
-			omeroUsed = true;
+			useOMERO = true;
 		} else {
 			container.remove(3);
 		}
@@ -585,7 +585,6 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 	 */
 	private void quit(ActionEvent actionEvent) {
 		dispose();
-		//System.exit(0);
 	}
 	
 	
@@ -615,7 +614,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 	 * Test all the box, condition etc before to allow the program to run and dispose the java.trax.gui
 	 */
 	private void start(ActionEvent actionEvent) {
-		if (omeroUsed) {
+		if (useOMERO) {
 			start = true;
 			dispose();
 			

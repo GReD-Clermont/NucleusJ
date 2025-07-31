@@ -78,7 +78,7 @@ public class CropFromCoordinatesPlugin implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() throws AccessException, ServiceException, ExecutionException {
-		if (cropFromCoordinatesDialog.isOMEROUsed()) {
+		if (cropFromCoordinatesDialog.useOMERO()) {
 			runOMERO();
 		} else {
 			String file = cropFromCoordinatesDialog.getLink();

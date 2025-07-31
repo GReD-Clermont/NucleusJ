@@ -398,7 +398,7 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 	}
 	
 	
-	public boolean isOmeroEnabled() {
+	public boolean useOMERO() {
 		return useOMERO;
 	}
 	

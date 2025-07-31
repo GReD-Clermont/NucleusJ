@@ -80,7 +80,7 @@ public class NODeJ implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() {
-		if (gui.isOMEROUsed()) {
+		if (gui.useOMERO()) {
 			runOmero();
 		} else {
 			runLocal();
