@@ -25,12 +25,13 @@ import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
-import fr.igred.nucleus.dialogs.IDialogListener;
-import fr.igred.nucleus.dialogs.SegmentationConfigDialog;
-import fr.igred.nucleus.dialogs.SegmentationDialog;
+import fr.igred.nucleus.gui.IDialogListener;
+import fr.igred.nucleus.gui.SegmentationConfigDialog;
+import fr.igred.nucleus.gui.SegmentationDialog;
 import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.nucleus.segmentation.SegmentationParameters;
 import ij.IJ;
+import ij.Prefs;
 import ij.plugin.PlugIn;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
@@ -43,7 +44,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class Segmentation_ implements PlugIn, IDialogListener {
+public class SegmentationPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
@@ -67,7 +68,7 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() {
-		if (segmentationDialog.isOMEROUsed()) {
+		if (segmentationDialog.useOMERO()) {
 			runOmeroSegmentation();
 		} else {
 			runLocalSegmentation();
@@ -149,6 +150,10 @@ public class Segmentation_ implements PlugIn, IDialogListener {
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
 		String input    = ".";
 		String output   = ".";
+		
+		Prefs.set("omero.host", hostname);
+		Prefs.set("omero.port", port);
+		Prefs.set("omero.user", username);
 		
 		SegmentationParameters params       = setParametersFromDialog(input, output);
 		SegmentationCalling    segmentation = new SegmentationCalling(params);

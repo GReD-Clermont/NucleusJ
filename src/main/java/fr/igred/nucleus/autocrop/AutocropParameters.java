@@ -17,7 +17,7 @@
  */
 package fr.igred.nucleus.autocrop;
 
-import fr.igred.nucleus.plugins.PluginParameters;
+import fr.igred.nucleus.core.PluginParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -20,7 +20,7 @@ package fr.igred.nucleus.machinelearning;
 import fr.igred.nucleus.core.Measure3D;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
-import fr.igred.nucleus.plugins.PluginParameters;
+import fr.igred.nucleus.core.PluginParameters;
 import fr.igred.nucleus.utils.Histogram;
 import ij.ImagePlus;
 import inra.ijpb.binary.BinaryImages;

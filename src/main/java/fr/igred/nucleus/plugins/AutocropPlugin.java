@@ -19,9 +19,9 @@ package fr.igred.nucleus.plugins;
 
 import fr.igred.nucleus.autocrop.AutoCropCalling;
 import fr.igred.nucleus.autocrop.AutocropParameters;
-import fr.igred.nucleus.dialogs.AutocropConfigDialog;
-import fr.igred.nucleus.dialogs.AutocropDialog;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.gui.AutocropConfigDialog;
+import fr.igred.nucleus.gui.AutocropDialog;
+import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.omero.Client;
 import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
@@ -31,6 +31,7 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import ij.IJ;
+import ij.Prefs;
 import ij.plugin.PlugIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ import java.util.concurrent.ExecutionException;
 import static java.lang.Integer.parseInt;
 
 
-public class Autocrop_ implements PlugIn, IDialogListener {
+public class AutocropPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
@@ -68,7 +69,7 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() {
-		if (autocropDialog.isOmeroEnabled()) {
+		if (autocropDialog.useOMERO()) {
 			runOmeroAutocrop();
 		} else {
 			runLocalAutocrop();
@@ -105,6 +106,10 @@ public class Autocrop_ implements PlugIn, IDialogListener {
 		char[] password = autocropDialog.getPassword();
 		String group    = autocropDialog.getGroup();
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
+		
+		Prefs.set("omero.host", hostname);
+		Prefs.set("omero.port", port);
+		Prefs.set("omero.user", username);
 		
 		String typeThresholding = autocropDialog.getTypeThresholding();
 		

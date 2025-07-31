@@ -24,8 +24,8 @@ import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.nucleus.autocrop.GenerateOverlay;
-import fr.igred.nucleus.dialogs.GenerateOverlayDialog;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.gui.GenerateOverlayDialog;
+import fr.igred.nucleus.gui.IDialogListener;
 import ij.IJ;
 import ij.Prefs;
 import ij.plugin.PlugIn;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class GenerateOverlay_ implements PlugIn, IDialogListener {
+public class GenerateOverlayPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
@@ -59,7 +59,7 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() throws AccessException, ServiceException, ExecutionException {
-		if (generateOverlayDialog.isOmeroEnabled()) {
+		if (generateOverlayDialog.useOMERO()) {
 			runOMERO();
 		} else {
 			runLocal();
@@ -92,7 +92,7 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 		String hostname = generateOverlayDialog.getHostname();
 		String port     = generateOverlayDialog.getPort();
 		String username = generateOverlayDialog.getUsername();
-		String password = generateOverlayDialog.getPassword();
+		char[] password = generateOverlayDialog.getPassword();
 		String group    = generateOverlayDialog.getGroup();
 		String output   = generateOverlayDialog.getOutputProject();
 		// Set user prefs
@@ -100,7 +100,7 @@ public class GenerateOverlay_ implements PlugIn, IDialogListener {
 		Prefs.set("omero.port", port);
 		Prefs.set("omero.user", username);
 		// Connect to OMERO
-		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		Client client = checkOMEROConnection(hostname, port, username, password, group);
 		// Handle the source according to the type given
 		String zProjectionDataType = generateOverlayDialog.getZprojectionDataType();
 		String dicDataType         = generateOverlayDialog.getDICDataType();

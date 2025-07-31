@@ -16,5 +16,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** This package contains GUI classes. */
+/** This package contains GUI classes to create dialogs and windows. */
 package fr.igred.nucleus.gui;

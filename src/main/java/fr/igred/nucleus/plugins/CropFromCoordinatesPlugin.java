@@ -28,8 +28,8 @@ import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.roi.GenericShapeWrapper;
 import fr.igred.omero.roi.ROIWrapper;
 import fr.igred.nucleus.autocrop.CropFromCoordinates;
-import fr.igred.nucleus.dialogs.CropFromCoordinatesDialog;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.gui.CropFromCoordinatesDialog;
+import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.nucleus.io.FilesNames;
 import ij.IJ;
 import ij.ImagePlus;
@@ -49,7 +49,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
-public class CropFromCoordinates_ implements PlugIn, IDialogListener {
+public class CropFromCoordinatesPlugin implements PlugIn, IDialogListener {
 	/**
 	 * Logger
 	 */
@@ -78,7 +78,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() throws AccessException, ServiceException, ExecutionException {
-		if (cropFromCoordinatesDialog.isOmeroEnabled()) {
+		if (cropFromCoordinatesDialog.useOMERO()) {
 			runOMERO();
 		} else {
 			String file = cropFromCoordinatesDialog.getLink();
@@ -206,7 +206,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		String hostname = cropFromCoordinatesDialog.getHostname();
 		String port     = cropFromCoordinatesDialog.getPort();
 		String username = cropFromCoordinatesDialog.getUsername();
-		String password = cropFromCoordinatesDialog.getPassword();
+		char[] password = cropFromCoordinatesDialog.getPassword();
 		String group    = cropFromCoordinatesDialog.getGroup();
 		String output   = cropFromCoordinatesDialog.getOutputProject();
 		int    channel  = Integer.parseInt(cropFromCoordinatesDialog.getChannelToCrop());
@@ -215,7 +215,7 @@ public class CropFromCoordinates_ implements PlugIn, IDialogListener {
 		Prefs.set("omero.port", port);
 		Prefs.set("omero.user", username);
 		
-		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		Client client = checkOMEROConnection(hostname, port, username, password, group);
 		
 		// Handle the source according to the type given
 		String         sourceDataType = cropFromCoordinatesDialog.getDataType();

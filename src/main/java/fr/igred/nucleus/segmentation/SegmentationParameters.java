@@ -18,7 +18,7 @@
 package fr.igred.nucleus.segmentation;
 
 
-import fr.igred.nucleus.plugins.PluginParameters;
+import fr.igred.nucleus.core.PluginParameters;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.dialogs;
+package fr.igred.nucleus.gui;
 
 import fr.igred.nucleus.Version;
 import fr.igred.nucleus.utils.ConvexHullDetection;
@@ -199,9 +199,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
 	
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		if (e.getSource() == convexHullDetection) {
-			boolean isConvHullDetection = convexHullDetection.isSelected();
-		} else if (e.getSource() == addCalibrationBox) {
+		if (e.getSource() == addCalibrationBox) {
 			if (addCalibrationBox.isSelected()) {
 				xCalibrationPanel = new JPanel();
 				xCalibrationPanel.setLayout(new BoxLayout(xCalibrationPanel, BoxLayout.LINE_AXIS));

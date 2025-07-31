@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.dialogs;
+package fr.igred.nucleus.gui;
 
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
@@ -47,7 +47,7 @@ import java.util.concurrent.ExecutionException;
  *
  * @author Poulet Axel
  */
-public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implements ItemListener {
+public class ChromocenterSegmentationDialog extends JFrame implements ItemListener {
 	private static final long serialVersionUID = -1605324416480852307L;
 	
 	private final transient IDialogListener dialogListener;
@@ -67,7 +67,7 @@ public class ChromocenterSegmentationPipelineBatchDialog extends JFrame implemen
 	
 	
 	/** Architecture of the graphical windows */
-	public ChromocenterSegmentationPipelineBatchDialog(IDialogListener dialogListener) {
+	public ChromocenterSegmentationDialog(IDialogListener dialogListener) {
 		this.dialogListener = dialogListener;
 		Container container;
 		JLabel    jLabelWorkDirectory;

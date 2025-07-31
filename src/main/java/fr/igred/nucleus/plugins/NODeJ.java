@@ -17,14 +17,16 @@
  */
 package fr.igred.nucleus.plugins;
 
+import fr.igred.nucleus.process.ChromocenterParameters;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.nucleus.gui.GuiAnalysis;
 import fr.igred.nucleus.process.ChromocenterCalling;
 import ij.IJ;
+import ij.Prefs;
 import ij.plugin.PlugIn;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
@@ -78,7 +80,7 @@ public class NODeJ implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() {
-		if (gui.isOMEROUsed()) {
+		if (gui.useOMERO()) {
 			runOmero();
 		} else {
 			runLocal();
@@ -94,6 +96,11 @@ public class NODeJ implements PlugIn, IDialogListener {
 		char[] password = gui.getPassword();
 		String group    = gui.getGroup();
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
+		
+		Prefs.set("omero.host", hostname);
+		Prefs.set("omero.port", port);
+		Prefs.set("omero.user", username);
+		
 		// get IDs
 		String sourceID;
 		String segmentedID;

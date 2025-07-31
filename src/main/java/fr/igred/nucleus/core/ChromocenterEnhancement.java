@@ -38,13 +38,13 @@ import static inra.ijpb.watershed.Watershed.computeWatershed;
  *
  * @author Tristan Dubos and Axel Poulet
  */
-public final class ChromocentersEnhancement {
+public final class ChromocenterEnhancement {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
 	
 	/** Private constructor to prevent instantiation */
-	private ChromocentersEnhancement() {
+	private ChromocenterEnhancement() {
 		// This class should not be instantiated
 	}
 	

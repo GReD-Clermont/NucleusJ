@@ -20,7 +20,6 @@ package fr.igred.nucleus.process;
 import fr.igred.nucleus.gui.Progress;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.FilesNames;
-import fr.igred.nucleus.plugins.ChromocenterParameters;
 import fr.igred.nucleus.utils2.NucleusChromocentersAnalysis;
 import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;

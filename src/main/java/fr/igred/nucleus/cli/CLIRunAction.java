@@ -24,7 +24,7 @@ import fr.igred.nucleus.autocrop.GenerateOverlay;
 import fr.igred.nucleus.autocrop.GenerateProjectionFromCoordinates;
 import fr.igred.nucleus.core.ComputeNucleiParameters;
 import fr.igred.nucleus.machinelearning.ComputeNucleiParametersML;
-import fr.igred.nucleus.plugins.ChromocenterParameters;
+import fr.igred.nucleus.process.ChromocenterParameters;
 import fr.igred.nucleus.process.ChromocenterCalling;
 import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.nucleus.segmentation.SegmentationParameters;

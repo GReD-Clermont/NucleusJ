@@ -17,7 +17,6 @@
  */
 package fr.igred.nucleus.process;
 
-import fr.igred.nucleus.plugins.ChromocenterParameters;
 import fr.igred.nucleus.utils.Histogram;
 import fr.igred.nucleus.io.ImageSaver;
 import ij.ImagePlus;

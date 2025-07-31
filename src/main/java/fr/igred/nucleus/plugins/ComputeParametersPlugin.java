@@ -21,8 +21,8 @@ import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.nucleus.core.ComputeNucleiParameters;
-import fr.igred.nucleus.dialogs.ComputeParametersDialog;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.gui.ComputeParametersDialog;
+import fr.igred.nucleus.gui.IDialogListener;
 import ij.IJ;
 import ij.Prefs;
 import ij.measure.Calibration;
@@ -35,7 +35,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ExecutionException;
 
 
-public class ComputeParametersPlugin_ implements PlugIn, IDialogListener {
+public class ComputeParametersPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
@@ -106,7 +106,7 @@ public class ComputeParametersPlugin_ implements PlugIn, IDialogListener {
 		String hostname = computeParametersDialog.getHostname();
 		String port     = computeParametersDialog.getPort();
 		String username = computeParametersDialog.getUsername();
-		String password = computeParametersDialog.getPassword();
+		char[] password = computeParametersDialog.getPassword();
 		String group    = computeParametersDialog.getGroup();
 		String rawID    = computeParametersDialog.getRawDatasetID();
 		String segID    = computeParametersDialog.getSegDatasetID();
@@ -115,7 +115,7 @@ public class ComputeParametersPlugin_ implements PlugIn, IDialogListener {
 		Prefs.set("omero.port", port);
 		Prefs.set("omero.user", username);
 		
-		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		Client client = checkOMEROConnection(hostname, port, username, password, group);
 		
 		ComputeNucleiParameters generateParameters = new ComputeNucleiParameters();
 		

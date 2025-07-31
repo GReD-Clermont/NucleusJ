@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package fr.igred.nucleus.dialogs;
+package fr.igred.nucleus.gui;
 
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
@@ -27,13 +27,11 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -77,15 +75,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
 	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
 	private final JPanel         localModeLayout    = new JPanel();
-	private final JPanel         omeroModeLayout    = new JPanel();
-	private final JTextField     jTextFieldHostname = new JTextField();
-	private final JTextField     jTextFieldPort     = new JTextField();
-	private final JTextField     jTextFieldUsername = new JTextField();
-	private final JPasswordField jPasswordField     = new JPasswordField();
-	private final JTextField     jTextFieldGroup    = new JTextField();
-	
-	private final JTextField jTextFieldRawID       = new JTextField();
-	private final JTextField jTextFieldSegmentedID = new JTextField();
+	private final OMEROPanel     omeroModeLayout    = new OMEROPanel();
 	
 	private final Container container;
 	
@@ -254,12 +244,10 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		container.add(localModeLayout, 1);
 		
 		// Omero mode layout
-		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
+		omeroModeLayout.setSourceLabel("Raw:");
+		omeroModeLayout.setSourceLabel2("Segmented:");
+		omeroModeLayout.setSourceLabel3("");
 		
-		JPanel        omeroPanel  = new JPanel();
-		GridBagLayout omeroLayout = new GridBagLayout();
-		omeroLayout.columnWeights = new double[]{0.1, 0.1, 2};
-		omeroPanel.setLayout(omeroLayout);
 		JTextPane jTextPane2 = new JTextPane();
 		jTextPane2.setText("You must select 2 Datasets:" + eol +
 		                   "1 containing raw nuclei images. " + eol +
@@ -267,102 +255,8 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                   "Images must have same file name and the same calibration.");
 		jTextPane2.setEditable(false);
 		omeroModeLayout.add(jTextPane2, 0);
-		jTextPane2.setMaximumSize(new Dimension(250, 50));
-		c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(5, 0, 5, 20);
-		
-		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelHostname, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldHostname, c);
-		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelPort, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldPort, c);
-		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelUsername, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldUsername, c);
-		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelPassword, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jPasswordField, c);
-		jPasswordField.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelGroup, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldGroup, c);
-		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Raw:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelSource, c);
-		c.gridx = 1;
-		
-		String[] dataTypes = {"Dataset"};
-		
-		JComboBox<String> jComboBoxDataType = new JComboBox<>(dataTypes);
-		omeroPanel.add(jComboBoxDataType, c);
-		c.gridx = 2;
-		omeroPanel.add(jTextFieldRawID, c);
-		jTextFieldRawID.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 6;
-		JLabel jLabelSegDataset = new JLabel("Segmented:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelSegDataset, c);
-		c.gridx = 1;
-		JComboBox<String> jComboBoxDataType2 = new JComboBox<>(dataTypes);
-		omeroPanel.add(jComboBoxDataType2, c);
-		c.gridx = 2;
-		omeroPanel.add(jTextFieldSegmentedID, c);
-		jTextFieldSegmentedID.setMaximumSize(new Dimension(10000, 20));
-		
-		omeroPanel.setBorder(padding);
-		omeroModeLayout.add(omeroPanel);
 		
 		super.setVisible(true);
-		
-		// DEFAULT VALUES FOR TESTING :
-		jTextFieldHostname.setText("omero.igred.fr");
-		jTextFieldPort.setText(String.valueOf(4064));
-		
-		jTextFieldUsername.setText("");
-		jTextFieldGroup.setText("553");
-		jPasswordField.setText("");
-		jTextFieldRawID.setText("");
-		jTextFieldSegmentedID.setText("");
 	}
 	
 	
@@ -415,37 +309,37 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	
 	
 	public String getUsername() {
-		return jTextFieldUsername.getText();
+		return omeroModeLayout.getUsername();
 	}
 	
 	
-	public String getPassword() {
-		return String.valueOf(jPasswordField.getPassword());
+	public char[] getPassword() {
+		return omeroModeLayout.getPassword();
 	}
 	
 	
 	public String getGroup() {
-		return jTextFieldGroup.getText();
+		return omeroModeLayout.getGroup();
 	}
 	
 	
 	public String getRawDatasetID() {
-		return jTextFieldRawID.getText();
+		return omeroModeLayout.getSourceID();
 	}
 	
 	
 	public String getSegDatasetID() {
-		return jTextFieldSegmentedID.getText();
+		return omeroModeLayout.getSourceID2();
 	}
 	
 	
 	public String getHostname() {
-		return jTextFieldHostname.getText();
+		return omeroModeLayout.getHostname();
 	}
 	
 	
 	public String getPort() {
-		return jTextFieldPort.getText();
+		return omeroModeLayout.getPort();
 	}
 	
 	
@@ -530,12 +424,11 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	}
 	
 	
-	
 	private void quit(ActionEvent actionEvent) {
 		dispose();
 	}
 	
-
+	
 	private void start(ActionEvent actionEvent) {
 		if (useOMERO) {
 			try {
@@ -562,7 +455,6 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 			}
 		}
 	}
-	
 	
 	
 	private void chooseDirectory(JTextField textField) {

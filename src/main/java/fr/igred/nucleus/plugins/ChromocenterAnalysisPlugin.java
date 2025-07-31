@@ -24,11 +24,12 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.nucleus.core.ChromocenterAnalysis;
 import fr.igred.nucleus.core.NucleusChromocentersAnalysis;
-import fr.igred.nucleus.dialogs.ChromocentersAnalysisPipelineBatchDialog;
-import fr.igred.nucleus.dialogs.IDialogListener;
+import fr.igred.nucleus.gui.ChromocenterAnalysisDialog;
+import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.nucleus.io.FileList;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.Prefs;
 import ij.io.FileSaver;
 import ij.measure.Calibration;
 import ij.plugin.PlugIn;
@@ -52,11 +53,11 @@ import java.util.stream.Stream;
 /**
  * @author Tristan Dubos and Axel Poulet
  */
-public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListener {
+public class ChromocenterAnalysisPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private ChromocentersAnalysisPipelineBatchDialog chromocentersPipelineBatchDialog;
+	private ChromocenterAnalysisDialog chromocentersPipelineBatchDialog;
 	
 	
 	public static void deleteFolder(String folderPathString) throws IOException {
@@ -83,13 +84,13 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 		if (IJ.versionLessThan("1.32c")) {
 			return;
 		}
-		chromocentersPipelineBatchDialog = new ChromocentersAnalysisPipelineBatchDialog(this);
+		chromocentersPipelineBatchDialog = new ChromocenterAnalysisDialog(this);
 	}
 	
 	
 	@Override
 	public void onStart() throws AccessException, ServiceException, ExecutionException {
-		if (chromocentersPipelineBatchDialog.isOmeroEnabled()) {
+		if (chromocentersPipelineBatchDialog.useOMERO()) {
 			runOMERO();
 		} else {
 			String file = chromocentersPipelineBatchDialog.getRawDataDirectory();
@@ -136,7 +137,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 		// Check connection
 		String hostname = chromocentersPipelineBatchDialog.getHostname();
 		String username = chromocentersPipelineBatchDialog.getUsername();
-		String password = chromocentersPipelineBatchDialog.getPassword();
+		char[] password = chromocentersPipelineBatchDialog.getPassword();
 		String port     = chromocentersPipelineBatchDialog.getPort();
 		String group    = chromocentersPipelineBatchDialog.getGroup();
 		
@@ -148,7 +149,11 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 		Long segID   = Long.valueOf(chromocentersPipelineBatchDialog.getSegID());
 		Long ccID    = Long.valueOf(chromocentersPipelineBatchDialog.getCcID());
 		
-		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		Prefs.set("omero.host", hostname);
+		Prefs.set("omero.port", port);
+		Prefs.set("omero.user", username);
+		
+		Client client = checkOMEROConnection(hostname, port, username, password, group);
 		
 		String mainFolder = null;
 		
