@@ -117,7 +117,6 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		radioOmeroPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 		container.add(radioOmeroPanel, 0);
 		
-		
 		// Local mode layout
 		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
 		

@@ -46,14 +46,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 
-public class AutocropDialog extends JFrame implements ActionListener, ItemListener {
+public class AutocropDialog extends JFrame implements ItemListener {
 	private static final long serialVersionUID = 1539112593885790535L;
 	
 	private static final String INPUT_CHOOSER  = "inputChooser";
@@ -162,7 +161,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		localPanel.add(jInputFileChooser, c);
 		jInputFileChooser.setMaximumSize(new Dimension(10000, 20));
 		JButton sourceButton = new JButton("...");
-		sourceButton.addActionListener(this);
+		sourceButton.addActionListener(this::choose);
 		sourceButton.setName(INPUT_CHOOSER);
 		c.insets = new Insets(0, 0, 0, 0);
 		c.gridx = 2;
@@ -177,7 +176,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		localPanel.add(jOutputFileChooser, c);
 		jOutputFileChooser.setMaximumSize(new Dimension(10000, 20));
 		JButton destButton = new JButton("...");
-		destButton.addActionListener(this);
+		destButton.addActionListener(this::choose);
 		destButton.setName(OUTPUT_CHOOSER);
 		c.insets = new Insets(10, 0, 0, 0);
 		c.gridx = 2;
@@ -334,7 +333,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	}
 	
 	
-	public void actionPerformed(ActionEvent e) {
+	public void choose(ActionEvent e) {
 		switch (((Component) e.getSource()).getName()) {
 			case INPUT_CHOOSER:
 				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -381,28 +380,28 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 			container.add(omeroModeLayout, 1);
 			omeroUsed = true;
 		} else {
-			container.remove(3);
+			container.remove(4);
 			if (autocropConfigFileDialog.isVisible()) {
 				autocropConfigFileDialog.setVisible(false);
 			}
 			
 			Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 			if (source == rdoDefault) {
-				container.add(defConf, 3);
+				container.add(defConf, 4);
 				defConf.setBorder(padding);
 				configMode = ConfigMode.DEFAULT;
 			} else if (source == rdoAddConfigDialog) {
-				container.add(jButtonConfig, 3);
+				container.add(jButtonConfig, 4);
 				jButtonConfig.setBorder(padding);
 				configMode = ConfigMode.INPUT;
 			} else if (source == rdoAddConfigFile) {
 				configFilePanel.setLayout(new BoxLayout(configFilePanel, BoxLayout.LINE_AXIS));
 				configFilePanel.add(jConfigFileChooser);
 				jConfigFileChooser.setMaximumSize(new Dimension(10000, 20));
-				confButton.addActionListener(this);
+				confButton.addActionListener(this::choose);
 				confButton.setName(CONFIG_CHOOSER);
 				configFilePanel.add(confButton);
-				container.add(configFilePanel, 3);
+				container.add(configFilePanel, 4);
 				configFilePanel.setBorder(padding);
 				configMode = ConfigMode.FILE;
 			}
