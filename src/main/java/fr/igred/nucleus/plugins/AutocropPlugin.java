@@ -20,7 +20,7 @@ package fr.igred.nucleus.plugins;
 import fr.igred.nucleus.autocrop.AutoCropCalling;
 import fr.igred.nucleus.autocrop.AutocropParameters;
 import fr.igred.nucleus.gui.AutocropConfigDialog;
-import fr.igred.nucleus.gui.AutocropDialog;
+import fr.igred.nucleus.gui.OMEROPanel;
 import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.omero.Client;
 import fr.igred.omero.annotations.TagAnnotationWrapper;
@@ -48,7 +48,7 @@ public class AutocropPlugin implements PlugIn, IDialogListener {
 	/** Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 	
-	private AutocropDialog autocropDialog;
+	private OMEROPanel autocropDialog;
 	
 	
 	/**
@@ -62,7 +62,7 @@ public class AutocropPlugin implements PlugIn, IDialogListener {
 		if (IJ.versionLessThan("1.32c")) {
 			return;
 		}
-		autocropDialog = new AutocropDialog(this);
+		autocropDialog = new OMEROPanel(this);
 	}
 	
 	

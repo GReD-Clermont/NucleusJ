@@ -53,7 +53,7 @@ import java.io.File;
 import java.util.concurrent.ExecutionException;
 
 
-public class AutocropDialog extends JFrame implements ActionListener, ItemListener {
+public class OMEROPanel extends JFrame implements ActionListener, ItemListener {
 	private static final long serialVersionUID = 1539112593885790535L;
 	
 	private static final String INPUT_CHOOSER  = "inputChooser";
@@ -117,7 +117,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	
 	
 	/** Architecture of the graphical windows */
-	public AutocropDialog(IDialogListener dialogListener) {
+	public OMEROPanel(IDialogListener dialogListener) {
 		this.dialogListener = dialogListener;
 		
 		JButton jButtonStart = new JButton("Start");
