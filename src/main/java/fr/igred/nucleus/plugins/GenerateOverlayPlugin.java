@@ -59,7 +59,7 @@ public class GenerateOverlayPlugin implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() throws AccessException, ServiceException, ExecutionException {
-		if (generateOverlayDialog.isOmeroEnabled()) {
+		if (generateOverlayDialog.isOMEROUsed()) {
 			runOMERO();
 		} else {
 			runLocal();
@@ -92,7 +92,7 @@ public class GenerateOverlayPlugin implements PlugIn, IDialogListener {
 		String hostname = generateOverlayDialog.getHostname();
 		String port     = generateOverlayDialog.getPort();
 		String username = generateOverlayDialog.getUsername();
-		String password = generateOverlayDialog.getPassword();
+		char[] password = generateOverlayDialog.getPassword();
 		String group    = generateOverlayDialog.getGroup();
 		String output   = generateOverlayDialog.getOutputProject();
 		// Set user prefs
@@ -100,7 +100,7 @@ public class GenerateOverlayPlugin implements PlugIn, IDialogListener {
 		Prefs.set("omero.port", port);
 		Prefs.set("omero.user", username);
 		// Connect to OMERO
-		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		Client client = checkOMEROConnection(hostname, port, username, password, group);
 		// Handle the source according to the type given
 		String zProjectionDataType = generateOverlayDialog.getZprojectionDataType();
 		String dicDataType         = generateOverlayDialog.getDICDataType();

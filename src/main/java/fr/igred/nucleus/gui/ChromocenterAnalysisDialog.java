@@ -22,22 +22,18 @@ import fr.igred.omero.exception.ServiceException;
 import ij.IJ;
 import ij.Prefs;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.border.Border;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -80,26 +76,14 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 	
 	private final transient IDialogListener dialogListener;
 	
-	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
-	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
-	private final JPanel         omeroModeLayout    = new JPanel();
-	private final JPanel         localModeLayout    = new JPanel();
-	private final JTextField     jTextFieldHostname = new JTextField();
-	private final JTextField     jTextFieldPort     = new JTextField();
-	private final JTextField     jTextFieldUsername = new JTextField();
-	private final JPasswordField jPasswordField     = new JPasswordField();
-	private final JTextField     jTextFieldGroup    = new JTextField();
-	
 	private final String[] dataTypes = {"Image", "Dataset"};
 	
-	private final JComboBox<String> jComboBoxDataType       = new JComboBox<>(dataTypes);
-	private final JComboBox<String> jComboBoxDataTypeNuc    = new JComboBox<>(dataTypes);
-	private final JComboBox<String> jComboBoxDataTypeCC     = new JComboBox<>(dataTypes);
-	private final JTextField        jTextFieldSourceID      = new JTextField();
-	private final JTextField        jTextFieldNucSegID      = new JTextField();
-	private final JTextField        jTextFieldOutputProject = new JTextField();
-	private final JTextField        jTextFieldCCsegID       = new JTextField();
-	private final Container         container;
+	private final JRadioButton omeroYesButton  = new JRadioButton("Yes");
+	private final JRadioButton omeroNoButton   = new JRadioButton("No");
+	private final OMEROPanel   omeroModeLayout = new OMEROPanel(dataTypes);
+	private final JPanel       localModeLayout = new JPanel();
+	
+	private final Container  container;
 	
 	private boolean start;
 	private boolean useOMERO;
@@ -129,8 +113,6 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 		container.setLayout(gridBagLayout);
 		
 		String eol = System.lineSeparator();
-		
-		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 		
 		// Use Omero ?
 		ButtonGroup bGroupOmeroMode = new ButtonGroup();
@@ -288,119 +270,9 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 		                                     new Insets(10, 10, 10, 10), 0, 0));
 		
 		// Omero mode layout
-		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		JPanel        omeroPanel  = new JPanel();
-		GridBagLayout omeroLayout = new GridBagLayout();
-		omeroLayout.columnWeights = new double[]{0.1, 0.1, 2};
-		omeroPanel.setLayout(omeroLayout);
-		c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(5, 0, 5, 20);
-		
-		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelHostname, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldHostname, c);
-		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelPort, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldPort, c);
-		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelUsername, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldUsername, c);
-		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelPassword, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jPasswordField, c);
-		jPasswordField.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelGroup, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldGroup, c);
-		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Image Source:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelSource, c);
-		c.gridx = 1;
-		omeroPanel.add(jComboBoxDataType, c);
-		c.gridx = 2;
-		omeroPanel.add(jTextFieldSourceID, c);
-		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 6;
-		JLabel jLabelToCrop = new JLabel("Nucleus segmentation:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelToCrop, c);
-		c.gridx = 1;
-		omeroPanel.add(jComboBoxDataTypeNuc, c);
-		c.gridx = 2;
-		omeroPanel.add(jTextFieldNucSegID, c);
-		jTextFieldNucSegID.setMaximumSize(new Dimension(20000, 20));
-		
-		c.gridy = 7;
-		JLabel channelToCrop = new JLabel("Chromocenter segmentation:");
-		c.gridx = 0;
-		omeroPanel.add(channelToCrop, c);
-		c.gridx = 1;
-		omeroPanel.add(jComboBoxDataTypeCC, c);
-		c.gridx = 2;
-		omeroPanel.add(jTextFieldCCsegID, c);
-		jTextFieldCCsegID.setMaximumSize(new Dimension(20, 20));
-		
-		
-		c.gridy = 8;
-		JLabel jLabelOutputProject = new JLabel("Output Dataset:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelOutputProject, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldOutputProject, c);
-		jTextFieldOutputProject.setMaximumSize(new Dimension(10000, 20));
-		container.add(calibration,
-		              new GridBagConstraints(0, 2, 3, 1, 1.0, 0.0,
-		                                     GridBagConstraints.FIRST_LINE_START,
-		                                     GridBagConstraints.HORIZONTAL,
-		                                     new Insets(10, 10, 0, 10), 0, 0));
-		
-		omeroPanel.setBorder(padding);
-		omeroModeLayout.add(omeroPanel);
-		//container.add(omeroModeLayout, 1);
-		
+		omeroModeLayout.setSourceLabel("Image Source:");
+		omeroModeLayout.setSourceLabel2("Nucleus segmentation:");
+		omeroModeLayout.setSourceLabel2("Chromocenter segmentation:");
 		
 		// Buttons at the bottom
 		JPanel buttonPanel = new JPanel();
@@ -420,81 +292,66 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 		jButtonQuit.addActionListener(this::quit);
 		jButtonStart.addActionListener(this::start);
 		super.setVisible(true);
-		
-		// DEFAULT VALUES FOR TESTING :
-		jTextFieldHostname.setText("omero.igred.fr");
-		jTextFieldPort.setText(String.valueOf(4064));
-		
-		jTextFieldUsername.setText("");
-		jTextFieldGroup.setText("553");
-		jPasswordField.setText("");
-		jComboBoxDataType.setSelectedIndex(1);
-		jComboBoxDataTypeCC.setSelectedIndex(1);
-		jComboBoxDataTypeNuc.setSelectedIndex(1);
-		jTextFieldSourceID.setText("");
-		jTextFieldNucSegID.setText("");
-		jTextFieldCCsegID.setText("");
-		jTextFieldOutputProject.setText("");
 	}
 	
 	
 	public String getHostname() {
-		return jTextFieldHostname.getText();
+		return omeroModeLayout.getHostname();
 	}
 	
 	
 	public String getPort() {
-		return jTextFieldPort.getText();
+		return omeroModeLayout.getPort();
 	}
 	
 	
 	public String getUsername() {
-		return jTextFieldUsername.getText();
+		return omeroModeLayout.getUsername();
 	}
 	
 	
-	public String getPassword() {
-		return String.valueOf(jPasswordField.getPassword());
+	public char[] getPassword() {
+		return omeroModeLayout.getPassword();
 	}
 	
 	
 	public String getGroup() {
-		return jTextFieldGroup.getText();
+		return omeroModeLayout.getGroup();
 	}
 	
 	
 	public String getOutputProject() {
-		return jTextFieldOutputProject.getText();
+		return omeroModeLayout.getOutputProject();
 	}
 	
 	
 	public String getSourceID() {
-		return jTextFieldSourceID.getText();
+		return omeroModeLayout.getSourceID();
 	}
 	
 	
 	public String getSegID() {
-		return jTextFieldNucSegID.getText();
+		return omeroModeLayout.getSourceID2();
 	}
 	
 	
 	public String getCcID() {
-		return jTextFieldCCsegID.getText();
+		return omeroModeLayout.getSourceID3();
 	}
 	
 	
 	public String getDataType() {
-		return (String) jComboBoxDataType.getSelectedItem();
+		return omeroModeLayout.getDataType();
 	}
 	
 	
 	public String getDataTypeSeg() {
-		return (String) jComboBoxDataTypeNuc.getSelectedItem();
+		return omeroModeLayout.getDataType2();
 	}
 	
 	
 	public String getDataTypeCC() {
-		return (String) jComboBoxDataTypeCC.getSelectedItem();
+		return omeroModeLayout.getDataType3();
 	}
 	
 	

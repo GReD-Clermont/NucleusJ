@@ -29,6 +29,7 @@ import fr.igred.nucleus.gui.IDialogListener;
 import fr.igred.nucleus.io.FileList;
 import ij.IJ;
 import ij.ImagePlus;
+import ij.Prefs;
 import ij.io.FileSaver;
 import ij.measure.Calibration;
 import ij.plugin.PlugIn;
@@ -136,7 +137,7 @@ public class ChromocenterAnalysisPlugin implements PlugIn, IDialogListener {
 		// Check connection
 		String hostname = chromocentersPipelineBatchDialog.getHostname();
 		String username = chromocentersPipelineBatchDialog.getUsername();
-		String password = chromocentersPipelineBatchDialog.getPassword();
+		char[] password = chromocentersPipelineBatchDialog.getPassword();
 		String port     = chromocentersPipelineBatchDialog.getPort();
 		String group    = chromocentersPipelineBatchDialog.getGroup();
 		
@@ -148,7 +149,11 @@ public class ChromocenterAnalysisPlugin implements PlugIn, IDialogListener {
 		Long segID   = Long.valueOf(chromocentersPipelineBatchDialog.getSegID());
 		Long ccID    = Long.valueOf(chromocentersPipelineBatchDialog.getCcID());
 		
-		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		Prefs.set("omero.host", hostname);
+		Prefs.set("omero.port", port);
+		Prefs.set("omero.user", username);
+		
+		Client client = checkOMEROConnection(hostname, port, username, password, group);
 		
 		String mainFolder = null;
 		

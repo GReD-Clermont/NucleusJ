@@ -21,18 +21,15 @@ import fr.igred.nucleus.Version;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.ServiceException;
 import ij.IJ;
-import ij.Prefs;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -58,43 +55,28 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	
 	private static final String INPUT_CHOOSER  = "inputChooser";
 	private static final String INPUT_CHOOSER2 = "inputChooser2";
-	private static final String OUTPUT_CHOOSER = "outputChooser";
 	
 	private final JFileChooser fc = new JFileChooser();
 	
 	private final transient IDialogListener dialogListener;
 	
-	private final JRadioButton    omeroYesButton     = new JRadioButton("Yes");
-	private final JRadioButton    omeroNoButton      = new JRadioButton("No");
-	private final JPanel          omeroModeLayout    = new JPanel();
-	private final JPanel          localModeLayout    = new JPanel();
-	private final JTextField      jTextFieldHostname = new JTextField();
-	private final JTextField      jTextFieldPort     = new JTextField();
-	private final JTextField      jTextFieldUsername = new JTextField();
-	private final JPasswordField  jPasswordField     = new JPasswordField();
-	private final JTextField      jTextFieldGroup    = new JTextField();
-	
 	private final String[] dataTypes = {"Dataset"};
 	
-	private final JComboBox<String> jComboBoxDataType       = new JComboBox<>(dataTypes);
-	private final JComboBox<String> jComboBoxDataTypeToCrop = new JComboBox<>(dataTypes);
+	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
+	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
+	private final OMEROPanel     omeroModeLayout    = new OMEROPanel(dataTypes);
+	private final JPanel         localModeLayout    = new JPanel();
 	
-	private final JTextField jTextFieldSourceID      = new JTextField();
-	private final JTextField zProjectionTextField    = new JTextField();
-	private final JTextField jTextFieldOutputProject = new JTextField();
-	private final JTextField dicFileChooser         = new JTextField();
-	private final JTextField zProjectionFileChooser = new JTextField();
+	private final JTextField dicFileChooser          = new JTextField();
+	private final JTextField zProjectionFileChooser  = new JTextField();
 	private final Container  container;
 	
 	private boolean start;
-	private boolean useOMERO;
+	private boolean omeroUsed;
 	
 	
 	public GenerateOverlayDialog(IDialogListener dialogListener) {
 		this.dialogListener = dialogListener;
-		String host     = Prefs.get("omero.host", "omero.igred.fr");
-		long   port     = Prefs.getInt("omero.port", 4064);
-		String username = Prefs.get("omero.user", "");
 		
 		JButton jButtonStart = new JButton("Start");
 		jButtonStart.setBackground(new Color(0x2dce98));
@@ -187,102 +169,9 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		container.add(localModeLayout, 1);
 		
 		// Omero mode layout
-		omeroModeLayout.setLayout(new BoxLayout(omeroModeLayout, BoxLayout.PAGE_AXIS));
-		
-		JPanel        omeroPanel  = new JPanel();
-		GridBagLayout omeroLayout = new GridBagLayout();
-		omeroLayout.columnWeights = new double[]{0.1, 0.1, 2};
-		omeroPanel.setLayout(omeroLayout);
-		c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(5, 0, 5, 20);
-		
-		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelHostname, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldHostname, c);
-		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelPort, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldPort, c);
-		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelUsername, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldUsername, c);
-		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelPassword, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jPasswordField, c);
-		jPasswordField.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelGroup, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldGroup, c);
-		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Z Projection:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelSource, c);
-		c.gridx = 1;
-		omeroPanel.add(jComboBoxDataType, c);
-		c.gridx = 2;
-		omeroPanel.add(jTextFieldSourceID, c);
-		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 6;
-		JLabel jLabelToCrop = new JLabel("DIC:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelToCrop, c);
-		c.gridx = 1;
-		omeroPanel.add(jComboBoxDataTypeToCrop, c);
-		c.gridx = 2;
-		omeroPanel.add(zProjectionTextField, c);
-		zProjectionTextField.setMaximumSize(new Dimension(20000, 20));
-		
-		
-		c.gridy = 7;
-		JLabel jLabelOutputProject = new JLabel("Output Project:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelOutputProject, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldOutputProject, c);
-		jTextFieldOutputProject.setMaximumSize(new Dimension(10000, 20));
-		
-		omeroPanel.setBorder(padding);
-		omeroModeLayout.add(omeroPanel);
-		
+		omeroModeLayout.setSourceLabel("Z Projection:");
+		omeroModeLayout.setSourceLabel2("DIC:");
+		omeroModeLayout.setSourceLabel3("");
 		
 		// Start/Quit buttons
 		
@@ -299,17 +188,6 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		jButtonQuit.addActionListener(this::quit);
 		jButtonStart.addActionListener(this::start);
 		super.setVisible(true);
-		
-		
-		// DEFAULT VALUES FOR TESTING :
-		jTextFieldHostname.setText(host);
-		jTextFieldPort.setText(String.valueOf(port));
-		jTextFieldUsername.setText(username);
-		jTextFieldGroup.setText("553");
-		jPasswordField.setText("");
-		jTextFieldSourceID.setText(""); //dic
-		zProjectionTextField.setText("");
-		jTextFieldOutputProject.setText("");
 	}
 	
 	
@@ -328,58 +206,58 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	}
 	
 	
-	public boolean isOmeroEnabled() {
-		return useOMERO;
+	public boolean isOMEROUsed() {
+		return omeroUsed;
 	}
 	
 	
 	public String getHostname() {
-		return jTextFieldHostname.getText();
+		return omeroModeLayout.getHostname();
 	}
 	
 	
 	public String getPort() {
-		return jTextFieldPort.getText();
+		return omeroModeLayout.getPort();
 	}
 	
 	
 	public String getSourceID() {
-		return jTextFieldSourceID.getText();
+		return omeroModeLayout.getSourceID();
 	}
 	
 	
 	public String getzProjectionID() {
-		return zProjectionTextField.getText();
+		return omeroModeLayout.getSourceID2();
 	}
 	
 	
 	public String getDICDataType() {
-		return (String) jComboBoxDataType.getSelectedItem();
+		return omeroModeLayout.getDataType();
 	}
 	
 	
 	public String getZprojectionDataType() {
-		return (String) jComboBoxDataTypeToCrop.getSelectedItem();
+		return omeroModeLayout.getDataType2();
 	}
 	
 	
 	public String getUsername() {
-		return jTextFieldUsername.getText();
+		return omeroModeLayout.getUsername();
 	}
 	
 	
-	public String getPassword() {
-		return String.valueOf(jPasswordField.getPassword());
+	public char[] getPassword() {
+		return omeroModeLayout.getPassword();
 	}
 	
 	
 	public String getGroup() {
-		return jTextFieldGroup.getText();
+		return omeroModeLayout.getGroup();
 	}
 	
 	
 	public String getOutputProject() {
-		return jTextFieldOutputProject.getText();
+		return omeroModeLayout.getOutputProject();
 	}
 	
 	
@@ -403,10 +281,6 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 					File selectedInput2 = fc.getSelectedFile();
 					zProjectionFileChooser.setText(selectedInput2.getPath());
 					break;
-				case OUTPUT_CHOOSER:
-					File selectedOutput = fc.getSelectedFile();
-					jTextFieldOutputProject.setText(selectedOutput.getPath());
-					break;
 				default:
 					throw new IllegalArgumentException("Unknown action source: " + e.getSource());
 			}
@@ -422,11 +296,11 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		if (source == omeroNoButton) {
 			container.remove(1);
 			container.add(localModeLayout, 1);
-			useOMERO = false;
+			omeroUsed = false;
 		} else if (source == omeroYesButton) {
 			container.remove(1);
 			container.add(omeroModeLayout, 1);
-			useOMERO = true;
+			omeroUsed = true;
 		} else {
 			container.remove(3);
 		}
@@ -434,13 +308,13 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		validate();
 		repaint();
 	}
-		
-		
+	
+	
 	private void quit(ActionEvent actionEvent) {
-			dispose();
-		}
-		
-		
+		dispose();
+	}
+	
+	
 	private void start(ActionEvent actionEvent) {
 		start = true;
 		dispose();

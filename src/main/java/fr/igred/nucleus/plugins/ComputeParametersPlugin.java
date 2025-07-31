@@ -106,7 +106,7 @@ public class ComputeParametersPlugin implements PlugIn, IDialogListener {
 		String hostname = computeParametersDialog.getHostname();
 		String port     = computeParametersDialog.getPort();
 		String username = computeParametersDialog.getUsername();
-		String password = computeParametersDialog.getPassword();
+		char[] password = computeParametersDialog.getPassword();
 		String group    = computeParametersDialog.getGroup();
 		String rawID    = computeParametersDialog.getRawDatasetID();
 		String segID    = computeParametersDialog.getSegDatasetID();
@@ -115,7 +115,7 @@ public class ComputeParametersPlugin implements PlugIn, IDialogListener {
 		Prefs.set("omero.port", port);
 		Prefs.set("omero.user", username);
 		
-		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		Client client = checkOMEROConnection(hostname, port, username, password, group);
 		
 		ComputeNucleiParameters generateParameters = new ComputeNucleiParameters();
 		

@@ -78,7 +78,7 @@ public class CropFromCoordinatesPlugin implements PlugIn, IDialogListener {
 	
 	@Override
 	public void onStart() throws AccessException, ServiceException, ExecutionException {
-		if (cropFromCoordinatesDialog.isOmeroEnabled()) {
+		if (cropFromCoordinatesDialog.isOMEROUsed()) {
 			runOMERO();
 		} else {
 			String file = cropFromCoordinatesDialog.getLink();
@@ -206,7 +206,7 @@ public class CropFromCoordinatesPlugin implements PlugIn, IDialogListener {
 		String hostname = cropFromCoordinatesDialog.getHostname();
 		String port     = cropFromCoordinatesDialog.getPort();
 		String username = cropFromCoordinatesDialog.getUsername();
-		String password = cropFromCoordinatesDialog.getPassword();
+		char[] password = cropFromCoordinatesDialog.getPassword();
 		String group    = cropFromCoordinatesDialog.getGroup();
 		String output   = cropFromCoordinatesDialog.getOutputProject();
 		int    channel  = Integer.parseInt(cropFromCoordinatesDialog.getChannelToCrop());
@@ -215,7 +215,7 @@ public class CropFromCoordinatesPlugin implements PlugIn, IDialogListener {
 		Prefs.set("omero.port", port);
 		Prefs.set("omero.user", username);
 		
-		Client client = checkOMEROConnection(hostname, port, username, password.toCharArray(), group);
+		Client client = checkOMEROConnection(hostname, port, username, password, group);
 		
 		// Handle the source according to the type given
 		String         sourceDataType = cropFromCoordinatesDialog.getDataType();

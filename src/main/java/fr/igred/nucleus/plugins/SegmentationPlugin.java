@@ -31,6 +31,7 @@ import fr.igred.nucleus.gui.SegmentationDialog;
 import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.nucleus.segmentation.SegmentationParameters;
 import ij.IJ;
+import ij.Prefs;
 import ij.plugin.PlugIn;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
@@ -149,6 +150,10 @@ public class SegmentationPlugin implements PlugIn, IDialogListener {
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
 		String input    = ".";
 		String output   = ".";
+		
+		Prefs.set("omero.host", hostname);
+		Prefs.set("omero.port", port);
+		Prefs.set("omero.user", username);
 		
 		SegmentationParameters params       = setParametersFromDialog(input, output);
 		SegmentationCalling    segmentation = new SegmentationCalling(params);

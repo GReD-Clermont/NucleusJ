@@ -17,6 +17,8 @@
  */
 package fr.igred.nucleus.gui;
 
+import ij.Prefs;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -36,20 +38,35 @@ public class OMEROPanel extends JPanel {
 	
 	private static final long serialVersionUID = -6868915494470555701L;
 	
-	private static final String[] dataTypes = {"Project", "Dataset", "Tag", "Image"};
-	
 	private final JTextField     jTextFieldHostname      = new JTextField();
 	private final JTextField     jTextFieldPort          = new JTextField();
 	private final JTextField     jTextFieldUsername      = new JTextField();
 	private final JPasswordField jPasswordField          = new JPasswordField();
 	private final JTextField     jTextFieldGroup         = new JTextField();
 	private final JTextField     jTextFieldSourceID      = new JTextField();
+	private final JTextField     jTextFieldSourceID2     = new JTextField();
+	private final JTextField     jTextFieldSourceID3     = new JTextField();
 	private final JTextField     jTextFieldOutputProject = new JTextField();
 	
-	private final JComboBox<String> jComboBoxDataType = new JComboBox<>(dataTypes);
+	private final JComboBox<String> jComboBoxDataType;
+	private final JComboBox<String> jComboBoxDataType2;
+	private final JComboBox<String> jComboBoxDataType3;
+	
+	private final JLabel jLabelSource  = new JLabel("Source:");
+	private final JLabel jLabelSource2 = new JLabel("Source 2:");
+	private final JLabel jLabelSource3 = new JLabel("Source 3:");
 	
 	
 	public OMEROPanel() {
+		this(new String[]{"Project", "Dataset", "Tag", "Image"});
+	}
+	
+	
+	public OMEROPanel(String[] dataTypes) {
+		jComboBoxDataType = new JComboBox<>(dataTypes);
+		jComboBoxDataType2 = new JComboBox<>(dataTypes);
+		jComboBoxDataType3 = new JComboBox<>(dataTypes);
+		
 		setBoxLayout();
 		
 		JPanel omeroPanel = new JPanel();
@@ -113,7 +130,6 @@ public class OMEROPanel extends JPanel {
 		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 5;
-		JLabel jLabelSource = new JLabel("Source:");
 		c.gridx = 0;
 		c.gridwidth = 1;
 		omeroPanel.add(jLabelSource, c);
@@ -124,6 +140,26 @@ public class OMEROPanel extends JPanel {
 		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
 		
 		c.gridy = 6;
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelSource2, c);
+		c.gridx = 1;
+		omeroPanel.add(jComboBoxDataType2, c);
+		c.gridx = 2;
+		omeroPanel.add(jTextFieldSourceID2, c);
+		jTextFieldSourceID2.setMaximumSize(new Dimension(20000, 20));
+		
+		c.gridy = 7;
+		c.gridx = 0;
+		c.gridwidth = 1;
+		omeroPanel.add(jLabelSource3, c);
+		c.gridx = 1;
+		omeroPanel.add(jComboBoxDataType3, c);
+		c.gridx = 2;
+		omeroPanel.add(jTextFieldSourceID3, c);
+		jTextFieldSourceID2.setMaximumSize(new Dimension(20000, 20));
+		
+		c.gridy = 8;
 		JLabel jLabelOutputProject = new JLabel("Output project:");
 		c.gridx = 0;
 		c.gridwidth = 1;
@@ -136,18 +172,23 @@ public class OMEROPanel extends JPanel {
 		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
 		omeroPanel.setBorder(padding);
 		super.add(omeroPanel);
+		initFields();
+	}
+	
+	
+	private void initFields() {
+		String host     = Prefs.get("omero.host", "localhost");
+		int    port     = Prefs.getInt("omero.port", 4064);
+		String username = Prefs.get("omero.user", "");
 		
-		// DEFAULT VALUES FOR TESTING :
-		jTextFieldHostname.setText("omero.gred-clermont.fr");
-		jTextFieldPort.setText("4064");
+		// DEFAULT VALUES :
+		jTextFieldHostname.setText(host);
+		jTextFieldPort.setText(String.valueOf(port));
+		jTextFieldUsername.setText(username);
 		
 		jTextFieldUsername.setText("");
 		jPasswordField.setText("");
-		jTextFieldGroup.setText("553");
-		
-		jComboBoxDataType.setSelectedIndex(3);
-		jTextFieldSourceID.setText("");
-		jTextFieldOutputProject.setText("");
+		jTextFieldGroup.setText("");
 	}
 	
 	
@@ -156,6 +197,56 @@ public class OMEROPanel extends JPanel {
 	 */
 	private void setBoxLayout() {
 		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+	}
+	
+	
+	/**
+	 * Sets the source label text.
+	 *
+	 * @param label The text to set for the source label.
+	 */
+	public void setSourceLabel(String label) {
+		jLabelSource.setText(label);
+	}
+	
+	
+	/**
+	 * Sets the second source label text and visibility based on the label: if the label is null or empty, the label and
+	 * associated components are hidden.
+	 *
+	 * @param label The text to set for the second source label.
+	 */
+	public void setSourceLabel2(String label) {
+		jLabelSource2.setText(label);
+		if (label == null || label.isEmpty()) {
+			jLabelSource2.setVisible(false);
+			jComboBoxDataType2.setVisible(false);
+			jTextFieldSourceID2.setVisible(false);
+		} else {
+			jLabelSource2.setVisible(true);
+			jComboBoxDataType2.setVisible(true);
+			jTextFieldSourceID2.setVisible(true);
+		}
+	}
+	
+	
+	/**
+	 * Sets the second source label text and visibility based on the label: if the label is null or empty, the label and
+	 * associated components are hidden.
+	 *
+	 * @param label The text to set for the second source label.
+	 */
+	public void setSourceLabel3(String label) {
+		jLabelSource3.setText(label);
+		if (label == null || label.isEmpty()) {
+			jLabelSource3.setVisible(false);
+			jComboBoxDataType3.setVisible(false);
+			jTextFieldSourceID3.setVisible(false);
+		} else {
+			jLabelSource3.setVisible(true);
+			jComboBoxDataType3.setVisible(true);
+			jTextFieldSourceID3.setVisible(true);
+		}
 	}
 	
 	
@@ -190,12 +281,52 @@ public class OMEROPanel extends JPanel {
 	
 	
 	/**
+	 * Returns the secondary source ID entered in the text field.
+	 *
+	 * @return See above.
+	 */
+	public String getSourceID2() {
+		return jTextFieldSourceID2.getText();
+	}
+	
+	
+	/**
+	 * Returns the secondary source ID entered in the text field.
+	 *
+	 * @return See above.
+	 */
+	public String getSourceID3() {
+		return jTextFieldSourceID3.getText();
+	}
+	
+	
+	/**
 	 * Returns the data type selected in the combo box.
 	 *
 	 * @return See above.
 	 */
 	public String getDataType() {
 		return (String) jComboBoxDataType.getSelectedItem();
+	}
+	
+	
+	/**
+	 * Returns the secondary data type selected in the combo box.
+	 *
+	 * @return See above.
+	 */
+	public String getDataType2() {
+		return (String) jComboBoxDataType2.getSelectedItem();
+	}
+	
+	
+	/**
+	 * Returns the secondary data type selected in the combo box.
+	 *
+	 * @return See above.
+	 */
+	public String getDataType3() {
+		return (String) jComboBoxDataType3.getSelectedItem();
 	}
 	
 	

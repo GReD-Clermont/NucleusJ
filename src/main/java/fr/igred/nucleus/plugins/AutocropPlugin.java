@@ -31,6 +31,7 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import ij.IJ;
+import ij.Prefs;
 import ij.plugin.PlugIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +106,10 @@ public class AutocropPlugin implements PlugIn, IDialogListener {
 		char[] password = autocropDialog.getPassword();
 		String group    = autocropDialog.getGroup();
 		Client client   = checkOMEROConnection(hostname, port, username, password, group);
+		
+		Prefs.set("omero.host", hostname);
+		Prefs.set("omero.port", port);
+		Prefs.set("omero.user", username);
 		
 		String typeThresholding = autocropDialog.getTypeThresholding();
 		

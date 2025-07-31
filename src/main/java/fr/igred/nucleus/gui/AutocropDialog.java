@@ -38,6 +38,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.Border;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -142,6 +143,10 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		
 		// Local mode layout
 		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
+		
+		// OMERO mode layout
+		omeroModeLayout.setSourceLabel2("");
+		omeroModeLayout.setSourceLabel3("");
 		
 		JPanel        localPanel  = new JPanel();
 		GridBagLayout localLayout = new GridBagLayout();
@@ -330,7 +335,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 	
 	
 	public void actionPerformed(ActionEvent e) {
-		switch (((JButton) e.getSource()).getName()) {
+		switch (((Component) e.getSource()).getName()) {
 			case INPUT_CHOOSER:
 				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				break;
@@ -344,7 +349,7 @@ public class AutocropDialog extends JFrame implements ActionListener, ItemListen
 		fc.setAcceptAllFileFilterUsed(false);
 		
 		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			switch (((JButton) e.getSource()).getName()) {
+			switch (((Component) e.getSource()).getName()) {
 				case INPUT_CHOOSER:
 					File selectedInput = fc.getSelectedFile();
 					jInputFileChooser.setText(selectedInput.getPath());
