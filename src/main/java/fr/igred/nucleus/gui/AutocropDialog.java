@@ -143,10 +143,6 @@ public class AutocropDialog extends JFrame implements ItemListener {
 		// Local mode layout
 		localModeLayout.setLayout(new BoxLayout(localModeLayout, BoxLayout.PAGE_AXIS));
 		
-		// OMERO mode layout
-		omeroModeLayout.setSourceLabel2("");
-		omeroModeLayout.setSourceLabel3("");
-		
 		JPanel        localPanel  = new JPanel();
 		GridBagLayout localLayout = new GridBagLayout();
 		localLayout.columnWeights = new double[]{1, 5, 0.5};
@@ -279,12 +275,12 @@ public class AutocropDialog extends JFrame implements ItemListener {
 	
 	
 	public String getSourceID() {
-		return omeroModeLayout.getSourceID();
+		return omeroModeLayout.getSourceID(0);
 	}
 	
 	
 	public String getDataType() {
-		return omeroModeLayout.getDataType();
+		return omeroModeLayout.getDataType(0);
 	}
 	
 	

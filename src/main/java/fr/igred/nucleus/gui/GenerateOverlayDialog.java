@@ -60,11 +60,9 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	
 	private final transient IDialogListener dialogListener;
 	
-	private final String[] dataTypes = {"Dataset"};
-	
 	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
 	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
-	private final OMEROPanel     omeroModeLayout    = new OMEROPanel(dataTypes);
+	private final OMEROPanel     omeroModeLayout;
 	private final JPanel         localModeLayout    = new JPanel();
 	
 	private final JTextField dicFileChooser          = new JTextField();
@@ -169,9 +167,10 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 		container.add(localModeLayout, 1);
 		
 		// Omero mode layout
-		omeroModeLayout.setSourceLabel("Z Projection:");
-		omeroModeLayout.setSourceLabel2("DIC:");
-		omeroModeLayout.setSourceLabel3("");
+		String[] dataTypes = {"Dataset"};
+		String label1 = "Z Projection:";
+		String label2 = "DIC:";
+		omeroModeLayout = new OMEROPanel(dataTypes, label1, label2);
 		
 		// Start/Quit buttons
 		
@@ -222,22 +221,22 @@ public class GenerateOverlayDialog extends JFrame implements ActionListener, Ite
 	
 	
 	public String getSourceID() {
-		return omeroModeLayout.getSourceID();
+		return omeroModeLayout.getSourceID(0);
 	}
 	
 	
 	public String getzProjectionID() {
-		return omeroModeLayout.getSourceID2();
+		return omeroModeLayout.getSourceID(1);
 	}
 	
 	
 	public String getDICDataType() {
-		return omeroModeLayout.getDataType();
+		return omeroModeLayout.getDataType(0);
 	}
 	
 	
 	public String getZprojectionDataType() {
-		return omeroModeLayout.getDataType2();
+		return omeroModeLayout.getDataType(1);
 	}
 	
 	

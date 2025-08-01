@@ -63,12 +63,10 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 	
 	private final transient IDialogListener dialogListener;
 	
-	private final String[] dataTypes = {"Dataset", "Image"};
-	
 	private final JRadioButton omeroYesButton  = new JRadioButton("Yes");
 	private final JRadioButton omeroNoButton   = new JRadioButton("No");
 	private final JPanel       localModeLayout = new JPanel();
-	private final OMEROPanel   omeroModeLayout = new OMEROPanel(dataTypes);
+	private final OMEROPanel   omeroModeLayout;
 	
 	/**  */
 	private final JCheckBox  jCbIsGauss  = new JCheckBox("Apply Gaussian filter on raw images ?");
@@ -399,9 +397,10 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		container.add(parameters, 2);
 		
 		// Omero mode layout
-		omeroModeLayout.setSourceLabel("Raw Nuclei:");
-		omeroModeLayout.setSourceLabel2("Segmented Nuclei:");
-		omeroModeLayout.setSourceLabel3("");
+		String[] dataTypes = {"Dataset", "Image"};
+		String label1 = "Raw Nuclei:";
+		String label2 = "Segmented Nuclei:";
+		omeroModeLayout = new OMEROPanel(dataTypes, label1, label2);
 		
 		//////////////////////////////////////////////////////////
 		
@@ -519,22 +518,22 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 	
 	
 	public String getSourceID() {
-		return omeroModeLayout.getSourceID();
+		return omeroModeLayout.getSourceID(0);
 	}
 	
 	
 	public String getSegmentedNucleiID() {
-		return omeroModeLayout.getSourceID2();
+		return omeroModeLayout.getSourceID(1);
 	}
 	
 	
 	public String getDataType() {
-		return omeroModeLayout.getDataType();
+		return omeroModeLayout.getDataType(0);
 	}
 	
 	
 	public String getDataTypeSegmented() {
-		return omeroModeLayout.getDataType2();
+		return omeroModeLayout.getDataType(1);
 	}
 	
 	

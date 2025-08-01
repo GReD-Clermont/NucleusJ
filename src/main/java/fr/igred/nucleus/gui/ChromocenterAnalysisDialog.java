@@ -76,11 +76,9 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 	
 	private final transient IDialogListener dialogListener;
 	
-	private final String[] dataTypes = {"Image", "Dataset"};
-	
 	private final JRadioButton omeroYesButton  = new JRadioButton("Yes");
 	private final JRadioButton omeroNoButton   = new JRadioButton("No");
-	private final OMEROPanel   omeroModeLayout = new OMEROPanel(dataTypes);
+	private final OMEROPanel   omeroModeLayout;
 	private final JPanel       localModeLayout = new JPanel();
 	
 	private final Container container;
@@ -93,6 +91,7 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 	public ChromocenterAnalysisDialog(IDialogListener dialogListener) {
 		final String font = "Albertus";
 		container = super.getContentPane();
+		
 		JLabel      jLabelWorkDirectory  = new JLabel("Work directory and data directory choice:");
 		JButton     jButtonWorkDirectory = new JButton("Output Directory");
 		JButton     jButtonStart         = new JButton("Start");
@@ -265,9 +264,11 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 		                                     new Insets(10, 10, 10, 10), 0, 0));
 		
 		// Omero mode layout
-		omeroModeLayout.setSourceLabel("Image Source:");
-		omeroModeLayout.setSourceLabel2("Nucleus segmentation:");
-		omeroModeLayout.setSourceLabel3("Chromocenter segmentation:");
+		String[] dataTypes = {"Dataset", "Image"};
+		String   label1    = "Image Source:";
+		String   label2    = "Nucleus segmentation:";
+		String   label3    = "Chromocenter segmentation:";
+		omeroModeLayout = new OMEROPanel(dataTypes, label1, label2, label3);
 		
 		// Buttons at the bottom
 		JPanel buttonPanel = new JPanel();
@@ -321,32 +322,32 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 	
 	
 	public String getSourceID() {
-		return omeroModeLayout.getSourceID();
+		return omeroModeLayout.getSourceID(0);
 	}
 	
 	
 	public String getSegID() {
-		return omeroModeLayout.getSourceID2();
+		return omeroModeLayout.getSourceID(1);
 	}
 	
 	
 	public String getCcID() {
-		return omeroModeLayout.getSourceID3();
+		return omeroModeLayout.getSourceID(2);
 	}
 	
 	
 	public String getDataType() {
-		return omeroModeLayout.getDataType();
+		return omeroModeLayout.getDataType(0);
 	}
 	
 	
 	public String getDataTypeSeg() {
-		return omeroModeLayout.getDataType2();
+		return omeroModeLayout.getDataType(1);
 	}
 	
 	
 	public String getDataTypeCC() {
-		return omeroModeLayout.getDataType3();
+		return omeroModeLayout.getDataType(2);
 	}
 	
 	

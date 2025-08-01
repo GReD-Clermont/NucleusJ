@@ -75,7 +75,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
 	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
 	private final JPanel         localModeLayout    = new JPanel();
-	private final OMEROPanel     omeroModeLayout    = new OMEROPanel();
+	private final OMEROPanel     omeroModeLayout;
 	
 	private final Container container;
 	
@@ -244,9 +244,9 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		container.add(localModeLayout, 1);
 		
 		// Omero mode layout
-		omeroModeLayout.setSourceLabel("Raw:");
-		omeroModeLayout.setSourceLabel2("Segmented:");
-		omeroModeLayout.setSourceLabel3("");
+		String label1 = "Raw:";
+		String label2 = "Segmented:";
+		omeroModeLayout = new OMEROPanel(label1, label2);
 		
 		JTextPane jTextPane2 = new JTextPane();
 		jTextPane2.setText("You must select 2 Datasets:" + eol +
@@ -324,12 +324,12 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 	
 	
 	public String getRawDatasetID() {
-		return omeroModeLayout.getSourceID();
+		return omeroModeLayout.getSourceID(0);
 	}
 	
 	
 	public String getSegDatasetID() {
-		return omeroModeLayout.getSourceID2();
+		return omeroModeLayout.getSourceID(1);
 	}
 	
 	

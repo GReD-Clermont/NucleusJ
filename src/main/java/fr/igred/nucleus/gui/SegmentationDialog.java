@@ -159,10 +159,6 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 		localModeLayout.add(localPanel);
 		container.add(localModeLayout, 1);
 		
-		// Omero mode layout
-		omeroModeLayout.setSourceLabel2("");
-		omeroModeLayout.setSourceLabel3("");
-		
 		// Config panel
 		JPanel configPanel = new JPanel();
 		configPanel.setLayout(new BoxLayout(configPanel, BoxLayout.LINE_AXIS));
@@ -243,12 +239,12 @@ public class SegmentationDialog extends JFrame implements ActionListener, ItemLi
 	
 	
 	public String getSourceID() {
-		return omeroModeLayout.getSourceID();
+		return omeroModeLayout.getSourceID(0);
 	}
 	
 	
 	public String getDataType() {
-		return omeroModeLayout.getDataType();
+		return omeroModeLayout.getDataType(0);
 	}
 	
 	

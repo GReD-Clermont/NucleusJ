@@ -53,16 +53,16 @@ import java.util.concurrent.ExecutionException;
 public class CropFromCoordinatesDialog extends JFrame implements ActionListener, ItemListener {
 	private static final long serialVersionUID = -1113846613817254789L;
 	
-	private final transient IDialogListener listener;
+	private static final String INPUT_CHOOSER = "inputChooser";
 	
-	private static final String INPUT_CHOOSER  = "inputChooser";
+	private final transient IDialogListener listener;
 	
 	private final JTextField   jImageChooser     = new JTextField();
 	private final JTextField   jCoordFileChooser = new JTextField();
 	private final JFileChooser fc                = new JFileChooser();
 	private final JRadioButton omeroYesButton    = new JRadioButton("Yes");
 	private final JRadioButton omeroNoButton     = new JRadioButton("No");
-	private final OMEROPanel   omeroModeLayout   = new OMEROPanel();
+	private final OMEROPanel   omeroModeLayout;
 	private final JPanel       localModeLayout   = new JPanel();
 	
 	private final JTextField jTextFieldChannelToCrop = new JTextField();
@@ -146,8 +146,9 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		container.add(localModeLayout, 1);
 		
 		// Omero mode layout
-		omeroModeLayout.setSourceLabel2("Image to crop:");
-		omeroModeLayout.setSourceLabel3("");
+		String label1 = "Source:";
+		String label2 = "Image to crop:";
+		omeroModeLayout = new OMEROPanel(label1, label2);
 
         /*/\*\
         ------------------------------ Buttons -----------------------------------------
@@ -206,12 +207,12 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	
 	
 	public String getSourceID() {
-		return omeroModeLayout.getSourceID();
+		return omeroModeLayout.getSourceID(0);
 	}
 	
 	
 	public String getToCropID() {
-		return omeroModeLayout.getSourceID2();
+		return omeroModeLayout.getSourceID(1);
 	}
 	
 	
@@ -221,12 +222,12 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 	
 	
 	public String getDataType() {
-		return omeroModeLayout.getDataType();
+		return omeroModeLayout.getDataType(0);
 	}
 	
 	
 	public String getDataTypeToCrop() {
-		return omeroModeLayout.getDataType2();
+		return omeroModeLayout.getDataType(1);
 	}
 	
 	
@@ -259,9 +260,9 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		
 		if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION &&
 		    INPUT_CHOOSER.equals(((Component) e.getSource()).getName())) {
-				File selectedInput = fc.getSelectedFile();
-				jInputFileChooser.setText(selectedInput.getPath());
-			}
+			File selectedInput = fc.getSelectedFile();
+			jInputFileChooser.setText(selectedInput.getPath());
+		}
 		
 		fc.setSelectedFile(null);
 	}
@@ -286,6 +287,7 @@ public class CropFromCoordinatesDialog extends JFrame implements ActionListener,
 		validate();
 		repaint();
 	}
+	
 	
 	/**
 	 * Disposes the dialog and starts the process.
