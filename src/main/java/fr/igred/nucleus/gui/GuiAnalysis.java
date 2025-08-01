@@ -65,10 +65,10 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 	
 	private final String[] dataTypes = {"Dataset", "Image"};
 	
-	private final JRadioButton   omeroYesButton     = new JRadioButton("Yes");
-	private final JRadioButton   omeroNoButton      = new JRadioButton("No");
-	private final JPanel         localModeLayout    = new JPanel();
-	private final OMEROPanel     omeroModeLayout    = new OMEROPanel(dataTypes);
+	private final JRadioButton omeroYesButton  = new JRadioButton("Yes");
+	private final JRadioButton omeroNoButton   = new JRadioButton("No");
+	private final JPanel       localModeLayout = new JPanel();
+	private final OMEROPanel   omeroModeLayout = new OMEROPanel(dataTypes);
 	
 	/**  */
 	private final JCheckBox  jCbIsGauss  = new JCheckBox("Apply Gaussian filter on raw images ?");

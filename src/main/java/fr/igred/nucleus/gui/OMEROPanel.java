@@ -20,8 +20,8 @@ package fr.igred.nucleus.gui;
 import ij.Prefs;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -37,6 +37,10 @@ import java.awt.Insets;
 public class OMEROPanel extends JPanel {
 	
 	private static final long serialVersionUID = -6868915494470555701L;
+	
+	private static final Dimension MAX_DIM = new Dimension(10000, 20);
+	
+	private static final int DEFAULT_PORT = 4064;
 	
 	private final JTextField     jTextFieldHostname      = new JTextField();
 	private final JTextField     jTextFieldPort          = new JTextField();
@@ -67,118 +71,58 @@ public class OMEROPanel extends JPanel {
 		jComboBoxDataType2 = new JComboBox<>(dataTypes);
 		jComboBoxDataType3 = new JComboBox<>(dataTypes);
 		
-		setBoxLayout();
-		
-		JPanel omeroPanel = new JPanel();
-		
 		GridBagLayout omeroLayout = new GridBagLayout();
-		omeroLayout.columnWeights = new double[]{0.1, 0.1, 2};
-		omeroPanel.setLayout(omeroLayout);
+		omeroLayout.columnWeights = new double[]{1, 1, 10};
+		super.setLayout(omeroLayout);
 		
+		addRow(0, "Hostname:", jTextFieldHostname);
+		addRow(1, "Port:", jTextFieldPort);
+		addRow(2, "Username:", jTextFieldUsername);
+		addRow(3, "Password:", jPasswordField);
+		addRow(4, "Group ID:", jTextFieldGroup);
+		addRow(5, jLabelSource, jComboBoxDataType, jTextFieldSourceID);
+		addRow(6, jLabelSource2, jComboBoxDataType2, jTextFieldSourceID2);
+		addRow(7, jLabelSource3, jComboBoxDataType3, jTextFieldSourceID3);
+		addRow(8, "Output project:", jTextFieldOutputProject);
+		
+		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
+		super.setBorder(padding);
+		initFields();
+	}
+	
+	
+	private void addRow(int row, String label, JComponent field) {
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.insets = new Insets(5, 0, 5, 20);
-		
-		c.gridy = 0;
-		JLabel jLabelHostname = new JLabel("Hostname:");
+		c.gridy = row;
 		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelHostname, c);
+		add(new JLabel(label), c);
 		c.gridx = 1;
 		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldHostname, c);
-		jTextFieldHostname.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 1;
-		JLabel jLabelPort = new JLabel("Port:");
+		add(field, c);
+		field.setMaximumSize(MAX_DIM);
+	}
+	
+	
+	private void addRow(int row, JLabel label, JComboBox<String> comboBox, JTextField textField) {
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(5, 0, 5, 2 * 10);
+		c.gridy = row;
 		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelPort, c);
+		add(label, c);
 		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldPort, c);
-		jTextFieldPort.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 2;
-		JLabel jLabelUsername = new JLabel("Username:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelUsername, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldUsername, c);
-		jTextFieldUsername.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 3;
-		JLabel jLabelPassword = new JLabel("Password:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelPassword, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jPasswordField, c);
-		jPasswordField.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 4;
-		JLabel jLabelGroup = new JLabel("Group ID:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelGroup, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldGroup, c);
-		jTextFieldGroup.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 5;
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelSource, c);
-		c.gridx = 1;
-		omeroPanel.add(jComboBoxDataType, c);
+		add(comboBox, c);
 		c.gridx = 2;
-		omeroPanel.add(jTextFieldSourceID, c);
-		jTextFieldSourceID.setMaximumSize(new Dimension(10000, 20));
-		
-		c.gridy = 6;
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelSource2, c);
-		c.gridx = 1;
-		omeroPanel.add(jComboBoxDataType2, c);
-		c.gridx = 2;
-		omeroPanel.add(jTextFieldSourceID2, c);
-		jTextFieldSourceID2.setMaximumSize(new Dimension(20000, 20));
-		
-		c.gridy = 7;
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelSource3, c);
-		c.gridx = 1;
-		omeroPanel.add(jComboBoxDataType3, c);
-		c.gridx = 2;
-		omeroPanel.add(jTextFieldSourceID3, c);
-		jTextFieldSourceID3.setMaximumSize(new Dimension(20000, 20));
-		
-		c.gridy = 8;
-		JLabel jLabelOutputProject = new JLabel("Output project:");
-		c.gridx = 0;
-		c.gridwidth = 1;
-		omeroPanel.add(jLabelOutputProject, c);
-		c.gridx = 1;
-		c.gridwidth = 2;
-		omeroPanel.add(jTextFieldOutputProject, c);
-		jTextFieldOutputProject.setMaximumSize(new Dimension(10000, 20));
-		
-		Border padding = BorderFactory.createEmptyBorder(10, 10, 10, 10);
-		omeroPanel.setBorder(padding);
-		super.add(omeroPanel);
-		initFields();
+		add(textField, c);
+		textField.setMaximumSize(MAX_DIM);
 	}
 	
 	
 	private void initFields() {
 		String host     = Prefs.get("omero.host", "localhost");
-		int    port     = Prefs.getInt("omero.port", 4064);
+		int    port     = Prefs.getInt("omero.port", DEFAULT_PORT);
 		String username = Prefs.get("omero.user", "");
 		
 		// DEFAULT VALUES :
@@ -188,14 +132,6 @@ public class OMEROPanel extends JPanel {
 		
 		jPasswordField.setText("");
 		jTextFieldGroup.setText("");
-	}
-	
-	
-	/**
-	 * Sets the layout of the panel to BoxLayout with vertical alignment.
-	 */
-	private void setBoxLayout() {
-		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 	}
 	
 	
