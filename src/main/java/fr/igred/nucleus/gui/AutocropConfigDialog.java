@@ -253,7 +253,7 @@ public class AutocropConfigDialog extends JFrame implements ItemListener {
         \*\/*/
 		
 		volumeNucleus.add(Box.createRigidArea(new Dimension(0, 20)));
-		buttonOK.setPreferredSize(new java.awt.Dimension(80, 21));
+		buttonOK.setPreferredSize(new Dimension(80, 21));
 		volumeNucleus.add(buttonOK);
 		
 		container.add(volumeNucleus,

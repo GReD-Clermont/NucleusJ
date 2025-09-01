@@ -701,7 +701,7 @@ public class NucleusSegmentation {
 	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
 		LOGGER.info("Computing and saving OTSU segmentation.");
 		if (!badCrop && bestThreshold != -1) {
-			String path = new java.io.File(".").getCanonicalPath() +
+			String path = new File(".").getCanonicalPath() +
 			              // File.separator + "OTSU" +
 			              File.separator + imageSeg[0].getTitle();
 			saveFile(imageSeg[0], path);
@@ -744,7 +744,7 @@ public class NucleusSegmentation {
 		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
 			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0]);
 			
-			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + CONVEX_HULL_ALGORITHM
+			String path = new File(".").getCanonicalPath() //+ File.separator + CONVEX_HULL_ALGORITHM
 			              + File.separator + imageSeg[0].getTitle();
 			saveFile(imageSeg[0], path);
 			

@@ -281,8 +281,8 @@ public class ChromocenterAnalysisDialog extends JFrame implements ItemListener {
 		                                     GridBagConstraints.PAGE_END, GridBagConstraints.NONE,
 		                                     new Insets(10, 10, 10, 10), 0, 0));
 		
-		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
-		jButtonStart.setPreferredSize(new java.awt.Dimension(120, 21));
+		jButtonQuit.setPreferredSize(new Dimension(120, 21));
+		jButtonStart.setPreferredSize(new Dimension(120, 21));
 		jButtonWorkDirectory.addActionListener(e -> chooseDirectory(jTextFieldWorkDirectory));
 		jButtonRawData.addActionListener(e -> chooseDirectory(jTextFieldRawData));
 		jButtonQuit.addActionListener(this::quit);

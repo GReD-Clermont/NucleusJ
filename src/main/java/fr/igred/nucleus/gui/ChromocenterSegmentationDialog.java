@@ -80,7 +80,7 @@ public class ChromocenterSegmentationDialog extends JFrame implements ItemListen
 		super.setSize(500, 500);
 		super.setLocationRelativeTo(null);
 		
-		Font italic = new java.awt.Font("Albertus", Font.ITALIC, 10);
+		Font italic = new Font("Albertus", Font.ITALIC, 10);
 		
 		container = super.getContentPane();
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -117,7 +117,7 @@ public class ChromocenterSegmentationDialog extends JFrame implements ItemListen
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(100, 10, 0, 0), 0, 0));
-		jButtonRawData.setPreferredSize(new java.awt.Dimension(120, 21));
+		jButtonRawData.setPreferredSize(new Dimension(120, 21));
 		jButtonRawData.setFont(italic);
 		
 		container.add(jTextFieldRawData,
@@ -125,7 +125,7 @@ public class ChromocenterSegmentationDialog extends JFrame implements ItemListen
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(100, 160, 0, 0), 0, 0));
-		jTextFieldRawData.setPreferredSize(new java.awt.Dimension(280, 21));
+		jTextFieldRawData.setPreferredSize(new Dimension(280, 21));
 		jTextFieldRawData.setFont(italic);
 		jTextFieldRawData.setName("nj.ccseg.rawdata");
 		
@@ -134,7 +134,7 @@ public class ChromocenterSegmentationDialog extends JFrame implements ItemListen
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(140, 10, 0, 0), 0, 0));
-		jButtonWorkDirectory.setPreferredSize(new java.awt.Dimension(120, 21));
+		jButtonWorkDirectory.setPreferredSize(new Dimension(120, 21));
 		jButtonWorkDirectory.setFont(italic);
 		
 		container.add(jTextFieldWorkDirectory,
@@ -142,7 +142,7 @@ public class ChromocenterSegmentationDialog extends JFrame implements ItemListen
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(140, 160, 0, 0), 0, 0));
-		jTextFieldWorkDirectory.setPreferredSize(new java.awt.Dimension(280, 21));
+		jTextFieldWorkDirectory.setPreferredSize(new Dimension(280, 21));
 		jTextFieldWorkDirectory.setFont(italic);
 		jTextFieldWorkDirectory.setName("nj.ccseg.workdirectory");
 		
@@ -185,13 +185,13 @@ public class ChromocenterSegmentationDialog extends JFrame implements ItemListen
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(190, 140, 0, 0), 0, 0));
-		jButtonStart.setPreferredSize(new java.awt.Dimension(120, 21));
+		jButtonStart.setPreferredSize(new Dimension(120, 21));
 		container.add(jButtonQuit,
 		              new GridBagConstraints(0, 2, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(190, 10, 0, 0), 0, 0));
-		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
+		jButtonQuit.setPreferredSize(new Dimension(120, 21));
 		super.setVisible(true);
 		
 		jButtonWorkDirectory.addActionListener(e -> chooseDirectory(jTextFieldWorkDirectory));

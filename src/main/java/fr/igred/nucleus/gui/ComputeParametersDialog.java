@@ -156,15 +156,15 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(100, 10, 0, 0), 0, 0));
-		jButtonRawData.setPreferredSize(new java.awt.Dimension(120, 21));
-		jButtonRawData.setFont(new java.awt.Font(font, Font.ITALIC, 10));
+		jButtonRawData.setPreferredSize(new Dimension(120, 21));
+		jButtonRawData.setFont(new Font(font, Font.ITALIC, 10));
 		localPanel.add(jTextFieldRawData,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(100, 160, 0, 0), 0, 0));
-		jTextFieldRawData.setPreferredSize(new java.awt.Dimension(280, 21));
-		jTextFieldRawData.setFont(new java.awt.Font(font, Font.ITALIC, 10));
+		jTextFieldRawData.setPreferredSize(new Dimension(280, 21));
+		jTextFieldRawData.setFont(new Font(font, Font.ITALIC, 10));
 		jTextFieldRawData.setName("nj.segparams.rawdata");
 		
 		localPanel.add(jButtonWorkDirectory,
@@ -172,15 +172,15 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(140, 10, 0, 0), 0, 0));
-		jButtonWorkDirectory.setPreferredSize(new java.awt.Dimension(120, 21));
-		jButtonWorkDirectory.setFont(new java.awt.Font(font, Font.ITALIC, 10));
+		jButtonWorkDirectory.setPreferredSize(new Dimension(120, 21));
+		jButtonWorkDirectory.setFont(new Font(font, Font.ITALIC, 10));
 		localPanel.add(jTextFieldWorkDirectory,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(140, 160, 0, 0), 0, 0));
-		jTextFieldWorkDirectory.setPreferredSize(new java.awt.Dimension(280, 21));
-		jTextFieldWorkDirectory.setFont(new java.awt.Font(font, Font.ITALIC, 10));
+		jTextFieldWorkDirectory.setPreferredSize(new Dimension(280, 21));
+		jTextFieldWorkDirectory.setFont(new Font(font, Font.ITALIC, 10));
 		jTextFieldWorkDirectory.setName("nj.segparams.workdir");
 		
 		localPanel.add(jLabelCalibration,
@@ -230,7 +230,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(20, 10, 0, 0), 0, 0));
-		jButtonQuit.setPreferredSize(new java.awt.Dimension(120, 21));
+		jButtonQuit.setPreferredSize(new Dimension(120, 21));
 		super.setVisible(true);
 		jButtonWorkDirectory.addActionListener(e -> chooseDirectory(jTextFieldWorkDirectory));
 		jButtonRawData.addActionListener(e -> chooseDirectory(jTextFieldRawData));

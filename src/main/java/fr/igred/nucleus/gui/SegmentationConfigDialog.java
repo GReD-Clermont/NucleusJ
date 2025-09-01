@@ -140,7 +140,7 @@ public class SegmentationConfigDialog extends JFrame implements ItemListener {
         \*\/*/
 		
 		
-		buttonOK.setPreferredSize(new java.awt.Dimension(80, 21));
+		buttonOK.setPreferredSize(new Dimension(80, 21));
 		volumePane.add(Box.createRigidArea(new Dimension(0, 10)));
 		volumePane.add(buttonOK);
 		

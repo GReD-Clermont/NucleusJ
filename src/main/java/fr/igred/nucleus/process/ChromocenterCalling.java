@@ -179,15 +179,15 @@ public class ChromocenterCalling {
 						masks = maskDataset.getImages(client, imageName);
 						/* Run Segmentation */
 						runSeveralImagesOMERO(image, masks.get(0), datasetName, client);
-						/* Import Segmented cc to the Dataset*/
+						/* Import Segmented cc to the Dataset */
 						outDataset.importImages(client, segImg);
 						outDatasetGradient.importImages(client, gradImg);
-						/* Delete the files locally*/
 					} catch (AccessException | OMEROServerError | ServiceException | IOException |
 					         ExecutionException ignore) {
 						//IGNORE
 					}
 					try {
+						/* Delete the files locally */
 						File segImgDelete  = new File(segImg);
 						File gradImgDelete = new File(gradImg);
 						Files.deleteIfExists(segImgDelete.toPath());

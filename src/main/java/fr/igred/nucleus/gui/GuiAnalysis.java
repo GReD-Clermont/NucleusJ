@@ -39,6 +39,8 @@ import javax.swing.JTextField;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -147,7 +149,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		JLabel label = new JLabel();
 		label.setText("Input and Output directories: ");
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		mainPanel.add(label,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
@@ -155,16 +157,16 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                     new Insets(10, 10, 0, 0), 0, 0));
 		
 		JButton jbInputDir = new JButton("Raw Nuclei");
-		jbInputDir.setPreferredSize(new java.awt.Dimension(150, 21));
-		jbInputDir.setFont(new java.awt.Font("arial", 2, 10));
+		jbInputDir.setPreferredSize(new Dimension(150, 21));
+		jbInputDir.setFont(new Font("arial", 2, 10));
 		mainPanel.add(jbInputDir,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(35, 20, 0, 0), 0, 0));
 		
-		jtfRawData.setPreferredSize(new java.awt.Dimension(280, 21));
-		jtfRawData.setFont(new java.awt.Font("arial", 2, 10));
+		jtfRawData.setPreferredSize(new Dimension(280, 21));
+		jtfRawData.setFont(new Font("arial", 2, 10));
 		jtfRawData.setName("nj.nodej.rawdata");
 		mainPanel.add(jtfRawData,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
@@ -173,16 +175,16 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                     new Insets(35, 190, 0, 0), 0, 0));
 		
 		JButton jbInputSeg = new JButton("Seg. Nuclei");
-		jbInputSeg.setPreferredSize(new java.awt.Dimension(150, 21));
-		jbInputSeg.setFont(new java.awt.Font("arial", 2, 10));
+		jbInputSeg.setPreferredSize(new Dimension(150, 21));
+		jbInputSeg.setFont(new Font("arial", 2, 10));
 		mainPanel.add(jbInputSeg,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(65, 20, 0, 0), 0, 0));
 		
-		jtfRawSeg.setPreferredSize(new java.awt.Dimension(280, 21));
-		jtfRawSeg.setFont(new java.awt.Font("arial", 2, 10));
+		jtfRawSeg.setPreferredSize(new Dimension(280, 21));
+		jtfRawSeg.setFont(new Font("arial", 2, 10));
 		jtfRawSeg.setName("nj.nodej.rawseg");
 		mainPanel.add(jtfRawSeg,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
@@ -191,16 +193,16 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                     new Insets(65, 190, 0, 0), 0, 0));
 		
 		JButton jbOutputDir = new JButton("Output directory");
-		jbOutputDir.setPreferredSize(new java.awt.Dimension(150, 21));
-		jbOutputDir.setFont(new java.awt.Font("arial", 2, 10));
+		jbOutputDir.setPreferredSize(new Dimension(150, 21));
+		jbOutputDir.setFont(new Font("arial", 2, 10));
 		mainPanel.add(jbOutputDir,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                     GridBagConstraints.FIRST_LINE_START,
 		                                     GridBagConstraints.NONE,
 		                                     new Insets(95, 20, 0, 0), 0, 0));
 		
-		jtfWorkDir.setPreferredSize(new java.awt.Dimension(280, 21));
-		jtfWorkDir.setFont(new java.awt.Font("arial", 2, 10));
+		jtfWorkDir.setPreferredSize(new Dimension(280, 21));
+		jtfWorkDir.setFont(new Font("arial", 2, 10));
 		jtfWorkDir.setName("nj.nodej.workdir");
 		mainPanel.add(jtfWorkDir,
 		              new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
@@ -210,7 +212,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		// group of radio button to choose the input type file
 		label = new JLabel();
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		label.setText("Parameters:");
 		parameters.add(label,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
@@ -218,7 +220,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(5, 10, 0, 0), 0, 0));
 		
-		jCbIs2D.setFont(new java.awt.Font("arial", 1, 12));
+		jCbIs2D.setFont(new Font("arial", 1, 12));
 		parameters.add(jCbIs2D,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -227,7 +229,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		label = new JLabel();
 		label.setText("Size of the neighborhood:");
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		parameters.add(label,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -235,8 +237,8 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                      new Insets(55, 20, 0, 0), 0, 0));
 		
 		jtfNeigh.setText("3");
-		jtfNeigh.setPreferredSize(new java.awt.Dimension(60, 21));
-		jtfNeigh.setFont(new java.awt.Font("arial", 1, 12));
+		jtfNeigh.setPreferredSize(new Dimension(60, 21));
+		jtfNeigh.setFont(new Font("arial", 1, 12));
 		parameters.add(jtfNeigh,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -245,7 +247,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		label = new JLabel();
 		label.setText("Factor for the threshold value:");
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		parameters.add(label,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -253,15 +255,15 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                      new Insets(80, 20, 0, 0), 0, 0));
 		
 		jtfFactor.setText("1.5");
-		jtfFactor.setPreferredSize(new java.awt.Dimension(60, 21));
-		jtfFactor.setFont(new java.awt.Font("arial", 1, 12));
+		jtfFactor.setPreferredSize(new Dimension(60, 21));
+		jtfFactor.setFont(new Font("arial", 1, 12));
 		parameters.add(jtfFactor,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
 		                                      GridBagConstraints.NONE,
 		                                      new Insets(78, 245, 0, 0), 0, 0));
 		
-		jCbIsGauss.setFont(new java.awt.Font("arial", 1, 12));
+		jCbIsGauss.setFont(new Font("arial", 1, 12));
 		parameters.add(jCbIsGauss,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -270,7 +272,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		label = new JLabel();
 		label.setText("Gaussian Blur X sigma:");
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		parameters.add(label,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -278,8 +280,8 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                      new Insets(135, 20, 0, 0), 0, 0));
 		
 		jtfGX.setText("1");
-		jtfGX.setPreferredSize(new java.awt.Dimension(60, 21));
-		jtfGX.setFont(new java.awt.Font("arial", 1, 12));
+		jtfGX.setPreferredSize(new Dimension(60, 21));
+		jtfGX.setFont(new Font("arial", 1, 12));
 		parameters.add(jtfGX,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -288,7 +290,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		label = new JLabel();
 		label.setText("Gaussian Blur Y sigma:");
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		parameters.add(label,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -296,8 +298,8 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                      new Insets(160, 20, 0, 0), 0, 0));
 		
 		jtfGY.setText("1");
-		jtfGY.setPreferredSize(new java.awt.Dimension(60, 21));
-		jtfGY.setFont(new java.awt.Font("arial", 1, 12));
+		jtfGY.setPreferredSize(new Dimension(60, 21));
+		jtfGY.setFont(new Font("arial", 1, 12));
 		parameters.add(jtfGY,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -306,7 +308,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		label = new JLabel();
 		label.setText("Gaussian Blur Z sigma:");
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		parameters.add(label,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -314,8 +316,8 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                      new Insets(185, 20, 0, 0), 0, 0));
 		
 		jtfGZ.setText("2");
-		jtfGZ.setPreferredSize(new java.awt.Dimension(60, 21));
-		jtfGZ.setFont(new java.awt.Font("arial", 1, 12));
+		jtfGZ.setPreferredSize(new Dimension(60, 21));
+		jtfGZ.setFont(new Font("arial", 1, 12));
 		parameters.add(jtfGZ,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -324,13 +326,13 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		label = new JLabel();
 		label.setText("Connected component filtering parameters: ");
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		parameters.add(label, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                             GridBagConstraints.FIRST_LINE_START,
 		                                             GridBagConstraints.NONE,
 		                                             new Insets(215, 10, 0, 0), 0, 0));
 		
-		jCbIsFilter.setFont(new java.awt.Font("arial", 1, 12));
+		jCbIsFilter.setFont(new Font("arial", 1, 12));
 		parameters.add(jCbIsFilter,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -339,7 +341,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		label = new JLabel();
 		label.setText("Min volume:");
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		parameters.add(label,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -347,8 +349,8 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                      new Insets(275, 20, 0, 0), 0, 0));
 		
 		jtfMin.setText("0.003");
-		jtfMin.setPreferredSize(new java.awt.Dimension(60, 21));
-		jtfMin.setFont(new java.awt.Font("arial", 1, 12));
+		jtfMin.setPreferredSize(new Dimension(60, 21));
+		jtfMin.setFont(new Font("arial", 1, 12));
 		parameters.add(jtfMin,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -357,7 +359,7 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		
 		label = new JLabel();
 		label.setText("Max volume:");
-		label.setFont(new java.awt.Font("arial", 1, 12));
+		label.setFont(new Font("arial", 1, 12));
 		parameters.add(label,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -365,8 +367,8 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		                                      new Insets(305, 20, 0, 0), 0, 0));
 		
 		jtfMax.setText("3");
-		jtfMax.setPreferredSize(new java.awt.Dimension(60, 21));
-		jtfMax.setFont(new java.awt.Font("arial", 1, 12));
+		jtfMax.setPreferredSize(new Dimension(60, 21));
+		jtfMax.setFont(new Font("arial", 1, 12));
 		parameters.add(jtfMax,
 		               new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                      GridBagConstraints.FIRST_LINE_START,
@@ -379,9 +381,9 @@ public class GuiAnalysis extends JFrame implements ItemListener {
 		//////////////////////////////////////
 		
 		JButton jbStart = new JButton("Start");
-		jbStart.setPreferredSize(new java.awt.Dimension(120, 21));
+		jbStart.setPreferredSize(new Dimension(120, 21));
 		JButton jbQuit = new JButton("Quit");
-		jbQuit.setPreferredSize(new java.awt.Dimension(120, 21));
+		jbQuit.setPreferredSize(new Dimension(120, 21));
 		
 		parameters.add(jbStart, new GridBagConstraints(0, 1, 0, 0, 0.0, 0.0,
 		                                               GridBagConstraints.FIRST_LINE_START,
