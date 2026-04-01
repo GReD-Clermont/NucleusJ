@@ -214,7 +214,7 @@ public class ChromocenterParameters extends PluginParameters {
 	                               boolean sizeFilterConnectedComponent,
 	                               double maxSizeConnectedComponent,
 	                               double minSizeConnectedComponent){
-		super(inputFolder, outputFolder);
+        super(inputFolder, outputFolder,gaussianBlurXsigma,gaussianBlurYsigma,gaussianBlurZsigma, gaussian);
 		this._segInputFolder =SegInputFolder;
 		this._gaussianBlurXsigma =gaussianBlurXsigma;
 		this._gaussianBlurYsigma =gaussianBlurYsigma;
@@ -252,7 +252,7 @@ public class ChromocenterParameters extends PluginParameters {
 	                               boolean sizeFilterConnectedComponent,
 	                               double maxSizeConnectedComponent,
 	                               double minSizeConnectedComponent){
-		super(inputFolder, outputFolder);
+        super(inputFolder, outputFolder,gaussianBlurXsigma,gaussianBlurYsigma,gaussianBlurZsigma, gaussian);
 		this._segInputFolder =SegInputFolder;
 		this._gaussianBlurXsigma =gaussianBlurXsigma;
 		this._gaussianBlurYsigma =gaussianBlurYsigma;
