@@ -59,7 +59,6 @@ public class NODeJ implements PlugIn, IDialogListener {
 		// check datatype
 		String dataType = gui.getDataType();
 		String dataTypeSegmented = gui.getDataTypeSegmented();
-		
 		ChromocenterParameters CCAnalyseParameters = new ChromocenterParameters(".",".",".",client,gui.getGaussianX(),
 		                                                                        gui.getGaussianY(), gui.getGaussianZ(),
 		                                                                        gui.getFactor(),gui.getNeigh(),
@@ -92,12 +91,14 @@ public class NODeJ implements PlugIn, IDialogListener {
 				gui.getGaussianX(),
 				gui.getGaussianY(),
 				gui.getGaussianZ(),
+                gui.getFactor(),
+                gui.getNeigh(),
 				gui.isGaussian(),
 				gui.isFilter(),
 				gui.getMax(),
 				gui.getMin());
-		
-		ChromocenterCalling CCAnalyse= new ChromocenterCalling(CCAnalyseParameters);
+
+        ChromocenterCalling CCAnalyse= new ChromocenterCalling(CCAnalyseParameters);
 		try {
 			CCAnalyse.runSeveralImages2();
 		} catch (Exception e) { e.printStackTrace(); }
