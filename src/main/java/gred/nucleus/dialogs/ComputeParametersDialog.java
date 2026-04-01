@@ -63,7 +63,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		jButtonQuit.setForeground(Color.white);
 		final JButton   jButtonRawData      = new JButton("Raw Data folder");
 		this.setTitle("Compute morphological parameters");
-		this.setSize(500, 500);
+		this.setSize(500, 700);
 		this.setLocationRelativeTo(null);
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.rowHeights = new int[]{17, 200, 124, 7, 10};
@@ -208,7 +208,7 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		gc.anchor = GridBagConstraints.NORTHWEST;
 		gc.ipady = GridBagConstraints.NORTHWEST;
 		JLabel calibrationLabel = new JLabel("Calibration:");
-		gc.gridx = 0;
+		gc.gridx = 2;
 		gc.gridy = 0;
 		calibrationLabel.setAlignmentX(0);
 		calibration.add(calibrationLabel);
@@ -216,15 +216,15 @@ public class ComputeParametersDialog extends JFrame implements ItemListener {
 		addCalibrationBox.setSelected(false);
 		addCalibrationBox.addItemListener(this);
 		calibration.add(addCalibrationBox, gc);
-		localPanel.add(calibration,
-		              new GridBagConstraints(0,
-		                                     2,
+		container.add(calibration,
+		              new GridBagConstraints(1,
+		                                     1,
 		                                     2,
 		                                     0,
 		                                     0.0,
 		                                     0.0,
 		                                     GridBagConstraints.NORTHWEST,
-		                                     GridBagConstraints.NONE,
+		                                     GridBagConstraints.NORTH,
 		                                     new Insets(0, 0, 0, 0),
 		                                     0,
 		                                     0));
