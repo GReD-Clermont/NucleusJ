@@ -135,13 +135,15 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 				try {
 					LOGGER.info("Begin Chromocenter Analysis");
 					for (int i = 0; i < sourceImages.size(); i++) {
-						sourceImageId = sourceImages.get(i).getId();
-						segImageId = segImages.get(i).getId();
-						ccImageId = ccImages.get(i).getId();
+                        try {
+                            sourceImageId = sourceImages.get(i).getId();
+                            segImageId = segImages.get(i).getId();
+                            ccImageId = ccImages.get(i).getId();
 
-						mainFolder = processAndAnalyze(client, sourceImageId, segImageId, ccImageId);
-
+                            mainFolder = processAndAnalyze(client, sourceImageId, segImageId, ccImageId);
+                        } catch (Exception ignore) {}
 					}
+                    runCCAnalysis(mainFolder, mainFolder);
 					LOGGER.info("Chromocenter Analysis has ended successfully");
 				} catch (Exception e) {
 					LOGGER.info("Chromocenter Analysis has failed");
@@ -186,7 +188,7 @@ public class ChromocentersAnalysisBatchPlugin_ implements PlugIn, IDialogListene
 		fileDownloader(client, sourceImageId, "RawDataNucleus");
 		fileDownloader(client, segImageId, "SegmentedDataNucleus");
 
-		runCCAnalysis(ccInputDir, ccInputDir);
+
 		return ccInputDir;
 	}
 
