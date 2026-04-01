@@ -345,7 +345,7 @@ public class Measure3D {
 	public double[] computeEigenValue3D(double label) {
 		ImageStack  imageStackInput = this.imageSeg[0].getImageStack();
 		VoxelRecord barycenter      = computeBarycenter3D(true, this.imageSeg[0], label);
-		
+
 		double xx      = 0;
 		double xy      = 0;
 		double xz      = 0;
@@ -377,11 +377,11 @@ public class Measure3D {
 		                      {xy / counter, yy / counter, yz / counter},
 		                      {xz / counter, yz / counter, zz / counter}};
 		Matrix matrix = new Matrix(tValues);
-		
+
 		EigenvalueDecomposition eigenValueDecomposition = matrix.eig();
 		return eigenValueDecomposition.getRealEigenvalues();
 	}
-	
+
 	
 	/**
 	 * Compute the flatness and the elongation of the object of interest
@@ -393,9 +393,12 @@ public class Measure3D {
 	public double[] computeFlatnessAndElongation(double label) {
 		double[] shapeParameters = new double[2];
 		double[] tEigenValues    = computeEigenValue3D(label);
-		shapeParameters[0] = tEigenValues[1] / tEigenValues[0];
-		shapeParameters[1] = tEigenValues[2] / tEigenValues[1];
-		return shapeParameters;
+        // added mathsqrt
+		//shapeParameters[0] = tEigenValues[1] / tEigenValues[0];
+		//shapeParameters[1] = tEigenValues[2] / tEigenValues[1];
+        shapeParameters[0] = Math.sqrt(tEigenValues[1] / tEigenValues[0]);
+        shapeParameters[1] = Math.sqrt(tEigenValues[2] / tEigenValues[1]);
+        return shapeParameters;
 	}
 	
 	
