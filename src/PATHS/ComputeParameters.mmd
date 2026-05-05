@@ -1,0 +1,19 @@
+graph TD
+    ComputeParameters --> GUI
+    ComputeParameters --> CLI
+    GUI --> MAINGUI
+    CLI --> runComputeNucleiParameters_local["CLIRunAction<br>runComputeNucleiParameters"]
+    CLI --> runComputeNucleiParameters_omero["CLIRunActionOMERO<br>runComputeNucleiParameters"]
+
+    runComputeNucleiParameters_local ------> run["ComputeNucleiParameters<br>run"]
+
+    runComputeNucleiParameters_omero ------> runFromOMERO["ComputeNucleiParameters<br>runFromOMERO"]
+    runFromOMERO ------> run
+
+    MAINGUI --> ComputeParametersPlugin["ComputeParametersPlugin<br>onStart"]
+    ComputeParametersPlugin --> runlocal["ComputeParametersPlugin<br>runlocal"]
+    ComputeParametersPlugin --> runOMERO["ComputeParametersPlugin<br>runOMERO"]
+
+    runlocal ------> run
+
+    runOMERO ------> runFromOMERO

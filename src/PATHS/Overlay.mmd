@@ -1,0 +1,19 @@
+graph TD
+    Overlay --> GUI
+    Overlay --> CLI
+    GUI --> MAINGUI
+    CLI --> runGenerateOV_local["CLIRunAction<br>runGenerateOV"]
+    CLI --> runGenerateOV_omero["CLIRunActionOMERO<br>runGenerateOV"]
+
+    runGenerateOV_local ------> run["GenerateOverlay<br>run"]
+
+    runGenerateOV_omero ------> runFromOMERO["GenerateOverlay<br>runFromOMERO"]
+    runFromOMERO ------> run
+
+    MAINGUI --> GenerateOverlayPlugin["GenerateOverlayPlugin<br>onStart"]
+    GenerateOverlayPlugin --> runLocal["GenerateOverlayPlugin<br>runLocal"]
+    GenerateOverlayPlugin --> runOMERO["GenerateOverlayPlugin<br>runOMERO"]
+
+    runLocal ------> run
+
+    runOMERO ------> runFromOMERO

@@ -1,0 +1,20 @@
+graph TD
+    CropFromCoordinates --> GUI
+    CropFromCoordinates --> CLI
+    GUI --> MAINGUI
+    CLI --> runCropFromCoordinates["CLIRunAction<br>runCropFromCoordinates"]
+    CLI --> runCropFromCoordinate["CLIRunActionOMERO<br>runCropFromCoordinate"]
+
+    runCropFromCoordinates ------> run["CropFromCoordinates<br>run"]
+
+    runCropFromCoordinate ------> runFromOMERO["CropFromCoordinates<br>runFromOMERO"]
+
+    runFromOMERO ------> run
+
+    MAINGUI --> CropFromCoordinatesPlugin["CropFromCoordinatesPlugin<br>onStart"]
+    CropFromCoordinatesPlugin --> cropFromCoordinates["CropFromCoordinatesPlugin<br>cropFromCoordinates"]
+    CropFromCoordinatesPlugin --> runOMERO["CropFromCoordinatesPlugin<br>runOMERO"]
+
+    cropFromCoordinates ------> run
+
+    runOMERO ------> cropImageFromOMERO["CropFromCoordinatesPlugin<br>cropImageFromOMERO"]

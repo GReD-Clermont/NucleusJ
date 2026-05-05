@@ -1,0 +1,6 @@
+graph TD
+    ChromocenterSegmentation --> GUI
+    GUI --> MAINGUI
+    MAINGUI --> ChromocenterSegmentationPlugin["ChromocenterSegmentationPlugin<br>onStart"]
+    ChromocenterSegmentationPlugin --> processOneNucleus["ChromocenterSegmentationPlugin<br>processOneNucleus"]
+    processOneNucleus ------> applyEnhanceChromocenters["ChromocenterEnhancement<br>applyEnhanceChromocenters"]

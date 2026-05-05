@@ -1,0 +1,20 @@
+graph TD
+    ComputeParametersSpots --> GUI
+    ComputeParametersSpots --> CLI
+    GUI --> MAINGUI
+    CLI --> runComputeCC["CLIRunActionOMERO<br>runComputeCC"]
+
+    runComputeCC ------> runComputeParametersCC["ChromocenterAnalysis<br>runComputeParametersCC"]
+    runComputeParametersCC ------> runCCAnalysis["ChromocenterAnalysis<br>runCCAnalysis"]
+
+    MAINGUI --> ChromocenterAnalysisPlugin["ChromocenterAnalysisPlugin<br>onStart"]
+    ChromocenterAnalysisPlugin --> runCCAnalysis_local["ChromocenterAnalysisPlugin<br>runCCAnalysis"]
+    ChromocenterAnalysisPlugin --> runOMERO["ChromocenterAnalysisPlugin<br>runOMERO"]
+
+    runOMERO ------> runCCAnalysis
+
+    runCCAnalysis_local ------> computeParametersChromocenter["ChromocenterAnalysis<br>computeParametersChromocenter"]
+    runCCAnalysis_local ------> computeParameters["NucleusChromocentersAnalysis<br>computeParameters"]
+
+    runCCAnalysis ------> computeParametersChromocenter
+    runCCAnalysis ------> computeParameters
