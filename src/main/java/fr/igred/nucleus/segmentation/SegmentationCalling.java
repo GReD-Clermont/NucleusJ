@@ -283,31 +283,42 @@ public class SegmentationCalling {
 		return log;
 	}
 	
-	
+
+	/** Pure compute step — runs the segmentation pipeline without performing any I/O. */
+	private NucleusSegmentation processOneImage(File currentFile) throws IOException, FormatException {
+		NucleusSegmentation seg = new NucleusSegmentation(currentFile, params);
+		seg.preProcessImage();
+		seg.findOTSUMaximisingSphericity();
+		seg.checkBadCrop(params.getInputFolder());
+		return seg;
+	}
+
+
+	/** Output step — writes the segmented image to disk and appends CSV info. */
+	private void saveOneImage(NucleusSegmentation seg) {
+		seg.saveOTSUSegmented();
+		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
+		this.outputCropGeneralInfoOTSU += seg.getImageCropInfoOTSU();
+		seg.saveConvexHullSeg();
+		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
+		this.outputCropGeneralInfoConvexHull += seg.getImageCropInfoConvexHull();
+	}
+
+
 	public String runOneImage(String filePath) throws IOException, FormatException {
 		String log         = "";
 		File   currentFile = new File(filePath);
-		
-		String fileImg = currentFile.toString();
+
 		LOGGER.info("Current image in process: {}", currentFile);
 		if (currentFile.exists()) {
 			String start = currentDateTime();
 			LOGGER.info("Start: {}", start);
-			NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(currentFile, params);
-			nucleusSegmentation.preProcessImage();
-			nucleusSegmentation.findOTSUMaximisingSphericity();
-			nucleusSegmentation.checkBadCrop(params.getInputFolder());
-			nucleusSegmentation.saveOTSUSegmented();
-			this.outputCropGeneralInfoOTSU += getResultsColumnNames();
-			this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
-			nucleusSegmentation.saveConvexHullSeg();
-			this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
-			this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
-			
+			NucleusSegmentation seg = processOneImage(currentFile);
+			saveOneImage(seg);
 			String end = currentDateTime();
 			LOGGER.info("End: {}", end);
 		} else {
-			log = "File " + fileImg + " does not exist.";
+			log = "File " + currentFile + " does not exist.";
 			LOGGER.error(log);
 		}
 		return log;
@@ -354,16 +365,24 @@ public class SegmentationCalling {
 		}
 	}
 	
-	
-	public String runOneImageOMERO(ImageWrapper image, Long output, Client client)
-	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
-		String log = "";
-		
+	/** Pair of OMERO dataset IDs (OTSU and Convex Hull) used to upload segmentation outputs. */
+	private static final class OutputDatasets {
+		final long otsu;
+		final long convexHull;
+
+		OutputDatasets(long otsu, long convexHull) {
+			this.otsu = otsu;
+			this.convexHull = convexHull;
+		}
+	}
+
+
+	/** Prepares the OMERO output datasets (creates them if missing) and returns their IDs. */
+	private OutputDatasets prepareOutputDatasetsOMERO(Long output, Client client)
+	throws AccessException, ServiceException, ExecutionException {
 		ProjectWrapper project = client.getProject(output);
-		
-		// Get OTSU dataset ID
+
 		List<DatasetWrapper> datasets = project.getDatasets("OTSU");
-		
 		long otsuDataset;
 		long convexHullDataset = -1;
 		if (datasets.isEmpty()) {
@@ -373,7 +392,6 @@ public class SegmentationCalling {
 			otsuDataset = datasets.get(0).getId();
 		}
 		project.reload(client);
-		// Get Convex Hull dataset ID
 		if (params.getConvexHullDetection()) {
 			datasets = project.getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 			if (datasets.isEmpty()) {
@@ -383,27 +401,46 @@ public class SegmentationCalling {
 				convexHullDataset = datasets.get(0).getId();
 			}
 		}
-		
-		String fileImg = image.getName();
-		LOGGER.info("Current image in process: {}", fileImg);
-		
+		return new OutputDatasets(otsuDataset, convexHullDataset);
+	}
+
+
+	/** Pure compute step (OMERO) — runs the segmentation pipeline without performing any I/O. */
+	private NucleusSegmentation processOneImageOMERO(ImageWrapper image, Client client)
+	throws AccessException, ServiceException, ExecutionException {
+		NucleusSegmentation seg = new NucleusSegmentation(image, params, client);
+		seg.preProcessImage();
+		seg.findOTSUMaximisingSphericity();
+		seg.checkBadCrop(image, client);
+		return seg;
+	}
+
+
+	/** Output step (OMERO) — uploads the segmented image to OMERO and appends CSV info. */
+	private void saveOneImageOMERO(NucleusSegmentation seg, Client client, OutputDatasets datasets)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
+		seg.saveOTSUSegmentedOMERO(client, datasets.otsu);
+		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
+		this.outputCropGeneralInfoOTSU += seg.getImageCropInfoOTSU();
+		seg.saveConvexHullSegOMERO(client, datasets.convexHull);
+		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
+		this.outputCropGeneralInfoConvexHull += seg.getImageCropInfoConvexHull();
+	}
+
+
+	public String runOneImageOMERO(ImageWrapper image, Long output, Client client)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
+		String log = "";
+
+		LOGGER.info("Current image in process: {}", image.getName());
+		OutputDatasets datasets = prepareOutputDatasetsOMERO(output, client);
 		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
-		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(image, params, client);
-		nucleusSegmentation.preProcessImage();
-		nucleusSegmentation.findOTSUMaximisingSphericity();
-		nucleusSegmentation.checkBadCrop(image, client);
-		
-		nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset);
-		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
-		this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
-		nucleusSegmentation.saveConvexHullSegOMERO(client, convexHullDataset);
-		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
-		this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
-		
+		NucleusSegmentation seg = processOneImageOMERO(image, client);
+		saveOneImageOMERO(seg, client, datasets);
 		String end = currentDateTime();
 		LOGGER.info("End: {}", end);
-		
+
 		return log;
 	}
 	
