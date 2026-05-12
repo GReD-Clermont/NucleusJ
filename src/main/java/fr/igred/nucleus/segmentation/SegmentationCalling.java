@@ -285,20 +285,20 @@ public class SegmentationCalling {
 	
 
 	/** Input step — loads a local image into a NucleusSegmentation. */
-	private NucleusSegmentation loadLocal(File currentFile) throws IOException, FormatException {
+	public NucleusSegmentation loadLocal(File currentFile) throws IOException, FormatException {
 		return new NucleusSegmentation(currentFile, params);
 	}
 
 
 	/** Compute step — runs the segmentation pipeline. Source-agnostic (local or OMERO). */
-	private void compute(NucleusSegmentation seg) {
+	public void compute(NucleusSegmentation seg) {
 		seg.preProcessImage();
 		seg.findOTSUMaximisingSphericity();
 	}
 
 
 	/** Output step — writes the segmented image to disk and appends CSV info. */
-	private void saveOneImage(NucleusSegmentation seg) {
+	public void saveOneImage(NucleusSegmentation seg) {
 		seg.checkBadCrop(params.getInputFolder());
 		seg.saveOTSUSegmented();
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
@@ -371,7 +371,7 @@ public class SegmentationCalling {
 	}
 	
 	/** Pair of OMERO dataset IDs (OTSU and Convex Hull) used to upload segmentation outputs. */
-	private static final class OutputDatasets {
+	public static final class OutputDatasets {
 		final long otsu;
 		final long convexHull;
 
@@ -383,7 +383,7 @@ public class SegmentationCalling {
 
 
 	/** Prepares the OMERO output datasets (creates them if missing) and returns their IDs. */
-	private OutputDatasets prepareOutputDatasetsOMERO(Long output, Client client)
+	public OutputDatasets prepareOutputDatasetsOMERO(Long output, Client client)
 	throws AccessException, ServiceException, ExecutionException {
 		ProjectWrapper project = client.getProject(output);
 
@@ -411,14 +411,14 @@ public class SegmentationCalling {
 
 
 	/** Input step (OMERO) — loads an OMERO image into a NucleusSegmentation. */
-	private NucleusSegmentation loadOMERO(ImageWrapper image, Client client)
+	public NucleusSegmentation loadOMERO(ImageWrapper image, Client client)
 	throws AccessException, ServiceException, ExecutionException {
 		return new NucleusSegmentation(image, params, client);
 	}
 
 
 	/** Output step (OMERO) — uploads the segmented image to OMERO and appends CSV info. */
-	private void saveOneImageOMERO(NucleusSegmentation seg,
+	public void saveOneImageOMERO(NucleusSegmentation seg,
 	                               ImageWrapper image,
 	                               Client client,
 	                               OutputDatasets datasets)
