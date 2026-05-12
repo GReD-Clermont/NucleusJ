@@ -235,9 +235,7 @@ public class SegmentationCalling {
 					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
 					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, params);
-					
-					nucleusSegmentation.preProcessImage();
-					nucleusSegmentation.findOTSUMaximisingSphericity();
+					compute(nucleusSegmentation);//////////////
 					nucleusSegmentation.checkBadCrop(params.getInputFolder());
 					nucleusSegmentation.saveOTSUSegmented();
 					otsuResults.put(file.getName(),
@@ -510,8 +508,7 @@ public class SegmentationCalling {
 					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
 					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(img, imp, params);
-					nucleusSegmentation.preProcessImage();
-					nucleusSegmentation.findOTSUMaximisingSphericity();
+					compute(nucleusSegmentation);//////////////
 					nucleusSegmentation.checkBadCrop(img, client);
 					
 					nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset); // Upload
