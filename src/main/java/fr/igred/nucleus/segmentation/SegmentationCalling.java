@@ -284,18 +284,22 @@ public class SegmentationCalling {
 	}
 	
 
-	/** Pure compute step — runs the segmentation pipeline without performing any I/O. */
-	private NucleusSegmentation processOneImage(File currentFile) throws IOException, FormatException {
-		NucleusSegmentation seg = new NucleusSegmentation(currentFile, params);
+	/** Input step — loads a local image into a NucleusSegmentation. */
+	private NucleusSegmentation loadLocal(File currentFile) throws IOException, FormatException {
+		return new NucleusSegmentation(currentFile, params);
+	}
+
+
+	/** Compute step — runs the segmentation pipeline. Source-agnostic (local or OMERO). */
+	private void compute(NucleusSegmentation seg) {
 		seg.preProcessImage();
 		seg.findOTSUMaximisingSphericity();
-		seg.checkBadCrop(params.getInputFolder());
-		return seg;
 	}
 
 
 	/** Output step — writes the segmented image to disk and appends CSV info. */
 	private void saveOneImage(NucleusSegmentation seg) {
+		seg.checkBadCrop(params.getInputFolder());
 		seg.saveOTSUSegmented();
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += seg.getImageCropInfoOTSU();
@@ -313,7 +317,8 @@ public class SegmentationCalling {
 		if (currentFile.exists()) {
 			String start = currentDateTime();
 			LOGGER.info("Start: {}", start);
-			NucleusSegmentation seg = processOneImage(currentFile);
+			NucleusSegmentation seg = loadLocal(currentFile);
+			compute(seg);
 			saveOneImage(seg);
 			String end = currentDateTime();
 			LOGGER.info("End: {}", end);
@@ -405,20 +410,20 @@ public class SegmentationCalling {
 	}
 
 
-	/** Pure compute step (OMERO) — runs the segmentation pipeline without performing any I/O. */
-	private NucleusSegmentation processOneImageOMERO(ImageWrapper image, Client client)
+	/** Input step (OMERO) — loads an OMERO image into a NucleusSegmentation. */
+	private NucleusSegmentation loadOMERO(ImageWrapper image, Client client)
 	throws AccessException, ServiceException, ExecutionException {
-		NucleusSegmentation seg = new NucleusSegmentation(image, params, client);
-		seg.preProcessImage();
-		seg.findOTSUMaximisingSphericity();
-		seg.checkBadCrop(image, client);
-		return seg;
+		return new NucleusSegmentation(image, params, client);
 	}
 
 
 	/** Output step (OMERO) — uploads the segmented image to OMERO and appends CSV info. */
-	private void saveOneImageOMERO(NucleusSegmentation seg, Client client, OutputDatasets datasets)
+	private void saveOneImageOMERO(NucleusSegmentation seg,
+	                               ImageWrapper image,
+	                               Client client,
+	                               OutputDatasets datasets)
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
+		seg.checkBadCrop(image, client);
 		seg.saveOTSUSegmentedOMERO(client, datasets.otsu);
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += seg.getImageCropInfoOTSU();
@@ -436,8 +441,9 @@ public class SegmentationCalling {
 		OutputDatasets datasets = prepareOutputDatasetsOMERO(output, client);
 		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
-		NucleusSegmentation seg = processOneImageOMERO(image, client);
-		saveOneImageOMERO(seg, client, datasets);
+		NucleusSegmentation seg = loadOMERO(image, client);
+		compute(seg);
+		saveOneImageOMERO(seg, image, client, datasets);
 		String end = currentDateTime();
 		LOGGER.info("End: {}", end);
 
