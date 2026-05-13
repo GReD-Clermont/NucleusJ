@@ -18,6 +18,7 @@
 package fr.igred.nucleus.segmentation;
 
 import fr.igred.nucleus.core.Measure3D;
+import fr.igred.nucleus.io_L_O.BatchImage;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.utils.ConvexHullSegmentation;
 import fr.igred.nucleus.utils.FillingHoles;
@@ -94,12 +95,27 @@ public class NucleusSegmentation {
 	/**
 	 * Constructor for the segmentation analysis for a folder containing images.
 	 *
-	 * @param imageFile              Current image analysed
+	 * @param source              Current image analysed
 	 * @param params list the parameters for the analyse
 	 *
 	 * @throws IOException
 	 * @throws FormatException
 	 */
+	public NucleusSegmentation(BatchImage source, SegmentationParameters params) throws IOException, FormatException, ServiceException, AccessException, ExecutionException{
+		this.segmentationParameters = params;
+		this.imgRaw = source.getImagePlus();
+		imgRaw.setTitle(source.getName());
+		this.imgRawTransformed = imgRaw.duplicate();
+		imgRawTransformed.setTitle(source.getName());
+		////////////////////////
+		Directory dirOutputOTSU = new Directory(params.getOutputFolder() + "OTSU");
+		dirOutputOTSU.checkAndCreateDir();
+		if (params.getConvexHullDetection()) {
+			Directory dirOutputConvexHull = new Directory(params.getOutputFolder() +
+					ConvexHullDetection.CONVEX_HULL_ALGORITHM);
+			dirOutputConvexHull.checkAndCreateDir();
+		}
+	}
 	public NucleusSegmentation(File imageFile, SegmentationParameters params)
 	throws IOException, FormatException {
 		this.segmentationParameters = params;

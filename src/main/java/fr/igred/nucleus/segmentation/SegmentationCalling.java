@@ -17,6 +17,9 @@
  */
 package fr.igred.nucleus.segmentation;
 
+import fr.igred.nucleus.io_L_O.BatchImage;
+import fr.igred.nucleus.io_L_O.LocalBatchImage;
+import fr.igred.nucleus.io_L_O.OMEROBatchImage;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
@@ -234,7 +237,7 @@ public class SegmentationCalling {
 					
 					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
-					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, params);
+					NucleusSegmentation nucleusSegmentation = load(new LocalBatchImage(file,0));
 					compute(nucleusSegmentation);//////////////
 					nucleusSegmentation.checkBadCrop(params.getInputFolder());
 					nucleusSegmentation.saveOTSUSegmented();
@@ -247,7 +250,7 @@ public class SegmentationCalling {
 					String end = currentDateTime();
 					LOGGER.info("End: {} at {}", fileImg, end);
 					latch.countDown();
-				} catch (IOException | FormatException e) {
+				} catch (IOException | ServiceException | AccessException | ExecutionException | FormatException e) {
 					LOGGER.error("Error processing image: {}", file.getName(), e);
 				}
 			}
@@ -283,8 +286,8 @@ public class SegmentationCalling {
 	
 
 	/** Input step — loads a local image into a NucleusSegmentation. */
-	public NucleusSegmentation loadLocal(File currentFile) throws IOException, FormatException {
-		return new NucleusSegmentation(currentFile, params);
+	public NucleusSegmentation  load(BatchImage source) throws IOException, FormatException, ServiceException, AccessException, ExecutionException {
+		return new NucleusSegmentation(source, params);
 	}
 
 
@@ -307,7 +310,7 @@ public class SegmentationCalling {
 	}
 
 
-	public String runOneImage(String filePath) throws IOException, FormatException {
+	public String runOneImage(String filePath) throws IOException, FormatException, ServiceException, AccessException, ExecutionException {
 		String log         = "";
 		File   currentFile = new File(filePath);
 
@@ -315,7 +318,7 @@ public class SegmentationCalling {
 		if (currentFile.exists()) {
 			String start = currentDateTime();
 			LOGGER.info("Start: {}", start);
-			NucleusSegmentation seg = loadLocal(currentFile);
+			NucleusSegmentation seg = load(new LocalBatchImage(currentFile,0));
 			compute(seg);
 			saveOneImage(seg);
 			String end = currentDateTime();
@@ -408,11 +411,7 @@ public class SegmentationCalling {
 	}
 
 
-	/** Input step (OMERO) — loads an OMERO image into a NucleusSegmentation. */
-	public NucleusSegmentation loadOMERO(ImageWrapper image, Client client)
-	throws AccessException, ServiceException, ExecutionException {
-		return new NucleusSegmentation(image, params, client);
-	}
+
 
 
 	/** Output step (OMERO) — uploads the segmented image to OMERO and appends CSV info. */
@@ -432,14 +431,14 @@ public class SegmentationCalling {
 
 
 	public String runOneImageOMERO(ImageWrapper image, Long output, Client client)
-	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
+	throws IOException, FormatException, ServiceException, AccessException, ExecutionException, OMEROServerError {
 		String log = "";
 
 		LOGGER.info("Current image in process: {}", image.getName());
 		OutputDatasets datasets = prepareOutputDatasetsOMERO(output, client);
 		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
-		NucleusSegmentation seg = loadOMERO(image, client);
+		NucleusSegmentation seg = load(new OMEROBatchImage(image, client, null, null, new int[]{0,0}, null, null));
 		compute(seg);
 		saveOneImageOMERO(seg, image, client, datasets);
 		String end = currentDateTime();
@@ -504,25 +503,25 @@ public class SegmentationCalling {
 			public void run() {
 				try {
 					String fileImg = img.getName();
-					
+
 					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
-					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(img, imp, params);
+					NucleusSegmentation nucleusSegmentation = load(new OMEROBatchImage(img, imp, null, null, new int[]{0,0}, null, null));
 					compute(nucleusSegmentation);//////////////
 					nucleusSegmentation.checkBadCrop(img, client);
-					
+
 					nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset); // Upload
 					otsuResults.put(img.getId(),
 					                nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
 					nucleusSegmentation.saveConvexHullSegOMERO(client, convexHullDataset); // Upload
 					convexHullResults.put(img.getId(),
 					                      nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
-					
+
 					String end = currentDateTime();
 					LOGGER.info("End: {} at {}", fileImg, end);
-					
+
 					latch.countDown();
-				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
+				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException | FormatException e) {
 					LOGGER.error("Error processing image: {}", img.getName(), e);
 				}
 			}
