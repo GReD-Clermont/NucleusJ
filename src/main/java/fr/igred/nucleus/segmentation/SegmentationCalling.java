@@ -20,7 +20,6 @@ package fr.igred.nucleus.segmentation;
 import fr.igred.nucleus.io_L_O.BatchImage;
 import fr.igred.nucleus.io_L_O.LocalBatchImage;
 import fr.igred.nucleus.io_L_O.OMEROBatchImage;
-import fr.igred.nucleus.io_L_O.OMEROBatchimagebyROIs;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
@@ -32,7 +31,6 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import fr.igred.omero.roi.ROIWrapper;
-import ij.ImagePlus;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -488,42 +486,45 @@ public class SegmentationCalling {
 		
 		CountDownLatch latch       = new CountDownLatch(images.size());
 		CountDownLatch uploadLatch = new CountDownLatch(1);
+
 		class ImageProcessorOMERO implements Runnable {
-			
-			private final ImageWrapper img;
-			private final ImagePlus    imp;
-			
-			
-			ImageProcessorOMERO(ImageWrapper img, ImagePlus imp) {
-				this.img = img;
-				this.imp = imp;
+
+			private final BatchImage batchImage;
+
+
+			ImageProcessorOMERO(BatchImage batchImage) {
+				this.batchImage = batchImage;
 			}
 			
 			
 			@Override
 			public void run() {
 				try {
-					String fileImg = img.getName();
+					String fileImg = batchImage.getName();
 
 					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
-					NucleusSegmentation nucleusSegmentation = load(new OMEROBatchImage(img, imp, null, null, new int[]{0,0}, null, null));
+					NucleusSegmentation nucleusSegmentation = load(batchImage);
 					compute(nucleusSegmentation);//////////////
-					nucleusSegmentation.checkBadCrop(img, client);
 
-					nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset); // Upload
-					otsuResults.put(img.getId(),
-					                nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
-					nucleusSegmentation.saveConvexHullSegOMERO(client, convexHullDataset); // Upload
-					convexHullResults.put(img.getId(),
-					                      nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
+					if(batchImage instanceof OMEROBatchImage) {
+						OMEROBatchImage obi = ((OMEROBatchImage) batchImage);
+						nucleusSegmentation.checkBadCrop(obi.getImage(), client);
+
+						nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset); // Upload
+						otsuResults.put(obi.getImage().getId(),
+								nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
+						nucleusSegmentation.saveConvexHullSegOMERO(obi.getClient(), convexHullDataset); // Upload
+						convexHullResults.put(obi.getImage().getId(),
+								nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
+					}
 
 					String end = currentDateTime();
 					LOGGER.info("End: {} at {}", fileImg, end);
 
 					latch.countDown();
 				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException | FormatException e) {
-					LOGGER.error("Error processing image: {}", img.getName(), e);
+					LOGGER.error("Error processing image: {}", batchImage.getName(), e);
 				}
 			}
 			
@@ -543,11 +544,13 @@ public class SegmentationCalling {
 			public void run() {
 				try {
 					LOGGER.info("Acquiring image");
-					
+
 					int[]     cBound = {0, 0}; // For each image
-					ImagePlus imp    = img.toImagePlus(client, null, null, cBound, null, null); // Download image
-					
-					processExecutor.submit(new ImageProcessorOMERO(img, imp)); // Pass img to executor
+
+					BatchImage image = new OMEROBatchImage(img, client, null, null, cBound, null, null);
+					image.loadImagePlus();
+
+					processExecutor.submit(new ImageProcessorOMERO(image)); // Pass img to executor
 					uploadLatch.countDown();
 					LOGGER.info("Resource returned ({}).", img.getName());
 				} catch (AccessException | ExecutionException | ServiceException e) {
@@ -701,7 +704,7 @@ public class SegmentationCalling {
 		for (ROIWrapper roi : rois) {
 			LOGGER.info("Current ROI in process: {}", i);
 			
-			NucleusSegmentation nucleusSegmentation = load(new OMEROBatchimagebyROIs(image,roi,i,params,client,null));
+			NucleusSegmentation nucleusSegmentation = load(new OMEROBatchImage(image,roi,i,params,client,null));
 			nucleusSegmentation.preProcessImage();
 			nucleusSegmentation.findOTSUMaximisingSphericity();
 			nucleusSegmentation.checkBadCrop(roi, client);

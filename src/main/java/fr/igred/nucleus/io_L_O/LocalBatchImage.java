@@ -1,5 +1,6 @@
 package fr.igred.nucleus.io_L_O;
 
+import fr.igred.omero.repository.ImageWrapper;
 import ij.ImagePlus;
 import ij.plugin.ChannelSplitter;
 import loci.formats.FormatException;
@@ -27,6 +28,13 @@ public class LocalBatchImage implements BatchImage {
         currentImage = ChannelSplitter.split(currentImage[channel]);
         return currentImage[0];
     }
+
+    @Override
+    public void loadImagePlus()  {
+
+    }
+    @Override
+    public ImageWrapper getImage() {}
 
     @Override
     public String getName() {
