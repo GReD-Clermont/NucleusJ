@@ -245,7 +245,7 @@ public class CLIRunActionOMERO {
 					if (!log.isEmpty()) {
 						LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 					}
-				} catch (IOException e) {
+				} catch (IOException | FormatException e) {
 					LOGGER.error("An error occurred.", e);
 				} catch (InterruptedException e) {
 					LOGGER.error("An interruption occurred.", e);

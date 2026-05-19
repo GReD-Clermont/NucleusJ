@@ -20,6 +20,7 @@ package fr.igred.nucleus.segmentation;
 import fr.igred.nucleus.io_L_O.BatchImage;
 import fr.igred.nucleus.io_L_O.LocalBatchImage;
 import fr.igred.nucleus.io_L_O.OMEROBatchImage;
+import fr.igred.nucleus.io_L_O.OMEROBatchimagebyROIs;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
@@ -681,7 +682,7 @@ public class SegmentationCalling {
 	
 	
 	public String runOneImageOMERObyROIs(ImageWrapper image, Long output, Client client)
-	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, InterruptedException {
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, InterruptedException, FormatException {
 		
 		StringBuilder info = new StringBuilder();
 		
@@ -700,7 +701,7 @@ public class SegmentationCalling {
 		for (ROIWrapper roi : rois) {
 			LOGGER.info("Current ROI in process: {}", i);
 			
-			NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(image, roi, i, params, client);
+			NucleusSegmentation nucleusSegmentation = load(new OMEROBatchimagebyROIs(image,roi,i,params,client,null));
 			nucleusSegmentation.preProcessImage();
 			nucleusSegmentation.findOTSUMaximisingSphericity();
 			nucleusSegmentation.checkBadCrop(roi, client);
@@ -756,7 +757,7 @@ public class SegmentationCalling {
 	
 	
 	public String runSeveralImagesOMERObyROIs(Iterable<? extends ImageWrapper> images, Long output, Client client)
-	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
+	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException, FormatException {
 		StringBuilder log = new StringBuilder();
 		
 		for (ImageWrapper image : images) {
