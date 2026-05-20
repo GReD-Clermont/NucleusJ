@@ -238,7 +238,7 @@ public class SegmentationCalling {
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
 					NucleusSegmentation nucleusSegmentation = load(new LocalBatchImage(file,0));
 					compute(nucleusSegmentation);//////////////
-					nucleusSegmentation.checkBadCrop(params.getInputFolder());
+					nucleusSegmentation.checkBadCrop(new LocalBatchImage(new File(params.getInputFolder()),0));
 					nucleusSegmentation.saveOTSUSegmented();
 					otsuResults.put(file.getName(),
 					                nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
@@ -299,7 +299,7 @@ public class SegmentationCalling {
 
 	/** Output step — writes the segmented image to disk and appends CSV info. */
 	public void saveOneImage(NucleusSegmentation seg) {
-		seg.checkBadCrop(params.getInputFolder());
+		seg.checkBadCrop(new LocalBatchImage( new File(params.getInputFolder()), 0));
 		seg.saveOTSUSegmented();
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += seg.getImageCropInfoOTSU();
@@ -419,7 +419,7 @@ public class SegmentationCalling {
 	                               Client client,
 	                               OutputDatasets datasets)
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
-		seg.checkBadCrop(image, client);
+		seg.checkBadCrop(new OMEROBatchImage(image, client, null, null, new int[]{0,0}, null, null));
 		seg.saveOTSUSegmentedOMERO(client, datasets.otsu);
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
 		this.outputCropGeneralInfoOTSU += seg.getImageCropInfoOTSU();
@@ -509,7 +509,7 @@ public class SegmentationCalling {
 
 					if(batchImage instanceof OMEROBatchImage) {
 						OMEROBatchImage obi = ((OMEROBatchImage) batchImage);
-						nucleusSegmentation.checkBadCrop(obi.getImage(), client);
+						nucleusSegmentation.checkBadCrop(new OMEROBatchImage(obi.getImage(), client, null, null, new int[]{0,0}, null, null));
 
 						nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset); // Upload
 						otsuResults.put(obi.getImage().getId(),
@@ -707,7 +707,7 @@ public class SegmentationCalling {
 			NucleusSegmentation nucleusSegmentation = load(new OMEROBatchImage(image,roi,i,params,client,null));
 			nucleusSegmentation.preProcessImage();
 			nucleusSegmentation.findOTSUMaximisingSphericity();
-			nucleusSegmentation.checkBadCrop(roi, client);
+			nucleusSegmentation.checkBadCrop(new OMEROBatchImage(image, roi, i, params, client, null));
 			
 			nucleusSegmentation.saveOTSUSegmentedOMERO(client, output);
 			info.append(nucleusSegmentation.getImageCropInfoOTSU());
