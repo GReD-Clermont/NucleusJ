@@ -19,6 +19,8 @@ package fr.igred.nucleus.segmentation;
 
 import fr.igred.nucleus.core.Measure3D;
 import fr.igred.nucleus.io_L_O.BatchImage;
+import fr.igred.nucleus.io_L_O.LocalBatchImage;
+import fr.igred.nucleus.io_L_O.OMEROBatchImage;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.utils.ConvexHullSegmentation;
 import fr.igred.nucleus.utils.FillingHoles;
@@ -47,6 +49,7 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.StackConverter;
 import ij.process.StackStatistics;
 import inra.ijpb.binary.BinaryImages;
+import jdk.vm.ci.meta.Local;
 import loci.formats.FormatException;
 import loci.plugins.BF;
 import org.slf4j.Logger;
@@ -618,8 +621,79 @@ public class NucleusSegmentation {
 	 * Method to move bad crop (truncated nucleus) to badcrop folder.
 	 * <p> TODO verifier cette methode si elle est à sa place
 	 *
-	 * @param inputPathDir folder of the input to create badcrop folder.
+	 * @param bi folder of the input to create badcrop folder.
 	 */
+
+	public void checkBadCrop(BatchImage bi) {
+		LOGGER.info("Checking bad crop.");
+		if (badCrop || bestThreshold == -1) {
+			if (bi instanceof LocalBatchImage) {
+				LocalBatchImage lbi = (LocalBatchImage) bi;
+				File badCropFolder = new File(lbi.getFile() + File.separator + "BadCrop");
+				LOGGER.debug("Saving bad crops to: {}", badCropFolder);
+
+				if (badCropFolder.exists() || badCropFolder.mkdir()) {
+					File    fileToMove = new File(lbi.getFile() + File.separator + imgRawTransformed.getTitle());
+					File    newFile    = new File(badCropFolder + File.separator + imgRawTransformed.getTitle());
+					boolean renamed    = fileToMove.renameTo(newFile);
+					if (!renamed) {
+						LOGGER.info("File not renamed: {}", fileToMove.getAbsolutePath());
+					}
+				} else {
+					LOGGER.error("Directory does not exist and could not be created: {}", badCropFolder);
+				}
+			}
+			else if (bi instanceof OMEROBatchImage) {
+				OMEROBatchImage obi = (OMEROBatchImage)bi;
+				ROIWrapper roi = obi.getROI();
+				if(roi == null){
+				List<TagAnnotationWrapper> tags;
+				TagAnnotationWrapper       tagBadCrop;
+
+				try {
+					tags = obi.getClient().getTags("BadCrop");
+				} catch (OMEROServerError | ServiceException e) {
+					LOGGER.error("Could not get list of \"BadCrop\" tags", e);
+					return;
+				}
+
+				if (tags.isEmpty()) {
+					try {
+						tagBadCrop = new TagAnnotationWrapper(obi.getClient(), "BadCrop", "");
+					} catch (AccessException | ServiceException | ExecutionException e) {
+						LOGGER.error("Could not create new \"BadCrop\" tag", e);
+						return;
+					}
+				} else {
+					try {
+						tagBadCrop = tags.get(0);
+					} catch (Exception e) {
+						LOGGER.error("Could not retrieve a \"BadCrop\" tag", e);
+						return;
+					}
+				}
+
+				LOGGER.info("Adding Bad Crop tag");
+				try {
+					obi.getImage().link(obi.getClient(), tagBadCrop);
+				} catch (AccessException | ServiceException | ExecutionException e) {
+					LOGGER.error("Tag already added", e);
+				}
+			}
+			else {
+					for (GenericShapeWrapper<?> shape : roi.getShapes()) {
+						shape.setStroke(Color.RED);
+					}
+				}
+				try {
+					roi.saveROI(obi.getClient());
+				} catch (OMEROServerError | ServiceException e) {
+					LOGGER.error("Could not save bad crop ROI id: {}", roi.getId());
+				}
+			}
+			}
+		}
+
 	public void checkBadCrop(String inputPathDir) {
 		LOGGER.info("Checking bad crop.");
 		if (badCrop || bestThreshold == -1) {

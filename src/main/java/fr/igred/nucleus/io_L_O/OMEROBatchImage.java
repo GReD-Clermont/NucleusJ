@@ -29,6 +29,7 @@ public class OMEROBatchImage implements BatchImage {
     //public static final String IJ_ID_PROPERTY = "IMAGE_ID";
     ////////ROIs
     public int i_roi;
+    public ROIWrapper roi = null;
 
     public OMEROBatchImage(ImageWrapper image, Client client,
                     int[] xBounds,
@@ -83,6 +84,7 @@ public class OMEROBatchImage implements BatchImage {
         int[] xBound = {x, x + width - 1};
         int[] yBound = {y, y + height - 1};
 
+        this.roi = roi;             //c'est pour checkBadCrop pour les ROIs
         this.image = image;
         this.i_roi = i;
         this.client = client;
@@ -112,12 +114,16 @@ public class OMEROBatchImage implements BatchImage {
         return image.getName();
     }
 
-    @Override
+
     public ImageWrapper getImage() {
         return image;
     }
 
     public Client getClient() {
         return client;
+    }
+
+    public ROIWrapper getROI() {
+        return  roi;
     }
 }

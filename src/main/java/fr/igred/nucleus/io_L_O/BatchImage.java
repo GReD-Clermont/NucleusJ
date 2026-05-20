@@ -14,6 +14,6 @@ public interface BatchImage {
     ImagePlus getImagePlus() throws IOException, FormatException, ServiceException, AccessException, ExecutionException;
     void loadImagePlus() throws ServiceException, AccessException, ExecutionException;
     String getName();
-    ImageWrapper getImage();
+    //ImageWrapper getImage();
     //Variable getID();
 }

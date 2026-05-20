@@ -33,11 +33,12 @@ public class LocalBatchImage implements BatchImage {
     public void loadImagePlus()  {
 
     }
-    @Override
-    public ImageWrapper getImage() {}
+
 
     @Override
     public String getName() {
         return imageFile.getName();
     }
+
+    public File getFile(){ return  imageFile;}
 }
