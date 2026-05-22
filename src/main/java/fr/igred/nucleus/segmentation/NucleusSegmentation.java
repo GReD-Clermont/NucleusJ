@@ -645,8 +645,8 @@ public class NucleusSegmentation {
 			}
 			else if (bi instanceof OMEROBatchImage) {
 				OMEROBatchImage obi = (OMEROBatchImage)bi;
-				ROIWrapper roi = obi.getROI();
-				if(roi == null){
+				ROIWrapper roi_r = obi.getROI();
+				if(roi_r == null){
 				List<TagAnnotationWrapper> tags;
 				TagAnnotationWrapper       tagBadCrop;
 
@@ -681,14 +681,14 @@ public class NucleusSegmentation {
 				}
 			}
 			else {
-					for (GenericShapeWrapper<?> shape : roi.getShapes()) {
+					for (GenericShapeWrapper<?> shape : roi_r.getShapes()) {
 						shape.setStroke(Color.RED);
 					}
 				}
 				try {
-					roi.saveROI(obi.getClient());
+					roi_r.saveROI(obi.getClient());
 				} catch (OMEROServerError | ServiceException e) {
-					LOGGER.error("Could not save bad crop ROI id: {}", roi.getId());
+					LOGGER.error("Could not save bad crop ROI id: {}", roi_r.getId());
 				}
 			}
 			}
