@@ -2,14 +2,20 @@ package fr.igred.nucleus.io_L_O;
 
 import fr.igred.nucleus.segmentation.SegmentationParameters;
 import fr.igred.omero.Client;
+import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.ImageWrapper;
-
+import fr.igred.omero.roi.GenericShapeWrapper;
 import fr.igred.omero.roi.ROIWrapper;
 import fr.igred.omero.roi.RectangleWrapper;
 import ij.ImagePlus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.awt.Color;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -17,6 +23,7 @@ import java.util.concurrent.ExecutionException;
 
 public class OMEROBatchImage implements BatchImage {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private ImageWrapper image;
     private Client client;
@@ -114,6 +121,55 @@ public class OMEROBatchImage implements BatchImage {
         return image.getName();
     }
 
+    @Override
+    public void markAsBadCrop(String imageTitle) {
+        if (roi == null) {
+            tagImageAsBadCrop();
+        } else {
+            markRoiAsBadCrop();
+        }
+    }
+
+    private void tagImageAsBadCrop() {
+        List<TagAnnotationWrapper> tags;
+        TagAnnotationWrapper       tagBadCrop;
+
+        try {
+            tags = client.getTags("BadCrop");
+        } catch (OMEROServerError | ServiceException e) {
+            LOGGER.error("Could not get list of \"BadCrop\" tags", e);
+            return;
+        }
+
+        if (tags.isEmpty()) {
+            try {
+                tagBadCrop = new TagAnnotationWrapper(client, "BadCrop", "");
+            } catch (AccessException | ServiceException | ExecutionException e) {
+                LOGGER.error("Could not create new \"BadCrop\" tag", e);
+                return;
+            }
+        } else {
+            tagBadCrop = tags.get(0);
+        }
+
+        LOGGER.info("Adding Bad Crop tag");
+        try {
+            image.link(client, tagBadCrop);
+        } catch (AccessException | ServiceException | ExecutionException e) {
+            LOGGER.error("Tag already added", e);
+        }
+    }
+
+    private void markRoiAsBadCrop() {
+        for (GenericShapeWrapper<?> shape : roi.getShapes()) {
+            shape.setStroke(Color.RED);
+        }
+        try {
+            roi.saveROI(client);
+        } catch (OMEROServerError | ServiceException e) {
+            LOGGER.error("Could not save bad crop ROI id: {}", roi.getId());
+        }
+    }
 
     public ImageWrapper getImage() {
         return image;

@@ -19,18 +19,14 @@ package fr.igred.nucleus.segmentation;
 
 import fr.igred.nucleus.core.Measure3D;
 import fr.igred.nucleus.io_L_O.BatchImage;
-import fr.igred.nucleus.io_L_O.LocalBatchImage;
-import fr.igred.nucleus.io_L_O.OMEROBatchImage;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.utils.ConvexHullSegmentation;
 import fr.igred.nucleus.utils.FillingHoles;
 import fr.igred.omero.Client;
-import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import fr.igred.omero.repository.ImageWrapper;
-import fr.igred.omero.roi.GenericShapeWrapper;
 import fr.igred.omero.roi.ROIWrapper;
 import fr.igred.omero.roi.RectangleWrapper;
 import fr.igred.nucleus.io.Directory;
@@ -49,13 +45,11 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.StackConverter;
 import ij.process.StackStatistics;
 import inra.ijpb.binary.BinaryImages;
-import jdk.vm.ci.meta.Local;
 import loci.formats.FormatException;
 import loci.plugins.BF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -618,154 +612,19 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Method to move bad crop (truncated nucleus) to badcrop folder.
-	 * <p> TODO verifier cette methode si elle est à sa place
+	 * Method to mark a bad crop (truncated nucleus) via the source-appropriate mechanism
+	 * (move file locally, tag image or color ROI on OMERO).
 	 *
-	 * @param bi folder of the input to create badcrop folder.
+	 * @param bi the BatchImage to mark if its segmentation failed.
 	 */
-
 	public void checkBadCrop(BatchImage bi) {
 		LOGGER.info("Checking bad crop.");
 		if (badCrop || bestThreshold == -1) {
-			if (bi instanceof LocalBatchImage) {
-				LocalBatchImage lbi = (LocalBatchImage) bi;
-				File badCropFolder = new File(lbi.getFile() + File.separator + "BadCrop");
-				LOGGER.debug("Saving bad crops to: {}", badCropFolder);
-
-				if (badCropFolder.exists() || badCropFolder.mkdir()) {
-					File    fileToMove = new File(lbi.getFile() + File.separator + imgRawTransformed.getTitle());
-					File    newFile    = new File(badCropFolder + File.separator + imgRawTransformed.getTitle());
-					boolean renamed    = fileToMove.renameTo(newFile);
-					if (!renamed) {
-						LOGGER.info("File not renamed: {}", fileToMove.getAbsolutePath());
-					}
-				} else {
-					LOGGER.error("Directory does not exist and could not be created: {}", badCropFolder);
-				}
-			}
-			else if (bi instanceof OMEROBatchImage) {
-				OMEROBatchImage obi = (OMEROBatchImage)bi;
-				ROIWrapper roi_r = obi.getROI();
-				if(roi_r == null){
-				List<TagAnnotationWrapper> tags;
-				TagAnnotationWrapper       tagBadCrop;
-
-				try {
-					tags = obi.getClient().getTags("BadCrop");
-				} catch (OMEROServerError | ServiceException e) {
-					LOGGER.error("Could not get list of \"BadCrop\" tags", e);
-					return;
-				}
-
-				if (tags.isEmpty()) {
-					try {
-						tagBadCrop = new TagAnnotationWrapper(obi.getClient(), "BadCrop", "");
-					} catch (AccessException | ServiceException | ExecutionException e) {
-						LOGGER.error("Could not create new \"BadCrop\" tag", e);
-						return;
-					}
-				} else {
-					try {
-						tagBadCrop = tags.get(0);
-					} catch (Exception e) {
-						LOGGER.error("Could not retrieve a \"BadCrop\" tag", e);
-						return;
-					}
-				}
-
-				LOGGER.info("Adding Bad Crop tag");
-				try {
-					obi.getImage().link(obi.getClient(), tagBadCrop);
-				} catch (AccessException | ServiceException | ExecutionException e) {
-					LOGGER.error("Tag already added", e);
-				}
-			}
-			else {
-					for (GenericShapeWrapper<?> shape : roi_r.getShapes()) {
-						shape.setStroke(Color.RED);
-					}
-				}
-				try {
-					roi_r.saveROI(obi.getClient());
-				} catch (OMEROServerError | ServiceException e) {
-					LOGGER.error("Could not save bad crop ROI id: {}", roi_r.getId());
-				}
-			}
-			}
-		}
-
-	public void checkBadCrop(String inputPathDir) {
-		LOGGER.info("Checking bad crop.");
-		if (badCrop || bestThreshold == -1) {
-			File badCropFolder = new File(inputPathDir + File.separator + "BadCrop");
-			LOGGER.debug("Saving bad crops to: {}", badCropFolder);
-			
-			if (badCropFolder.exists() || badCropFolder.mkdir()) {
-				File    fileToMove = new File(inputPathDir + File.separator + imgRawTransformed.getTitle());
-				File    newFile    = new File(badCropFolder + File.separator + imgRawTransformed.getTitle());
-				boolean renamed    = fileToMove.renameTo(newFile);
-				if (!renamed) {
-					LOGGER.info("File not renamed: {}", fileToMove.getAbsolutePath());
-				}
-			} else {
-				LOGGER.error("Directory does not exist and could not be created: {}", badCropFolder);
-			}
+			bi.markAsBadCrop(imgRawTransformed.getTitle());
 		}
 	}
-	
-	
-	public void checkBadCrop(ImageWrapper image, Client client) {
-		if (badCrop || bestThreshold == -1) {
-			List<TagAnnotationWrapper> tags;
-			TagAnnotationWrapper       tagBadCrop;
-			
-			try {
-				tags = client.getTags("BadCrop");
-			} catch (OMEROServerError | ServiceException e) {
-				LOGGER.error("Could not get list of \"BadCrop\" tags", e);
-				return;
-			}
-			
-			if (tags.isEmpty()) {
-				try {
-					tagBadCrop = new TagAnnotationWrapper(client, "BadCrop", "");
-				} catch (AccessException | ServiceException | ExecutionException e) {
-					LOGGER.error("Could not create new \"BadCrop\" tag", e);
-					return;
-				}
-			} else {
-				try {
-					tagBadCrop = tags.get(0);
-				} catch (Exception e) {
-					LOGGER.error("Could not retrieve a \"BadCrop\" tag", e);
-					return;
-				}
-			}
-			
-			LOGGER.info("Adding Bad Crop tag");
-			try {
-				image.link(client, tagBadCrop);
-			} catch (AccessException | ServiceException | ExecutionException e) {
-				LOGGER.error("Tag already added", e);
-			}
-		}
-	}
-	
-	
-	public void checkBadCrop(ROIWrapper roi, Client client) {
-		if (badCrop || bestThreshold == -1) {
-			for (GenericShapeWrapper<?> shape : roi.getShapes()) {
-				shape.setStroke(Color.RED);
-			}
-		}
-		try {
-			roi.saveROI(client);
-		} catch (OMEROServerError | ServiceException e) {
-			LOGGER.error("Could not save bad crop ROI id: {}", roi.getId());
-		}
-	}
-	
-	
+
+
 	/**
 	 * Method to save the OTSU segmented image.
 	 * <p> TODO verifier cette methode si elle est à ca place
