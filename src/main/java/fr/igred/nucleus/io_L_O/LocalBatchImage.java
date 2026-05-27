@@ -1,5 +1,7 @@
 package fr.igred.nucleus.io_L_O;
 
+import fr.igred.nucleus.segmentation.NucleusSegmentation;
+import fr.igred.nucleus.segmentation.SegmentationCalling;
 import ij.ImagePlus;
 import ij.plugin.ChannelSplitter;
 import loci.formats.FormatException;
@@ -41,6 +43,12 @@ public class LocalBatchImage implements BatchImage {
     @Override
     public String getName() {
         return imageFile.getName();
+    }
+
+    @Override
+    public void save(NucleusSegmentation seg, SegmentationCalling.OutputDatasets datasets) {
+        seg.saveOTSUSegmented();
+        seg.saveConvexHullSeg();
     }
 
     @Override

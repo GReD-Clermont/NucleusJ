@@ -165,12 +165,10 @@ public class AutoCropCalling {
 			public void run() {
 				try {
 					cropInfo.put(file.getName(), processAutoCropWorkflow(file));
+					latch.countDown();
 				} catch (IOException | FormatException e) {
 					LOGGER.error("Cannot run autocrop on: {}", file.getName(), e);
 					IJ.error("Cannot run autocrop on " + file.getName());
-				} finally {
-					// GARANTIE : le latch décrémente toujours, même en cas d'erreur
-					latch.countDown();
 				}
 			}
 			
@@ -189,9 +187,7 @@ public class AutoCropCalling {
 		
 		StringBuilder generalInfoBuilder = new StringBuilder();
 		for (File file : files) {
-			if (cropInfo.containsKey(file.getName())) {
-				generalInfoBuilder.append(cropInfo.get(file.getName()));
-			}
+			generalInfoBuilder.append(cropInfo.getOrDefault(file.getName(), ""));
 		}
 		outputCropGeneralInfo += generalInfoBuilder.toString();
 		
@@ -317,10 +313,8 @@ public class AutoCropCalling {
 					cropInfo.put(image.getName(), info);
 				} catch (AccessException | ServiceException | OMEROServerError | IOException | ExecutionException e) {
 					LOGGER.error("Cannot run autocrop on: {}", image.getName(), e);
-				} finally {
-					// GARANTIE : le latch décrémente toujours
-					latch.countDown();
 				}
+				latch.countDown();
 			}
 			
 		}
@@ -339,14 +333,13 @@ public class AutoCropCalling {
 			public void run() {
 				String fileImg = image.getName();
 				LOGGER.info("Current file: {}", fileImg);
+				AutoCrop autoCrop = null;
 				try {
-					AutoCrop autoCrop = new AutoCrop(image, params, client);
-					processExecutor.submit(new ImageProcessor(autoCrop, image));
+					autoCrop = new AutoCrop(image, params, client);
 				} catch (ServiceException | AccessException | ExecutionException e) {
 					LOGGER.error("Cannot create AutoCrop for image: {}", fileImg, e);
-					// Si l'initialisation échoue, on débloque le latch ici !
-					latch.countDown();
 				}
+				processExecutor.submit(new ImageProcessor(autoCrop, image));
 			}
 			
 		}
@@ -361,9 +354,7 @@ public class AutoCropCalling {
 		
 		StringBuilder generalInfoBuilder = new StringBuilder();
 		for (ImageWrapper image : images) {
-			if (cropInfo.containsKey(image.getName())) {
-				generalInfoBuilder.append(cropInfo.get(image.getName()));
-			}
+			generalInfoBuilder.append(cropInfo.getOrDefault(image.getName(), ""));
 		}
 		outputCropGeneralInfo += generalInfoBuilder.toString();
 		

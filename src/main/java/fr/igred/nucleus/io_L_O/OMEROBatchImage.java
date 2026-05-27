@@ -1,5 +1,7 @@
 package fr.igred.nucleus.io_L_O;
 
+import fr.igred.nucleus.segmentation.NucleusSegmentation;
+import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.nucleus.segmentation.SegmentationParameters;
 import fr.igred.omero.Client;
 import fr.igred.omero.annotations.TagAnnotationWrapper;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -119,6 +122,13 @@ public class OMEROBatchImage implements BatchImage {
     @Override
     public String getName(){
         return image.getName();
+    }
+
+    @Override
+    public void save(NucleusSegmentation seg, SegmentationCalling.OutputDatasets datasets)
+    throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
+        seg.saveOTSUSegmentedOMERO(client, datasets.getOtsu());
+        seg.saveConvexHullSegOMERO(client, datasets.getConvexHull());
     }
 
     @Override
