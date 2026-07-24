@@ -17,11 +17,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static fr.igred.nucleus.io.ImageSaver.saveFile;
 
 
 public class OMEROBatchImage implements BatchImage {
@@ -127,8 +130,8 @@ public class OMEROBatchImage implements BatchImage {
     @Override
     public void save(NucleusSegmentation seg, SegmentationCalling.OutputDatasets datasets)
     throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
-        seg.saveOTSUSegmentedOMERO(client, datasets.getOtsu());
-        seg.saveConvexHullSegOMERO(client, datasets.getConvexHull());
+        seg.saveOTSUSegmented_global(this, datasets.getOtsu());
+        seg.saveConvexHullSeg_global(this, datasets.getConvexHull());
     }
 
     @Override
@@ -191,5 +194,22 @@ public class OMEROBatchImage implements BatchImage {
 
     public ROIWrapper getROI() {
         return  roi;
+    }
+
+    @Override
+    public void saveImage(ImagePlus image, String localPath, long datasetId)
+            throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError{
+
+        //fichier temporaire
+        saveFile(image,localPath);
+
+        client.getDataset(datasetId).importImages(client, localPath);
+
+        File file = new File(localPath);
+        try {
+            Files.deleteIfExists(file.toPath());
+        } catch (IOException e) {
+            LOGGER.error("Could not delete file: {}", localPath);
+        }
     }
 }

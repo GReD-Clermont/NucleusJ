@@ -53,13 +53,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
-
-import static fr.igred.nucleus.io.ImageSaver.saveFile;
 import static fr.igred.nucleus.utils.Thresholding.convertToMask;
 import static fr.igred.nucleus.utils.Thresholding.createMask;
 
@@ -629,40 +626,14 @@ public class NucleusSegmentation {
 	 * Method to save the OTSU segmented image.
 	 * <p> TODO verifier cette methode si elle est à ca place
 	 */
-	public void saveOTSUSegmented() {
+
+	public void saveOTSUSegmented_global(BatchImage source, long otsuDataset)
+	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError
+	{
 		LOGGER.info("Computing and saving OTSU segmentation.");
 		if (!badCrop && bestThreshold != -1) {
-			String pathSegOTSU = segmentationParameters.getOutputFolder() +
-			                     "OTSU" +
-			                     File.separator +
-			                     imageSeg[0].getTitle();
-			saveFile(imageSeg[0], pathSegOTSU);
-			
-		}
-	}
-	
-	
-	/**
-	 * Method to save the OTSU segmented image.
-	 * <p> TODO verifier cette methode si elle est à ca place
-	 */
-	public void saveOTSUSegmentedOMERO(Client client, Long output)
-	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
-		LOGGER.info("Computing and saving OTSU segmentation.");
-		if (!badCrop && bestThreshold != -1) {
-			String path = new java.io.File(".").getCanonicalPath() +
-			              // File.separator + "OTSU" +
-			              File.separator + imageSeg[0].getTitle();
-			saveFile(imageSeg[0], path);
-			
-			client.getDataset(output).importImages(client, path);
-			
-			File file = new File(path);
-			try {
-				Files.deleteIfExists(file.toPath());
-			} catch (IOException e) {
-				LOGGER.error("Could not delete file: {}", path);
-			}
+			String path = segmentationParameters.getOutputFolder() + "OTSU" + File.separator + imageSeg[0].getTitle();
+			source.saveImage(imageSeg[0], path, otsuDataset);
 		}
 	}
 	
@@ -671,43 +642,24 @@ public class NucleusSegmentation {
 	 * Method to save the OTSU segmented image.
 	 * <p> TODO verifier cette methode si elle est à sa place
 	 */
-	public void saveConvexHullSeg() {
+
+	
+	public void saveConvexHullSeg_global(BatchImage source, long ConvexHullDataset)
+	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError
+	{
 		LOGGER.info("Computing and saving Convex Hull segmentation.");
-		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
+		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()){
 			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0]);
 			String pathConvexHullSeg = segmentationParameters.getOutputFolder() +
-			                           ConvexHullDetection.CONVEX_HULL_ALGORITHM + File.separator + imageSeg[0].getTitle();
+					ConvexHullDetection.CONVEX_HULL_ALGORITHM +
+					File.separator +
+					imageSeg[0].getTitle();
 			imageSeg[0].setTitle(pathConvexHullSeg);
-			saveFile(imageSeg[0], pathConvexHullSeg);
+			source.saveImage(imageSeg[0],pathConvexHullSeg,ConvexHullDataset);
 		}
 	}
-	
-	
-	/**
-	 * Method to save the OTSU segmented image.
-	 * <p> TODO verifier cette methode si elle est à sa place
-	 */
-	public void saveConvexHullSegOMERO(Client client, Long output)
-	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
-		LOGGER.info("Computing and saving Convex Hull segmentation.");
-		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
-			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0]);
-			
-			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + CONVEX_HULL_ALGORITHM
-			              + File.separator + imageSeg[0].getTitle();
-			saveFile(imageSeg[0], path);
-			
-			client.getDataset(output).importImages(client, path);
-			
-			File file = new File(path);
-			try {
-				Files.deleteIfExists(file.toPath());
-			} catch (IOException e) {
-				LOGGER.error("Could not delete file: {}", path);
-			}
-		}
-	}
-	
+
+
 	
 	/**
 	 * Method to get the parameter of the 3D parameters for OTSU segmented image if the object can't be segmented return

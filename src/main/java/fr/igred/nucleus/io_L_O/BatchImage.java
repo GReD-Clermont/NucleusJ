@@ -18,4 +18,6 @@ public interface BatchImage {
     void markAsBadCrop(String imageTitle);
     void save(NucleusSegmentation seg, SegmentationCalling.OutputDatasets datasets)
             throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError;
+    void saveImage(ImagePlus image, String localPath, long datasetId)
+            throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError;
 }

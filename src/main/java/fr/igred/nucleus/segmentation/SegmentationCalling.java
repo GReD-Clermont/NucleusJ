@@ -238,6 +238,7 @@ public class SegmentationCalling {
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
 					NucleusSegmentation nucleusSegmentation = load(new LocalBatchImage(file,0));
 					compute(nucleusSegmentation);//////////////
+
 					BatchImage badCropContext = new LocalBatchImage(new File(params.getInputFolder()), 0);
 					nucleusSegmentation.checkBadCrop(badCropContext);
 					badCropContext.save(nucleusSegmentation, null);
@@ -566,7 +567,7 @@ public class SegmentationCalling {
 	
 	public void saveCropGeneralInfoOmero(Client client, Long output)
 	throws ServiceException, AccessException, ExecutionException, InterruptedException {
-		String date = currentDateTime("yyyy-MM-dd_HH-mm-ss");
+		String date = currentDateTime("yyyy-MM-dd_HH-mm-ss"); 
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		ProjectWrapper project = client.getProject(output);
@@ -663,23 +664,21 @@ public class SegmentationCalling {
 		
 		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
-		
+		OutputDatasets datasets = prepareOutputDatasetsOMERO(output, client);
 		int i = 0;
 		
 		for (ROIWrapper roi : rois) {
 			LOGGER.info("Current ROI in process: {}", i);
-			
-			NucleusSegmentation nucleusSegmentation = load(new OMEROBatchImage(image,roi,i,params,client,null));
+			OMEROBatchImage source = new OMEROBatchImage(image, roi, i, params, client, null);
+			NucleusSegmentation nucleusSegmentation = load(source);
+
 			nucleusSegmentation.preProcessImage();
 			nucleusSegmentation.findOTSUMaximisingSphericity();
-			nucleusSegmentation.checkBadCrop(new OMEROBatchImage(image, roi, i, params, client, null));
-			
-			nucleusSegmentation.saveOTSUSegmentedOMERO(client, output);
+			nucleusSegmentation.checkBadCrop(source);
+			source.save(nucleusSegmentation, datasets);
+
 			info.append(nucleusSegmentation.getImageCropInfoOTSU());
-			
-			nucleusSegmentation.saveConvexHullSegOMERO(client, output);
 			info.append(nucleusSegmentation.getImageCropInfoConvexHull());
-			
 			i++;
 		}
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
