@@ -314,6 +314,7 @@ public class AutoCropCalling {
 				} catch (AccessException | ServiceException | OMEROServerError | IOException | ExecutionException e) {
 					LOGGER.error("Cannot run autocrop on: {}", image.getName(), e);
 				}
+
 				latch.countDown();
 			}
 			

@@ -29,6 +29,7 @@ import fr.igred.nucleus.process.ChromocenterCalling;
 import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.nucleus.segmentation.SegmentationParameters;
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import loci.formats.FormatException;
 import org.apache.commons.cli.CommandLine;
@@ -208,7 +209,7 @@ public class CLIRunAction {
 				if (!log.isEmpty()) {
 					LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 				}
-			} catch (IOException | ServiceException | AccessException | ExecutionException e) {
+			} catch (IOException | ServiceException | AccessException | ExecutionException | FormatException | OMEROServerError e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		} else {

@@ -241,7 +241,7 @@ public class SegmentationPlugin implements PlugIn, IDialogListener {
 				IJ.error("File or directory does not exist");
 			} catch (NumberFormatException | FormatException e) {
 				LOGGER.error("An error occurred.", e);
-			} catch (ServiceException | AccessException | ExecutionException e) {
+			} catch (ServiceException | AccessException | ExecutionException | OMEROServerError e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		}

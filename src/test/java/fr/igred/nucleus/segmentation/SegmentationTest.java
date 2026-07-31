@@ -18,6 +18,7 @@
 package fr.igred.nucleus.segmentation;
 
 import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
 import loci.formats.FormatException;
 import org.apache.commons.io.FilenameUtils;
@@ -67,7 +68,7 @@ class SegmentationTest {
 	
 	
 	private static void runSegmentation(String imageSourceFile, String output)
-	throws IOException, FormatException, ServiceException, AccessException, ExecutionException {
+	throws IOException, FormatException, ServiceException, AccessException, ExecutionException, OMEROServerError {
 		SegmentationParameters segmentationParams = new SegmentationParameters(imageSourceFile, output);
 		SegmentationCalling    segmentation       = new SegmentationCalling(segmentationParams);
 		segmentation.runOneImage(imageSourceFile);
