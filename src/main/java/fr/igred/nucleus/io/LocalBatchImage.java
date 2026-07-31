@@ -1,7 +1,6 @@
-package fr.igred.nucleus.io_L_O;
+package fr.igred.nucleus.io;
 
 import fr.igred.nucleus.segmentation.NucleusSegmentation;
-import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static fr.igred.nucleus.io.ImageSaver.saveFile;
@@ -52,7 +52,7 @@ public class LocalBatchImage implements BatchImage {
     }
 
     @Override
-    public void save(NucleusSegmentation seg, SegmentationCalling.OutputDatasets datasets)
+    public void save(NucleusSegmentation seg, Map<String, Long> datasets)
     throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
         seg.saveOTSUSegmented_global(this,-1);
         seg.saveConvexHullSeg_global(this,-1);

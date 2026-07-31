@@ -1,8 +1,8 @@
-package fr.igred.nucleus.io_L_O;
+package fr.igred.nucleus.io;
 
 import fr.igred.nucleus.segmentation.NucleusSegmentation;
-import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.nucleus.segmentation.SegmentationParameters;
+import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.omero.Client;
 import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static fr.igred.nucleus.io.ImageSaver.saveFile;
@@ -128,10 +129,10 @@ public class OMEROBatchImage implements BatchImage {
     }
 
     @Override
-    public void save(NucleusSegmentation seg, SegmentationCalling.OutputDatasets datasets)
+    public void save(NucleusSegmentation seg, Map<String, Long> datasets)
     throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
-        seg.saveOTSUSegmented_global(this, datasets.getOtsu());
-        seg.saveConvexHullSeg_global(this, datasets.getConvexHull());
+        seg.saveOTSUSegmented_global(this, datasets.getOrDefault("OTSU", -1L));
+        seg.saveConvexHullSeg_global(this, datasets.getOrDefault(ConvexHullDetection.CONVEX_HULL_ALGORITHM, -1L));
     }
 
     @Override

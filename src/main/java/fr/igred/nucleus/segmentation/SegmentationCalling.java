@@ -17,9 +17,9 @@
  */
 package fr.igred.nucleus.segmentation;
 
-import fr.igred.nucleus.io_L_O.BatchImage;
-import fr.igred.nucleus.io_L_O.LocalBatchImage;
-import fr.igred.nucleus.io_L_O.OMEROBatchImage;
+import fr.igred.nucleus.io.BatchImage;
+import fr.igred.nucleus.io.LocalBatchImage;
+import fr.igred.nucleus.io.OMEROBatchImage;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
@@ -304,7 +304,7 @@ public class SegmentationCalling {
 	 * <p>If {@code datasets == null} the source is treated as local (writes to disk);
 	 * otherwise it uploads to the given OMERO datasets.
 	 */
-	public void saveOneImage(NucleusSegmentation seg, BatchImage source, OutputDatasets datasets)
+	public void saveOneImage(NucleusSegmentation seg, BatchImage source, Map<String, Long> datasets)
 	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
 		seg.checkBadCrop(source);
 		source.save(seg, datasets);
@@ -375,46 +375,35 @@ public class SegmentationCalling {
 		}
 	}
 	
-	/** Pair of OMERO dataset IDs (OTSU and Convex Hull) used to upload segmentation outputs. */
-	public static final class OutputDatasets {
-		final long otsu;
-		final long convexHull;
-
-		OutputDatasets(long otsu, long convexHull) {
-			this.otsu = otsu;
-			this.convexHull = convexHull;
-		}
-
-		public long getOtsu()       { return otsu; }
-		public long getConvexHull() { return convexHull; }
-	}
-
-
-	/** Prepares the OMERO output datasets (creates them if missing) and returns their IDs. */
-	public OutputDatasets prepareOutputDatasetsOMERO(Long output, Client client)
+	/**
+	 * Prepares the OMERO output datasets (creates them if missing) and returns their IDs,
+	 * mapped by dataset name ({@code "OTSU"}, {@link ConvexHullDetection#CONVEX_HULL_ALGORITHM}).
+	 * A dataset absent from the map means the corresponding output is disabled.
+	 */
+	public Map<String, Long> prepareOutputDatasetsOMERO(Long output, Client client)
 	throws AccessException, ServiceException, ExecutionException {
 		ProjectWrapper project = client.getProject(output);
 
+		Map<String, Long> outputDatasets = new HashMap<>();
 		List<DatasetWrapper> datasets = project.getDatasets("OTSU");
-		long otsuDataset;
-		long convexHullDataset = -1;
 		if (datasets.isEmpty()) {
-			otsuDataset = project.addDataset(client, "OTSU", "").getId();
+			outputDatasets.put("OTSU", project.addDataset(client, "OTSU", "").getId());
 			project.reload(client);
 		} else {
-			otsuDataset = datasets.get(0).getId();
+			outputDatasets.put("OTSU", datasets.get(0).getId());
 		}
 		project.reload(client);
 		if (params.getConvexHullDetection()) {
 			datasets = project.getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 			if (datasets.isEmpty()) {
-				convexHullDataset = project.addDataset(client, ConvexHullDetection.CONVEX_HULL_ALGORITHM, "").getId();
+				outputDatasets.put(ConvexHullDetection.CONVEX_HULL_ALGORITHM,
+				                   project.addDataset(client, ConvexHullDetection.CONVEX_HULL_ALGORITHM, "").getId());
 				project.reload(client);
 			} else {
-				convexHullDataset = datasets.get(0).getId();
+				outputDatasets.put(ConvexHullDetection.CONVEX_HULL_ALGORITHM, datasets.get(0).getId());
 			}
 		}
-		return new OutputDatasets(otsuDataset, convexHullDataset);
+		return outputDatasets;
 	}
 
 
@@ -426,7 +415,7 @@ public class SegmentationCalling {
 		String log = "";
 
 		LOGGER.info("Current image in process: {}", image.getName());
-		OutputDatasets datasets = prepareOutputDatasetsOMERO(output, client);
+		Map<String, Long> datasets = prepareOutputDatasetsOMERO(output, client);
 		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
 		BatchImage source = new OMEROBatchImage(image, client, null, null, new int[]{0,0}, null, null);
@@ -448,8 +437,8 @@ public class SegmentationCalling {
 		ExecutorService downloadExecutor = Executors.newFixedThreadPool(DOWNLOADER_THREADS);
 		ExecutorService processExecutor  = Executors.newFixedThreadPool(executorThreads);
 		tID = inputID;
-		
-		OutputDatasets datasets = prepareOutputDatasetsOMERO(output, client);
+
+		Map<String, Long> datasets = prepareOutputDatasetsOMERO(output, client);
 
 		Map<Long, String> otsuResults       = new ConcurrentHashMap<>(images.size());
 		Map<Long, String> convexHullResults = new ConcurrentHashMap<>(images.size());
@@ -665,7 +654,7 @@ public class SegmentationCalling {
 		
 		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
-		OutputDatasets datasets = prepareOutputDatasetsOMERO(output, client);
+		Map<String, Long> datasets = prepareOutputDatasetsOMERO(output, client);
 		int i = 0;
 		
 		for (ROIWrapper roi : rois) {

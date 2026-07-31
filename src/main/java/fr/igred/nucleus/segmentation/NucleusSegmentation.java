@@ -18,17 +18,13 @@
 package fr.igred.nucleus.segmentation;
 
 import fr.igred.nucleus.core.Measure3D;
-import fr.igred.nucleus.io_L_O.BatchImage;
+import fr.igred.nucleus.io.BatchImage;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.utils.ConvexHullSegmentation;
 import fr.igred.nucleus.utils.FillingHoles;
-import fr.igred.omero.Client;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
-import fr.igred.omero.repository.ImageWrapper;
-import fr.igred.omero.roi.ROIWrapper;
-import fr.igred.omero.roi.RectangleWrapper;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.utils.Thresholding;
 import fr.igred.nucleus.utils.Gradient;
@@ -37,7 +33,6 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Macro;
 import ij.measure.Calibration;
-import ij.plugin.ChannelSplitter;
 import ij.plugin.Filters3D;
 import ij.plugin.GaussianBlur3D;
 import ij.plugin.filter.LutApplier;
@@ -46,7 +41,6 @@ import ij.process.StackConverter;
 import ij.process.StackStatistics;
 import inra.ijpb.binary.BinaryImages;
 import loci.formats.FormatException;
-import loci.plugins.BF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,102 +104,8 @@ public class NucleusSegmentation {
 			dirOutputConvexHull.checkAndCreateDir();
 		}
 	}
-	public NucleusSegmentation(File imageFile, SegmentationParameters params)
-	throws IOException, FormatException {
-		this.segmentationParameters = params;
-		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
-		this.imgRaw = getImageChannel(imageFile, 0);
-		imgRaw.setTitle(imageFile.getName());
-		this.imgRawTransformed = imgRaw.duplicate();
-		imgRawTransformed.setTitle(imageFile.getName());
-		Directory dirOutputOTSU = new Directory(params.getOutputFolder() + "OTSU");
-		dirOutputOTSU.checkAndCreateDir();
-		if (params.getConvexHullDetection()) {
-			Directory dirOutputConvexHull = new Directory(params.getOutputFolder() +
-			                                              ConvexHullDetection.CONVEX_HULL_ALGORITHM);
-			dirOutputConvexHull.checkAndCreateDir();
-		}
-	}
-	
-	
-	public NucleusSegmentation(ImageWrapper image, SegmentationParameters params, Client client)
-	throws ServiceException, AccessException, ExecutionException {
-		this.segmentationParameters = params;
-		
-		int[] cBound = {0, 0};
-		this.imgRaw = image.toImagePlus(client, null, null, cBound, null, null);
-		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
-		imgRaw.setTitle(image.getName());
-		this.imgRawTransformed = imgRaw.duplicate();
-		imgRawTransformed.setTitle(image.getName());
-	}
-	
-	
-	// Changed HERE TO RETRIEVE ONLY ID, ALLOWING MULTI THREADING DOWNLOAD
-	public NucleusSegmentation(ImageWrapper image, ImagePlus imp, SegmentationParameters params) {
-		this.segmentationParameters = params;
-		
-		this.imgRaw = imp;
-		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
-		imgRaw.setTitle(image.getName());
-		this.imgRawTransformed = imgRaw.duplicate();
-		imgRawTransformed.setTitle(image.getName());
-	}
-	
-	
-	public NucleusSegmentation(ImageWrapper image,
-	                           ROIWrapper roi,
-	                           int i,
-	                           SegmentationParameters params,
-	                           Client client)
-	throws ServiceException, AccessException, ExecutionException {
-		this.segmentationParameters = params;
-		
-		List<RectangleWrapper> rectangles = roi.getShapes().getElementsOf(RectangleWrapper.class);
-		
-		RectangleWrapper rectangle = rectangles.get(0);
-		
-		int roiThickness = rectangles.size();
-		int channel      = rectangle.getC();
-		int slice        = rectangle.getZ();
-		
-		double[] coordinates = rectangle.getCoordinates();
-		int      x           = (int) coordinates[0];
-		int      y           = (int) coordinates[1];
-		int      width       = (int) coordinates[2];
-		int      height      = (int) coordinates[3];
-		
-		int[] cBound = {channel, channel};
-		int[] zBound = {slice, slice + roiThickness - 1};
-		int[] xBound = {x, x + width - 1};
-		int[] yBound = {y, y + height - 1};
-		
-		this.imgRaw = image.toImagePlus(client, xBound, yBound, cBound, zBound, null);
-		
-		imgRaw.setTitle(image.getName() + "_" + i + "_C" + rectangle.getC());
-		this.imgRawTransformed = imgRaw.duplicate();
-		imgRawTransformed.setTitle(imgRaw.getTitle());
-	}
-	
-	
-	/**
-	 * Method to set a specific channel image
-	 *
-	 * @param imageFile
-	 * @param channel   channel number of the current image to analyse
-	 *
-	 * @return channel image
-	 *
-	 * @throws IOException
-	 * @throws FormatException
-	 */
-	public static ImagePlus getImageChannel(File imageFile, int channel) throws IOException, FormatException {
-		ImagePlus[] currentImage = BF.openImagePlus(imageFile.getAbsolutePath());
-		currentImage = ChannelSplitter.split(currentImage[channel]);
-		return currentImage[0];
-	}
-	
-	
+
+
 	/**
 	 * Method to save 3D parameters computed
 	 *
