@@ -18,18 +18,13 @@
 package fr.igred.nucleus.segmentation;
 
 import fr.igred.nucleus.core.Measure3D;
+import fr.igred.nucleus.io.BatchImage;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.utils.ConvexHullSegmentation;
 import fr.igred.nucleus.utils.FillingHoles;
-import fr.igred.omero.Client;
-import fr.igred.omero.annotations.TagAnnotationWrapper;
 import fr.igred.omero.exception.AccessException;
 import fr.igred.omero.exception.OMEROServerError;
 import fr.igred.omero.exception.ServiceException;
-import fr.igred.omero.repository.ImageWrapper;
-import fr.igred.omero.roi.GenericShapeWrapper;
-import fr.igred.omero.roi.ROIWrapper;
-import fr.igred.omero.roi.RectangleWrapper;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.utils.Thresholding;
 import fr.igred.nucleus.utils.Gradient;
@@ -38,7 +33,6 @@ import ij.ImagePlus;
 import ij.ImageStack;
 import ij.Macro;
 import ij.measure.Calibration;
-import ij.plugin.ChannelSplitter;
 import ij.plugin.Filters3D;
 import ij.plugin.GaussianBlur3D;
 import ij.plugin.filter.LutApplier;
@@ -47,21 +41,16 @@ import ij.process.StackConverter;
 import ij.process.StackStatistics;
 import inra.ijpb.binary.BinaryImages;
 import loci.formats.FormatException;
-import loci.plugins.BF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
-
-import static fr.igred.nucleus.io.ImageSaver.saveFile;
 import static fr.igred.nucleus.utils.Thresholding.convertToMask;
 import static fr.igred.nucleus.utils.Thresholding.createMask;
 
@@ -94,108 +83,29 @@ public class NucleusSegmentation {
 	/**
 	 * Constructor for the segmentation analysis for a folder containing images.
 	 *
-	 * @param imageFile              Current image analysed
+	 * @param source              Current image analysed
 	 * @param params list the parameters for the analyse
 	 *
 	 * @throws IOException
 	 * @throws FormatException
 	 */
-	public NucleusSegmentation(File imageFile, SegmentationParameters params)
-	throws IOException, FormatException {
+	public NucleusSegmentation(BatchImage source, SegmentationParameters params) throws IOException, FormatException, ServiceException, AccessException, ExecutionException{
 		this.segmentationParameters = params;
-		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
-		this.imgRaw = getImageChannel(imageFile, 0);
-		imgRaw.setTitle(imageFile.getName());
+		this.imgRaw = source.getImagePlus();
+		imgRaw.setTitle(source.getName());
 		this.imgRawTransformed = imgRaw.duplicate();
-		imgRawTransformed.setTitle(imageFile.getName());
+		imgRawTransformed.setTitle(source.getName());
+		////////////////////////
 		Directory dirOutputOTSU = new Directory(params.getOutputFolder() + "OTSU");
 		dirOutputOTSU.checkAndCreateDir();
 		if (params.getConvexHullDetection()) {
 			Directory dirOutputConvexHull = new Directory(params.getOutputFolder() +
-			                                              ConvexHullDetection.CONVEX_HULL_ALGORITHM);
+					ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 			dirOutputConvexHull.checkAndCreateDir();
 		}
 	}
-	
-	
-	public NucleusSegmentation(ImageWrapper image, SegmentationParameters params, Client client)
-	throws ServiceException, AccessException, ExecutionException {
-		this.segmentationParameters = params;
-		
-		int[] cBound = {0, 0};
-		this.imgRaw = image.toImagePlus(client, null, null, cBound, null, null);
-		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
-		imgRaw.setTitle(image.getName());
-		this.imgRawTransformed = imgRaw.duplicate();
-		imgRawTransformed.setTitle(image.getName());
-	}
-	
-	
-	// Changed HERE TO RETRIEVE ONLY ID, ALLOWING MULTI THREADING DOWNLOAD
-	public NucleusSegmentation(ImageWrapper image, ImagePlus imp, SegmentationParameters params) {
-		this.segmentationParameters = params;
-		
-		this.imgRaw = imp;
-		// TODO ADD CHANNEL PARAMETERS (CASE OF CHANNELS UNSPLITED)
-		imgRaw.setTitle(image.getName());
-		this.imgRawTransformed = imgRaw.duplicate();
-		imgRawTransformed.setTitle(image.getName());
-	}
-	
-	
-	public NucleusSegmentation(ImageWrapper image,
-	                           ROIWrapper roi,
-	                           int i,
-	                           SegmentationParameters params,
-	                           Client client)
-	throws ServiceException, AccessException, ExecutionException {
-		this.segmentationParameters = params;
-		
-		List<RectangleWrapper> rectangles = roi.getShapes().getElementsOf(RectangleWrapper.class);
-		
-		RectangleWrapper rectangle = rectangles.get(0);
-		
-		int roiThickness = rectangles.size();
-		int channel      = rectangle.getC();
-		int slice        = rectangle.getZ();
-		
-		double[] coordinates = rectangle.getCoordinates();
-		int      x           = (int) coordinates[0];
-		int      y           = (int) coordinates[1];
-		int      width       = (int) coordinates[2];
-		int      height      = (int) coordinates[3];
-		
-		int[] cBound = {channel, channel};
-		int[] zBound = {slice, slice + roiThickness - 1};
-		int[] xBound = {x, x + width - 1};
-		int[] yBound = {y, y + height - 1};
-		
-		this.imgRaw = image.toImagePlus(client, xBound, yBound, cBound, zBound, null);
-		
-		imgRaw.setTitle(image.getName() + "_" + i + "_C" + rectangle.getC());
-		this.imgRawTransformed = imgRaw.duplicate();
-		imgRawTransformed.setTitle(imgRaw.getTitle());
-	}
-	
-	
-	/**
-	 * Method to set a specific channel image
-	 *
-	 * @param imageFile
-	 * @param channel   channel number of the current image to analyse
-	 *
-	 * @return channel image
-	 *
-	 * @throws IOException
-	 * @throws FormatException
-	 */
-	public static ImagePlus getImageChannel(File imageFile, int channel) throws IOException, FormatException {
-		ImagePlus[] currentImage = BF.openImagePlus(imageFile.getAbsolutePath());
-		currentImage = ChannelSplitter.split(currentImage[channel]);
-		return currentImage[0];
-	}
-	
-	
+
+
 	/**
 	 * Method to save 3D parameters computed
 	 *
@@ -599,121 +509,31 @@ public class NucleusSegmentation {
 	
 	
 	/**
-	 * Method to move bad crop (truncated nucleus) to badcrop folder.
-	 * <p> TODO verifier cette methode si elle est à sa place
+	 * Method to mark a bad crop (truncated nucleus) via the source-appropriate mechanism
+	 * (move file locally, tag image or color ROI on OMERO).
 	 *
-	 * @param inputPathDir folder of the input to create badcrop folder.
+	 * @param bi the BatchImage to mark if its segmentation failed.
 	 */
-	public void checkBadCrop(String inputPathDir) {
+	public void checkBadCrop(BatchImage bi) {
 		LOGGER.info("Checking bad crop.");
 		if (badCrop || bestThreshold == -1) {
-			File badCropFolder = new File(inputPathDir + File.separator + "BadCrop");
-			LOGGER.debug("Saving bad crops to: {}", badCropFolder);
-			
-			if (badCropFolder.exists() || badCropFolder.mkdir()) {
-				File    fileToMove = new File(inputPathDir + File.separator + imgRawTransformed.getTitle());
-				File    newFile    = new File(badCropFolder + File.separator + imgRawTransformed.getTitle());
-				boolean renamed    = fileToMove.renameTo(newFile);
-				if (!renamed) {
-					LOGGER.info("File not renamed: {}", fileToMove.getAbsolutePath());
-				}
-			} else {
-				LOGGER.error("Directory does not exist and could not be created: {}", badCropFolder);
-			}
+			bi.markAsBadCrop(imgRawTransformed.getTitle());
 		}
 	}
-	
-	
-	public void checkBadCrop(ImageWrapper image, Client client) {
-		if (badCrop || bestThreshold == -1) {
-			List<TagAnnotationWrapper> tags;
-			TagAnnotationWrapper       tagBadCrop;
-			
-			try {
-				tags = client.getTags("BadCrop");
-			} catch (OMEROServerError | ServiceException e) {
-				LOGGER.error("Could not get list of \"BadCrop\" tags", e);
-				return;
-			}
-			
-			if (tags.isEmpty()) {
-				try {
-					tagBadCrop = new TagAnnotationWrapper(client, "BadCrop", "");
-				} catch (AccessException | ServiceException | ExecutionException e) {
-					LOGGER.error("Could not create new \"BadCrop\" tag", e);
-					return;
-				}
-			} else {
-				try {
-					tagBadCrop = tags.get(0);
-				} catch (Exception e) {
-					LOGGER.error("Could not retrieve a \"BadCrop\" tag", e);
-					return;
-				}
-			}
-			
-			LOGGER.info("Adding Bad Crop tag");
-			try {
-				image.link(client, tagBadCrop);
-			} catch (AccessException | ServiceException | ExecutionException e) {
-				LOGGER.error("Tag already added", e);
-			}
-		}
-	}
-	
-	
-	public void checkBadCrop(ROIWrapper roi, Client client) {
-		if (badCrop || bestThreshold == -1) {
-			for (GenericShapeWrapper<?> shape : roi.getShapes()) {
-				shape.setStroke(Color.RED);
-			}
-		}
-		try {
-			roi.saveROI(client);
-		} catch (OMEROServerError | ServiceException e) {
-			LOGGER.error("Could not save bad crop ROI id: {}", roi.getId());
-		}
-	}
-	
-	
+
+
 	/**
 	 * Method to save the OTSU segmented image.
 	 * <p> TODO verifier cette methode si elle est à ca place
 	 */
-	public void saveOTSUSegmented() {
+
+	public void saveOTSUSegmented_global(BatchImage source, long otsuDataset)
+	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError
+	{
 		LOGGER.info("Computing and saving OTSU segmentation.");
 		if (!badCrop && bestThreshold != -1) {
-			String pathSegOTSU = segmentationParameters.getOutputFolder() +
-			                     "OTSU" +
-			                     File.separator +
-			                     imageSeg[0].getTitle();
-			saveFile(imageSeg[0], pathSegOTSU);
-			
-		}
-	}
-	
-	
-	/**
-	 * Method to save the OTSU segmented image.
-	 * <p> TODO verifier cette methode si elle est à ca place
-	 */
-	public void saveOTSUSegmentedOMERO(Client client, Long output)
-	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
-		LOGGER.info("Computing and saving OTSU segmentation.");
-		if (!badCrop && bestThreshold != -1) {
-			String path = new java.io.File(".").getCanonicalPath() +
-			              // File.separator + "OTSU" +
-			              File.separator + imageSeg[0].getTitle();
-			saveFile(imageSeg[0], path);
-			
-			client.getDataset(output).importImages(client, path);
-			
-			File file = new File(path);
-			try {
-				Files.deleteIfExists(file.toPath());
-			} catch (IOException e) {
-				LOGGER.error("Could not delete file: {}", path);
-			}
+			String path = segmentationParameters.getOutputFolder() + "OTSU" + File.separator + imageSeg[0].getTitle();
+			source.saveImage(imageSeg[0], path, otsuDataset);
 		}
 	}
 	
@@ -722,43 +542,24 @@ public class NucleusSegmentation {
 	 * Method to save the OTSU segmented image.
 	 * <p> TODO verifier cette methode si elle est à sa place
 	 */
-	public void saveConvexHullSeg() {
+
+	
+	public void saveConvexHullSeg_global(BatchImage source, long ConvexHullDataset)
+	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError
+	{
 		LOGGER.info("Computing and saving Convex Hull segmentation.");
-		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
+		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()){
 			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0]);
 			String pathConvexHullSeg = segmentationParameters.getOutputFolder() +
-			                           ConvexHullDetection.CONVEX_HULL_ALGORITHM + File.separator + imageSeg[0].getTitle();
+					ConvexHullDetection.CONVEX_HULL_ALGORITHM +
+					File.separator +
+					imageSeg[0].getTitle();
 			imageSeg[0].setTitle(pathConvexHullSeg);
-			saveFile(imageSeg[0], pathConvexHullSeg);
+			source.saveImage(imageSeg[0],pathConvexHullSeg,ConvexHullDataset);
 		}
 	}
-	
-	
-	/**
-	 * Method to save the OTSU segmented image.
-	 * <p> TODO verifier cette methode si elle est à sa place
-	 */
-	public void saveConvexHullSegOMERO(Client client, Long output)
-	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
-		LOGGER.info("Computing and saving Convex Hull segmentation.");
-		if (!badCrop && bestThreshold != -1 && segmentationParameters.getConvexHullDetection()) {
-			imageSeg[0] = ConvexHullSegmentation.convexHullDetection(imageSeg[0]);
-			
-			String path = new java.io.File(".").getCanonicalPath() //+ File.separator + CONVEX_HULL_ALGORITHM
-			              + File.separator + imageSeg[0].getTitle();
-			saveFile(imageSeg[0], path);
-			
-			client.getDataset(output).importImages(client, path);
-			
-			File file = new File(path);
-			try {
-				Files.deleteIfExists(file.toPath());
-			} catch (IOException e) {
-				LOGGER.error("Could not delete file: {}", path);
-			}
-		}
-	}
-	
+
+
 	
 	/**
 	 * Method to get the parameter of the 3D parameters for OTSU segmented image if the object can't be segmented return

@@ -1,0 +1,28 @@
+graph TD
+    NODeJ --> GUI
+    NODeJ --> CLI
+    GUI --> MAINGUI
+    CLI --> runSegCC_local["CLIRunAction<br>runSegCC"]
+    CLI --> runSegCC_omero["CLIRunActionOMERO<br>runSegCC"]
+
+    runSegCC_local ------> runSeveralImages["ChromocenterCalling<br>runSeveralImages"]
+    runSegCC_omero ------> segmentationOMERO["ChromocenterCalling<br>segmentationOMERO"]
+
+    MAINGUI --> NODeJPlugin["NODeJ<br>onStart"]
+    NODeJPlugin --> runLocal["NODeJ<br>runLocal"]
+    NODeJPlugin --> runOmero["NODeJ<br>runOmero"]
+
+    runLocal ------> runSeveralImages
+    runOmero ------> segmentationOMERO
+
+    runSeveralImages --> runCC3D["ChromocenterSegmentation<br>runCC3D"]
+    runSeveralImages --> compute3DParameters["NucleusChromocentersAnalysis<br>compute3DParameters"]
+
+    segmentationOMERO --> runOneImageOMERO["ChromocenterCalling<br>runOneImageOMERO"]
+    segmentationOMERO --> runSeveralImagesOMERO["ChromocenterCalling<br>runSeveralImagesOMERO"]
+
+    runOneImageOMERO --> runCC3D
+    runOneImageOMERO --> compute3DParameters
+
+    runSeveralImagesOMERO --> runCC3D
+    runSeveralImagesOMERO --> compute3DParametersOmero["NucleusChromocentersAnalysis<br>compute3DParametersOmero"]

@@ -1,0 +1,23 @@
+graph TD
+    AutoCrop --> GUI
+    AutoCrop --> CLI
+    GUI --> MAINGUI
+    CLI --> runAutocrop["CLIRunAction<br>runAutocrop"]
+    CLI --> runAutoCropOMERO["CLIRunActionOMERO<br>runAutoCropOMERO"]
+
+    runAutocrop ------> runFile["AutoCropCalling<br>runFile"]
+    runAutocrop -------------> runFolder["AutoCropCalling<br>runFolder"]
+
+    runAutoCropOMERO --> autoCropOMERO["CLIRunActionOMERO<br>autoCropOMERO"]
+    autoCropOMERO -----------> runImageOMERO["AutoCropCalling<br>runImageOMERO"]
+    autoCropOMERO -----------> runSeveralImageOMERO["AutoCropCalling<br>runSeveralImageOMERO"]
+
+    MAINGUI --> AutocropPlugin["AutocropPlugin<br>onStart"]
+    AutocropPlugin --> runLocalAutocrop["AutocropPlugin<br>runLocalAutocrop"]
+    AutocropPlugin --> runOmeroAutocrop["AutocropPlugin<br>runOmeroAutocrop"]
+
+    runLocalAutocrop ------> runFile
+    runLocalAutocrop -------------> runFolder
+
+    runOmeroAutocrop ------> runImageOMERO
+    runOmeroAutocrop -------------> runSeveralImageOMERO

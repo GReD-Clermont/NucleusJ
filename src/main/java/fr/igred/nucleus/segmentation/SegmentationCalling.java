@@ -17,6 +17,9 @@
  */
 package fr.igred.nucleus.segmentation;
 
+import fr.igred.nucleus.io.BatchImage;
+import fr.igred.nucleus.io.LocalBatchImage;
+import fr.igred.nucleus.io.OMEROBatchImage;
 import fr.igred.nucleus.utils.ConvexHullDetection;
 import fr.igred.nucleus.io.Directory;
 import fr.igred.nucleus.io.OutputTextFile;
@@ -28,7 +31,6 @@ import fr.igred.omero.repository.DatasetWrapper;
 import fr.igred.omero.repository.ImageWrapper;
 import fr.igred.omero.repository.ProjectWrapper;
 import fr.igred.omero.roi.ROIWrapper;
-import ij.ImagePlus;
 import loci.formats.FormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -231,25 +234,24 @@ public class SegmentationCalling {
 			public void run() {
 				try {
 					String fileImg = file.toString();
-					
+
 					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
-					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(file, params);
-					
-					nucleusSegmentation.preProcessImage();
-					nucleusSegmentation.findOTSUMaximisingSphericity();
-					nucleusSegmentation.checkBadCrop(params.getInputFolder());
-					nucleusSegmentation.saveOTSUSegmented();
+					NucleusSegmentation nucleusSegmentation = load(new LocalBatchImage(file,0));
+					compute(nucleusSegmentation);//////////////
+
+					BatchImage badCropContext = new LocalBatchImage(new File(params.getInputFolder()), 0);
+					nucleusSegmentation.checkBadCrop(badCropContext);
+					badCropContext.save(nucleusSegmentation, null);
 					otsuResults.put(file.getName(),
 					                nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
-					nucleusSegmentation.saveConvexHullSeg();
 					convexHullResults.put(file.getName(),
 					                      nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
-					
+
 					String end = currentDateTime();
 					LOGGER.info("End: {} at {}", fileImg, end);
 					latch.countDown();
-				} catch (IOException | FormatException e) {
+				} catch (IOException | ServiceException | AccessException | ExecutionException | FormatException | OMEROServerError e) {
 					LOGGER.error("Error processing image: {}", file.getName(), e);
 				}
 			}
@@ -283,31 +285,50 @@ public class SegmentationCalling {
 		return log;
 	}
 	
-	
-	public String runOneImage(String filePath) throws IOException, FormatException {
+
+	/** Input step — loads a local image into a NucleusSegmentation. */
+	public NucleusSegmentation  load(BatchImage source) throws IOException, FormatException, ServiceException, AccessException, ExecutionException {
+		return new NucleusSegmentation(source, params);
+	}
+
+
+	/** Compute step — runs the segmentation pipeline. Source-agnostic (local or OMERO). */
+	public void compute(NucleusSegmentation seg) {
+		seg.preProcessImage();
+		seg.findOTSUMaximisingSphericity();
+	}
+
+
+	/**
+	 * Output step — persists the segmented image and appends CSV info.
+	 * <p>If {@code datasets == null} the source is treated as local (writes to disk);
+	 * otherwise it uploads to the given OMERO datasets.
+	 */
+	public void saveOneImage(NucleusSegmentation seg, BatchImage source, Map<String, Long> datasets)
+	throws IOException, AccessException, ServiceException, ExecutionException, OMEROServerError {
+		seg.checkBadCrop(source);
+		source.save(seg, datasets);
+		this.outputCropGeneralInfoOTSU       += getResultsColumnNames() + seg.getImageCropInfoOTSU();
+		this.outputCropGeneralInfoConvexHull += getResultsColumnNames() + seg.getImageCropInfoConvexHull();
+	}
+
+
+	public String runOneImage(String filePath)
+	throws IOException, FormatException, ServiceException, AccessException, ExecutionException, OMEROServerError {
 		String log         = "";
 		File   currentFile = new File(filePath);
-		
-		String fileImg = currentFile.toString();
+
 		LOGGER.info("Current image in process: {}", currentFile);
 		if (currentFile.exists()) {
 			String start = currentDateTime();
 			LOGGER.info("Start: {}", start);
-			NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(currentFile, params);
-			nucleusSegmentation.preProcessImage();
-			nucleusSegmentation.findOTSUMaximisingSphericity();
-			nucleusSegmentation.checkBadCrop(params.getInputFolder());
-			nucleusSegmentation.saveOTSUSegmented();
-			this.outputCropGeneralInfoOTSU += getResultsColumnNames();
-			this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
-			nucleusSegmentation.saveConvexHullSeg();
-			this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
-			this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
-			
+			NucleusSegmentation seg = load(new LocalBatchImage(currentFile,0));
+			compute(seg);
+			saveOneImage(seg, new LocalBatchImage(new File(params.getInputFolder()), 0), null);
 			String end = currentDateTime();
 			LOGGER.info("End: {}", end);
 		} else {
-			log = "File " + fileImg + " does not exist.";
+			log = "File " + currentFile + " does not exist.";
 			LOGGER.error(log);
 		}
 		return log;
@@ -354,56 +375,56 @@ public class SegmentationCalling {
 		}
 	}
 	
-	
-	public String runOneImageOMERO(ImageWrapper image, Long output, Client client)
-	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
-		String log = "";
-		
+	/**
+	 * Prepares the OMERO output datasets (creates them if missing) and returns their IDs,
+	 * mapped by dataset name ({@code "OTSU"}, {@link ConvexHullDetection#CONVEX_HULL_ALGORITHM}).
+	 * A dataset absent from the map means the corresponding output is disabled.
+	 */
+	public Map<String, Long> prepareOutputDatasetsOMERO(Long output, Client client)
+	throws AccessException, ServiceException, ExecutionException {
 		ProjectWrapper project = client.getProject(output);
-		
-		// Get OTSU dataset ID
+
+		Map<String, Long> outputDatasets = new HashMap<>();
 		List<DatasetWrapper> datasets = project.getDatasets("OTSU");
-		
-		long otsuDataset;
-		long convexHullDataset = -1;
 		if (datasets.isEmpty()) {
-			otsuDataset = project.addDataset(client, "OTSU", "").getId();
+			outputDatasets.put("OTSU", project.addDataset(client, "OTSU", "").getId());
 			project.reload(client);
 		} else {
-			otsuDataset = datasets.get(0).getId();
+			outputDatasets.put("OTSU", datasets.get(0).getId());
 		}
 		project.reload(client);
-		// Get Convex Hull dataset ID
 		if (params.getConvexHullDetection()) {
 			datasets = project.getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM);
 			if (datasets.isEmpty()) {
-				convexHullDataset = project.addDataset(client, ConvexHullDetection.CONVEX_HULL_ALGORITHM, "").getId();
+				outputDatasets.put(ConvexHullDetection.CONVEX_HULL_ALGORITHM,
+				                   project.addDataset(client, ConvexHullDetection.CONVEX_HULL_ALGORITHM, "").getId());
 				project.reload(client);
 			} else {
-				convexHullDataset = datasets.get(0).getId();
+				outputDatasets.put(ConvexHullDetection.CONVEX_HULL_ALGORITHM, datasets.get(0).getId());
 			}
 		}
-		
-		String fileImg = image.getName();
-		LOGGER.info("Current image in process: {}", fileImg);
-		
+		return outputDatasets;
+	}
+
+
+
+
+
+	public String runOneImageOMERO(ImageWrapper image, Long output, Client client)
+	throws IOException, FormatException, ServiceException, AccessException, ExecutionException, OMEROServerError {
+		String log = "";
+
+		LOGGER.info("Current image in process: {}", image.getName());
+		Map<String, Long> datasets = prepareOutputDatasetsOMERO(output, client);
 		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
-		NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(image, params, client);
-		nucleusSegmentation.preProcessImage();
-		nucleusSegmentation.findOTSUMaximisingSphericity();
-		nucleusSegmentation.checkBadCrop(image, client);
-		
-		nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset);
-		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
-		this.outputCropGeneralInfoOTSU += nucleusSegmentation.getImageCropInfoOTSU();
-		nucleusSegmentation.saveConvexHullSegOMERO(client, convexHullDataset);
-		this.outputCropGeneralInfoConvexHull += getResultsColumnNames();
-		this.outputCropGeneralInfoConvexHull += nucleusSegmentation.getImageCropInfoConvexHull();
-		
+		BatchImage source = new OMEROBatchImage(image, client, null, null, new int[]{0,0}, null, null);
+		NucleusSegmentation seg = load(source);
+		compute(seg);
+		saveOneImage(seg, source, datasets);
 		String end = currentDateTime();
 		LOGGER.info("End: {}", end);
-		
+
 		return log;
 	}
 	
@@ -416,74 +437,50 @@ public class SegmentationCalling {
 		ExecutorService downloadExecutor = Executors.newFixedThreadPool(DOWNLOADER_THREADS);
 		ExecutorService processExecutor  = Executors.newFixedThreadPool(executorThreads);
 		tID = inputID;
-		
-		ProjectWrapper project = client.getProject(output);
-		// Get OTSU dataset ID
-		List<DatasetWrapper> datasets = project.getDatasets("OTSU");
-		long                 otsuDataset;
-		long                 convexHullDataset;
-		if (datasets.isEmpty()) {
-			otsuDataset = project.addDataset(client, "OTSU", "").getId();
-			project.reload(client);
-		} else {
-			otsuDataset = datasets.get(0).getId();
-		}
-		project.reload(client);
-		// Get Convex Hull dataset ID
-		if (params.getConvexHullDetection()) {
-			datasets = project.getDatasets(ConvexHullDetection.CONVEX_HULL_ALGORITHM);
-			if (datasets.isEmpty()) {
-				convexHullDataset = project.addDataset(client, ConvexHullDetection.CONVEX_HULL_ALGORITHM, "").getId();
-				project.reload(client);
-			} else {
-				convexHullDataset = datasets.get(0).getId();
-			}
-		} else {
-			convexHullDataset = -1;
-		}
-		
+
+		Map<String, Long> datasets = prepareOutputDatasetsOMERO(output, client);
+
 		Map<Long, String> otsuResults       = new ConcurrentHashMap<>(images.size());
 		Map<Long, String> convexHullResults = new ConcurrentHashMap<>(images.size());
 		
 		CountDownLatch latch       = new CountDownLatch(images.size());
 		CountDownLatch uploadLatch = new CountDownLatch(1);
+
 		class ImageProcessorOMERO implements Runnable {
-			
-			private final ImageWrapper img;
-			private final ImagePlus    imp;
-			
-			
-			ImageProcessorOMERO(ImageWrapper img, ImagePlus imp) {
-				this.img = img;
-				this.imp = imp;
+
+			private final BatchImage batchImage;
+
+
+			ImageProcessorOMERO(BatchImage batchImage) {
+				this.batchImage = batchImage;
 			}
 			
 			
 			@Override
 			public void run() {
 				try {
-					String fileImg = img.getName();
-					
+					String fileImg = batchImage.getName();
+
 					String start = currentDateTime();
 					LOGGER.info("Current image in process: {} {} Start : {}", fileImg, lineSeparator(), start);
-					NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(img, imp, params);
-					nucleusSegmentation.preProcessImage();
-					nucleusSegmentation.findOTSUMaximisingSphericity();
-					nucleusSegmentation.checkBadCrop(img, client);
-					
-					nucleusSegmentation.saveOTSUSegmentedOMERO(client, otsuDataset); // Upload
-					otsuResults.put(img.getId(),
-					                nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
-					nucleusSegmentation.saveConvexHullSegOMERO(client, convexHullDataset); // Upload
-					convexHullResults.put(img.getId(),
-					                      nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
-					
+					NucleusSegmentation nucleusSegmentation = load(batchImage);
+					compute(nucleusSegmentation);//////////////
+
+					nucleusSegmentation.checkBadCrop(batchImage);
+					batchImage.save(nucleusSegmentation, datasets);
+
+					OMEROBatchImage obi = (OMEROBatchImage) batchImage;
+					otsuResults.put(obi.getImage().getId(),
+							nucleusSegmentation.getImageCropInfoOTSU()); // Put in thread safe collection
+					convexHullResults.put(obi.getImage().getId(),
+							nucleusSegmentation.getImageCropInfoConvexHull()); // Put in thread safe collection
+
 					String end = currentDateTime();
 					LOGGER.info("End: {} at {}", fileImg, end);
-					
+
 					latch.countDown();
-				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException e) {
-					LOGGER.error("Error processing image: {}", img.getName(), e);
+				} catch (AccessException | OMEROServerError | ServiceException | IOException | ExecutionException | FormatException e) {
+					LOGGER.error("Error processing image: {}", batchImage.getName(), e);
 				}
 			}
 			
@@ -503,11 +500,13 @@ public class SegmentationCalling {
 			public void run() {
 				try {
 					LOGGER.info("Acquiring image");
-					
+
 					int[]     cBound = {0, 0}; // For each image
-					ImagePlus imp    = img.toImagePlus(client, null, null, cBound, null, null); // Download image
-					
-					processExecutor.submit(new ImageProcessorOMERO(img, imp)); // Pass img to executor
+
+					BatchImage image = new OMEROBatchImage(img, client, null, null, cBound, null, null);
+					image.loadImagePlus();
+
+					processExecutor.submit(new ImageProcessorOMERO(image)); // Pass img to executor
 					uploadLatch.countDown();
 					LOGGER.info("Resource returned ({}).", img.getName());
 				} catch (AccessException | ExecutionException | ServiceException e) {
@@ -558,7 +557,7 @@ public class SegmentationCalling {
 	
 	public void saveCropGeneralInfoOmero(Client client, Long output)
 	throws ServiceException, AccessException, ExecutionException, InterruptedException {
-		String date = currentDateTime("yyyy-MM-dd_HH-mm-ss");
+		String date = currentDateTime("yyyy-MM-dd_HH-mm-ss"); 
 		LOGGER.info("Saving OTSU results.");
 		DatasetWrapper dataset = client.getProject(output).getDatasets("OTSU").get(0);
 		ProjectWrapper project = client.getProject(output);
@@ -642,7 +641,7 @@ public class SegmentationCalling {
 	
 	
 	public String runOneImageOMERObyROIs(ImageWrapper image, Long output, Client client)
-	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, InterruptedException {
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException, InterruptedException, FormatException {
 		
 		StringBuilder info = new StringBuilder();
 		
@@ -655,23 +654,21 @@ public class SegmentationCalling {
 		
 		String start = currentDateTime();
 		LOGGER.info("Start: {}", start);
-		
+		Map<String, Long> datasets = prepareOutputDatasetsOMERO(output, client);
 		int i = 0;
 		
 		for (ROIWrapper roi : rois) {
 			LOGGER.info("Current ROI in process: {}", i);
-			
-			NucleusSegmentation nucleusSegmentation = new NucleusSegmentation(image, roi, i, params, client);
+			OMEROBatchImage source = new OMEROBatchImage(image, roi, i, params, client, null);
+			NucleusSegmentation nucleusSegmentation = load(source);
+
 			nucleusSegmentation.preProcessImage();
 			nucleusSegmentation.findOTSUMaximisingSphericity();
-			nucleusSegmentation.checkBadCrop(roi, client);
-			
-			nucleusSegmentation.saveOTSUSegmentedOMERO(client, output);
+			nucleusSegmentation.checkBadCrop(source);
+			source.save(nucleusSegmentation, datasets);
+
 			info.append(nucleusSegmentation.getImageCropInfoOTSU());
-			
-			nucleusSegmentation.saveConvexHullSegOMERO(client, output);
 			info.append(nucleusSegmentation.getImageCropInfoConvexHull());
-			
 			i++;
 		}
 		this.outputCropGeneralInfoOTSU += getResultsColumnNames();
@@ -717,7 +714,7 @@ public class SegmentationCalling {
 	
 	
 	public String runSeveralImagesOMERObyROIs(Iterable<? extends ImageWrapper> images, Long output, Client client)
-	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException {
+	throws AccessException, ServiceException, OMEROServerError, IOException, ExecutionException, InterruptedException, FormatException {
 		StringBuilder log = new StringBuilder();
 		
 		for (ImageWrapper image : images) {

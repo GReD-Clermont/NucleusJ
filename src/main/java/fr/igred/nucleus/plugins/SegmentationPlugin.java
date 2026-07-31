@@ -201,7 +201,7 @@ public class SegmentationPlugin implements PlugIn, IDialogListener {
 			IJ.error("Unable to access to OMERO service");
 		} catch (AccessException ae) {
 			IJ.error("Cannot access " + dataType + "with ID = " + inputID + ".");
-		} catch (OMEROServerError | IOException | ExecutionException e) {
+		} catch (OMEROServerError | IOException | ExecutionException | FormatException e) {
 			LOGGER.error("An error occurred.", e);
 		} catch (InterruptedException e) {
 			LOGGER.error("Segmentation interrupted", e);
@@ -240,6 +240,8 @@ public class SegmentationPlugin implements PlugIn, IDialogListener {
 			} catch (IOException ioe) {
 				IJ.error("File or directory does not exist");
 			} catch (NumberFormatException | FormatException e) {
+				LOGGER.error("An error occurred.", e);
+			} catch (ServiceException | AccessException | ExecutionException | OMEROServerError e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		}

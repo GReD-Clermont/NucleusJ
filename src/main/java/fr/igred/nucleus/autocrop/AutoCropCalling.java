@@ -102,6 +102,38 @@ public class AutoCropCalling {
 	
 	
 	/**
+	 * Processus factorisé pour les fichiers locaux
+	 */
+	protected String processAutoCropWorkflow(File file) throws IOException, FormatException {
+		LOGGER.info("Current file: {}", file.getAbsolutePath());
+		String     fileImg          = file.toString();
+		FilesNames outPutFilesNames = new FilesNames(fileImg);
+		String     prefix           = outPutFilesNames.prefixNameFile();
+		AutoCrop   autoCrop         = new AutoCrop(file, prefix, params);
+		
+		autoCrop.thresholdKernels(typeThresholding);
+		autoCrop.computeConnectedComponent();
+		autoCrop.componentBorderFilter();
+		autoCrop.componentSizeFilter();
+		autoCrop.computeBoxes();
+		autoCrop.addCropParameter();
+		autoCrop.boxIntersection();
+		autoCrop.cropKernels();
+		LOGGER.info("ENDED CROPPING");
+		autoCrop.writeAnalyseInfo();
+		
+		AnnotateAutoCrop annotate = new AnnotateAutoCrop(autoCrop.getFileCoordinates(),
+		                                                 file,
+		                                                 params.getOutputFolder() + File.separator,
+		                                                 prefix,
+		                                                 params);
+		annotate.run();
+		
+		return autoCrop.getImageCropInfo();
+	}
+	
+	
+	/**
 	 * Run auto crop on image's folder: -If input is a file: open the image with bio-formats plugin to obtain the
 	 * metadata then run the auto crop. -If input is directory, listed the file, foreach tif file loaded file with
 	 * bio-formats, run the auto crop.
@@ -131,31 +163,8 @@ public class AutoCropCalling {
 			
 			@Override
 			public void run() {
-				LOGGER.info("Current file: {}", file.getAbsolutePath());
-				String     fileImg          = file.toString();
-				FilesNames outPutFilesNames = new FilesNames(fileImg);
-				String     prefix           = outPutFilesNames.prefixNameFile();
 				try {
-					AutoCrop autoCrop = new AutoCrop(file, prefix, params);
-					autoCrop.thresholdKernels(typeThresholding);
-					autoCrop.computeConnectedComponent();
-					autoCrop.componentBorderFilter();
-					autoCrop.componentSizeFilter();
-					autoCrop.computeBoxes();
-					autoCrop.addCropParameter();
-					autoCrop.boxIntersection();
-					autoCrop.cropKernels();
-					autoCrop.writeAnalyseInfo();
-					AnnotateAutoCrop annotate = new AnnotateAutoCrop(autoCrop.getFileCoordinates(),
-					                                                 file,
-					                                                 params.getOutputFolder() +
-					                                                 File.separator,
-					                                                 prefix,
-					                                                 params);
-					annotate.run();
-					
-					cropInfo.put(file.getName(), autoCrop.getImageCropInfo());
-					
+					cropInfo.put(file.getName(), processAutoCropWorkflow(file));
 					latch.countDown();
 				} catch (IOException | FormatException e) {
 					LOGGER.error("Cannot run autocrop on: {}", file.getName(), e);
@@ -178,7 +187,7 @@ public class AutoCropCalling {
 		
 		StringBuilder generalInfoBuilder = new StringBuilder();
 		for (File file : files) {
-			generalInfoBuilder.append(cropInfo.get(file.getName()));
+			generalInfoBuilder.append(cropInfo.getOrDefault(file.getName(), ""));
 		}
 		outputCropGeneralInfo += generalInfoBuilder.toString();
 		
@@ -195,30 +204,8 @@ public class AutoCropCalling {
 	 */
 	public void runFile(String file) {
 		File currentFile = new File(file);
-		LOGGER.info("Current file: {}", currentFile.getAbsolutePath());
-		String     fileImg          = currentFile.toString();
-		FilesNames outPutFilesNames = new FilesNames(fileImg);
-		/* image prefix name */
-		String prefix = outPutFilesNames.prefixNameFile();
 		try {
-			AutoCrop autoCrop = new AutoCrop(currentFile, prefix, params);
-			autoCrop.thresholdKernels(typeThresholding);
-			autoCrop.computeConnectedComponent();
-			autoCrop.componentBorderFilter();
-			autoCrop.componentSizeFilter();
-			autoCrop.computeBoxes();
-			autoCrop.addCropParameter();
-			autoCrop.boxIntersection();
-			autoCrop.cropKernels();
-			LOGGER.info("ENDED CROPPING");
-			autoCrop.writeAnalyseInfo();
-			AnnotateAutoCrop annotate = new AnnotateAutoCrop(autoCrop.getFileCoordinates(),
-			                                                 currentFile,
-			                                                 params.getOutputFolder() + File.separator,
-			                                                 prefix,
-			                                                 params);
-			annotate.run();
-			this.outputCropGeneralInfo += autoCrop.getImageCropInfo();
+			this.outputCropGeneralInfo += processAutoCropWorkflow(currentFile);
 		} catch (IOException | FormatException e) {
 			LOGGER.error("Cannot run autocrop on: {}", currentFile.getName(), e);
 			IJ.error("Cannot run autocrop on " + currentFile.getName());
@@ -233,13 +220,12 @@ public class AutoCropCalling {
 	}
 	
 	
-	public void runImageOMERO(ImageWrapper image, Long[] outputsDatImages, Client client)
+	/**
+	 * Processus factorisé spécifique pour OMERO
+	 */
+	private String processAutoCropWorkflowOMERO(AutoCrop autoCrop, ImageWrapper image, Long[] outputsDatImages,
+	                                            Client client, String prefix, long outputProject)
 	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
-		String fileImg = image.getName();
-		LOGGER.info("Current file: {}", fileImg);
-		FilesNames outPutFilesNames = new FilesNames(fileImg);
-		String     prefix           = outPutFilesNames.prefixNameFile();
-		AutoCrop   autoCrop         = new AutoCrop(image, params, client);
 		autoCrop.thresholdKernels(typeThresholding);
 		autoCrop.computeConnectedComponent();
 		autoCrop.componentBorderFilter();
@@ -249,21 +235,41 @@ public class AutoCropCalling {
 		autoCrop.boxIntersection();
 		autoCrop.cropKernelsOMERO(image, outputsDatImages, client);
 		autoCrop.writeAnalyseInfoOMERO(outputsDatImages[params.getChannelToComputeThreshold()], client);
+		
 		AnnotateAutoCrop annotate = new AnnotateAutoCrop(autoCrop.getFileCoordinates(),
 		                                                 autoCrop.getRawImage(),
 		                                                 params.getOutputFolder() + File.separator,
 		                                                 prefix,
 		                                                 params);
+		
+		if (outputProject != -1) {
+			annotate.saveProjectionOMERO(client, outputProject);
+		}
 		annotate.run();
-		DatasetWrapper outputDataset = client.getDataset(outputsDatImages[0]);
-		List<ProjectWrapper> projects = outputDataset.getProjects(client);
+		
+		return autoCrop.getImageCropInfoOmero(image.getName());
+	}
+	
+	
+	public void runImageOMERO(ImageWrapper image, Long[] outputsDatImages, Client client)
+	throws AccessException, ServiceException, ExecutionException, OMEROServerError, IOException {
+		String fileImg = image.getName();
+		LOGGER.info("Current file: {}", fileImg);
+		FilesNames outPutFilesNames = new FilesNames(fileImg);
+		String     prefix           = outPutFilesNames.prefixNameFile();
+		AutoCrop   autoCrop         = new AutoCrop(image, params, client);
+		
+		// Recherche du projet (uniquement pour cette image)
+		long                 outputProject = -1;
+		DatasetWrapper       outputDataset = client.getDataset(outputsDatImages[0]);
+		List<ProjectWrapper> projects      = outputDataset.getProjects(client);
 		if (projects.isEmpty()) {
 			LOGGER.warn("No project found for dataset: {}", outputDataset.getName());
 		} else {
-			long outputProject = projects.get(0).getId();
-			annotate.saveProjectionOMERO(client, outputProject);
+			outputProject = projects.get(0).getId();
 		}
-		this.outputCropGeneralInfo += autoCrop.getImageCropInfoOmero(image.getName());
+		this.outputCropGeneralInfo += processAutoCropWorkflowOMERO(autoCrop, image, outputsDatImages, client, prefix,
+		                                                           outputProject);
 	}
 	
 	
@@ -276,15 +282,16 @@ public class AutoCropCalling {
 		
 		ConcurrentHashMap<String, String> cropInfo = new ConcurrentHashMap<>(images.size());
 		
-		long outputFound = -1;
-		DatasetWrapper outputDataset = client.getDataset(outputsDatImages[0]);
-		List<ProjectWrapper> projects = outputDataset.getProjects(client);
+		// Recherche du projet UNE SEULE FOIS pour tout le dossier
+		long                 outputProject = -1;
+		DatasetWrapper       outputDataset = client.getDataset(outputsDatImages[0]);
+		List<ProjectWrapper> projects      = outputDataset.getProjects(client);
 		if (projects.isEmpty()) {
 			LOGGER.warn("No project found for dataset: {}", outputDataset.getName());
 		} else {
-			outputFound = projects.get(0).getId();
+			outputProject = projects.get(0).getId();
 		}
-		long outputProject = outputFound;
+		final long finalOutputProject = outputProject;
 		
 		class ImageProcessor implements Runnable {
 			private final AutoCrop     autoCrop;
@@ -299,37 +306,19 @@ public class AutoCropCalling {
 			
 			@Override
 			public void run() {
-				autoCrop.thresholdKernels(typeThresholding);
-				autoCrop.computeConnectedComponent();
-				autoCrop.componentBorderFilter();
-				autoCrop.componentSizeFilter();
-				autoCrop.computeBoxes();
-				autoCrop.addCropParameter();
-				autoCrop.boxIntersection();
 				try {
-					autoCrop.cropKernelsOMERO(image, outputsDatImages, client);
-					autoCrop.writeAnalyseInfoOMERO(outputsDatImages[params.getChannelToComputeThreshold()],
-					                               client);
-					
-					AnnotateAutoCrop annotate = new AnnotateAutoCrop(autoCrop.getFileCoordinates(),
-					                                                 autoCrop.getRawImage(),
-					                                                 params.getOutputFolder() +
-					                                                 File.separator,
-					                                                 FilenameUtils.removeExtension(image.getName()),
-					                                                 params);
-					annotate.run();
-					annotate.saveProjectionOMERO(client, outputProject);
+					String prefix = FilenameUtils.removeExtension(image.getName());
+					String info = processAutoCropWorkflowOMERO(autoCrop, image, outputsDatImages, client, prefix,
+					                                           finalOutputProject);
+					cropInfo.put(image.getName(), info);
 				} catch (AccessException | ServiceException | OMEROServerError | IOException | ExecutionException e) {
 					LOGGER.error("Cannot run autocrop on: {}", image.getName(), e);
 				}
-				
-				cropInfo.put(image.getName(), autoCrop.getImageCropInfo());
-				
+
 				latch.countDown();
 			}
 			
 		}
-		
 		
 		class ImageDownloader implements Runnable {
 			
@@ -359,13 +348,14 @@ public class AutoCropCalling {
 		for (ImageWrapper image : images) {
 			downloadExecutor.submit(new ImageDownloader(image));
 		}
+		
 		latch.await();
 		downloadExecutor.shutdownNow();
 		processExecutor.shutdownNow();
 		
 		StringBuilder generalInfoBuilder = new StringBuilder();
 		for (ImageWrapper image : images) {
-			generalInfoBuilder.append(cropInfo.get(image.getName()));
+			generalInfoBuilder.append(cropInfo.getOrDefault(image.getName(), ""));
 		}
 		outputCropGeneralInfo += generalInfoBuilder.toString();
 		

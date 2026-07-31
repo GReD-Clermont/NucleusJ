@@ -28,6 +28,9 @@ import fr.igred.nucleus.process.ChromocenterParameters;
 import fr.igred.nucleus.process.ChromocenterCalling;
 import fr.igred.nucleus.segmentation.SegmentationCalling;
 import fr.igred.nucleus.segmentation.SegmentationParameters;
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
 import loci.formats.FormatException;
 import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
@@ -36,6 +39,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.concurrent.ExecutionException;
 
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
@@ -189,7 +193,7 @@ public class CLIRunAction {
 	}
 	
 	
-	private void runSegmentation() throws FormatException {
+	private void runSegmentation() throws IOException, FormatException {
 		SegmentationParameters params = new SegmentationParameters(cmd.getOptionValue("input"),
 		                                                                           cmd.getOptionValue("output"));
 		if (cmd.hasOption("config")) {
@@ -205,7 +209,7 @@ public class CLIRunAction {
 				if (!log.isEmpty()) {
 					LOGGER.error("Nuclei which didn't pass the segmentation:{}{}", System.lineSeparator(), log);
 				}
-			} catch (IOException e) {
+			} catch (IOException | ServiceException | AccessException | ExecutionException | FormatException | OMEROServerError e) {
 				LOGGER.error("An error occurred.", e);
 			}
 		} else {

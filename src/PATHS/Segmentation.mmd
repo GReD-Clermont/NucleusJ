@@ -1,0 +1,25 @@
+graph TD
+    Segmentation --> GUI
+    Segmentation --> CLI
+    GUI --> MAINGUI
+    CLI --> runSegmentation["CLIRunAction<br>runSegmentation"]
+    CLI --> runSegmentationOMERO["CLIRunActionOMERO<br>runSegmentationOMERO"]
+
+    runSegmentation ------> runOneImage["SegmentationCalling<br>runOneImage"]
+    runSegmentation -------------> runSeveralImages["SegmentationCalling<br>runSeveralImages"]
+
+    runSegmentationOMERO --> segmentationOMERO["CLIRunActionOMERO<br>segmentationOMERO"]
+    segmentationOMERO --> runOneImageOMERO["SegmentationCalling<br>runOneImageOMERO"]
+    segmentationOMERO --> runSeveralImagesOMERO["SegmentationCalling<br>runSeveralImagesOMERO"]
+    segmentationOMERO --> runOneImageOMERObyROIs["SegmentationCalling<br>runOneImageOMERObyROIs"]
+    segmentationOMERO --> runSeveralImagesOMERObyROIs["SegmentationCalling<br>runSeveralImagesOMERObyROIs"]
+
+    MAINGUI --> SegmentationPlugin["SegmentationPlugin<br>onStart"]
+    SegmentationPlugin --> runLocalSegmentation["SegmentationPlugin<br>runLocalSegmentation"]
+    SegmentationPlugin --> runOmeroSegmentation["SegmentationPlugin<br>runOmeroSegmentation"]
+
+    runLocalSegmentation ------> runOneImage
+    runLocalSegmentation -------------> runSeveralImages
+
+    runOmeroSegmentation ------> runOneImageOMERO
+    runOmeroSegmentation -------------> runSeveralImagesOMERO

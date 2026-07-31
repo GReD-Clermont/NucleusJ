@@ -17,6 +17,9 @@
  */
 package fr.igred.nucleus.segmentation;
 
+import fr.igred.omero.exception.AccessException;
+import fr.igred.omero.exception.OMEROServerError;
+import fr.igred.omero.exception.ServiceException;
 import loci.formats.FormatException;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Tag;
@@ -28,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -64,7 +68,7 @@ class SegmentationTest {
 	
 	
 	private static void runSegmentation(String imageSourceFile, String output)
-	throws IOException, FormatException {
+	throws IOException, FormatException, ServiceException, AccessException, ExecutionException, OMEROServerError {
 		SegmentationParameters segmentationParams = new SegmentationParameters(imageSourceFile, output);
 		SegmentationCalling    segmentation       = new SegmentationCalling(segmentationParams);
 		segmentation.runOneImage(imageSourceFile);
